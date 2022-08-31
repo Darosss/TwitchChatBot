@@ -1,12 +1,47 @@
 const tmi = require("tmi.js");
 const functionsHead = require("./functionsHead.js");
-const auth = "",
-  userName = "booksarefunsometimes",
-  channelToSend = "potent213";
+
+const broadcaster = "booksarefunsometimes";
 const config = require("./configHead.js");
+const auth_conf = require("./auth.js");
+const auth = auth_conf.auth;
 const pathUserJson = [];
 const usersJson = [];
 
+class BotChleb {
+  constructor(config) {
+    this.config = config;
+    this.triggers = this.config.timers.words;
+  }
+  checkTrigger(client, channel, msg) {
+    let trig_key = Object.keys(this.triggers);
+    for (let i = 0; i < trig_key.length; i++) {
+      let trigger = this.triggers[trig_key[i]];
+      let trigger_word = trigger[0];
+      if (trigger[2]) {
+        console.log(trigger_word);
+        if (msg.toLowerCase().includes(trigger_word)) {
+          this.triggers[trig_key[i]][2] = false;
+          // its must be like this, because it should change this.triggers
+          client.say(channel, trigger[1]);
+          var that = this;
+          setTimeout(function () {
+            console.log("Trigger can be used now again: ", trigger_word);
+            that.triggers[trig_key[i]][2] = true;
+          }, trigger[3] * 1000);
+        }
+      } else {
+        console.log("za wczesnie na " + trigger_word);
+      }
+    }
+  }
+  wassup() {
+    console.log("chuj");
+  }
+}
+
+const botChleb = new BotChleb(config.options);
+botChleb.greet;
 var chan = config.options.channels.arr;
 var pref = config.options.channels.pref;
 var bots = config.options.bots;
@@ -55,7 +90,7 @@ const client = new tmi.Client({
   },
   identity: {
     password: auth,
-    username: userName,
+    username: broadcaster,
   },
   channels: chan,
 });
@@ -66,17 +101,14 @@ client.on("message", (channel, tags, message, self) => {
   // intervalOnce = false;
   // setInterval(function(){
   // client.say(channel, config.options.timers.zabolGame[0]);
-
   // },config.options.timers.zabolGame[1]);
   // }
-  if (tags.username !== userName) {
-    functionsHead.checkTrigger(
-      client,
-      channel,
-      message,
-      config.options.timers.words
-    );
-  }
+  if (tags["display-name"] == config.options.username) return;
+  // if sender message == bot = return;
+
+  botChleb.checkTrigger(client, channel, message);
+  // check message for trigger from config
+
   var nowDate = new Date();
   nowDate =
     nowDate.getFullYear() +
