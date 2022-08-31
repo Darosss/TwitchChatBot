@@ -1,6 +1,6 @@
 const tmi = require("tmi.js");
 const functionsHead = require("./functionsHead.js");
-const auth = "oauth:a2c092sexzv36to0cagd8p7lrjcwj6",
+const auth = "",
   userName = "booksarefunsometimes",
   channelToSend = "potent213";
 const config = require("./configHead.js");
