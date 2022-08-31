@@ -28,44 +28,7 @@ function writeJsonData(whereSave, whichObj, lastSeen) {
   );
 }
 
-function checkAndCreate(folder, file) {
-  const fs = require("fs");
-
-  var dir = folder;
-
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-
-  if (fs.existsSync(file)) {
-    // path exists
-    console.log("exists:", file);
-  } else {
-    fs.writeFile(file, "", function (err) {
-      if (err) throw err;
-      console.log("File is created successfully.");
-    });
-    console.log("DOES NOT exist:", file);
-  }
-}
-function createNewJsonUsers(userChan, userJson) {
-  var fs = require("fs");
-
-  if (fs.existsSync(userJson)) {
-    // path exists
-    console.log("exists:", userJson);
-  } else {
-    let result = [];
-    const jsonString = JSON.stringify(result);
-    fs.writeFileSync(userJson, jsonString);
-    userChan = require(userJson);
-    console.log("DOES NOT exist:", file);
-  }
-}
-
 module.exports = {
   appendToFile,
-  checkAndCreate,
   writeJsonData,
-  createNewJsonUsers,
 };
