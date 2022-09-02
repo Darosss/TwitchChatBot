@@ -5,21 +5,17 @@ config.options.channels = {};
 config.options.username = "booksarefunsometimes";
 config.options.oauth = "oauth";
 
-config.options.ignoreConditions = true; //dodge every condition
 config.options.channelsSeparately = true; //write separately folder for each of canal
-config.options.splitLetter = ";.;"; //write separately folder for each of canal
 
 config.options.folderName = "public"; //name head folder of txt
 config.options.nameSentence = "sentences"; //name of sentences
-config.options.nameQuestions = "questions"; // name txt of quesitons
-config.options.emotesOnly = "emotesOnly"; //name txt of emotes only
 
 config.options.channels = ["booksarefunsometimes"]; //debug
-//config.options.channels.arr = ["loltyler1", "k3soju"]; //channels to monitor
+//config.options.channels = ["loltyler1", "k3soju"]; //channels to monitor
 config.options.channels.pref = [""]; //prefix for channel emotes
 
 config.options.msgLength = 0; // minimum length of message
-config.options.commands = ["!"]; //dodge? leave blank ""
+config.options.commands = ["!"]; //not needed? leave blank ""
 
 config.options.bots = [
   "streamelements",
@@ -27,7 +23,7 @@ config.options.bots = [
   "nightbot",
   "moobot",
   "lemonadebot_",
-]; //exclude this users ex. bots
+]; //exclude this users example. bots or broadcaster or sth
 config.options.words = ["http", "@", "www.", "sub", "follow"]; // exclude words
 
 config.options.timers = {};

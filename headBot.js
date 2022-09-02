@@ -5,16 +5,17 @@ const config = require("./configHead.js");
 const userData = require("./auth.js");
 const username = userData.username;
 const userAuth = userData.auth;
-const pathUserJson = [];
-const usersJson = [];
 
 class BotChleb {
   constructor(config) {
     this.config = config;
     this.triggers = this.config.timers.words;
     this.chanels = this.config.channels;
-    this.sentences = [];
-    this.checkIfJsonExist();
+    this.logMsgDir = [];
+    this.logMsg = [];
+    this.usersDir = [];
+    this.usersJson = [];
+    this.#createNonExistingJsons();
   }
 
   checkTrigger(client, channel, msg) {
@@ -39,53 +40,39 @@ class BotChleb {
       }
     }
   }
-  checkIfJsonExist() {
+  #createNonExistingJsons() {
     if (this.config.channelsSeparately) {
+      //TODO create else condition where == false
+      // and add users from all channels to one file
+      // not needed for now
       var today = new Date();
       today = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
       var dir = [];
       for (let i = 0; i < this.chanels.length; i++) {
-        dir[i] = `./${config.options.folderName}/${this.chanels[i]}/${today}`;
-        this.sentences[
-          i
-        ] = `${dir[i]}/${today}-${this.chanels[i]}-${this.config.nameSentence}.txt`;
-
-        this.checkAndCreate(dir[i], this.sentences[i]);
-
-        var dirUserJson = `./${config.options.folderName}/${this.chanels[i]}`;
-        pathUserJson[
-          this.chanels[i]
-        ] = `${dirUserJson}/${this.chanels[i]}-users.json`;
-
-        this.createNewJsonUsers(
-          usersJson[this.chanels[i]],
-          pathUserJson[this.chanels[i]]
-        );
-        usersJson[this.chanels[i]] = require(pathUserJson[this.chanels[i]]);
-        //change to when exist - return;
+        dir[i] = `./${config.options.folderName}/${this.chanels[i]}`;
+        this.#createUsersJson(dir[i], this.chanels[i], "users");
+        this.#createSentencesJson(dir[i], this.chanels[i], today, "sentences");
       }
     }
   }
-  checkAndCreate(folder, file) {
-    const fs = require("fs");
-    var dir = folder;
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    if (fs.existsSync(file)) {
-      // path exists
-      console.log("exists:", file);
-    } else {
-      fs.writeFile(file, "", function (err) {
-        if (err) throw err;
-        console.log("File is created successfully.");
-      });
-      console.log("DOES NOT exist:", file);
-    }
+  #createUsersJson(dir, channel, suffix) {
+    this.usersDir[channel] = `${dir}/${channel}-${suffix}.json`;
+    this.#createNewJsonFile(dir, this.usersDir[channel]);
+    this.usersJson[channel] = require(this.usersDir[channel]);
   }
-  createNewJsonUsers(userChan, userJson) {
-    var fs = require("fs");
+  #createSentencesJson(dir, channel, time, suffix) {
+    this.logMsgDir[channel] = `${dir}/${time}-${channel}-${suffix}.json`;
+    this.#createNewJsonFile(dir, this.logMsgDir[channel]);
 
+    this.logMsg[channel] = require(this.logMsgDir[channel]);
+  }
+
+  #createNewJsonFile(folder, userJson) {
+    var fs = require("fs");
+    if (!fs.existsSync(folder)) {
+      console.log("Folder path does not exist:", folder);
+      fs.mkdirSync(folder, { recursive: true });
+    }
     if (fs.existsSync(userJson)) {
       // path exists
       console.log("exists:", userJson);
@@ -93,22 +80,76 @@ class BotChleb {
       let result = [];
       const jsonString = JSON.stringify(result);
       fs.writeFileSync(userJson, jsonString);
-      userChan = require(userJson);
-      console.log("DOES NOT exist:", file);
+      console.log("DOES NOT exist:", userJson);
     }
   }
+  #rewriteJson(dirLog, msgsChannel) {
+    const fs = require("fs");
+    fs.writeFile(
+      dirLog,
+      JSON.stringify(msgsChannel, null, 2),
+
+      function writeJSON(err) {
+        if (err) return console.log(err);
+        console.log("Writing message to " + dirLog);
+      }
+    );
+  }
+  #formatDateYMDHMS() {
+    var lastSeenDate = new Date();
+    var ymd = `${lastSeenDate.getFullYear()}-${lastSeenDate.getMonth()}-${lastSeenDate.getDate()}`;
+    var hours = lastSeenDate.getHours();
+    var minutes = lastSeenDate.getMinutes();
+    var seconds = lastSeenDate.getSeconds();
+
+    hours = hours > 9 ? hours : "0" + hours;
+    minutes = minutes > 9 ? minutes : "0" + minutes;
+    seconds = seconds > 9 ? seconds : "0" + seconds;
+    // convert instead 1/01 2/02 etc
+    lastSeenDate = `${ymd} ${hours}:${minutes}:${seconds}`;
+    return lastSeenDate;
+  }
+  countMessages(channel, chatter) {
+    var foundUser = false;
+    var which = 0;
+
+    var channelName = channel.replace("#", "");
+    // replace beacause channel includes # in nickname(dunno why)
+    for (let i = 0; i < this.usersJson[channelName].length; i++) {
+      var user = this.usersJson[channelName][i];
+      if (user.hasOwnProperty("name")) {
+        if (user.name == chatter) {
+          foundUser = true;
+          which = i;
+          this.usersJson[channelName][i].messages++;
+          this.usersJson[channelName][i].lastSeen = this.#formatDateYMDHMS();
+        }
+      }
+    }
+    if (!foundUser) {
+      // not found object named channel name, need create new
+      console.log("Need to create new json object inside users");
+      this.usersJson[channelName].push({
+        name: chatter,
+        messages: 1,
+        lastSeen: lastSeenDate,
+      });
+    }
+    this.#rewriteJson(this.usersDir[channelName], this.usersJson[channelName]);
+  }
+  logMessages(channel, chatter, msg) {
+    var channelName = channel.replace("#", "");
+    // replace beacause channel includes # in nickname(dunno why)
+    this.logMsg[channelName].push({
+      name: chatter,
+      messages: msg,
+      date_msg: this.#formatDateYMDHMS(),
+    });
+    this.#rewriteJson(this.logMsgDir[channelName], this.logMsg[channelName]);
+  }
 }
-
 const botChleb = new BotChleb(config.options);
-botChleb.greet;
-var pref = config.options.channels.pref;
-var bots = config.options.bots;
-var commands = config.options.commands;
-var words = config.options.words;
-
-var sentences = [];
 var intervalOnce = true;
-
 const client = new tmi.Client({
   options: { debug: true },
   connection: {
@@ -130,83 +171,11 @@ client.on("message", (channel, tags, message, self) => {
   // client.say(channel, config.options.timers.zabolGame[0]);
   // },config.options.timers.zabolGame[1]);
   // }
+  botChleb.countMessages(channel, tags.username);
+  botChleb.logMessages(channel, tags.username, message);
+
   if (tags["display-name"] == config.options.username) return;
   // if sender message == bot = return;
-
   botChleb.checkTrigger(client, channel, message);
   // check message for trigger from config
-  botChleb.countMessage();
-  botChleb.logMessage();
-  //   var nowDate = new Date();
-  //   nowDate =
-  //     nowDate.getFullYear() +
-  //     "-" +
-  //     nowDate.getMonth() +
-  //     "-" +
-  //     nowDate.getDate() +
-  //     " " +
-  //     nowDate.getHours() +
-  //     ":" +
-  //     nowDate.getMinutes() +
-  //     ":" +
-  //     nowDate.getSeconds();
-  //   for (let i = 0; i < chan.length; i++) {
-  //     functionsHead.appendToFile(
-  //       sentences[i],
-  //       message +
-  //         config.options.splitLetter +
-  //         tags.username +
-  //         config.options.splitLetter +
-  //         nowDate
-  //     );
-  //   }
-  //   var foundUser = false;
-  //   var lastSeenDate = new Date();
-  //   var hours = lastSeenDate.getHours();
-  //   hours = hours > 9 ? hours : "0" + hours;
-  //   var minutes = lastSeenDate.getMinutes();
-  //   minutes = minutes > 9 ? minutes : "0" + minutes;
-  //   var seconds = lastSeenDate.getSeconds();
-  //   seconds = seconds > 9 ? seconds : "0" + seconds;
-
-  //   lastSeenDate =
-  //     lastSeenDate.getFullYear() +
-  //     "-" +
-  //     lastSeenDate.getMonth() +
-  //     "-" +
-  //     lastSeenDate.getDate() +
-  //     " " +
-  //     hours +
-  //     ":" +
-  //     minutes +
-  //     ":" +
-  //     seconds;
-  //   var which = 0;
-
-  //   var channelName = channel.replace("#", "");
-  //   for (let i = 0; i < usersJson[channelName].length; i++) {
-  //     var user = usersJson[channelName][i];
-  //     if (user.hasOwnProperty("name")) {
-  //       if (user.name == tags.username) {
-  //         //console.log("Found user in json");
-  //         foundUser = true;
-  //         which = i;
-  //         //console.log(pathUserJson[channelName]);
-  //         functionsHead.writeJsonData(
-  //           pathUserJson[channelName],
-  //           which,
-  //           lastSeenDate
-  //         );
-  //         break;
-  //       }
-  //     }
-  //   }
-  //   if (!foundUser) {
-  //     console.log("potrzeba stworzyc nowego jsona objecta ");
-  //     usersJson[channelName].push({
-  //       name: tags.username,
-  //       messages: 1,
-  //       lastSeen: lastSeenDate,
-  //     });
-  //   }
 });
