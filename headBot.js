@@ -3,17 +3,18 @@ const TwitchApi = require("node-twitch").default;
 require("dotenv").config();
 const config_file = require("./configHead.js");
 
-const twApi = new TwitchApi({
-  client_id: process.env.client_id,
-  client_secret: process.env.client_secret,
-});
 // TODO CHANGE ALL FOR LOOP FOREACH WHEN CAN its More readable for me then
 class BotTimer {
   constructor(config) {
     this.config = config;
     this.triggers = this.config.triggers;
     this.timers = this.config.timers;
+    this.follow_tim = this.timers.follower;
     this.msgs_count = [];
+    this.twApi = new TwitchApi({
+      client_id: process.env.client_id,
+      client_secret: process.env.client_secret,
+    });
     Object.keys(this.timers).forEach((element) => {
       this.msgs_count[element] = 0;
     });
@@ -42,42 +43,44 @@ class BotTimer {
       }
     }
   }
-  // TODO need to do here sth like config[...]...phrases.format
-  // fe.
-  // format.datediff = true \\ false
-  // means: false == will be normal date fe. 2022/4/9
-  // true == 50 days difference betwen today and this date
   returnFollowMsg(date = "", name = "") {
-    var random = Math.floor(
-      Math.random() * this.timers.follower.phrases.length
-    );
-    var dat;
+    let dat;
     if (date.length > 0) {
-      var follow_at = date.split("T")[0].split("-");
+      let follow_at = date.split("T")[0].split("-");
       dat = new Date(follow_at[0], follow_at[1], follow_at[2]);
     }
     const diffTime = Math.abs(new Date() - dat);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    var msg =
-      this.timers.follower.phrases[random][0] +
-      diffDays +
-      this.timers.follower.phrases[random][1] +
-      name +
-      this.timers.follower.phrases[random][2];
+
+    let lenKeys = Object.keys(this.follow_tim.phrases).length - 1;
+    let rand = Math.floor(Math.random() * lenKeys);
+    let randKey = Object.keys(this.follow_tim.phrases)[rand];
+    let choosenPhrase = this.follow_tim.phrases[randKey];
+    let msg = "";
+    if (choosenPhrase.dateDiff) date = diffDays;
+
+    msg = `${choosenPhrase[0]} ${name} ${choosenPhrase[1]} ${date} 
+    ${choosenPhrase[2]}`;
     return msg;
   }
+  // For now it must be like this, the follow msg is unqie for now example:
+  // TEXT ...{name of follow}  TEXT....
+  //{date of follow(2 formats, diff days or normal date)} ...TEXT
+  // Dates switches from config true false
   returnNormalMsg(from) {
     var random = Math.floor(Math.random() * from.phrases.length);
     return from.phrases[random];
   }
+  //return for every other normal timer tj. only texts;
+
   async getUserId(loginName) {
-    const users = await twApi.getUsers(loginName);
+    const users = await this.twApi.getUsers(loginName);
     const user = users.data[0];
     const userId = user.id;
     return userId;
   }
   async getRandomFollower(channel) {
-    return await twApi
+    return await this.twApi
       .getFollows({
         to_id: (await this.getUserId(channel)).toString(),
       })
@@ -87,17 +90,14 @@ class BotTimer {
       });
   }
   async isFollowing(broadcaster, chatter) {
-    return await twApi
+    return await this.twApi
       .getFollows({
         to_id: (await this.getUserId(broadcaster)).toString(),
         from_id: await (await this.getUserId(chatter)).toString(),
       })
       .then((result) => {
-        if (result.total <= 0) {
-          return true;
-        } else {
-          return false;
-        }
+        if (result.total <= 0) return true;
+        else return false;
       });
   }
   async checkNormalTimer(client, channel, chatter) {
@@ -108,16 +108,12 @@ class BotTimer {
       switch (element) {
         case "follower":
           await this.isFollowing(channel, chatter).then((result) => {
-            if (result) {
-              console.log("Not follow msg value 3");
-              incrMsg = 3;
-            } else {
-              console.log("Follow msg value 1");
-            }
+            if (result) incrMsg = this.timers[element].msgValue;
           });
           break;
+        //TODO other switches: subs cheers etc idk
         default:
-          console.log("Zliczam normalnego timersa");
+        // console.log("Zliczam normalnego timersa");
       }
       if (
         this.timers[element].enabled &&
@@ -125,26 +121,26 @@ class BotTimer {
       ) {
         if (element == "follower") {
           await this.getRandomFollower(channel).then((result) => {
-            //client.say(channel, this.returnFollowMsg(result.followed_at, result.from_name));
-            console.log(
-              this.returnFollowMsg(result.followed_at, result.from_name)
-            );
+            // client.say(
+            //   channel,
+            //   this.returnFollowMsg(result.followed_at, result.from_name)
+            // );
           });
         } // TODO other else is for subs/ cheers and donation if can
         else {
-          console.log(this.returnNormalMsg(this.timers[element]));
+          // client.say(channel, this.returnNormalMsg(this.timers[element]));
         }
         this.timers[element].enabled = false; // set timer for false
         this.msgs_count[element] = 0; // reset msgs count to 0, because msg is sent
 
         setTimeout(function () {
           that.timers[element].enabled = true; // set time true after period of time(delay)
-          console.log(element, "is up again"); // debug info
+          console.log(element.toUpperCase(), "is up again"); // debug info
         }, that.timers[element].delay * 1000); // set timeout(f(), delay timer);
       }
       this.msgs_count[element] += incrMsg;
     });
-    console.log(this.msgs_count);
+    console.log("COUNTERS: ", this.msgs_count);
 
     // --------------------------THATS DEBUG -------------------------------
     // else {
