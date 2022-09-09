@@ -1,0 +1,40 @@
+{
+  "timers": {
+    "follower": {
+      "enabled": true,
+      "delay": 5,
+      "minMsg": 3,
+      "msgValue": 3,
+      "phrases": {
+        "default": [
+          "HERE IS TEXT NR1(after me is randomly choosen follower)",
+          "HERE IS TEXT NR2(after me is this user follow date)",
+          "HERE IS TEXT NR3"
+        ],
+        "defaul2": [
+          "2HERE IS TEXT NR1(after me is randomly choosen follower)",
+          "2HERE IS TEXT NR2(after me is this user follow date)",
+          "2HERE IS TEXT NR3"
+        ]
+      }
+    },
+    "default": {
+      "enabled": true,
+      "delay": 3,
+      "min_msg": 5,
+      "phrases": [
+        "THATS DEFAULT PHRASE ONE",
+        "PHRASES ARE RANDOMLY CHOOSEN BY BOT ",
+        "OFCORSE IF THERE ARE MORE THAN 1"
+      ]
+    }
+  },
+  "triggers": {
+    "zabol": {
+      "enabled": true,
+      "delay": 2,
+      "trigger": "osfrog",
+      "msg": "OSFrog Z OSFrog a OSFrog b OSFrog o OSFrog l OSFrog"
+    }
+  }
+}
