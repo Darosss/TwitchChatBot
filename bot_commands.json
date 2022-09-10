@@ -1,10 +1,12 @@
 {
+  "delay": 10,
   "timers": {
     "follower": {
       "enabled": true,
       "delay": 5,
       "minMsg": 3,
       "msgValue": 3,
+      "msgCount": 0,
       "phrases": {
         "default": [
           "HERE IS TEXT NR1(after me is randomly choosen follower)",
@@ -21,7 +23,9 @@
     "default": {
       "enabled": true,
       "delay": 3,
-      "min_msg": 5,
+      "minMsg": 5,
+      "msgValue": 1,
+      "msgCount": 0,
       "phrases": [
         "THATS DEFAULT PHRASE ONE",
         "PHRASES ARE RANDOMLY CHOOSEN BY BOT ",
