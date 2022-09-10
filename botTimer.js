@@ -6,15 +6,11 @@ class BotTimer {
     this.cmds = commands;
     this.timers = this.cmds.timers;
     this.triggers = this.cmds.triggers;
-    this.msgs_count = [];
+    this.delay = this.cmds.delay * 1000;
     this.twApi = new TwitchApi({
       client_id: process.env.client_id,
       client_secret: process.env.client_secret,
     });
-    Object.keys(this.timers).forEach((element) => {
-      this.msgs_count[element] = 0;
-    });
-    // SET EVERY MSG COUNT TO 0 WHEN STARTING BOT
   }
   checkTrigger(client, channel, msg) {
     Object.keys(this.triggers).forEach((element) => {
@@ -102,84 +98,70 @@ class BotTimer {
         else return false;
       });
   }
-  async checkNormalTimer(client, channel, chatter) {
+  async countTimers(channel, chatter) {
+    Object.keys(this.timers).forEach(async (element) => {
+      console.log(element, this.timers[element].msgCount);
+    });
     // loop throu config.options.timers...
     Object.keys(this.timers).forEach(async (element) => {
       var that = this;
       var incrMsg = 1;
       switch (element) {
         case "follower":
-          await this.isFollowing(channel, chatter).then((result) => {
-            if (result) incrMsg = this.timers[element].msgValue;
-          });
+          await this.isFollowing(channel, chatter)
+            .then((result) => {
+              if (result) incrMsg = this.timers[element].msgValue;
+            })
+            .catch((error) => {
+              console.error("Too fast requests, didnt get answer from API");
+            });
           break;
         //TODO other switches: subs cheers etc idk
         default:
         // console.log("Zliczam normalnego timersa");
       }
-      if (
-        this.timers[element].enabled &&
-        this.msgs_count[element] >= this.timers[element].minMsg
-      ) {
-        if (element == "follower") {
-          await this.getRandomFollower(channel).then((result) => {
-            client.say(
-              channel,
-              this.returnFollowMsg(result.followed_at, result.from_name)
-            );
-          });
-        } // TODO other else is for subs/ cheers and donation if can
-        else {
-          client.say(channel, this.returnNormalMsg(this.timers[element]));
-        }
-        this.timers[element].enabled = false; // set timer for false
-        this.msgs_count[element] = 0; // reset msgs count to 0, because msg is sent
-
-        setTimeout(function () {
-          that.timers[element].enabled = true; // set time true after period of time(delay)
-          console.log(
-            clc.notice("TIMER:"),
-            clc.info(element.toUpperCase()),
-            clc.notice("- is up again")
-          ); // debug info
-        }, that.timers[element].delay * 1000); // set timeout(f(), delay timer);
-      }
-      this.msgs_count[element] += incrMsg;
+      this.timers[element].msgCount += incrMsg;
     });
-    // console.log("COUNTERS: ", this.msgs_count);
+  }
+  async checkTimers() {}
 
-    //   // --------------------------THATS DEBUG -------------------------------
-    //   // else {
-    //   //   if (
-    //   //     !this.timers[element].enabled &&
-    //   //     this.msgs_count[element] >= this.timers[element].msg
-    //   //   ) {
-    //   //     console.log(
-    //   //       element,
-    //   //       "is false, but messages are fine: counted:",
-    //   //       this.msgs_count[element],
-    //   //       "min:",
-    //   //       this.timers[element].msg
-    //   //     );
-    //   //   } else if (
-    //   //     this.timers[element].enabled &&
-    //   //     !this.msgs_count[element] >= this.timers[element].msg
-    //   //   ) {
-    //   //     console.log(
-    //   //       element,
-    //   //       "is enabled, but messages aren't high enough counted:",
-    //   //       this.msgs_count[element],
-    //   //       "min:",
-    //   //       this.timers[element].msg
-    //   //     );
-    //   //   } else {
-    //   //     console.log("Nothing is true so do nothing");
-    //   //   }
-    //   // }
-    //   // --------------------------THATS DEBUG -------------------------------
-    // }
-    //checkTimerApi for taking data from json api fe. data,
-    //random name follower etc(is following)
+  async checkTimersInterval(client, channel) {
+    var that = this;
+    //for now like this
+    setInterval(async function checkTimers() {
+      Object.keys(that.timers).forEach(async (element) => {
+        console.log(element, that.timers[element].msgCount);
+      });
+      Object.keys(that.timers).forEach(async (element) => {
+        if (
+          that.timers[element].enabled &&
+          that.timers[element].msgCount >= that.timers[element].minMsg
+        ) {
+          if (element == "follower") {
+            await that.getRandomFollower(channel).then((result) => {
+              client.say(
+                channel,
+                that.returnFollowMsg(result.followed_at, result.from_name)
+              );
+            });
+          } // TODO other else is for subs/ cheers and donation if can
+          else {
+            client.say(channel, that.returnNormalMsg(that.timers[element]));
+          }
+          that.timers[element].enabled = false; // set timer for false
+          that.timers[element].msgCount = 0; // reset msgs count to 0, because msg is sent
+
+          setTimeout(function () {
+            that.timers[element].enabled = true; // set time true after period of time(delay)
+            console.log(
+              clc.notice("TIMER:"),
+              clc.info(element.toUpperCase()),
+              clc.notice("- is up again")
+            ); // debug info
+          }, that.timers[element].delay * 1000); // set timeout(f(), delay timer);
+        }
+      });
+    }, this.delay);
   }
 }
 module.exports = BotTimer;
