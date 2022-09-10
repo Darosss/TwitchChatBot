@@ -54,7 +54,6 @@ class BotTimer {
     let randKey = Object.keys(follow_tim.phrases)[rand];
     let choosenPhrase = follow_tim.phrases[randKey];
     let msg = "";
-    console.log("choosenPhrase", choosenPhrase);
 
     if (!choosenPhrase.format.includes("date")) follow_date = "";
     if (choosenPhrase.format.includes("date diff")) {
@@ -120,14 +119,14 @@ class BotTimer {
     let timer_interval = setInterval(async function checkTimers() {
       let chckDate = new Date();
       chckDate = `${chckDate.getHours()}:${chckDate.getMinutes()}:${chckDate.getSeconds()}`;
-      console.log(clc.info("Checking "), clc.notice(chckDate));
+      // console.log(clc.info("Checking "), clc.notice(chckDate));
 
       Object.keys(that.timers).forEach(async (element) => {
-        console.log(
-          clc.info(element),
-          ":",
-          clc.notice(that.timers[element].msgCount)
-        );
+        // console.log(
+        //   clc.info(element),
+        //   ":",
+        //   clc.notice(that.timers[element].msgCount)
+        // );
         let enabled = that.timers[element].enabled;
         let moreThanMinMsg =
           that.timers[element].msgCount >= that.timers[element].minMsg;
