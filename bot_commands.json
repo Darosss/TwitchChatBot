@@ -4,7 +4,7 @@
     "follower": {
       "enabled": true,
       "delay": 5,
-      "minMsg": 0,
+      "minMsg": 5,
       "msgValue": 3,
       "msgCount": 0,
       "_comment": "Format options: [date, only date, date diff](can be empty)",
@@ -19,11 +19,11 @@
         },
         "default2": {
           "phrases": ["3", "3", "4"],
-          "format": ""
+          "format": "date time"
         },
         "default3": {
           "phrases": ["3", "3", "4"],
-          "format": ""
+          "format": "date only"
         },
         "default4": {
           "phrases": ["3", "3", "4"],
