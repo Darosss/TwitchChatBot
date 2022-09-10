@@ -1,5 +1,5 @@
 {
-  "delay": 10,
+  "delay": 20,
   "timers": {
     "follower": {
       "enabled": true,
