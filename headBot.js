@@ -1,6 +1,7 @@
 const tmi = require("tmi.js");
 const BotTimer = require("./botTimer.js");
 const BotLog = require("./botLog.js");
+var clc = require("./cli_color.js");
 const config_file = require("./configHead.js");
 const bot_commands = require("./bot_commands.json");
 require("dotenv").config();
@@ -11,7 +12,7 @@ const botLogObj = new BotLog(config_file.options);
 const botTimerObj = new BotTimer(bot_commands);
 
 const client = new tmi.Client({
-  options: { debug: true },
+  options: { debug: false },
   connection: {
     secure: true,
     reconnect: true,
@@ -24,11 +25,31 @@ const client = new tmi.Client({
 });
 
 client.connect();
-
-client.on("join", (channel, username, self) => {
-  botTimerObj.checkTimersInterval(client, channel.slice(1));
+let timer_interval;
+client.on("connected", () => {
+  console.log(clc.notice("CONNECTED"));
+  client.on("join", (channel) => {
+    if (timer_interval) return;
+    // if timer is set return
+    timer_interval = botTimerObj.checkTimersInterval(client, channel.slice(1));
+    console.log(clc.notice("JOINED"), clc.info("- I set the interval "));
+  });
+});
+client.on("disconnected", (reason) => {
+  if (timer_interval) {
+    console.log(clc.error("DISCONNECTED"), clc.notice("-clearing interval"));
+    clearInterval(timer_interval);
+  }
 });
 client.on("message", (channel, tags, message, self) => {
+  let msgTime = new Date();
+  msgTime = `${msgTime.getHours()}:${msgTime.getMinutes()}:${msgTime.getSeconds()}`;
+
+  console.log(
+    `[${clc.notice(msgTime)}] - ${clc.info(tags.username)}:${clc.notice(
+      message
+    )}`
+  );
   botLogObj.countMessages(channel, tags.username);
   botLogObj.logMessages(channel, tags.username, message);
   if (self) return; //echoed msg
