@@ -22,13 +22,20 @@ const client = new tmi.Client({
   },
   channels: config_file.options.channels,
 });
-client.connect();
-client.on("message", (channel, tags, message, self) => {
-  // botLogObj.countMessages(channel, tags.username);
-  // botLogObj.logMessages(channel, tags.username, message);
-  if (self) return; //echoed msg
 
-  botTimerObj.checkNormalTimer(client, channel.slice(1), "darkohoiik"); //tags["display-name"]
+client.connect();
+
+client.on("join", (channel, username, self) => {
+  botTimerObj.checkTimersInterval(client, channel.slice(1));
+});
+client.on("message", (channel, tags, message, self) => {
+  botLogObj.countMessages(channel, tags.username);
+  botLogObj.logMessages(channel, tags.username, message);
+  if (self) return; //echoed msg
+  if (tags.username == config_file.options.username) return;
+  // need to be because bot can all alone cont msgs
+  botTimerObj.countTimers(channel.slice(1), tags.username); //tags["display-name"]
+
   botTimerObj.checkTrigger(client, channel, message);
-  // check message for trigger from config
+  // check message for trigger from json
 });
