@@ -58,7 +58,7 @@ class BotLog {
 
       function writeJSON(err) {
         if (err) return console.log(err);
-        console.log("Writing message to " + dirLog);
+        //console.log("Writing message to " + dirLog);
       }
     );
   }

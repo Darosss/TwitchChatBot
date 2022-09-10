@@ -12,5 +12,4 @@ config.options.channels = ["booksarefunsometimes"]; //channels to monitor, each 
 
 config.options.commands = ["!"]; //not needed? leave blank ""
 
-// config.options.timers.zabolGame = ["szukam :)", 5000];
 module.exports = config;
