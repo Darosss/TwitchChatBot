@@ -5,12 +5,8 @@ var clc = require("./cli_color.js");
 const config_file = require("./configHead.js");
 const bot_commands = require("./bot_commands.json");
 require("dotenv").config();
-// TODO Convert timers/trigers to json/xml or sth
-// TODO CHANGE ALL FOR LOOP FOREACH WHEN CAN its More readable for me then
-
 const botLogObj = new BotLog(config_file.options);
 const botTimerObj = new BotTimer(bot_commands);
-
 const client = new tmi.Client({
   options: { debug: false },
   connection: {
@@ -46,9 +42,7 @@ client.on("message", (channel, tags, message, self) => {
   msgTime = `${msgTime.getHours()}:${msgTime.getMinutes()}:${msgTime.getSeconds()}`;
 
   console.log(
-    `[${clc.notice(msgTime)}] - ${clc.info(tags.username)}:${clc.notice(
-      message
-    )}`
+    `[${clc.msg(msgTime)}] - ${clc.name(tags.username)}:${clc.msg(message)}`
   );
   botLogObj.countMessages(channel, tags.username);
   botLogObj.logMessages(channel, tags.username, message);
@@ -57,6 +51,6 @@ client.on("message", (channel, tags, message, self) => {
   // need to be because bot can all alone cont msgs
   botTimerObj.countTimers(channel.slice(1), tags.username); //tags["display-name"]
 
-  botTimerObj.checkTrigger(client, channel, message);
+  botTimerObj.checkTriggers(client, channel, message);
   // check message for trigger from json
 });
