@@ -1,18 +1,15 @@
-const TwitchApi = require("node-twitch").default;
 var clc = require("./cli_color.js");
-// TODO REpair error with double msgs followers etc
+const TwApi = require("./twApi.js");
+
 class BotTimer {
   constructor(commands) {
     this.cmds = commands;
     this.timers = this.cmds.timers;
     this.triggers = this.cmds.triggers;
     this.delay = this.cmds.delay * 1000;
-    this.twApi = new TwitchApi({
-      client_id: process.env.client_id,
-      client_secret: process.env.client_secret,
-    });
+    this.twApi = new TwApi(process.env.client_id, process.env.client_secret);
   }
-  checkTrigger(client, channel, msg) {
+  checkTriggers(client, channel, msg) {
     Object.keys(this.triggers).forEach((element) => {
       let trigger = this.triggers[element];
       let trigger_word = trigger.trigger;
@@ -58,56 +55,37 @@ class BotTimer {
     let choosenPhrase = follow_tim.phrases[randKey];
     let msg = "";
     console.log("choosenPhrase", choosenPhrase);
-    if (choosenPhrase.format.includes("date")) {
-      if (choosenPhrase.format.includes("diff")) {
-        follow_date = diffDays;
-      } else if (choosenPhrase.format.includes("only date")) {
-        follow_date = follow_date.split(" ")[0];
-      }
-    } else {
-      follow_date = "";
+
+    if (!choosenPhrase.format.includes("date")) follow_date = "";
+    if (choosenPhrase.format.includes("date diff")) {
+      follow_date = diffDays;
+    }
+    if (choosenPhrase.format.includes("date only")) {
+      follow_date = follow_date.split(" ")[0];
+    }
+    if (choosenPhrase.format.includes("date time")) {
+      follow_date = follow_date.split(" ")[1];
+    }
+    if (choosenPhrase.format.includes("date days")) {
+      //TODO days
+    }
+    if (choosenPhrase.format.includes("date hours")) {
+      //TODO hours
+    }
+    if (choosenPhrase.format.includes("date minutes")) {
+      //TODO minutes
+    }
+    if (choosenPhrase.format.includes("date seconds")) {
+      //TODO seconds
     }
 
     msg = `${choosenPhrase.phrases[0]} ${name} ${choosenPhrase.phrases[1]} ${follow_date}
       ${choosenPhrase.phrases[2]}`;
     return msg;
   }
-  // For now it must be like this, the follow msg is unqie for now example:
-  // TEXT ...{name of follow}  TEXT....
-  //{date of follow(2 formats, diff days or normal date)} ...TEXT
-  // Dates switches from config true false
   returnNormalMsg(from) {
     var random = Math.floor(Math.random() * from.phrases.length);
     return from.phrases[random];
-  }
-  //   //return for every other normal timer tj. only texts;
-
-  async getUserId(loginName) {
-    const users = await this.twApi.getUsers(loginName);
-    const user = users.data[0];
-    const userId = user.id;
-    return userId;
-  }
-  async getRandomFollower(channel) {
-    return await this.twApi
-      .getFollows({
-        to_id: (await this.getUserId(channel)).toString(),
-      })
-      .then((result) => {
-        var random = Math.floor(Math.random() * result.data.length);
-        return result.data[random];
-      });
-  }
-  async isFollowing(broadcaster, chatter) {
-    return await this.twApi
-      .getFollows({
-        to_id: (await this.getUserId(broadcaster)).toString(),
-        from_id: await (await this.getUserId(chatter)).toString(),
-      })
-      .then((result) => {
-        if (result.total <= 0) return true;
-        else return false;
-      });
   }
   async countTimers(channel, chatter) {
     Object.keys(this.timers).forEach(async (element) => {
@@ -115,7 +93,8 @@ class BotTimer {
       var incrMsg = 1;
       switch (element) {
         case "follower":
-          await this.isFollowing(channel, chatter)
+          await this.twApi
+            .isFollowing(channel, chatter)
             .then((result) => {
               if (result) incrMsg = this.timers[element].msgValue;
             })
@@ -137,7 +116,7 @@ class BotTimer {
   }
   async checkTimersInterval(client, channel) {
     var that = this;
-    //for now like this
+    //FIXME for now like this
     let timer_interval = setInterval(async function checkTimers() {
       let chckDate = new Date();
       chckDate = `${chckDate.getHours()}:${chckDate.getMinutes()}:${chckDate.getSeconds()}`;
@@ -156,7 +135,7 @@ class BotTimer {
         if (enabled && moreThanMinMsg) {
           switch (element) {
             case "follower":
-              await that.getRandomFollower(channel).then((result) => {
+              await that.twApi.getRandomFollower(channel).then((result) => {
                 client.say(
                   channel,
                   that.returnFollowMsg(result.followed_at, result.from_name)
