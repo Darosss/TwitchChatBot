@@ -1,23 +1,34 @@
 {
-  "delay": 20,
+  "delay": 4,
   "timers": {
     "follower": {
       "enabled": true,
       "delay": 5,
-      "minMsg": 3,
+      "minMsg": 0,
       "msgValue": 3,
       "msgCount": 0,
+      "_comment": "Format options: [date, only date, date diff](can be empty)",
       "phrases": {
-        "default": [
-          "HERE IS TEXT NR1(after me is randomly choosen follower)",
-          "HERE IS TEXT NR2(after me is this user follow date)",
-          "HERE IS TEXT NR3"
-        ],
-        "defaul2": [
-          "2HERE IS TEXT NR1(after me is randomly choosen follower)",
-          "2HERE IS TEXT NR2(after me is this user follow date)",
-          "2HERE IS TEXT NR3"
-        ]
+        "default": {
+          "phrases": [
+            "HERE IS TEXT NR1(after me is randomly choosen follower)",
+            "HERE IS TEXT NR2(after me is this user follow date)",
+            "HERE IS TEXT NR3"
+          ],
+          "format": "date diff"
+        },
+        "default2": {
+          "phrases": ["3", "3", "4"],
+          "format": ""
+        },
+        "default3": {
+          "phrases": ["3", "3", "4"],
+          "format": ""
+        },
+        "default4": {
+          "phrases": ["3", "3", "4"],
+          "format": "date diff"
+        }
       }
     },
     "default": {

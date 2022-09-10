@@ -42,9 +42,11 @@ class BotTimer {
 
   returnFollowMsg(follow_date = "", name = "") {
     let follow_tim = this.timers.follower;
+    follow_date = follow_date.replace("T", " ");
+    follow_date = follow_date.replace("Z", "");
     let date;
     if (follow_date.length > 0) {
-      let follow_at = follow_date.split("T")[0].split("-");
+      let follow_at = follow_date.split(" ")[0].split("-");
       date = new Date(follow_at[0], follow_at[1], follow_at[2]);
     }
     const diffTime = Math.abs(new Date() - date);
@@ -55,10 +57,19 @@ class BotTimer {
     let randKey = Object.keys(follow_tim.phrases)[rand];
     let choosenPhrase = follow_tim.phrases[randKey];
     let msg = "";
-    if (choosenPhrase.dateDiff) follow_date = diffDays;
+    console.log("choosenPhrase", choosenPhrase);
+    if (choosenPhrase.format.includes("date")) {
+      if (choosenPhrase.format.includes("diff")) {
+        follow_date = diffDays;
+      } else if (choosenPhrase.format.includes("only date")) {
+        follow_date = follow_date.split(" ")[0];
+      }
+    } else {
+      follow_date = "";
+    }
 
-    msg = `${choosenPhrase[0]} ${name} ${choosenPhrase[1]} ${follow_date}
-      ${choosenPhrase[2]}`;
+    msg = `${choosenPhrase.phrases[0]} ${name} ${choosenPhrase.phrases[1]} ${follow_date}
+      ${choosenPhrase.phrases[2]}`;
     return msg;
   }
   // For now it must be like this, the follow msg is unqie for now example:
