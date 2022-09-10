@@ -100,10 +100,6 @@ class BotTimer {
   }
   async countTimers(channel, chatter) {
     Object.keys(this.timers).forEach(async (element) => {
-      console.log(element, this.timers[element].msgCount);
-    });
-    // loop throu config.options.timers...
-    Object.keys(this.timers).forEach(async (element) => {
       var that = this;
       var incrMsg = 1;
       switch (element) {
@@ -116,37 +112,48 @@ class BotTimer {
               console.error("Too fast requests, didnt get answer from API");
             });
           break;
-        //TODO other switches: subs cheers etc idk
+        case "sub":
+          //TODO Sub timer
+          break;
+        case "cheer":
+          //TODO cheer timer / donation?
+          break;
         default:
-        // console.log("Zliczam normalnego timersa");
+        // console.log("I count normal timer");
       }
       this.timers[element].msgCount += incrMsg;
     });
   }
-  async checkTimers() {}
-
   async checkTimersInterval(client, channel) {
     var that = this;
     //for now like this
-    setInterval(async function checkTimers() {
+    let timer_interval = setInterval(async function checkTimers() {
+      let chckDate = new Date();
+      chckDate = `${chckDate.getHours()}:${chckDate.getMinutes()}:${chckDate.getSeconds()}`;
+      console.log(clc.info("Checking "), clc.notice(chckDate));
+
       Object.keys(that.timers).forEach(async (element) => {
-        console.log(element, that.timers[element].msgCount);
-      });
-      Object.keys(that.timers).forEach(async (element) => {
-        if (
-          that.timers[element].enabled &&
-          that.timers[element].msgCount >= that.timers[element].minMsg
-        ) {
-          if (element == "follower") {
-            await that.getRandomFollower(channel).then((result) => {
-              client.say(
-                channel,
-                that.returnFollowMsg(result.followed_at, result.from_name)
-              );
-            });
-          } // TODO other else is for subs/ cheers and donation if can
-          else {
-            client.say(channel, that.returnNormalMsg(that.timers[element]));
+        console.log(
+          clc.info(element),
+          ":",
+          clc.notice(that.timers[element].msgCount)
+        );
+        let enabled = that.timers[element].enabled;
+        let moreThanMinMsg =
+          that.timers[element].msgCount >= that.timers[element].minMsg;
+
+        if (enabled && moreThanMinMsg) {
+          switch (element) {
+            case "follower":
+              await that.getRandomFollower(channel).then((result) => {
+                client.say(
+                  channel,
+                  that.returnFollowMsg(result.followed_at, result.from_name)
+                );
+              });
+              break;
+            default:
+              client.say(channel, that.returnNormalMsg(that.timers[element]));
           }
           that.timers[element].enabled = false; // set timer for false
           that.timers[element].msgCount = 0; // reset msgs count to 0, because msg is sent
@@ -157,11 +164,12 @@ class BotTimer {
               clc.notice("TIMER:"),
               clc.info(element.toUpperCase()),
               clc.notice("- is up again")
-            ); // debug info
+            );
           }, that.timers[element].delay * 1000); // set timeout(f(), delay timer);
         }
       });
     }, this.delay);
+    return timer_interval;
   }
 }
 module.exports = BotTimer;
