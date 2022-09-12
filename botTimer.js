@@ -1,13 +1,17 @@
 var clc = require("./cli_color.js");
 const TwApi = require("./twApi.js");
-
 class BotTimer {
   constructor(commands) {
+    this.twApi = new TwApi(process.env.client_id, process.env.client_secret);
     this.cmds = commands;
     this.timers = this.cmds.timers;
     this.triggers = this.cmds.triggers;
+    this.chatGames = new chatGames(this.cmds.chatGames);
+    this.gameStage = 0;
     this.delay = this.cmds.delay * 1000;
-    this.twApi = new TwApi(process.env.client_id, process.env.client_secret);
+    this.activeTime = this.cmds.activeTime;
+    this.minUsersGame = this.cmds.minUsersGame;
+    this.activeUsers = new Map();
   }
   checkTriggers(client, channel, msg) {
     Object.keys(this.triggers).forEach((element) => {
@@ -17,14 +21,13 @@ class BotTimer {
         if (msg.toLowerCase().includes(trigger_word)) {
           this.triggers[element].enabled = false;
           client.say(channel, trigger.msg);
-          var that = this;
-          setTimeout(function () {
+          setTimeout(() => {
             console.log(
               clc.notice("TRIGGER:"),
               clc.info(element.toUpperCase()),
               clc.notice("- is up again")
             );
-            that.triggers[element].enabled = true;
+            this.triggers[element].enabled = true;
           }, trigger.delay * 1000);
         }
       } else {
@@ -88,7 +91,6 @@ class BotTimer {
   }
   async countTimers(channel, chatter) {
     Object.keys(this.timers).forEach(async (element) => {
-      var that = this;
       var incrMsg = 1;
       switch (element) {
         case "follower":
@@ -114,51 +116,147 @@ class BotTimer {
     });
   }
   async checkTimersInterval(client, channel) {
-    var that = this;
-    //FIXME for now like this
-    let timer_interval = setInterval(async function checkTimers() {
+    let timer_interval = setInterval(async () => {
       let chckDate = new Date();
       chckDate = `${chckDate.getHours()}:${chckDate.getMinutes()}:${chckDate.getSeconds()}`;
       // console.log(clc.info("Checking "), clc.notice(chckDate));
 
-      Object.keys(that.timers).forEach(async (element) => {
-        // console.log(
-        //   clc.info(element),
-        //   ":",
-        //   clc.notice(that.timers[element].msgCount)
-        // );
-        let enabled = that.timers[element].enabled;
+      Object.keys(this.timers).forEach(async (element) => {
+        let enabled = this.timers[element].enabled;
         let moreThanMinMsg =
-          that.timers[element].msgCount >= that.timers[element].minMsg;
+          this.timers[element].msgCount >= this.timers[element].minMsg;
 
         if (enabled && moreThanMinMsg) {
           switch (element) {
             case "follower":
-              await that.twApi.getRandomFollower(channel).then((result) => {
+              await this.twApi.getRandomFollower(channel).then((result) => {
                 client.say(
                   channel,
-                  that.returnFollowMsg(result.followed_at, result.from_name)
+                  this.returnFollowMsg(result.followed_at, result.from_name)
                 );
               });
               break;
             default:
-              client.say(channel, that.returnNormalMsg(that.timers[element]));
+              client.say(channel, this.returnNormalMsg(this.timers[element]));
           }
-          that.timers[element].enabled = false; // set timer for false
-          that.timers[element].msgCount = 0; // reset msgs count to 0, because msg is sent
+          this.timers[element].enabled = false; // set timer for false
+          this.timers[element].msgCount = 0; // reset msgs count to 0, because msg is sent
 
-          setTimeout(function () {
-            that.timers[element].enabled = true; // set time true after period of time(delay)
+          setTimeout(() => {
+            this.timers[element].enabled = true; // set time true after period of time(delay)
             console.log(
               clc.notice("TIMER:"),
               clc.info(element.toUpperCase()),
               clc.notice("- is up again")
             );
-          }, that.timers[element].delay * 1000); // set timeout(f(), delay timer);
+          }, this.timers[element].delay * 1000); // set timeout(f(), delay timer);
         }
       });
     }, this.delay);
     return timer_interval;
   }
+  addActiveUser(username) {
+    let msgTime = new Date();
+    this.activeUsers.set(username, msgTime);
+    console.log("active users:", this.activeUsers);
+  }
+  checkActiveUsers() {
+    // console.log("Check active users");
+    this.activeUsers.forEach((values, keys) => {
+      console.log(values, keys);
+      const diffTime = Math.abs(new Date() - values);
+      const diffSeconds = Math.ceil(diffTime / 1000);
+      if (diffSeconds > this.activeTime) {
+        console.log(
+          clc.notice("User:"),
+          clc.name(keys),
+          clc.notice("is not active anymore after"),
+          diffSeconds,
+          clc.notice("seconds")
+        );
+        this.activeUsers.delete(keys);
+      }
+    });
+  }
+  // randomChatGame(){
+  //  this.checkActiveUsers();
+  //}
+  async chatGameMialcznik(client, channel) {
+    this.checkActiveUsers();
+    // if (this.activeUsers.size < this.minUsersGame) return;
+    // let gameKeys = Object.keys(this.chatGames);
+    // var randKey = Math.floor(Math.random() * gameKeys.length);
+    // let chatGameKeys = Object.keys(this.chatGames[gameKeys[randKey]]);
+    // console.log(this.chatGames.mialcznik[chatGameKeys[this.gameStage]]);
+    this.chatGames.startGame();
+    this.gameStage = 0;
+  }
+}
+class chatGames {
+  constructor(games) {
+    this.games = games;
+    this.easyGames = this.games.easyGames;
+    this.advancedGames = this.games.advancedGames;
+    this.easyGamesObj = new easyGame(this.easyGames);
+    this.advancedGamesObj = new advancedGame(this.advancedGames);
+  }
+
+  getTypeOfGame() {
+    let typeKeys = Object.keys(this.games);
+    let randType = Math.floor(Math.random() * typeKeys.length);
+    return typeKeys[randType];
+  }
+  getRandomGame() {
+    let typeOfGame = this.getTypeOfGame();
+    switch (typeOfGame) {
+      case "easyGames":
+        this.easyGamesObj.getRandomGame();
+        console.log("easy wybrano", this.easyGamesObj.getRandomGame());
+        this.startEasyGame();
+        break;
+      case "advancedGames":
+        console.log("advanc wybrano", this.advancedGamesObj.getRandomGame());
+        this.startAdvancedGame();
+        break;
+      default:
+        break;
+    }
+    // let gameKeys = Object.keys(typeOfGame);
+    // let randGame = Math.floor(Math.random() * gameKeys.length);
+    // console.log("kek", typeOfGame[gameKeys[randGame]]);
+  }
+
+  startGame() {
+    this.getRandomGame();
+  }
+  startEasyGame() {
+    console.log("STARTED EASY");
+    //TODO easy game rule:
+    // Take startGame phrase and wait x time
+    // Get random active user and paste foundUser phrase
+    // if answer answered
+    // if not notAnswered
+    // sth like this
+  }
+  startAdvancedGame() {
+    console.log("STARTED ADVANC");
+  }
+}
+class easyGame {
+  constructor(sequences) {
+    this.seq = sequences;
+  }
+
+  getRandomGame() {
+    let gameKeys = Object.keys(this.seq);
+    let randGame = Math.floor(Math.random() * gameKeys.length);
+    let choosenGame = this.seq[gameKeys[randGame]];
+    return choosenGame;
+  }
+}
+class advancedGame {
+  constructor(sequences) {}
+
+  getRandomGame() {}
 }
 module.exports = BotTimer;
