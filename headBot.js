@@ -27,7 +27,9 @@ client.on("connected", () => {
   client.on("join", (channel) => {
     if (timer_interval) return;
     // if timer is set return
+
     timer_interval = botTimerObj.checkTimersInterval(client, channel.slice(1));
+    botTimerObj.chatGameMialcznik();
     console.log(clc.notice("JOINED"), clc.info("- I set the interval "));
   });
 });
@@ -37,20 +39,21 @@ client.on("disconnected", (reason) => {
     clearInterval(timer_interval);
   }
 });
-client.on("message", (channel, tags, message, self) => {
+
+function logMsg(username, msg) {
   let msgTime = new Date();
   msgTime = `${msgTime.getHours()}:${msgTime.getMinutes()}:${msgTime.getSeconds()}`;
+  console.log(`[${clc.msg(msgTime)}] - ${clc.name(username)}:${clc.msg(msg)}`);
+}
+client.on("message", (channel, tags, message, self) => {
+  logMsg(tags.username, message);
 
-  console.log(
-    `[${clc.msg(msgTime)}] - ${clc.name(tags.username)}:${clc.msg(message)}`
-  );
   botLogObj.countMessages(channel, tags.username);
   botLogObj.logMessages(channel, tags.username, message);
   if (self) return; //echoed msg
   if (tags.username == config_file.options.username) return;
   // need to be because bot can all alone cont msgs
-  botTimerObj.countTimers(channel.slice(1), tags.username); //tags["display-name"]
-
+  botTimerObj.countTimers(channel.slice(1), tags.username);
   botTimerObj.checkTriggers(client, channel, message);
   // check message for trigger from json
 });
