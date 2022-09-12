@@ -24,13 +24,12 @@ client.connect();
 let timer_interval;
 client.on("connected", () => {
   console.log(clc.notice("CONNECTED"));
-  client.on("join", (channel) => {
+  client.on("join", (channel, self) => {
     if (timer_interval) return;
-    // if timer is set return
-
+    // probably do not need this for later
+    if (!self) return;
+    console.log(clc.notice("BOT JOINED"), clc.info("- It set the intervals"));
     timer_interval = botTimerObj.checkTimersInterval(client, channel.slice(1));
-    botTimerObj.chatGameMialcznik();
-    console.log(clc.notice("JOINED"), clc.info("- I set the interval "));
   });
 });
 client.on("disconnected", (reason) => {
@@ -51,9 +50,21 @@ client.on("message", (channel, tags, message, self) => {
   botLogObj.countMessages(channel, tags.username);
   botLogObj.logMessages(channel, tags.username, message);
   if (self) return; //echoed msg
-  if (tags.username == config_file.options.username) return;
+  // if (tags.username == config_file.options.username) return;
+  // disabled for now for debug
+  botTimerObj.chatGameMialcznik(client, channel);
+  botTimerObj.addActiveUser(tags.username);
   // need to be because bot can all alone cont msgs
   botTimerObj.countTimers(channel.slice(1), tags.username);
   botTimerObj.checkTriggers(client, channel, message);
   // check message for trigger from json
 });
+
+// client.on("part", (channel, username, self) => {
+//   console.log("left", channel, username);
+
+//   // Do your stuff.
+// });
+// client.on("join", (channel, username, self) => {
+//   console.log("joined", channel, username);
+// });
