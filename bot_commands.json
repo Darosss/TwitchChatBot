@@ -1,11 +1,13 @@
 {
-  "delay": 4,
+  "delay": 2,
+  "activeTime": 300,
+  "minUsersGame": 3,
   "timers": {
     "follower": {
       "enabled": true,
-      "delay": 5,
-      "minMsg": 5,
-      "msgValue": 3,
+      "delay": 360,
+      "minMsg": 50,
+      "msgValue": 8,
       "msgCount": 0,
       "_comment": "Format options: [date, only date, date diff](can be empty)",
       "phrases": {
@@ -33,8 +35,8 @@
     },
     "default": {
       "enabled": true,
-      "delay": 3,
-      "minMsg": 5,
+      "delay": 360,
+      "minMsg": 10,
       "msgValue": 1,
       "msgCount": 0,
       "phrases": [
@@ -47,9 +49,31 @@
   "triggers": {
     "zabol": {
       "enabled": true,
-      "delay": 2,
+      "delay": 360,
       "trigger": "osfrog",
       "msg": "OSFrog Z OSFrog a OSFrog b OSFrog o OSFrog l OSFrog"
+    }
+  },
+  "chatGames": {
+    "easyGames": {
+      "mialcznik": {
+        "startGame": [
+          "*Mialcznik szuka ludzi do wpierdolenia*....",
+          "*Mialcznik widzi jak drzwi sa otwarte wchodzi do domu"
+        ],
+        "foundUser": "Mialcznik chce wkurwic teraz ",
+        "answered": "Mialcznik spierdala w podskoku i macha ogonem",
+        "notAnswered": "Mialcznik zapierdala mieso i warczy"
+      },
+      "not": {
+        "startGame": [
+          "*sadsadolenia*....",
+          "*Mialcznik asdsadwi sa otwarte wchodzi do domu"
+        ],
+        "foundUser": "Mialcznik chce wkurwic teraz ",
+        "answered": "Mialcznik spierdala w podskoku i macha ogonem",
+        "notAnswered": "Mialcznik zapierdala mieso i warczy"
+      }
     }
   }
 }
