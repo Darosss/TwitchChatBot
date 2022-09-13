@@ -55,24 +55,21 @@
     }
   },
   "chatGames": {
-    "easyGames": {
-      "mialcznik": {
-        "startGame": [
-          "*Mialcznik szuka ludzi do wpierdolenia*....",
-          "*Mialcznik widzi jak drzwi sa otwarte wchodzi do domu"
-        ],
-        "foundUser": "Mialcznik chce wkurwic teraz ",
-        "answered": "Mialcznik spierdala w podskoku i macha ogonem",
-        "notAnswered": "Mialcznik zapierdala mieso i warczy"
-      },
-      "not": {
-        "startGame": [
-          "*sadsadolenia*....",
-          "*Mialcznik asdsadwi sa otwarte wchodzi do domu"
-        ],
-        "foundUser": "Mialcznik chce wkurwic teraz ",
-        "answered": "Mialcznik spierdala w podskoku i macha ogonem",
-        "notAnswered": "Mialcznik zapierdala mieso i warczy"
+    "options": {
+      "enabled": true,
+      "onDelay": false,
+      "pendingGame": "",
+      "waitForAnswer": 3333,
+      "actualState": ""
+    },
+    "gamesList": {
+      "easyGames": {
+        "mialcznik": {
+          "startGame": "*Mialcznik zaczyna sprawdzac wejscie do domu*....",
+          "foundUser": "Mialcznik zauwaza, ze osoba[aktywny user] nie patrzy, wiec probuje wejsc do domu ",
+          "notAnswered": "Mialcznik zapierdala mieso z domu i warczy",
+          "answered": "Mialcznik wkurwiony spierdala w podskoku i macha ogonem"
+        }
       }
     }
   }
