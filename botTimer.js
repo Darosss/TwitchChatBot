@@ -1,6 +1,6 @@
 var clc = require("./cli_color.js");
 const TwApi = require("./twApi.js");
-
+const CHANNEL_DEBUG = "#booksarefunsometimes";
 class BotTimer {
   constructor(client, commands) {
     this.client = client;
@@ -9,12 +9,12 @@ class BotTimer {
     this.timers = this.cmds.timers;
     this.triggers = this.cmds.triggers;
     this.games = this.cmds.chatGames;
-    this.chatGames = new chatGames(client, this.games);
+    this.activeTime = this.cmds.activeTime;
+    this.activeUsers = new Map();
+
+    this.chatGames = new chatGames(client, this.games, this.activeUsers);
     //change to chatgamesobj
     this.delay = this.cmds.delay * 1000;
-    this.activeTime = this.cmds.activeTime;
-    this.minUsersGame = this.cmds.minUsersGame;
-    this.activeUsers = new Map();
   }
   checkTriggers(client, channel, msg) {
     Object.keys(this.triggers).forEach((element) => {
@@ -42,7 +42,6 @@ class BotTimer {
       }
     });
   }
-
   returnFollowMsg(follow_date = "", name = "") {
     let follow_tim = this.timers.follower;
     follow_date = follow_date.replace("T", " ");
@@ -158,6 +157,7 @@ class BotTimer {
     }, this.delay);
     return timer_interval;
   }
+  //TODO change add active user to channels example: usechapter999 and booksarefunsometimes have another active users
   addActiveUser(username) {
     let msgTime = new Date();
     this.activeUsers.set(username, msgTime);
@@ -181,218 +181,189 @@ class BotTimer {
       }
     });
   }
-  // randomChatGame(){
-  //  this.checkActiveUsers();
-  //}
   async checkChatGames() {
     this.checkActiveUsers();
-    // if (this.activeUsers.size < this.minUsersGame) return;
+
     //uncomment its for start game when more than x users are 'active'
     if (this.games.options.pendingGame.length > 0) return;
-    this.chatGames.startIntervalGames();
+    this.chatGames.intervalCheckGame();
+    // this.chatGames.startRandomGame();
   }
 }
 class chatGames {
-  constructor(client, games) {
+  constructor(client, games, activeUsers) {
     this.games = games;
     this.options = this.games.options;
     this.gamesList = this.games.gamesList;
     this.easyGames = this.gamesList.easyGames;
-    this.advancedGames = this.gamesList.advancedGames;
-    this.waitingForAnswer;
-    this.easyGamesStates = [
-      "startGame",
-      "foundUser",
-      "answered",
-      "notAnswered",
-    ];
-    this.stateOfGame = "";
+    this.activeUsers = activeUsers;
+    this.minActiveUsers = this.options.minActiveUsers;
     this.easyGamesObj = new EasyGame(
       client,
       this.easyGames,
-      this.easyGamesStates,
-      this.options
+      this.options,
+      activeUsers
     );
-    this.advancedGamesObj = new advancedGame(this.advancedGames);
-    this.choosenGame = "";
+    this.timeBetweenGames = this.options.timeBetweenGames;
+    this.checkGamesMs = this.options.checkGamesMs * 1000;
   }
-  startIntervalGames() {
-    setInterval(() => {
-      console.log("IM CHECKING IF GAME CAN BE STARTED or...CHECKING %");
-      this.startRandomGame();
-    }, this.options.waitForAnswer);
-  }
-  startRandomGame() {
-    if (!this.options.enabled) {
-      this.options.pendingGame = "";
-      return;
-    }
-    if (this.options.pendingGame.length > 1) {
-      console.log("Already choosen random type of game");
-      this.playGame();
-      return;
-    }
+  checkTimeBetweenGames() {
+    let lastGameDate = this.options.lastTimeEnded;
+    if (isNaN(lastGameDate)) return true;
+    const diffTime = Math.abs(new Date() - lastGameDate);
+    const diffSeconds = Math.ceil(diffTime / 1000);
+
     console.log(
-      "Is enabled chat game:",
-      this.options.enabled,
-      "Pending game:",
+      "seconds",
+      diffSeconds,
       this.options.pendingGame,
-      "onDelay:",
-      this.options.onDelay
+      this.options.enabled
     );
-
-    this.options.pendingGame = this.getTypeOfGame();
-    switch (this.options.pendingGame) {
-      case "easyGames":
-        this.options.pendingGame = "easyGames";
-        this.easyGamesObj.setRandomGame();
-        console.log("case easyGames switch -- enabled?", this.options.enabled);
-        break;
-      case "advancedGames":
-        // this.startAdvancedGame();
-        break;
-      default:
-        console.log("DEFAULT bc???");
-        break;
-    }
+    if (diffSeconds > this.timeBetweenGames) return true;
   }
-  playGame() {
-    console.log("playGame pendingGame", this.options.pendingGame);
-    switch (this.options.pendingGame) {
-      case "easyGames":
-        this.playEasyGame();
-        break;
-      // case "advGames":
-      default:
-        break;
-    }
-  }
-  turnOnTimeout() {
-    console.log("END OF GAME - Turned on timeout to enable again games");
-    this.options.enabled = false;
-    setTimeout(() => {
-      console.log("Chat games are enabled again");
-      this.options.enabled = true;
-    }, 20000);
-  }
-  playEasyGame() {
-    switch (this.options.actualState) {
-      case this.easyGamesStates[1]:
-        console.log("Start found user switch");
-        this.easyGamesObj.foundUserState();
+  intervalCheckGame() {
+    setInterval(() => {
+      console.log(clc.msg("Checking if game can be started"));
+      if (this.activeUsers.size < this.minActiveUsers) return;
+      if (!this.checkTimeBetweenGames()) return;
 
-        console.log(
-          "found user: changed state to - ",
-          this.options.actualState
-        );
-        break;
+      //TODO % or static time between games
+      this.startRandomGame();
+    }, this.checkGamesMs);
+  }
+  isGameEnabled() {
+    if (this.options.enabled) return true;
 
-      case this.easyGamesStates[2]:
-        console.log("Start answered switch");
-        this.easyGamesObj.answeredState();
-        this.turnOnTimeout();
-        console.log("ANSWERED: changed state to - ", this.options.actualState);
-        break;
-      case this.easyGamesStates[3]:
-        console.log("Start not answered switch");
-        this.easyGamesObj.notAnsweredState();
-        this.turnOnTimeout();
-        console.log(
-          "NOTANSWERED: changed state to - empty string ",
-          this.options.actualState
-        );
-        break;
-      case "wait":
-        console.log("Waiting for response");
-        break;
-      default:
-        console.log("Start eays game switch");
-        this.easyGamesObj.startEasyGame();
-        console.log(
-          "default - startgame: changed state to - ",
-          this.options.actualState
-        );
-        break;
-    }
+    this.options.pendingGame = "";
+    return false;
+  }
+  isGameChoosen() {
+    if (this.options.pendingGame.length > 1) return true;
+
+    return false;
   }
   getTypeOfGame() {
     let typeKeys = Object.keys(this.gamesList);
     let randType = Math.floor(Math.random() * typeKeys.length);
     return typeKeys[randType];
   }
-}
-class EasyGame {
-  constructor(client, sequences, states, options) {
-    this.client = client;
-    this.seq = sequences;
-    this.states = states;
-    this.options = options;
-    this.choosenEasyGame = "";
-    this.onMsg;
-    this.waitForAnswer = this.options.waitForAnswer;
-    this.waitingForAnswer;
-  }
-  setRandomGame() {
-    let gameKeys = Object.keys(this.seq);
-    let randGame = Math.floor(Math.random() * gameKeys.length);
-    this.choosenEasyGame = this.seq[gameKeys[randGame]];
-  }
-  startEasyGame() {
-    console.log(clc.notice(this.choosenEasyGame[this.states[0]]));
-    this.client.say(
-      "#booksarefunsometimes",
-      this.choosenEasyGame[this.states[0]]
-    );
-    this.options.actualState = this.states[1];
-  }
-  foundUserState() {
-    console.log("Found user....");
-    console.log(clc.notice(this.choosenEasyGame[this.states[1]]));
-    this.client.say(
-      "#booksarefunsometimes",
-      this.choosenEasyGame[this.states[1]]
-    );
+  startRandomGame() {
+    if (!this.isGameEnabled()) return;
+    if (this.isGameChoosen()) return;
 
-    this.onMsg = this.client.on("message", (channel, tags, message, self) => {
-      if (self) return;
-      console.log("ALREADY ANSWERED and cleared timeout");
-      if (message == "mialczniku chuju") {
-        this.options.actualState = this.states[2];
-        clearTimeout(this.waitingForAnswer);
-      }
-    });
-    if (!this.waitingForAnswer) {
-      console.log("WAUITING FOR ANSWER");
-      this.waitingForAnswer = setTimeout(() => {
-        console.log("Timeout ended not asnwered");
-
-        this.options.actualState = this.states[3];
-        console.log("actula state", this.options.actualState);
-      }, Math.floor(this.waitForAnswer / 2));
+    this.options.pendingGame = this.getTypeOfGame();
+    switch (this.options.pendingGame) {
+      case "easyGames":
+        this.options.pendingGame = "easyGames";
+        this.easyGamesObj.startEasyGame();
+        console.log(
+          "Choosen game-easy game(this should be logged once per session game)"
+        );
+        break;
+      default:
+        console.log("No game found - break");
+        break;
     }
   }
-  answeredState() {
-    console.log("Answred....");
-    console.log(clc.notice(this.choosenEasyGame[this.states[2]]));
-    this.client.say(
-      "#booksarefunsometimes",
-      this.choosenEasyGame[this.states[2]]
-    );
-    this.options.actualState = "";
-  }
-  notAnsweredState() {
-    console.log("not answered user....");
-    console.log(clc.notice(this.choosenEasyGame[this.states[3]]));
-    this.client.say(
-      "#booksarefunsometimes",
-      this.choosenEasyGame[this.states[3]]
-    );
-    this.options.actualState = "";
-  }
 }
-class advancedGame {
-  constructor(sequences) {}
+class EasyGame {
+  constructor(client, easyGamesList, options, activeUsers) {
+    this.client = client;
+    this.gamesList = easyGamesList;
+    this.options = options;
+    this.choosenGame = "";
+    this.stages = this.options.easyGamesStages;
+    this.actualStage = this.options.actualStage;
+    this.onMsg;
+    this.waitForAnswer = this.options.waitForAnswer * 1000;
+    this.gameTimeout;
+    this.gameMs = this.options.gameMs * 1000;
+    this.activeUsers = activeUsers;
+  }
+  setRandomGame() {
+    let gameKeys = Object.keys(this.gamesList);
+    let randGame = Math.floor(Math.random() * gameKeys.length);
+    this.choosenGame = this.gamesList[gameKeys[randGame]];
+  }
 
-  getRandomGame() {}
+  setTimeoutGameStage(stage, delay = this.gameMs) {
+    console.log("Timeout should work");
+    this.gameTimeout = setTimeout(() => {
+      stage();
+    }, delay);
+  }
+  startEasyGame() {
+    console.log("Easy game started");
+    this.setRandomGame();
+    this.options.lastTimeEnded = new Date();
+    this.setTimeoutGameStage(this.startGameStage.bind(this));
+  }
+  clearGameTimeout() {
+    console.log("Clearing game timeout");
+    if (this.gameTimeout) {
+      clearTimeout(this.gameTimeout);
+    }
+  }
+  checkMsgForAnswers(msg) {
+    this.choosenGame.answersList.every((answer) => {
+      if (msg.includes(answer)) {
+        console.log("Good answer, pass");
+        this.actualStage = this.stages[2];
+        this.answeredStage();
+        return false;
+      }
+      return true;
+    });
+  }
+  chooseRandomActiveUser() {
+    let activeUsers = Array.from(this.activeUsers);
+    return activeUsers[Math.floor(Math.random() * activeUsers.length)][0];
+  }
+  startGameStage() {
+    this.client.say(CHANNEL_DEBUG, this.choosenGame[this.stages[0]]);
+    console.log("START MESSAGE", this.choosenGame[this.stages[0]]);
+    this.actualStage = this.stages[1];
+    this.setTimeoutGameStage(this.checkForAnswerStage.bind(this));
+  }
+
+  checkForAnswerStage() {
+    console.log(clc.notice(this.choosenGame[this.stages[1]]));
+    let answerMsg =
+      this.choosenGame[this.stages[1]][0] +
+      this.chooseRandomActiveUser() +
+      this.choosenGame[this.stages[1]][1];
+
+    this.client.say(CHANNEL_DEBUG, answerMsg);
+    this.onMsg = this.client.on("message", (channel, tags, message, self) => {
+      if (self) return;
+      if (channel != CHANNEL_DEBUG) return;
+      this.checkMsgForAnswers(message);
+    });
+    this.setTimeoutGameStage(
+      this.notAnsweredStage.bind(this),
+      this.waitForAnswer
+    );
+  }
+  answeredStage() {
+    this.clearGameTimeout();
+    console.log("Answred....END OF THE GAME");
+    this.client.say(CHANNEL_DEBUG, this.choosenGame[this.stages[2]]);
+    console.log("ANSWERED MESSAGE", this.choosenGame[this.stages[2]]);
+
+    this.endGameStage();
+  }
+  notAnsweredStage() {
+    console.log("not answered....END OF THE GAME");
+    this.client.say(CHANNEL_DEBUG, this.choosenGame[this.stages[3]]);
+    console.log("NOT ANSWERED MESSAGE", this.choosenGame[this.stages[3]]);
+    this.endGameStage();
+  }
+  endGameStage() {
+    //clear variables for now/ dunno if needed
+    this.actualStage = "";
+    this.onMsg = "";
+    this.options.pendingGame = "";
+  }
 }
+
 module.exports = BotTimer;
