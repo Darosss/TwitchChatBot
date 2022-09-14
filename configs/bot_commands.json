@@ -1,7 +1,6 @@
 {
   "delay": 2,
   "activeTime": 300,
-  "minUsersGame": 3,
   "timers": {
     "follower": {
       "enabled": true,
@@ -59,16 +58,30 @@
       "enabled": true,
       "onDelay": false,
       "pendingGame": "",
-      "waitForAnswer": 3333,
-      "actualState": ""
+      "minActiveUsers": 3,
+      "waitForAnswer": 3,
+      "gameMs": 5,
+      "checkGamesMs": 5,
+      "timeBetweenGames": 360,
+      "actualState": "",
+      "easyGamesStages": [
+        "startGame",
+        "checkForAnswer",
+        "answered",
+        "notAnswered"
+      ]
     },
     "gamesList": {
       "easyGames": {
         "mialcznik": {
           "startGame": "*Mialcznik zaczyna sprawdzac wejscie do domu*....",
-          "foundUser": "Mialcznik zauwaza, ze osoba[aktywny user] nie patrzy, wiec probuje wejsc do domu ",
+          "checkForAnswer": [
+            "Mialcznik zauwaza, ze osoba ",
+            " nie patrzy, wiec probuje wejsc do domu"
+          ],
           "notAnswered": "Mialcznik zapierdala mieso z domu i warczy",
-          "answered": "Mialcznik wkurwiony spierdala w podskoku i macha ogonem"
+          "answered": "Mialcznik wkurwiony spierdala w podskoku i macha ogonem",
+          "answersList": ["chuju", "mialcznik", "kszzz"]
         }
       }
     }
