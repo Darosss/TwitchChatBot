@@ -16,7 +16,7 @@ class BotTimer {
     this.chatGamesObj = new ChatGames(client, this.games, this.activeUsers);
     this.delay = this.cmds.delay * 1000;
   }
-  onMessageActions(client, channel, message, username) {
+  initOnMessage(client, channel, message, username) {
     this.addActiveUser(username);
     this.checkTriggers(client, channel, message);
     this.countTimers(channel.slice(1), username);
