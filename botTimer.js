@@ -110,19 +110,30 @@ class BotTimer {
       this.timers[element].msgCount += incrMsg;
     });
   }
+  resetTimer(timer) {
+    this.timers[timer].enabled = false;
+    this.timers[timer].msgCount = 0;
+  }
+  timeoutTimer(timer) {
+    setTimeout(() => {
+      this.timers[timer].enabled = true; // set time true after period of time(delay)
+      console.log(
+        clc.notice("TIMER:"),
+        clc.info(timer.toUpperCase()),
+        clc.notice("- is up again")
+      );
+    }, this.timers[timer].delay * 1000); // set timeout(f(), delay timer);}
+  }
   async checkTimersInterval(client, channel) {
     let timer_interval = setInterval(async () => {
       let chckDate = new Date();
       chckDate = `${chckDate.getHours()}:${chckDate.getMinutes()}:${chckDate.getSeconds()}`;
-      // console.log(clc.info("Checking "), clc.notice(chckDate));
-
-      Object.keys(this.timers).forEach(async (element) => {
-        let enabled = this.timers[element].enabled;
+      Object.keys(this.timers).forEach(async (timer) => {
+        let enabled = this.timers[timer].enabled;
         let moreThanMinMsg =
-          this.timers[element].msgCount >= this.timers[element].minMsg;
-
+          this.timers[timer].msgCount >= this.timers[timer].minMsg;
         if (enabled && moreThanMinMsg) {
-          switch (element) {
+          switch (timer) {
             case "follower":
               await this.twApi.getRandomFollower(channel).then((result) => {
                 client.say(
@@ -132,19 +143,10 @@ class BotTimer {
               });
               break;
             default:
-              client.say(channel, this.returnNormalMsg(this.timers[element]));
+              client.say(channel, this.returnNormalMsg(this.timers[timer]));
           }
-          this.timers[element].enabled = false; // set timer for false
-          this.timers[element].msgCount = 0; // reset msgs count to 0, because msg is sent
-
-          setTimeout(() => {
-            this.timers[element].enabled = true; // set time true after period of time(delay)
-            console.log(
-              clc.notice("TIMER:"),
-              clc.info(element.toUpperCase()),
-              clc.notice("- is up again")
-            );
-          }, this.timers[element].delay * 1000); // set timeout(f(), delay timer);
+          this.resetTimer(timer);
+          this.timeoutTimer(timer);
         }
       });
     }, this.delay);
