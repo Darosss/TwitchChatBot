@@ -6,7 +6,6 @@ const config = require("./configs/configHead.json");
 const bot_commands = require("./configs/bot_commands.json");
 require("dotenv").config();
 
-let timer_interval;
 const client = new tmi.Client({
   options: { debug: false },
   connection: {
@@ -25,11 +24,15 @@ client.connect();
 
 client.on("connected", () => {
   console.log(clc.notice("CONNECTED"));
-  client.on("join", (channel, self) => {
-    if (!self || timer_interval) return;
-    console.log(clc.notice("BOT JOINED"), clc.info("- It set the intervals"));
-    timer_interval = botTimerObj.checkTimersInterval(client, channel.slice(1));
-    botTimerObj.checkChatGamesInterval();
+  client.on("join", (channel, username, self) => {
+    if (!self) return;
+    console.log(
+      clc.notice("BOT JOINED"),
+      username,
+      clc.info("- It set the intervals")
+    );
+
+    botTimerObj.initOnJoinToChannel(channel.slice(1));
   });
 });
 client.on("disconnected", (reason) => {
@@ -47,9 +50,10 @@ function logMsg(username, msg) {
 
 client.on("message", (channel, tags, message, self) => {
   logMsg(tags.username, message);
+
+  if (self) return; //echoed msg from bot
   botLogObj.countMessages(channel.slice(1), tags.username);
   botLogObj.logMessages(channel.slice(1), tags.username, message);
-  if (self) return; //echoed msg from bot
   if (tags.username == config.bot_username) return;
   botTimerObj.initOnMessage(client, channel, message, tags.username);
 });

@@ -17,13 +17,28 @@ class BotTimer {
     this.minActiveUsers = this.cmds.minActiveUsers;
     this.checkChatGamesDelay = this.cmds.checkChatGamesDelay * 1000;
   }
-
   initOnMessage(client, channel, message, username) {
-    this.addActiveUser(username);
-    this.checkTriggers(client, channel, message);
-    this.countTimers(channel.slice(1), username);
+    this.#addActiveUser(username);
+    this.#checkTriggers(client, channel, message);
+    this.#countTimers(channel.slice(1), username);
   }
-  timeoutTrigger(trigger) {
+  initOnJoinToChannel(channel) {
+    this.#checkTimersInterval(channel);
+    this.#checkChatGamesInterval();
+  }
+
+  #checkTriggers(client, channel, msg) {
+    Object.keys(this.triggers).forEach((element) => {
+      let trigger = this.triggers[element];
+      let trigger_word = trigger.trig_word;
+      if (trigger.enabled && msg.toLowerCase().includes(trigger_word)) {
+        this.triggers[element].enabled = false;
+        client.say(channel, trigger.msg);
+        this.#timeoutTrigger(element);
+      }
+    });
+  }
+  #timeoutTrigger(trigger) {
     setTimeout(() => {
       console.log(
         clc.notice("TRIGGER:"),
@@ -33,18 +48,20 @@ class BotTimer {
       this.triggers[trigger].enabled = true;
     }, this.triggers[trigger].delay * 1000);
   }
-  checkTriggers(client, channel, msg) {
-    Object.keys(this.triggers).forEach((element) => {
-      let trigger = this.triggers[element];
-      let trigger_word = trigger.trig_word;
-      if (trigger.enabled && msg.toLowerCase().includes(trigger_word)) {
-        this.triggers[element].enabled = false;
-        client.say(channel, trigger.msg);
-        this.timeoutTrigger(element);
-      }
-    });
+  #returnFollowMsg(follow_date = "", name = "") {
+    let timerFollow = this.timers.follower;
+    let lenKeys = Object.keys(timerFollow.phrases).length - 1;
+    let rand = Math.floor(Math.random() * lenKeys);
+    let randKey = Object.keys(timerFollow.phrases)[rand];
+    let choosenPhrase = timerFollow.phrases[randKey];
+    follow_date = this.#formatFollowDate(choosenPhrase.format, follow_date);
+    let returnMsg = "";
+
+    returnMsg = `${choosenPhrase.phrases[0]} ${name} ${choosenPhrase.phrases[1]} ${follow_date}
+      ${choosenPhrase.phrases[2]}`;
+    return returnMsg;
   }
-  formatFollowDate(format, date) {
+  #formatFollowDate(format, date) {
     if (!format.includes("date")) return "";
     date = date.replace("T", " ").replace("Z", "");
     const diffTime = Math.abs(new Date() - new Date(date));
@@ -65,24 +82,11 @@ class BotTimer {
     }
     return date;
   }
-  returnFollowMsg(follow_date = "", name = "") {
-    let timerFollow = this.timers.follower;
-    let lenKeys = Object.keys(timerFollow.phrases).length - 1;
-    let rand = Math.floor(Math.random() * lenKeys);
-    let randKey = Object.keys(timerFollow.phrases)[rand];
-    let choosenPhrase = timerFollow.phrases[randKey];
-    follow_date = this.formatFollowDate(choosenPhrase.format, follow_date);
-    let returnMsg = "";
-
-    returnMsg = `${choosenPhrase.phrases[0]} ${name} ${choosenPhrase.phrases[1]} ${follow_date}
-      ${choosenPhrase.phrases[2]}`;
-    return returnMsg;
-  }
-  returnNormalMsg(from) {
+  #returnNormalMsg(from) {
     var random = Math.floor(Math.random() * from.phrases.length);
     return from.phrases[random];
   }
-  async countTimers(channel, chatter) {
+  async #countTimers(channel, chatter) {
     Object.keys(this.timers).forEach(async (element) => {
       var incrMsg = 1;
       switch (element) {
@@ -109,11 +113,11 @@ class BotTimer {
       this.timers[element].msgCount += incrMsg;
     });
   }
-  resetTimer(timer) {
+  #resetTimer(timer) {
     this.timers[timer].enabled = false;
     this.timers[timer].msgCount = 0;
   }
-  timeoutTimer(timer) {
+  #timeoutTimer(timer) {
     setTimeout(() => {
       this.timers[timer].enabled = true; // set time true after period of time(delay)
       console.log(
@@ -123,8 +127,8 @@ class BotTimer {
       );
     }, this.timers[timer].delay * 1000); // set timeout(f(), delay timer);}
   }
-  async checkTimersInterval(client, channel) {
-    let timer_interval = setInterval(async () => {
+  async #checkTimersInterval(channel) {
+    setInterval(async () => {
       let chckDate = new Date();
       chckDate = `${chckDate.getHours()}:${chckDate.getMinutes()}:${chckDate.getSeconds()}`;
       Object.keys(this.timers).forEach(async (timer) => {
@@ -135,26 +139,28 @@ class BotTimer {
           switch (timer) {
             case "follower":
               await this.twApi.getRandomFollower(channel).then((result) => {
-                client.say(
+                this.client.say(
                   channel,
-                  this.returnFollowMsg(result.followed_at, result.from_name)
+                  this.#returnFollowMsg(result.followed_at, result.from_name)
                 );
               });
               break;
             default:
-              client.say(channel, this.returnNormalMsg(this.timers[timer]));
+              this.client.say(
+                channel,
+                this.#returnNormalMsg(this.timers[timer])
+              );
           }
-          this.resetTimer(timer);
-          this.timeoutTimer(timer);
+          this.#resetTimer(timer);
+          this.#timeoutTimer(timer);
         }
       });
     }, this.delay);
-    return timer_interval;
   }
-  addActiveUser(username) {
+  #addActiveUser(username) {
     this.activeUsers.set(username, new Date());
   }
-  checkActiveChatUsers() {
+  #checkActiveChatUsers() {
     this.activeUsers.forEach((values, keys) => {
       const diffTime = Math.abs(new Date() - values);
       const diffSeconds = Math.ceil(diffTime / 1000);
@@ -170,9 +176,9 @@ class BotTimer {
       }
     });
   }
-  checkChatGamesInterval() {
+  #checkChatGamesInterval() {
     setInterval(() => {
-      this.checkActiveChatUsers();
+      this.#checkActiveChatUsers();
       if (this.activeUsers.size >= this.minActiveUsers) {
         this.chatGamesObj.startGameIfAvailable();
         return;
