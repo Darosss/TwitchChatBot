@@ -10,12 +10,12 @@ class BotTimer {
     this.timers = this.cmds.timers;
     this.triggers = this.cmds.triggers;
     this.games = this.cmds.chatGames;
-    this.activeTime = this.cmds.activeTime;
+    this.maxActiveUserTime = this.cmds.maxActiveUserTime;
     this.activeUsers = new Map();
     this.chatGamesObj = new ChatGames(client, this.games, this.activeUsers);
-    this.delay = this.cmds.delayTimers * 1000;
+    this.delay = this.cmds.checkTimersDelay * 1000;
     this.minActiveUsers = this.cmds.minActiveUsers;
-    this.delayChatGames = this.cmds.delayChatGames * 1000;
+    this.checkChatGamesDelay = this.cmds.checkChatGamesDelay * 1000;
   }
 
   initOnMessage(client, channel, message, username) {
@@ -130,7 +130,7 @@ class BotTimer {
       Object.keys(this.timers).forEach(async (timer) => {
         let enabled = this.timers[timer].enabled;
         let moreThanMinMsg =
-          this.timers[timer].msgCount >= this.timers[timer].minMsg;
+          this.timers[timer].msgCount >= this.timers[timer].minMsgValue;
         if (enabled && moreThanMinMsg) {
           switch (timer) {
             case "follower":
@@ -158,7 +158,7 @@ class BotTimer {
     this.activeUsers.forEach((values, keys) => {
       const diffTime = Math.abs(new Date() - values);
       const diffSeconds = Math.ceil(diffTime / 1000);
-      if (diffSeconds > this.activeTime) {
+      if (diffSeconds > this.maxActiveUserTime) {
         console.log(
           clc.notice("User:"),
           clc.name(keys),
@@ -177,7 +177,7 @@ class BotTimer {
         this.chatGamesObj.startGameIfAvailable();
         return;
       }
-    }, this.delayChatGames);
+    }, this.checkChatGamesDelay);
   }
 }
 class ChatGames {
