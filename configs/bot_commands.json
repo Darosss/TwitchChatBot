@@ -1,5 +1,5 @@
 {
-  "checkTimersDelay": 2,
+  "checkTimersDelay": 10,
   "maxActiveUserTime": 120,
   "checkChatGamesDelay": 2,
   "minActiveUsers": 3,
@@ -7,8 +7,8 @@
     "follower": {
       "enabled": true,
       "delay": 360,
-      "minMsg": 50,
-      "msgValue": 8,
+      "minMsgValue": 70,
+      "msgValue": 15,
       "msgCount": 0,
       "_comment": "Format options: [date, only date, date diff](can be empty)",
       "phrases": {

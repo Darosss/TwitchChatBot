@@ -1,0 +1,7 @@
+{
+  "bot_username": "booksarefunsometimes",
+  "channelsSeparately": true,
+  "folderChannels": "public",
+  "sufixMsgFile": "sentences",
+  "channels": ["booksarefunsometimes"]
+}

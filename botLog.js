@@ -19,7 +19,7 @@ class BotLog {
       // for (let i = 0; i < this.chanels.length; i++) {
       this.chanels.forEach((channel) => {
         channel = channel.slice(1);
-        dir[channel] = `./${this.config.folderName}/${channel}`;
+        dir[channel] = `./${this.config.folderChannels}/${channel}`;
         this.#createUsersJson(dir[channel], channel, "users");
         this.#createSentencesJson(dir[channel], channel, today, "sentences");
       });

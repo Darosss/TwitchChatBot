@@ -2,7 +2,7 @@ const tmi = require("tmi.js");
 const BotTimer = require("./botTimer.js");
 const BotLog = require("./botLog.js");
 var clc = require("./cli_color.js");
-const config_file = require("./configs/configHead.js");
+const config = require("./configs/configHead.json");
 const bot_commands = require("./configs/bot_commands.json");
 require("dotenv").config();
 
@@ -17,11 +17,10 @@ const client = new tmi.Client({
     password: process.env.password,
     username: process.env.username,
   },
-  channels: config_file.options.channels,
+  channels: config.channels,
 });
-
 //TODO change configs to json
-const botLogObj = new BotLog(config_file.options);
+const botLogObj = new BotLog(config);
 const botTimerObj = new BotTimer(client, bot_commands);
 client.connect();
 
@@ -52,6 +51,6 @@ client.on("message", (channel, tags, message, self) => {
   botLogObj.countMessages(channel.slice(1), tags.username);
   botLogObj.logMessages(channel.slice(1), tags.username, message);
   if (self) return; //echoed msg from bot
-  if (tags.username == config_file.options.username) return;
+  if (tags.username == config.bot_username) return;
   botTimerObj.initOnMessage(client, channel, message, tags.username);
 });
