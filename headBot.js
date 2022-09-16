@@ -19,6 +19,7 @@ const client = new tmi.Client({
   },
   channels: config_file.options.channels,
 });
+
 //TODO change configs to json
 const botLogObj = new BotLog(config_file.options);
 const botTimerObj = new BotTimer(client, bot_commands);
@@ -30,7 +31,7 @@ client.on("connected", () => {
     if (!self || timer_interval) return;
     console.log(clc.notice("BOT JOINED"), clc.info("- It set the intervals"));
     timer_interval = botTimerObj.checkTimersInterval(client, channel.slice(1));
-    botTimerObj.checkChatGames(client);
+    botTimerObj.checkChatGamesInterval();
   });
 });
 client.on("disconnected", (reason) => {
@@ -48,10 +49,9 @@ function logMsg(username, msg) {
 
 client.on("message", (channel, tags, message, self) => {
   logMsg(tags.username, message);
-  // botLogObj.countMessages(channel, tags.username);
-  // botLogObj.logMessages(channel, tags.username, message);
-  if (self) return; //echoed msg
-  // if (tags.username == config_file.options.username) return;
-  // disabled for now for debug
+  botLogObj.countMessages(channel.slice(1), tags.username);
+  botLogObj.logMessages(channel.slice(1), tags.username, message);
+  if (self) return; //echoed msg from bot
+  if (tags.username == config_file.options.username) return;
   botTimerObj.initOnMessage(client, channel, message, tags.username);
 });
