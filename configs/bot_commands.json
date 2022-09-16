@@ -48,8 +48,8 @@
   "triggers": {
     "zabol": {
       "enabled": true,
-      "delay": 360,
-      "trigger": "osfrog",
+      "delay": 4,
+      "trig_word": "osfrog",
       "msg": "OSFrog Z OSFrog a OSFrog b OSFrog o OSFrog l OSFrog"
     }
   },
@@ -60,8 +60,8 @@
       "pendingGame": "",
       "minActiveUsers": 3,
       "waitForAnswer": 3,
-      "gameMs": 5,
-      "checkGamesMs": 5,
+      "gameMs": 25,
+      "checkGamesMs": 25,
       "timeBetweenGames": 360,
       "actualState": "",
       "easyGamesStages": [
