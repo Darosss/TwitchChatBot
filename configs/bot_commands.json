@@ -1,34 +1,32 @@
 {
-  "delay": 2,
-  "activeTime": 300,
+  "delayTimers": 2,
+  "activeTime": 120,
+  "delayChatGames": 2,
+  "minActiveUsers": 3,
   "timers": {
     "follower": {
       "enabled": true,
-      "delay": 360,
-      "minMsg": 50,
+      "delay": 5,
+      "minMsg": 2,
       "msgValue": 8,
       "msgCount": 0,
       "_comment": "Format options: [date, only date, date diff](can be empty)",
       "phrases": {
         "default": {
-          "phrases": [
-            "HERE IS TEXT NR1(after me is randomly choosen follower)",
-            "HERE IS TEXT NR2(after me is this user follow date)",
-            "HERE IS TEXT NR3"
-          ],
-          "format": "date diff"
+          "phrases": ["sadsda", "ss", "test"],
+          "format": "date days"
         },
         "default2": {
           "phrases": ["3", "3", "4"],
-          "format": "date time"
+          "format": "date"
         },
         "default3": {
           "phrases": ["3", "3", "4"],
-          "format": "date only"
+          "format": "date"
         },
         "default4": {
           "phrases": ["3", "3", "4"],
-          "format": "date diff"
+          "format": "date"
         }
       }
     },
@@ -58,10 +56,9 @@
       "enabled": true,
       "onDelay": false,
       "pendingGame": "",
-      "minActiveUsers": 3,
+
       "waitForAnswer": 3,
-      "gameMs": 25,
-      "checkGamesMs": 25,
+      "gameMs": 2,
       "timeBetweenGames": 360,
       "actualState": "",
       "easyGamesStages": [
