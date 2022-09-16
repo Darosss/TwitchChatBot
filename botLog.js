@@ -28,7 +28,6 @@ class BotLog {
   #createUsersJson(dir, channel, suffix) {
     this.usersDir[channel] = `${dir}/${channel}-${suffix}.json`;
     this.#createNewJsonFile(dir, this.usersDir[channel]);
-    console.log("kek", this.usersDir[channel]);
     this.usersJson[channel] = require(this.usersDir[channel]);
   }
   #createSentencesJson(dir, channel, time, suffix) {

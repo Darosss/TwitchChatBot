@@ -45,7 +45,6 @@ class BotTimer {
     });
   }
   formatFollowDate(format, date) {
-    console.log(format);
     if (!format.includes("date")) return "";
     date = date.replace("T", " ").replace("Z", "");
     const diffTime = Math.abs(new Date() - new Date(date));
@@ -106,6 +105,7 @@ class BotTimer {
         default:
         // console.log("I count normal timer");
       }
+
       this.timers[element].msgCount += incrMsg;
     });
   }
@@ -245,7 +245,6 @@ class EasyGame {
     this.actualStage = this.options.actualStage;
     this.onMsg;
     this.channel = this.client.opts.channels[0].slice(1);
-    console.log(this.channel);
     this.waitForAnswer = this.options.waitForAnswer * 1000;
     this.gameTimeout;
     this.gameMs = this.options.gameMs * 1000;
