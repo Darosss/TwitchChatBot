@@ -19,7 +19,6 @@ const client = new tmi.Client({
   },
   channels: config.channels,
 });
-//TODO change configs to json
 const botLogObj = new BotLog(config);
 const botTimerObj = new BotTimer(client, bot_commands);
 client.connect();
