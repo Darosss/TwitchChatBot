@@ -5,8 +5,8 @@ var clc = require("./cli_color.js");
 const config_file = require("./configs/configHead.js");
 const bot_commands = require("./configs/bot_commands.json");
 require("dotenv").config();
-const botLogObj = new BotLog(config_file.options);
 
+let timer_interval;
 const client = new tmi.Client({
   options: { debug: false },
   connection: {
@@ -19,15 +19,15 @@ const client = new tmi.Client({
   },
   channels: config_file.options.channels,
 });
+//TODO change configs to json
+const botLogObj = new BotLog(config_file.options);
 const botTimerObj = new BotTimer(client, bot_commands);
 client.connect();
-let timer_interval;
+
 client.on("connected", () => {
   console.log(clc.notice("CONNECTED"));
   client.on("join", (channel, self) => {
-    if (timer_interval) return;
-    // probably do not need this for later
-    if (!self) return;
+    if (!self || timer_interval) return;
     console.log(clc.notice("BOT JOINED"), clc.info("- It set the intervals"));
     timer_interval = botTimerObj.checkTimersInterval(client, channel.slice(1));
     botTimerObj.checkChatGames(client);
@@ -39,13 +39,7 @@ client.on("disconnected", (reason) => {
     clearInterval(timer_interval);
   }
 });
-// setInterval(() => {
-//   console.log(clc.error("WYSYLAM WIADOMOSC"));
-//   botTimerObj.checkChatGames(client);
-// }, 3000);
-// botTimerObj.checkChatGames("c", "mesg");
-// botTimerObj.checkChatGames("c", "2nd");
-// botTimerObj.checkChatGames("c", "3nd");
+
 function logMsg(username, msg) {
   let msgTime = new Date();
   msgTime = `${msgTime.getHours()}:${msgTime.getMinutes()}:${msgTime.getSeconds()}`;
@@ -54,24 +48,10 @@ function logMsg(username, msg) {
 
 client.on("message", (channel, tags, message, self) => {
   logMsg(tags.username, message);
-
   // botLogObj.countMessages(channel, tags.username);
   // botLogObj.logMessages(channel, tags.username, message);
   if (self) return; //echoed msg
   // if (tags.username == config_file.options.username) return;
   // disabled for now for debug
-
-  // botTimerObj.checkChatGames(client, channel);
-  // botTimerObj.addActiveUser(tags.username);
-  // botTimerObj.countTimers(channel.slice(1), tags.username);
-  // botTimerObj.checkTriggers(client, channel, message);
+  botTimerObj.initOnMessage(client, channel, message, tags.username);
 });
-
-// client.on("part", (channel, username, self) => {
-//   console.log("left", channel, username);
-
-//   // Do your stuff.
-// });
-// client.on("join", (channel, username, self) => {
-//   console.log("joined", channel, username);
-// });
