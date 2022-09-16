@@ -14,8 +14,11 @@ class BotTimer {
     this.activeTime = this.cmds.activeTime;
     this.activeUsers = new Map();
     this.chatGamesObj = new ChatGames(client, this.games, this.activeUsers);
-    this.delay = this.cmds.delay * 1000;
+    this.delay = this.cmds.delayTimers * 1000;
+    this.minActiveUsers = this.cmds.minActiveUsers;
+    this.delayChatGames = this.cmds.delayChatGames * 1000;
   }
+
   initOnMessage(client, channel, message, username) {
     this.addActiveUser(username);
     this.checkTriggers(client, channel, message);
@@ -39,59 +42,43 @@ class BotTimer {
         this.triggers[element].enabled = false;
         client.say(channel, trigger.msg);
         this.timeoutTrigger(element);
-      } else {
-        console.log(
-          clc.notice("TRIGGER:"),
-          clc.info(element.toUpperCase()),
-          clc.notice("- it's too early")
-        );
       }
     });
   }
+  formatFollowDate(format, date) {
+    console.log(format);
+    if (!format.includes("date")) return "";
+    date = date.replace("T", " ").replace("Z", "");
+    const diffTime = Math.abs(new Date() - new Date(date));
+    const diffMs = diffTime;
+
+    if (format.includes("date")) date = date.split(" ")[0];
+    else if (format.includes("date time")) date = date.split(" ")[1];
+    else if (format.includes("date days")) {
+      date = Math.ceil(diffMs / 1000 / 60 / 60 / 24) + " days ";
+    } else if (format.includes("date hours")) {
+      date = Math.ceil(diffMs / 1000 / 60 / 60) + " hours ";
+    } else if (format.includes("date minutes")) {
+      date = Math.ceil(diffMs / 1000 / 60) + " minutes ";
+    } else if (format.includes("date seconds")) {
+      date = Math.ceil(diffMs / 1000) + " seconds ";
+    } else if (format.includes("date miliseconds")) {
+      date = Math.ceil(diffMs) + " miliseconds ";
+    }
+    return date;
+  }
   returnFollowMsg(follow_date = "", name = "") {
-    let follow_tim = this.timers.follower;
-    follow_date = follow_date.replace("T", " ");
-    follow_date = follow_date.replace("Z", "");
-    let date;
-    if (follow_date.length > 0) {
-      let follow_at = follow_date.split(" ")[0].split("-");
-      date = new Date(follow_at[0], follow_at[1], follow_at[2]);
-    }
-    const diffTime = Math.abs(new Date() - date);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    let lenKeys = Object.keys(follow_tim.phrases).length - 1;
+    let timerFollow = this.timers.follower;
+    let lenKeys = Object.keys(timerFollow.phrases).length - 1;
     let rand = Math.floor(Math.random() * lenKeys);
-    let randKey = Object.keys(follow_tim.phrases)[rand];
-    let choosenPhrase = follow_tim.phrases[randKey];
-    let msg = "";
-    //TODO funkcje format
-    if (!choosenPhrase.format.includes("date")) follow_date = "";
-    if (choosenPhrase.format.includes("date diff")) {
-      follow_date = diffDays;
-    }
-    if (choosenPhrase.format.includes("date only")) {
-      follow_date = follow_date.split(" ")[0];
-    }
-    if (choosenPhrase.format.includes("date time")) {
-      follow_date = follow_date.split(" ")[1];
-    }
-    if (choosenPhrase.format.includes("date days")) {
-      //TODO days
-    }
-    if (choosenPhrase.format.includes("date hours")) {
-      //TODO hours
-    }
-    if (choosenPhrase.format.includes("date minutes")) {
-      //TODO minutes
-    }
-    if (choosenPhrase.format.includes("date seconds")) {
-      //TODO seconds
-    }
+    let randKey = Object.keys(timerFollow.phrases)[rand];
+    let choosenPhrase = timerFollow.phrases[randKey];
+    follow_date = this.formatFollowDate(choosenPhrase.format, follow_date);
+    let returnMsg = "";
 
-    msg = `${choosenPhrase.phrases[0]} ${name} ${choosenPhrase.phrases[1]} ${follow_date}
+    returnMsg = `${choosenPhrase.phrases[0]} ${name} ${choosenPhrase.phrases[1]} ${follow_date}
       ${choosenPhrase.phrases[2]}`;
-    return msg;
+    return returnMsg;
   }
   returnNormalMsg(from) {
     var random = Math.floor(Math.random() * from.phrases.length);
@@ -163,15 +150,11 @@ class BotTimer {
     }, this.delay);
     return timer_interval;
   }
-  //TODO change add active user to channels example: usechapter999 and booksarefunsometimes have another active users
   addActiveUser(username) {
-    let msgTime = new Date();
-    this.activeUsers.set(username, msgTime);
-    console.log("active users:", this.activeUsers);
+    this.activeUsers.set(username, new Date());
   }
   checkActiveUsers() {
     this.activeUsers.forEach((values, keys) => {
-      console.log(values, keys);
       const diffTime = Math.abs(new Date() - values);
       const diffSeconds = Math.ceil(diffTime / 1000);
       if (diffSeconds > this.activeTime) {
@@ -186,13 +169,14 @@ class BotTimer {
       }
     });
   }
-  async checkChatGames() {
-    this.checkActiveUsers();
-
-    //uncomment its for start game when more than x users are 'active'
-    if (this.games.options.pendingGame.length > 0) return;
-    this.chatGamesObj.intervalCheckGame();
-    // this.chatGames.startRandomGame();
+  checkChatGamesInterval() {
+    setInterval(() => {
+      this.checkActiveUsers();
+      if (this.activeUsers.size >= this.minActiveUsers) {
+        this.chatGamesObj.startGameIfAvailable();
+        return;
+      }
+    }, this.delayChatGames);
   }
 }
 class ChatGames {
@@ -201,16 +185,10 @@ class ChatGames {
     this.options = this.games.options;
     this.gamesList = this.games.gamesList;
     this.easyGames = this.gamesList.easyGames;
-    this.activeUsers = activeUsers;
-    this.minActiveUsers = this.options.minActiveUsers;
-    this.easyGamesObj = new EasyGame(
-      client,
-      this.easyGames,
-      this.options,
-      activeUsers
-    );
+    this.easyGamesObj = new EasyGame(client, this.easyGames, this.options);
     this.timeBetweenGames = this.options.timeBetweenGames;
-    this.checkGamesMs = this.options.checkGamesMs * 1000;
+    this.activeUsers = activeUsers;
+    // this.checkGamesMs = this.options.checkGamesMs * 1000;
   }
   checkTimeBetweenGames() {
     let lastGameDate = this.options.lastTimeEnded;
@@ -226,15 +204,10 @@ class ChatGames {
     );
     if (diffSeconds > this.timeBetweenGames) return true;
   }
-  intervalCheckGame() {
-    setInterval(() => {
-      console.log(clc.msg("Checking if game can be started"));
-      if (this.activeUsers.size < this.minActiveUsers) return;
-      if (!this.checkTimeBetweenGames()) return;
-
-      //TODO % or static time between games
-      this.startRandomGame();
-    }, this.checkGamesMs);
+  startGameIfAvailable() {
+    console.log(clc.msg("Checking if game can be started"));
+    if (!this.checkTimeBetweenGames()) return;
+    this.startRandomGame();
   }
   isGameEnabled() {
     if (this.options.enabled) return true;
@@ -260,7 +233,7 @@ class ChatGames {
     switch (this.options.pendingGame) {
       case "easyGames":
         this.options.pendingGame = "easyGames";
-        this.easyGamesObj.startEasyGame();
+        this.easyGamesObj.startEasyGame(this.activeUsers);
         console.log(
           "Choosen game-easy game(this should be logged once per session game)"
         );
@@ -272,7 +245,7 @@ class ChatGames {
   }
 }
 class EasyGame {
-  constructor(client, easyGamesList, options, activeUsers) {
+  constructor(client, easyGamesList, options) {
     this.client = client;
     this.gamesList = easyGamesList;
     this.options = options;
@@ -283,7 +256,7 @@ class EasyGame {
     this.waitForAnswer = this.options.waitForAnswer * 1000;
     this.gameTimeout;
     this.gameMs = this.options.gameMs * 1000;
-    this.activeUsers = activeUsers;
+    this.activeUsers;
   }
   setRandomGame() {
     let gameKeys = Object.keys(this.gamesList);
@@ -297,8 +270,9 @@ class EasyGame {
       stage();
     }, delay);
   }
-  startEasyGame() {
+  startEasyGame(activeUsers) {
     console.log("Easy game started");
+    this.activeUsers = activeUsers;
     this.setRandomGame();
     this.options.lastTimeEnded = new Date();
     this.setTimeoutGameStage(this.startGameStage.bind(this));
