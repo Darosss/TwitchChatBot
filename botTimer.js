@@ -1,6 +1,5 @@
 var clc = require("./cli_color.js");
 const TwApi = require("./twApi.js");
-const CHANNEL_DEBUG = "#booksarefunsometimes";
 
 //TODO do other advanced games maybe? or jsut try to implement this to stream next time?
 class BotTimer {
@@ -155,7 +154,7 @@ class BotTimer {
   addActiveUser(username) {
     this.activeUsers.set(username, new Date());
   }
-  checkActiveUsers() {
+  checkActiveChatUsers() {
     this.activeUsers.forEach((values, keys) => {
       const diffTime = Math.abs(new Date() - values);
       const diffSeconds = Math.ceil(diffTime / 1000);
@@ -173,7 +172,7 @@ class BotTimer {
   }
   checkChatGamesInterval() {
     setInterval(() => {
-      this.checkActiveUsers();
+      this.checkActiveChatUsers();
       if (this.activeUsers.size >= this.minActiveUsers) {
         this.chatGamesObj.startGameIfAvailable();
         return;
@@ -190,36 +189,26 @@ class ChatGames {
     this.easyGamesObj = new EasyGame(client, this.easyGames, this.options);
     this.timeBetweenGames = this.options.timeBetweenGames;
     this.activeUsers = activeUsers;
-    // this.checkGamesMs = this.options.checkGamesMs * 1000;
   }
   checkTimeBetweenGames() {
     let lastGameDate = this.options.lastTimeEnded;
     if (isNaN(lastGameDate)) return true;
     const diffTime = Math.abs(new Date() - lastGameDate);
     const diffSeconds = Math.ceil(diffTime / 1000);
-
-    console.log(
-      "seconds",
-      diffSeconds,
-      this.options.pendingGame,
-      this.options.enabled
-    );
     if (diffSeconds > this.timeBetweenGames) return true;
   }
   startGameIfAvailable() {
-    console.log(clc.msg("Checking if game can be started"));
+    // console.log(clc.msg("Checking if game can be started"));
     if (!this.checkTimeBetweenGames()) return;
     this.startRandomGame();
   }
   isGameEnabled() {
     if (this.options.enabled) return true;
-
     this.options.pendingGame = "";
     return false;
   }
   isGameChoosen() {
     if (this.options.pendingGame.length > 1) return true;
-
     return false;
   }
   getTypeOfGame() {
@@ -255,6 +244,8 @@ class EasyGame {
     this.stages = this.options.easyGamesStages;
     this.actualStage = this.options.actualStage;
     this.onMsg;
+    this.channel = this.client.opts.channels[0].slice(1);
+    console.log(this.channel);
     this.waitForAnswer = this.options.waitForAnswer * 1000;
     this.gameTimeout;
     this.gameMs = this.options.gameMs * 1000;
@@ -301,7 +292,7 @@ class EasyGame {
     return activeUsers[Math.floor(Math.random() * activeUsers.length)][0];
   }
   startGameStage() {
-    this.client.say(CHANNEL_DEBUG, this.choosenGame[this.stages[0]]);
+    this.client.say(this.channel, this.choosenGame[this.stages[0]]);
     console.log("START MESSAGE", this.choosenGame[this.stages[0]]);
     this.actualStage = this.stages[1];
     this.setTimeoutGameStage(this.checkForAnswerStage.bind(this));
@@ -314,10 +305,10 @@ class EasyGame {
       this.chooseRandomActiveUser() +
       this.choosenGame[this.stages[1]][1];
 
-    this.client.say(CHANNEL_DEBUG, answerMsg);
+    this.client.say(this.channel, answerMsg);
     this.onMsg = this.client.on("message", (channel, tags, message, self) => {
       if (self) return;
-      if (channel != CHANNEL_DEBUG) return;
+      if (channel != this.channel) return;
       this.checkMsgForAnswers(message);
     });
     this.setTimeoutGameStage(
@@ -328,14 +319,14 @@ class EasyGame {
   answeredStage() {
     this.clearGameTimeout();
     console.log("Answred....END OF THE GAME");
-    this.client.say(CHANNEL_DEBUG, this.choosenGame[this.stages[2]]);
+    this.client.say(this.channel, this.choosenGame[this.stages[2]]);
     console.log("ANSWERED MESSAGE", this.choosenGame[this.stages[2]]);
 
     this.endGameStage();
   }
   notAnsweredStage() {
     console.log("not answered....END OF THE GAME");
-    this.client.say(CHANNEL_DEBUG, this.choosenGame[this.stages[3]]);
+    this.client.say(this.channel, this.choosenGame[this.stages[3]]);
     console.log("NOT ANSWERED MESSAGE", this.choosenGame[this.stages[3]]);
     this.endGameStage();
   }
