@@ -8,7 +8,7 @@ config.options.channelsSeparately = true; //write separately folder for each of 
 config.options.folderName = "public"; //name head folder of txt files
 config.options.nameSentence = "sentences"; //sufix of sentences
 
-config.options.channels = ["booksarefunsometimes", "usechapter999"]; //channels to monitor, each separated by ' inside []
+config.options.channels = ["booksarefunsometimes"]; //channels to monitor, each separated by ' inside []
 
 config.options.commands = ["!"]; //not needed? leave blank ""
 
