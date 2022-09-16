@@ -1,6 +1,8 @@
 var clc = require("./cli_color.js");
 const TwApi = require("./twApi.js");
 const CHANNEL_DEBUG = "#booksarefunsometimes";
+
+//TODO do other advanced games maybe? or jsut try to implement this to stream next time?
 class BotTimer {
   constructor(client, commands) {
     this.client = client;
@@ -11,28 +13,32 @@ class BotTimer {
     this.games = this.cmds.chatGames;
     this.activeTime = this.cmds.activeTime;
     this.activeUsers = new Map();
-
-    this.chatGames = new chatGames(client, this.games, this.activeUsers);
-    //change to chatgamesobj
+    this.chatGamesObj = new ChatGames(client, this.games, this.activeUsers);
     this.delay = this.cmds.delay * 1000;
+  }
+  onMessageActions(client, channel, message, username) {
+    this.addActiveUser(username);
+    this.checkTriggers(client, channel, message);
+    this.countTimers(channel.slice(1), username);
+  }
+  timeoutTrigger(trigger) {
+    setTimeout(() => {
+      console.log(
+        clc.notice("TRIGGER:"),
+        clc.info(trigger.toUpperCase()),
+        clc.notice("- is up again")
+      );
+      this.triggers[trigger].enabled = true;
+    }, this.triggers[trigger].delay * 1000);
   }
   checkTriggers(client, channel, msg) {
     Object.keys(this.triggers).forEach((element) => {
       let trigger = this.triggers[element];
-      let trigger_word = trigger.trigger;
-      if (trigger.enabled) {
-        if (msg.toLowerCase().includes(trigger_word)) {
-          this.triggers[element].enabled = false;
-          client.say(channel, trigger.msg);
-          setTimeout(() => {
-            console.log(
-              clc.notice("TRIGGER:"),
-              clc.info(element.toUpperCase()),
-              clc.notice("- is up again")
-            );
-            this.triggers[element].enabled = true;
-          }, trigger.delay * 1000);
-        }
+      let trigger_word = trigger.trig_word;
+      if (trigger.enabled && msg.toLowerCase().includes(trigger_word)) {
+        this.triggers[element].enabled = false;
+        client.say(channel, trigger.msg);
+        this.timeoutTrigger(element);
       } else {
         console.log(
           clc.notice("TRIGGER:"),
@@ -59,7 +65,7 @@ class BotTimer {
     let randKey = Object.keys(follow_tim.phrases)[rand];
     let choosenPhrase = follow_tim.phrases[randKey];
     let msg = "";
-
+    //TODO funkcje format
     if (!choosenPhrase.format.includes("date")) follow_date = "";
     if (choosenPhrase.format.includes("date diff")) {
       follow_date = diffDays;
@@ -164,7 +170,6 @@ class BotTimer {
     console.log("active users:", this.activeUsers);
   }
   checkActiveUsers() {
-    // console.log("Check active users");
     this.activeUsers.forEach((values, keys) => {
       console.log(values, keys);
       const diffTime = Math.abs(new Date() - values);
@@ -186,11 +191,11 @@ class BotTimer {
 
     //uncomment its for start game when more than x users are 'active'
     if (this.games.options.pendingGame.length > 0) return;
-    this.chatGames.intervalCheckGame();
+    this.chatGamesObj.intervalCheckGame();
     // this.chatGames.startRandomGame();
   }
 }
-class chatGames {
+class ChatGames {
   constructor(client, games, activeUsers) {
     this.games = games;
     this.options = this.games.options;
