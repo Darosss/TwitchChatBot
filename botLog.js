@@ -16,16 +16,19 @@ class BotLog {
       var today = new Date();
       today = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
       var dir = [];
-      for (let i = 0; i < this.chanels.length; i++) {
-        dir[i] = `./${this.config.folderName}/${this.chanels[i]}`;
-        this.#createUsersJson(dir[i], this.chanels[i], "users");
-        this.#createSentencesJson(dir[i], this.chanels[i], today, "sentences");
-      }
+      // for (let i = 0; i < this.chanels.length; i++) {
+      this.chanels.forEach((channel) => {
+        channel = channel.slice(1);
+        dir[channel] = `./${this.config.folderName}/${channel}`;
+        this.#createUsersJson(dir[channel], channel, "users");
+        this.#createSentencesJson(dir[channel], channel, today, "sentences");
+      });
     }
   }
   #createUsersJson(dir, channel, suffix) {
     this.usersDir[channel] = `${dir}/${channel}-${suffix}.json`;
     this.#createNewJsonFile(dir, this.usersDir[channel]);
+    console.log("kek", this.usersDir[channel]);
     this.usersJson[channel] = require(this.usersDir[channel]);
   }
   #createSentencesJson(dir, channel, time, suffix) {
@@ -78,42 +81,35 @@ class BotLog {
   }
   countMessages(channel, chatter) {
     var foundUser = false;
-    var which = 0;
-
-    var channelName = channel.replace("#", "");
-    // replace beacause channel includes # in nickname(dunno why)
-    for (let i = 0; i < this.usersJson[channelName].length; i++) {
-      var user = this.usersJson[channelName][i];
+    this.usersJson[channel].forEach((user) => {
+      //for (let i = 0; i < this.usersJson[channel].length; i++) {
+      var user = user;
       if (user.hasOwnProperty("name")) {
         if (user.name == chatter) {
           foundUser = true;
-          which = i;
-          this.usersJson[channelName][i].messages++;
-          this.usersJson[channelName][i].lastSeen = this.#formatDateYMDHMS();
+          user.messages++;
+          user.lastSeen = this.#formatDateYMDHMS();
         }
       }
-    }
+    });
     if (!foundUser) {
       // not found object named channel name, need create new
-      console.log("Need to create new json object inside users");
-      this.usersJson[channelName].push({
+      console.log("Need to create new user json object inside users");
+      this.usersJson[channel].push({
         name: chatter,
         messages: 1,
         lastSeen: this.#formatDateYMDHMS,
       });
     }
-    this.#rewriteJson(this.usersDir[channelName], this.usersJson[channelName]);
+    this.#rewriteJson(this.usersDir[channel], this.usersJson[channel]);
   }
   logMessages(channel, chatter, msg) {
-    var channelName = channel.replace("#", "");
-    // replace beacause channel includes # in nickname(dunno why)
-    this.logMsg[channelName].push({
+    this.logMsg[channel].push({
       name: chatter,
       messages: msg,
       date_msg: this.#formatDateYMDHMS(),
     });
-    this.#rewriteJson(this.logMsgDir[channelName], this.logMsg[channelName]);
+    this.#rewriteJson(this.logMsgDir[channel], this.logMsg[channel]);
   }
 }
-
 module.exports = BotLog;
