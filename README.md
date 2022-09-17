@@ -13,7 +13,7 @@ Bot includes:
 * chat games
   * every configurable in bot_commands.json
 
-To run inside env file modify exisiting variables:
+To run create file (.env) in program directory copy variables bellow and modify them:
 
 * CLIENT_ID - Application twitch ID
 * CLIENT_SECRET - Application twitch SECRET
