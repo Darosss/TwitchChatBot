@@ -311,16 +311,17 @@ class EasyGame {
   }
 
   checkForAnswerStage() {
+    let randomActiveUser = this.chooseRandomActiveUser();
     console.log(clc.notice(this.choosenGame[this.stages[1]]));
     let answerMsg =
       this.choosenGame[this.stages[1]][0] +
-      this.chooseRandomActiveUser() +
+      randomActiveUser +
       this.choosenGame[this.stages[1]][1];
 
     this.client.say(this.channel, answerMsg);
     this.onMsg = this.client.on("message", (channel, tags, message, self) => {
       if (self) return;
-      if (channel != this.channel) return;
+      if (tags.username != randomActiveUser) return;
       this.checkMsgForAnswers(message);
     });
     this.setTimeoutGameStage(
