@@ -1,8 +1,8 @@
 {
-  "checkTimersDelay": 10,
-  "maxActiveUserTime": 120,
-  "checkChatGamesDelay": 2,
-  "minActiveUsers": 3,
+  "checkTimersDelay": 20,
+  "maxActiveUserTime": 150,
+  "checkChatGamesDelay": 20,
+  "minActiveUsers": 4,
   "timers": {
     "follower": {
       "enabled": true,
@@ -33,7 +33,7 @@
     "default": {
       "enabled": true,
       "delay": 360,
-      "minMsgValue": 15,
+      "minMsgValue": 10,
       "msgValue": 1,
       "msgCount": 0,
       "phrases": [
@@ -46,7 +46,7 @@
   "triggers": {
     "zabol": {
       "enabled": true,
-      "delay": 260,
+      "delay": 360,
       "trig_word": "osfrog",
       "msg": "OSFrog Z OSFrog a OSFrog b OSFrog o OSFrog l OSFrog"
     }
@@ -54,7 +54,6 @@
   "chatGames": {
     "options": {
       "enabled": true,
-      "onDelay": false,
       "pendingGame": "",
       "waitForAnswer": 15,
       "gameMs": 20,
