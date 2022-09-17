@@ -16,6 +16,8 @@ class BotTimer {
     this.delay = this.cmds.checkTimersDelay * 1000;
     this.minActiveUsers = this.cmds.minActiveUsers;
     this.checkChatGamesDelay = this.cmds.checkChatGamesDelay * 1000;
+    this.timersInterval;
+    this.chatGamesInterval;
   }
   initOnMessage(client, channel, message, username) {
     this.#addActiveUser(username);
@@ -23,17 +25,21 @@ class BotTimer {
     this.#countTimers(channel.slice(1), username);
   }
   initOnJoinToChannel(channel) {
+    if (this.timersInterval) clearInterval(this.timersInterval);
+    if (this.chatGamesInterval) clearInterval(this.chatGamesInterval);
     this.#checkTimersInterval(channel);
     this.#checkChatGamesInterval();
   }
-
   #checkTriggers(client, channel, msg) {
     Object.keys(this.triggers).forEach((element) => {
       let trigger = this.triggers[element];
       let trigger_word = trigger.trig_word;
       if (trigger.enabled && msg.toLowerCase().includes(trigger_word)) {
         this.triggers[element].enabled = false;
-        client.say(channel, trigger.msg);
+        console.log(channel, trigger.msg);
+        client.say(channel, trigger.msg).catch((error) => {
+          console.log("Send msg");
+        });
         this.#timeoutTrigger(element);
       }
     });
@@ -127,34 +133,35 @@ class BotTimer {
       );
     }, this.timers[timer].delay * 1000); // set timeout(f(), delay timer);}
   }
-  async #checkTimersInterval(channel) {
-    setInterval(async () => {
-      let chckDate = new Date();
-      chckDate = `${chckDate.getHours()}:${chckDate.getMinutes()}:${chckDate.getSeconds()}`;
-      Object.keys(this.timers).forEach(async (timer) => {
-        let enabled = this.timers[timer].enabled;
-        let moreThanMinMsg =
-          this.timers[timer].msgCount >= this.timers[timer].minMsgValue;
-        if (enabled && moreThanMinMsg) {
-          switch (timer) {
-            case "follower":
-              await this.twApi.getRandomFollower(channel).then((result) => {
-                this.client.say(
-                  channel,
-                  this.#returnFollowMsg(result.followed_at, result.from_name)
-                );
-              });
-              break;
-            default:
+  async #sendTimersIfAvailable(channel) {
+    Object.keys(this.timers).forEach(async (timer) => {
+      let enabled = this.timers[timer].enabled;
+      let moreThanMinMsg =
+        this.timers[timer].msgCount >= this.timers[timer].minMsgValue;
+      if (enabled && moreThanMinMsg) {
+        switch (timer) {
+          case "follower":
+            await this.twApi.getRandomFollower(channel).then((result) => {
               this.client.say(
                 channel,
-                this.#returnNormalMsg(this.timers[timer])
+                this.#returnFollowMsg(result.followed_at, result.from_name)
               );
-          }
-          this.#resetTimer(timer);
-          this.#timeoutTimer(timer);
+            });
+            break;
+          default:
+            this.client.say(channel, this.#returnNormalMsg(this.timers[timer]));
         }
-      });
+        this.#resetTimer(timer);
+        this.#timeoutTimer(timer);
+      }
+    });
+  }
+  #checkTimersInterval(channel) {
+    this.timersInterval = setInterval(() => {
+      let chckDate = new Date();
+      chckDate = `${chckDate.getHours()}:${chckDate.getMinutes()}:${chckDate.getSeconds()}`;
+
+      this.#sendTimersIfAvailable(channel);
     }, this.delay);
   }
   #addActiveUser(username) {
@@ -177,7 +184,7 @@ class BotTimer {
     });
   }
   #checkChatGamesInterval() {
-    setInterval(() => {
+    this.chatGamesInterval = setInterval(() => {
       this.#checkActiveChatUsers();
       if (this.activeUsers.size >= this.minActiveUsers) {
         this.chatGamesObj.startGameIfAvailable();
