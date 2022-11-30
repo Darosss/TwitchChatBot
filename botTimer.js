@@ -9,6 +9,7 @@ class BotTimer {
     this.cmds = commands;
     this.timers = this.cmds.timers;
     this.triggers = this.cmds.triggers;
+    this.noTriggerMsg = this.cmds.noTriggerMsg;
     this.games = this.cmds.chatGames;
     this.maxActiveUserTime = this.cmds.maxActiveUserTime;
     this.activeUsers = new Map();
@@ -30,20 +31,65 @@ class BotTimer {
     this.#checkTimersInterval(channel);
     this.#checkChatGamesInterval();
   }
+
   #checkTriggers(client, channel, msg) {
+    let foundAtLeastOne = false;
     Object.keys(this.triggers).forEach((element) => {
       let trigger = this.triggers[element];
+      let triggerChance = trigger.chance;
+
       let trigger_word = trigger.trig_word;
-      if (trigger.enabled && msg.toLowerCase().includes(trigger_word)) {
+
+      if (
+        trigger.enabled &&
+        this.#checkIfMsgContainsTriger(msg.toLowerCase(), trigger_word) &&
+        this.#triggerChance(triggerChance)
+      ) {
         this.triggers[element].enabled = false;
-        console.log(channel, trigger.msg);
-        client.say(channel, trigger.msg).catch((error) => {
-          console.log("Send msg");
+        foundAtLeastOne = true;
+
+        let trigerMsgToSend = this.#getRandomMessageTrigger(trigger.msg);
+        console.log(channel, trigerMsgToSend);
+
+        client.say(channel, trigerMsgToSend).catch((error) => {
+          console.log("Send msg err");
         });
+
         this.#timeoutTrigger(element);
       }
     });
+
+    if (!foundAtLeastOne && this.#triggerChance(this.noTriggerMsg.chance)) {
+      let noTriggerMsgSend = this.#getRandomMessageTrigger(
+        this.noTriggerMsg.msg
+      );
+
+      client.say(channel, noTriggerMsgSend).catch((error) => {
+        console.log("Send msg err");
+      });
+    }
   }
+  #getRandomMessageTrigger(msgs) {
+    let rand = Math.floor(Math.random() * msgs.length);
+    return msgs[rand];
+  }
+
+  #checkIfMsgContainsTriger(msg, triggers) {
+    let msgContainsTriger = false;
+    for (let i = 0; i < triggers.length; i++) {
+      if (msg.includes(triggers[i].toLowerCase())) {
+        return true;
+      }
+    }
+    return msgContainsTriger;
+  }
+
+  #triggerChance(percent) {
+    let chance = Math.random() * 100;
+    console.log("chance", chance, "percent", percent);
+    if (chance < percent) return true;
+  }
+
   #timeoutTrigger(trigger) {
     setTimeout(() => {
       console.log(
