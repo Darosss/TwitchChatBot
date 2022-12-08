@@ -69,6 +69,7 @@ class BotTimer {
       });
     }
   }
+
   #getRandomMessageTrigger(msgs) {
     let rand = Math.floor(Math.random() * msgs.length);
     return msgs[rand];
@@ -113,6 +114,7 @@ class BotTimer {
       ${choosenPhrase.phrases[2]}`;
     return returnMsg;
   }
+
   #formatFollowDate(format, date) {
     if (!format.includes("date")) return "";
     date = date.replace("T", " ").replace("Z", "");
@@ -134,10 +136,12 @@ class BotTimer {
     }
     return date;
   }
+
   #returnNormalMsg(from) {
     var random = Math.floor(Math.random() * from.phrases.length);
     return from.phrases[random];
   }
+
   async #countTimers(channel, chatter) {
     Object.keys(this.timers).forEach(async (element) => {
       var incrMsg = 1;
@@ -165,10 +169,12 @@ class BotTimer {
       this.timers[element].msgCount += incrMsg;
     });
   }
+
   #resetTimer(timer) {
     this.timers[timer].enabled = false;
     this.timers[timer].msgCount = 0;
   }
+
   #timeoutTimer(timer) {
     setTimeout(() => {
       this.timers[timer].enabled = true; // set time true after period of time(delay)
@@ -179,6 +185,7 @@ class BotTimer {
       );
     }, this.timers[timer].delay * 1000); // set timeout(f(), delay timer);}
   }
+
   async #sendTimersIfAvailable(channel) {
     Object.keys(this.timers).forEach(async (timer) => {
       let enabled = this.timers[timer].enabled;
@@ -202,6 +209,7 @@ class BotTimer {
       }
     });
   }
+
   #checkTimersInterval(channel) {
     this.timersInterval = setInterval(() => {
       let chckDate = new Date();
@@ -210,9 +218,11 @@ class BotTimer {
       this.#sendTimersIfAvailable(channel);
     }, this.delay);
   }
+
   #addActiveUser(username) {
     this.activeUsers.set(username, new Date());
   }
+
   #checkActiveChatUsers() {
     this.activeUsers.forEach((values, keys) => {
       const diffTime = Math.abs(new Date() - values);
@@ -229,6 +239,7 @@ class BotTimer {
       }
     });
   }
+
   #checkChatGamesInterval() {
     this.chatGamesInterval = setInterval(() => {
       this.#checkActiveChatUsers();
@@ -245,41 +256,54 @@ class ChatGames {
     this.options = this.games.options;
     this.gamesList = this.games.gamesList;
     this.easyGames = this.gamesList.easyGames;
+    this.selectionGames = this.gamesList.selectionGames;
     this.easyGamesObj = new EasyGame(client, this.easyGames, this.options);
+    this.selectionGamesObj = new SelectionGame(
+      client,
+      this.selectionGames,
+      this.options
+    );
     this.timeBetweenGames = this.options.timeBetweenGames;
     this.activeUsers = activeUsers;
   }
+
   checkTimeBetweenGames() {
     let lastGameDate = this.options.lastTimeEnded;
+    console.log(lastGameDate, "test");
     if (isNaN(lastGameDate)) return true;
     const diffTime = Math.abs(new Date() - lastGameDate);
     const diffSeconds = Math.ceil(diffTime / 1000);
     if (diffSeconds > this.timeBetweenGames) return true;
   }
+
   startGameIfAvailable() {
-    // console.log(clc.msg("Checking if game can be started"));
     if (!this.checkTimeBetweenGames()) return;
     this.startRandomGame();
   }
+
   isGameEnabled() {
     if (this.options.enabled) return true;
     this.options.pendingGame = "";
     return false;
   }
+
   isGameChoosen() {
     if (this.options.pendingGame.length > 1) return true;
     return false;
   }
+
   getTypeOfGame() {
     let typeKeys = Object.keys(this.gamesList);
     let randType = Math.floor(Math.random() * typeKeys.length);
     return typeKeys[randType];
   }
+
   startRandomGame() {
     if (!this.isGameEnabled()) return;
     if (this.isGameChoosen()) return;
 
     this.options.pendingGame = this.getTypeOfGame();
+    console.log("Choosen game", this.options.pendingGame);
     switch (this.options.pendingGame) {
       case "easyGames":
         this.options.pendingGame = "easyGames";
@@ -288,6 +312,11 @@ class ChatGames {
           "Choosen game-easy game(this should be logged once per session game)"
         );
         break;
+      case "selectionGames": {
+        this.options.pendingGame = "selectionGames";
+        this.selectionGamesObj.startSelectGame(this.activeUsers);
+        break;
+      }
       default:
         console.log("No game found - break");
         break;
@@ -309,6 +338,7 @@ class EasyGame {
     this.gameMs = this.options.gameMs * 1000;
     this.activeUsers;
   }
+
   setRandomGame() {
     let gameKeys = Object.keys(this.gamesList);
     let randGame = Math.floor(Math.random() * gameKeys.length);
@@ -321,6 +351,7 @@ class EasyGame {
       stage();
     }, delay);
   }
+
   startEasyGame(activeUsers) {
     console.log("Easy game started");
     this.activeUsers = activeUsers;
@@ -328,12 +359,14 @@ class EasyGame {
     this.options.lastTimeEnded = new Date();
     this.setTimeoutGameStage(this.startGameStage.bind(this));
   }
+
   clearGameTimeout() {
     console.log("Clearing game timeout");
     if (this.gameTimeout) {
       clearTimeout(this.gameTimeout);
     }
   }
+
   checkMsgForAnswers(msg) {
     this.choosenGame.answersList.every((answer) => {
       if (msg.includes(answer)) {
@@ -345,10 +378,12 @@ class EasyGame {
       return true;
     });
   }
+
   chooseRandomActiveUser() {
     let activeUsers = Array.from(this.activeUsers);
     return activeUsers[Math.floor(Math.random() * activeUsers.length)][0];
   }
+
   startGameStage() {
     this.client.say(this.channel, this.choosenGame[this.stages[0]]);
     console.log("START MESSAGE", this.choosenGame[this.stages[0]]);
@@ -365,7 +400,7 @@ class EasyGame {
       this.choosenGame[this.stages[1]][1];
 
     this.client.say(this.channel, answerMsg);
-    this.onMsg = this.client.on("message", (channel, tags, message, self) => {
+    this.client.on("message", (channel, tags, message, self) => {
       if (self) return;
       if (tags.username != randomActiveUser) return;
       this.checkMsgForAnswers(message);
@@ -375,6 +410,7 @@ class EasyGame {
       this.waitForAnswer
     );
   }
+
   answeredStage() {
     this.clearGameTimeout();
     console.log("Answred....END OF THE GAME");
@@ -383,6 +419,7 @@ class EasyGame {
 
     this.endGameStage();
   }
+
   notAnsweredStage() {
     console.log("not answered....END OF THE GAME");
     this.client.say(this.channel, this.choosenGame[this.stages[3]]);
@@ -390,9 +427,99 @@ class EasyGame {
     this.endGameStage();
   }
   endGameStage() {
-    //clear variables for now/ dunno if needed
     this.actualStage = "";
     this.onMsg = "";
+    this.options.pendingGame = "";
+  }
+}
+class SelectionGame {
+  constructor(client, selectionGamesList, options) {
+    this.client = client;
+    this.gamesList = selectionGamesList;
+    this.options = options;
+    this.choosenGame = "";
+    this.actualStage;
+    this.channel = this.client.opts.channels[0].slice(1);
+    this.waitForAnswer = this.options.waitForAnswer * 1000;
+    this.gameTimeout;
+    this.gameMs = this.options.gameMs * 1000;
+    this.activeUsers;
+    this.choosenRandomUser;
+    this.checkChoiceOnMsg();
+  }
+
+  setRandomChoicesGame() {
+    let gameKeys = Object.keys(this.gamesList);
+    let randGame = Math.floor(Math.random() * gameKeys.length);
+    this.choosenGame = this.gamesList[gameKeys[randGame]];
+    this.actualStage = this.choosenGame["choices"];
+  }
+
+  startSelectGame(activeUsers) {
+    console.log("Select game started");
+    this.activeUsers = activeUsers;
+    this.setRandomChoicesGame();
+    this.options.lastTimeEnded = new Date();
+    this.choosenRandomUser = this.chooseRandomActiveUser();
+    this.startGameStage();
+  }
+
+  checkMsgForChoice(msg) {
+    if (!this.actualStage) return;
+
+    Object.keys(this.actualStage).every((answer) => {
+      if (msg.includes(answer)) {
+        this.actualStage = this.actualStage[msg];
+
+        this.startGameStage();
+        return false;
+      }
+      return true;
+    });
+  }
+
+  checkChoiceOnMsg() {
+    this.onMsg = this.client.on("message", (channel, tags, message, self) => {
+      if (self) return;
+      if (tags.username != this.choosenRandomUser) return;
+      this.checkMsgForChoice(message);
+    });
+  }
+
+  chooseRandomActiveUser() {
+    let activeUsers = Array.from(this.activeUsers);
+    return activeUsers[Math.floor(Math.random() * activeUsers.length)][0];
+  }
+
+  startGameStage() {
+    setTimeout(() => {
+      this.client.say(this.channel, this.actualStage["description"]);
+
+      setTimeout(() => {
+        if (this.actualStage["choicesDesc"]) {
+          this.client.say(this.channel, this.actualStage["choicesDesc"]);
+        } else if (this.actualStage["end"]) {
+          let descFinish = this.actualStage["end"]["description"];
+          if (this.actualStage["end"]["finished"]) {
+            setTimeout(() => {
+              this.client.say(this.channel, descFinish);
+            }, Math.ceil(this.gameMs / 4));
+            setTimeout(() => {
+              this.client.say(
+                this.channel,
+                this.choosenGame["endGame"]["description"]
+              );
+            }, Math.ceil(this.gameMs / 4));
+
+            this.endGameStage();
+          }
+        }
+      }, Math.ceil(this.gameMs / 3));
+    }, this.gameMs / 2);
+  }
+
+  endGameStage() {
+    this.actualStage = "";
     this.options.pendingGame = "";
   }
 }
