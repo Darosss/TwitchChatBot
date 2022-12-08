@@ -1,64 +1,73 @@
 {
   "checkTimersDelay": 20,
   "maxActiveUserTime": 150,
-  "checkChatGamesDelay": 20,
-  "minActiveUsers": 4,
+  "checkChatGamesDelay": 5,
+  "minActiveUsers": 3,
   "timers": {
     "follower": {
-      "enabled": true,
+      "enabled": false,
       "delay": 360,
-      "minMsgValue": 70,
-      "msgValue": 15,
+      "minMsgValue": 40,
+      "msgValue": 5,
       "msgCount": 0,
       "_comment": "Format options: [date, only date, date diff](can be empty)",
       "phrases": {
         "default": {
-          "phrases": ["sadsda", "ss", "test"],
+          "phrases": [
+            "Tego tamtemu tmeu ",
+            " uzyskal dobrybyt dzieki wiecznej zmarzlinie wiecznosci ",
+            " ty też możesz miec kuycyka "
+          ],
           "format": "date days"
         },
         "default2": {
-          "phrases": ["3", "3", "4"],
-          "format": "date"
-        },
-        "default3": {
-          "phrases": ["3", "3", "4"],
-          "format": "date"
-        },
-        "default4": {
-          "phrases": ["3", "3", "4"],
-          "format": "date"
+          "phrases": [
+            "Long long long time ago ",
+            " hit sarna by his bus and followe mnie ",
+            " ago and he has really good and you can aslso hvae good dinare so give mi foloł and and sarna will git your bus. I mean dont give me follow but give him"
+          ],
+          "format": "date miliseconds"
         }
       }
     },
     "default": {
       "enabled": true,
-      "delay": 360,
-      "minMsgValue": 10,
+      "delay": 90,
+      "minMsgValue": 3,
       "msgValue": 1,
       "msgCount": 0,
-      "phrases": [
-        "THATS DEFAULT PHRASE ONE",
-        "PHRASES ARE RANDOMLY CHOOSEN BY BOT ",
-        "OFCORSE IF THERE ARE MORE THAN 1"
-      ]
+      "phrases": ["POHRASE 1", "TEST"]
     }
   },
   "triggers": {
-    "zabol": {
+    "default": {
       "enabled": true,
-      "delay": 360,
-      "trig_word": "osfrog",
-      "msg": "OSFrog Z OSFrog a OSFrog b OSFrog o OSFrog l OSFrog"
+      "chance": 100,
+      "delay": 60,
+      "trig_word": ["triger", "triger2"],
+      "msg": [
+        "No witam witam :)",
+        "Yooo :D",
+        "HeyGuys",
+        "VoHiYo",
+        "KonCha",
+        "1212"
+      ]
     }
+  },
+  "noTriggerMsg": {
+    "chance": 8,
+    "msg": ["no triger msg 1", "no triger msg2"]
   },
   "chatGames": {
     "options": {
       "enabled": true,
       "pendingGame": "",
-      "waitForAnswer": 15,
-      "gameMs": 20,
+      "waitForAnswer": 10,
+      "gameMs": 3,
       "timeBetweenGames": 360,
       "actualState": "",
+      "lastTimeEnded": "",
       "easyGamesStages": [
         "startGame",
         "checkForAnswer",
@@ -74,9 +83,82 @@
             "Mialcznik zauwaza, ze osoba ",
             " nie patrzy, wiec probuje wejsc do domu"
           ],
-          "notAnswered": "Mialcznik zapierdala mieso z domu i warczy",
-          "answered": "Mialcznik wkurwiony spierdala w podskoku i macha ogonem",
+          "notAnswered": "Mialcznik lapie mieso z domu i warczy",
+          "answered": "Mialcznik zdenerwowany ucieka w podskoku i macha ogonem",
           "answersList": ["chuju", "mialcznik", "kszzz"]
+        }
+      },
+      "selectionGames": {
+        "mialcznik": {
+          "choices": {
+            "description": "Miałcznuk musi kupić świeży chlep bo mienso bez clepa nie dobre :( (xD) Którą drogę powinien wybrać miaucznik?....",
+            "choicesDesc": " 1. LEWA SCIEZKA, 2. PRAWA SCIEZKA",
+            "1": {
+              "description": "Mialcznik spotyka na drodze dwie drogi kieruje sie do",
+              "choicesDesc": " 1. PARKU, 2. ULICY",
+              "1": {
+                "description": "MIaułcznik na swojej drodze spotyka gołombia. MIaułcznik to łowca więc nawet nie zdając sobie z tego sprawy łapie gołombia.",
+                "choicesDesc": "1. ZJEDZ GOLEMBIA, 2. ZACHOWAJ GOLEMBIA",
+
+                "1": {
+                  "description": "miaułucznik postanawia zjesc gołombia i czuje że ma szczescie wiec idzie daloej drogą do sklepu.",
+                  "end": {
+                    "finished": true,
+                    "description": "Mialcznik zjadł golempia i nikt mu nie przeszkodzil w drodze do sklepa"
+                  }
+                },
+                "2": {
+                  "description": "MIAułcznik postanawia zachować gołombia bo lubi mięso a gołomb chudy.",
+                  "end": {
+                    "finished": true,
+                    "description": "Mialcznik zachowal golembia zeby go utuczyc i zjesc i warczec"
+                  }
+                }
+              },
+              "2": {
+                "description": "MIAUłucznik spaceruje praktycznie pustą droga a niebo jest czyste.",
+                "end": {
+                  "finished": true,
+                  "description": "Mialcznik przeszedl przez ulice w spokoju i nikt go nie zaczepił"
+                }
+              }
+            },
+            "2": {
+              "description": "MIAŁUCXZNIK Spotyka na swojej drodze strasznego pana krula który zagradza mu droge. 1.HISTORIA, 2. CHINSKI UNIK, 3. NEGOCJACJE, 4. ZAPLATA",
+              "1": {
+                "description": "Powiedz... im że dzisiaj... nie....No...biba no nie? Żeeeee jutro bo... dziś to nie.",
+                "end": {
+                  "finished": true,
+                  "description": "Mialcznik stracil 2h na zrozumieniu pana Krula i zostawił go nie rozumiejac ani slowa"
+                }
+              },
+              "2": {
+                "description": "Miałcznik spotykał na swojej drodze różne przeszkody i jest także przygotowany na taką sytuacje.Postanawia zastosować Uniwersalną Nowoczesną Irytującą i Koordynowaną Cholernie Hałaśliwą Intonacje Niskich Sapów Króla Iguan czyli w skrócie UNIK CHINSKI.我没有那么多猫叫声晚上去烧我的草你国王",
+                "end": {
+                  "finished": true,
+                  "description": "Unik okazal sie byc swietnym sposobem na zaimponowanie czlowiekom dlatego zaprowadzili mialcznika do sklepa"
+                }
+              },
+              "3": {
+                "description": "Krulu wiem czego kcesz.  jaśli mnie przepuscisz to przyniose Ci coś co kcesz :<",
+                "end": {
+                  "finished": true,
+                  "description": "Krul nic nie chcial wiec puscij mialcznika przed siebie podgwizdujac mu pod nosem lalalal"
+                }
+              },
+              "4": {
+                "description": "Krulu ja Ci gołombia żem przyniusł i warcze i macham ogonem ale przejś chce  wiec ide.",
+                "end": {
+                  "finished": true,
+                  "description": "Krul mu powiedzial: 'A co ja pies?' powyzywal i sie przewrocil a mialcznik poszedl w swoja strone"
+                }
+              }
+            }
+          },
+
+          "endGame": {
+            "description": "Milacznik przetrwal i zajada kielbase ze sklepu"
+          }
         }
       }
     }
