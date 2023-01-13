@@ -1,0 +1,86 @@
+.twitch-chat-header {
+  background-color: rgb(87, 85, 85);
+  width: 40%;
+  height: 60vmin;
+  margin-left: 1rem;
+}
+
+.twitch-chat-messages {
+  height: 80%;
+  flex-flow: row;
+  overflow-y: scroll;
+  border-top: 0.2rem solid black;
+}
+
+.chat-message {
+  display: flex;
+  width: 100%;
+}
+
+.chat-message:not(:first-child) {
+  border-top: 0.1rem solid black;
+}
+
+.twitch-chat-messages div:first-child {
+  border-left: 0;
+}
+
+.twitch-chat-messages .time {
+  color: gold;
+  font-size: 0.9rem;
+  font-weight: 500;
+  width: 15%;
+}
+
+.chat-message .username {
+  color: black;
+
+  border-left: 0.1rem solid black;
+  font-size: 1rem;
+  overflow: hidden;
+  font-weight: 900;
+  width: 25%;
+}
+
+.chat-message .message {
+  color: gold;
+  width: 60%;
+  font-size: 1rem;
+  text-align: left;
+  overflow: auto;
+  font-weight: 700;
+}
+
+.chat-message div {
+  padding-left: 0.5rem;
+}
+
+.twitch-chat-send-message {
+  margin-left: 0.2rem;
+  height: 10%;
+  width: 100%;
+}
+
+.twitch-chat-textarea {
+  background-color: gray;
+  min-width: 45%;
+  max-width: 45%;
+  min-height: 100%;
+  max-height: 100%;
+  width: 100%;
+  float: left;
+  font-size: 1.2rem;
+}
+
+.twitch-chat-btn-send-message {
+  background-color: gray;
+  border: 0;
+  margin-left: 0.2rem;
+  height: 2.5rem;
+  float: left;
+  width: 49%;
+}
+
+.twitch-chat-btn-send-message:active {
+  background-color: darkgray;
+}
