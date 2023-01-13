@@ -19,7 +19,11 @@ class BotLog {
       // for (let i = 0; i < this.chanels.length; i++) {
       this.chanels.forEach((channel) => {
         channel = channel.slice(1);
-        dir[channel] = `./${this.config.folderChannels}/${channel}`;
+        const folderOfProgram = __dirname.slice(0, __dirname.lastIndexOf("\\"));
+        dir[
+          channel
+        ] = `${folderOfProgram}/${this.config.folderChannels}/${channel}`;
+
         this.#createUsersJson(dir[channel], channel, "users");
         this.#createSentencesJson(dir[channel], channel, today, "sentences");
       });
@@ -27,6 +31,7 @@ class BotLog {
   }
   #createUsersJson(dir, channel, suffix) {
     this.usersDir[channel] = `${dir}/${channel}-${suffix}.json`;
+
     this.#createNewJsonFile(dir, this.usersDir[channel]);
     this.usersJson[channel] = require(this.usersDir[channel]);
   }
@@ -44,7 +49,7 @@ class BotLog {
     }
     if (fs.existsSync(userJson)) {
       // path exists
-      console.log("exists:", userJson);
+      // console.log("exists:", userJson);
     } else {
       let result = [];
       const jsonString = JSON.stringify(result);
@@ -111,4 +116,4 @@ class BotLog {
     this.#rewriteJson(this.logMsgDir[channel], this.logMsg[channel]);
   }
 }
-module.exports = BotLog;
+export default BotLog;
