@@ -13,20 +13,8 @@
       "_comment": "Format options: [date, only date, date diff](can be empty)",
       "phrases": {
         "default": {
-          "phrases": [
-            "Tego tamtemu tmeu ",
-            " uzyskal dobrybyt dzieki wiecznej zmarzlinie wiecznosci ",
-            " ty też możesz miec kuycyka "
-          ],
+          "phrases": ["123", "123", "123"],
           "format": "date days"
-        },
-        "default2": {
-          "phrases": [
-            "Long long long time ago ",
-            " hit sarna by his bus and followe mnie ",
-            " ago and he has really good and you can aslso hvae good dinare so give mi foloł and and sarna will git your bus. I mean dont give me follow but give him"
-          ],
-          "format": "date miliseconds"
         }
       }
     },
@@ -36,28 +24,25 @@
       "minMsgValue": 3,
       "msgValue": 1,
       "msgCount": 0,
-      "phrases": ["POHRASE 1", "TEST"]
+      "phrases": ["Nnadal istnieje?"]
     }
   },
   "triggers": {
-    "default": {
+    "defaultcostam": {
       "enabled": true,
       "chance": 100,
-      "delay": 60,
-      "trig_word": ["triger", "triger2"],
+      "delay": 15,
+      "trig_word": ["ranga", "range", "rangę"],
       "msg": [
-        "No witam witam :)",
-        "Yooo :D",
-        "HeyGuys",
-        "VoHiYo",
-        "KonCha",
-        "1212"
+        "Bazalt",
+        "Byłem kiedyś w brązie...",
+        "^? Żołnierz, 16k HP, Precyzyjna flinta"
       ]
     }
   },
   "noTriggerMsg": {
     "chance": 8,
-    "msg": ["no triger msg 1", "no triger msg2"]
+    "msg": ["Nnadal istnieje?"]
   },
   "chatGames": {
     "options": {
@@ -78,14 +63,14 @@
     "gamesList": {
       "easyGames": {
         "mialcznik": {
-          "startGame": "*Mialcznik zaczyna sprawdzac wejscie do domu*....",
+          "startGame": "*Game start*....",
           "checkForAnswer": [
-            "Mialcznik zauwaza, ze osoba ",
-            " nie patrzy, wiec probuje wejsc do domu"
+            "Game sees that person ",
+            " do not see so game goes somewhere"
           ],
-          "notAnswered": "Mialcznik lapie mieso z domu i warczy",
-          "answered": "Mialcznik zdenerwowany ucieka w podskoku i macha ogonem",
-          "answersList": ["chuju", "mialcznik", "kszzz"]
+          "notAnswered": "Game doing sth when not answered",
+          "answered": "Game run because answer",
+          "answersList": ["run", "wtf", "bro"]
         }
       },
       "selectionGames": {
