@@ -1,26 +1,22 @@
-import express from "express";
 import dotenv from "dotenv";
 import * as ClientTmi from "./twitch-tmi";
 import http from "http";
-import cors from "cors";
-
 import localSocket from "./local-socket";
+import initMongoDataBase from "./mongoDBConn";
+import expressApp from "./app";
 
 dotenv.config();
 
-const app = express();
-app.use(express.json());
-app.use(cors());
-const port = 5000;
+initMongoDataBase();
 
+const app = expressApp();
 const server = http.createServer(app);
 
 const localSocketIO = localSocket(server);
 
 const TwitchTmi = ClientTmi.default(localSocketIO);
-
 TwitchTmi.connect();
 
-server.listen(port, () => {
-  console.log("listening on *:", port);
+server.listen(process.env.BACKEND_PORT, () => {
+  console.log("listening on *:", process.env.BACKEND_PORT);
 });
