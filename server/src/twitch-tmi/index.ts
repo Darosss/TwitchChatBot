@@ -52,14 +52,24 @@ const clientTmi = (
     console.log(`[${wholeMessage}] - ${username}:${msg}`);
   }
 
-  client.on("message", (channel, tags, message, self) => {
-    socket.emit("messageServer", new Date(), tags.username!, message);
-    logMsg(tags.username!, message);
+  client.on("message", async (channel, tags, message, self) => {
+    let channelName = channel.slice(1);
+    let senderName = tags.username || "undefined";
+
+    socket.emit("messageServer", new Date(), senderName, message); // emit for socket
+
+    logMsg(senderName, message);
+
     if (self) return; //echoed msg from bot
-    botLogObj.countMessages(channel.slice(1), tags.username);
-    botLogObj.logMessages(channel.slice(1), tags.username, message);
-    if (tags.username == config.bot_username) return;
-    botTimerObj.initOnMessage(client, channel, message, tags.username);
+
+    botLogObj.countMessages(channelName, senderName);
+    botLogObj.logMessages(channelName, senderName, message);
+
+    const userId = await botLogObj.isUserInDB(senderName);
+    await botLogObj.saveMessageToDatabase(userId, message);
+
+    if (senderName == config.bot_username) return;
+    botTimerObj.initOnMessage(client, channel, message, senderName);
   });
 
   return client;
