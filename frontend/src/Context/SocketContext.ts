@@ -5,10 +5,9 @@ import {
   ClientToServerEvents,
 } from "../../../libs/types";
 
-export const socketConn = io(`http://localhost:5000`) as Socket<
-  ServerToClientEvents,
-  ClientToServerEvents
->;
+export const socketConn = io(
+  process.env.REACT_APP_SOCKET_URL as string
+) as Socket<ServerToClientEvents, ClientToServerEvents>;
 
 export const SocketContext = React.createContext<
   Socket<ServerToClientEvents, ClientToServerEvents>
