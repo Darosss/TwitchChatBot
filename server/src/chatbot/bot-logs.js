@@ -1,3 +1,6 @@
+import { Message } from "../models/message.model";
+import { User } from "../models/user.model";
+
 class BotLog {
   constructor(config) {
     this.config = config;
@@ -16,7 +19,6 @@ class BotLog {
       var today = new Date();
       today = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
       var dir = [];
-      // for (let i = 0; i < this.chanels.length; i++) {
       this.chanels.forEach((channel) => {
         channel = channel.slice(1);
         const folderOfProgram = __dirname.slice(0, __dirname.lastIndexOf("\\"));
@@ -114,6 +116,44 @@ class BotLog {
       date_msg: this.#formatDateYMDHMS(),
     });
     this.#rewriteJson(this.logMsgDir[channel], this.logMsg[channel]);
+  }
+
+  async saveMessageToDatabase(senderId, message) {
+    const newMessage = new Message({
+      message: message,
+      date: new Date(),
+      owner: senderId,
+    });
+    try {
+      newMessage.save();
+    } catch (err) {
+      console.log(
+        "Couldnt save message. Anyway message should be saved in local file."
+      );
+    }
+  }
+
+  async isUserInDB(username) {
+    const user = await User.findOne({ username: username });
+    if (!user) {
+      return await this.#createNewDBUser(username);
+    } else {
+      return user.id;
+    }
+  }
+
+  async #createNewDBUser(username) {
+    const newUser = new User({ username: username });
+    try {
+      await newUser.save((err, userDoc) => {
+        console.log(err, "err save");
+        console.log(userDoc, "user new");
+      });
+
+      return newUser.id;
+    } catch (err) {
+      return false;
+    }
   }
 }
 export default BotLog;
