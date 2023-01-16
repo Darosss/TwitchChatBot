@@ -66,11 +66,15 @@ class BotStatisticDatabase {
 
     switch (messageWithoutPrefix) {
       case "points": {
-        message = `@${user.username}, your points: ${user.points}`;
+        message = `@${
+          user.username
+        }, your points: ${user.points.toLocaleString()}`;
         break;
       }
       case "messages" || "msgs": {
-        message = `@${user.username}, your messages: ${user.messageCount}`;
+        message = `@${
+          user.username
+        }, your messages: ${user.messageCount.toLocaleString()}`;
         break;
       }
       default:
