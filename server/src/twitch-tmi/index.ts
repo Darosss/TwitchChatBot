@@ -54,6 +54,11 @@ const clientTmi = (
     console.log(`[${wholeMessage}] - ${username}:${msg}`);
   }
 
+  client.on("join", async (channel, username, self) => {
+    console.log(`${username} joined the chat -- checking if user is in DB`);
+    await botStatisticDatabase.isUserInDB(username);
+  });
+
   client.on("message", async (channel, tags, message, self) => {
     let channelName = channel.slice(1);
     let senderName = tags.username || "undefined";
