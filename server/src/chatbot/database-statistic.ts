@@ -1,11 +1,17 @@
 import { ObjectId } from "mongoose";
 import { Message } from "../models/message.model";
+import { IUser } from "../models/types";
 import { User } from "../models/user.model";
 
-class BotStatisticDatabase {
-  constructor() {}
+type userId = string | ObjectId;
 
-  async saveMessageToDatabase(senderId: string | ObjectId, message: string) {
+class BotStatisticDatabase {
+  commandPrefix: string;
+  constructor() {
+    this.commandPrefix = "--";
+  }
+
+  async saveMessageToDatabase(senderId: userId, message: string) {
     const newMessage = new Message({
       message: message,
       date: new Date(),
@@ -40,15 +46,39 @@ class BotStatisticDatabase {
     }
   }
 
-  async onMessageActions(userId: string | ObjectId) {
-    const pointIncrement = 1;
+  async updateUserStatistics(userId: userId) {
+    const pointsIncrement = 1;
 
     await User.findByIdAndUpdate(userId, {
-      $inc: { points: pointIncrement, messageCount: 1 },
+      $inc: { points: pointsIncrement, messageCount: 1 },
       // add points by message,       count messages
       $set: { lastSeen: new Date() },
       // set last seen to new Date()
     });
+  }
+
+  async checkMessageForCommand(user: IUser, message: string) {
+    if (!message.startsWith(this.commandPrefix)) return false;
+    let messageWithoutPrefix = message.slice(
+      this.commandPrefix.length,
+      message.length
+    );
+
+    switch (messageWithoutPrefix) {
+      case "points": {
+        message = `@${user.username}, your points: ${user.points}`;
+        break;
+      }
+      case "messages" || "msgs": {
+        message = `@${user.username}, your messages: ${user.messageCount}`;
+        break;
+      }
+      default:
+        message = `Not found command. Check commands with: ${this.commandPrefix}commands`;
+        break;
+    }
+
+    return message;
   }
 }
 
