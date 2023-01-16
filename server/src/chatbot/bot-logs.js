@@ -91,6 +91,7 @@ class BotLog {
         if (user.name == chatter) {
           foundUser = true;
           user.messages++;
+          user.points++;
           user.lastSeen = this.#formatDateYMDHMS();
         }
       }
@@ -101,6 +102,7 @@ class BotLog {
       this.usersJson[channel].push({
         name: chatter,
         messages: 1,
+        points: 1,
         lastSeen: this.#formatDateYMDHMS,
       });
     }
