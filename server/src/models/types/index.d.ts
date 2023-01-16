@@ -4,6 +4,8 @@ export interface IUser {
   username: string;
   createdAt: Date;
   points: Number;
+  lastSeen: Date;
+  messageCount: Number;
 }
 
 export type IUserDocument = IUser & Document;
