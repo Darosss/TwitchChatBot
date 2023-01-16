@@ -74,8 +74,14 @@ const clientTmi = (
     if (!user) return;
 
     await botStatisticDatabase.saveMessageToDatabase(user.id, message);
+    await botStatisticDatabase.updateUserStatistics(user.id);
 
-    await botStatisticDatabase.onMessageActions(user.id);
+    const commandAnswer = await botStatisticDatabase.checkMessageForCommand(
+      user,
+      message
+    );
+
+    commandAnswer ? client.say(channel, commandAnswer) : null;
 
     if (self) return; //echoed msg from bot
 
