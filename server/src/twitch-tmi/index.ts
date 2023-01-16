@@ -10,6 +10,7 @@ import {
   ServerToClientEvents,
   SocketData,
 } from "../../../libs/types";
+import BotStatisticDatabase from "../chatbot/database-statistic";
 require("dotenv").config();
 
 const channelsToJoin: string[] = config["channels"];
@@ -35,6 +36,7 @@ const clientTmi = (
   });
   const botLogObj = new BotLog(config);
   const botTimerObj = new BotTimer(client, bot_commands);
+  const botStatisticDatabase = new BotStatisticDatabase();
 
   client.on("connected", () => {
     console.log("CONNECTED - I set the intervals now");
@@ -60,13 +62,17 @@ const clientTmi = (
 
     logMsg(senderName, message);
 
-    if (self) return; //echoed msg from bot
-
     botLogObj.countMessages(channelName, senderName);
     botLogObj.logMessages(channelName, senderName, message);
 
-    const userId = await botLogObj.isUserInDB(senderName);
-    await botLogObj.saveMessageToDatabase(userId, message);
+    const user = await botStatisticDatabase.isUserInDB(senderName);
+    if (!user) return;
+
+    await botStatisticDatabase.saveMessageToDatabase(user.id, message);
+
+    await botStatisticDatabase.onMessageActions(user.id);
+
+    if (self) return; //echoed msg from bot
 
     if (senderName == config.bot_username) return;
     botTimerObj.initOnMessage(client, channel, message, senderName);
