@@ -40,9 +40,14 @@ class BotStatisticDatabase {
     }
   }
 
-  async addMessagePoints(userId: string | ObjectId) {
+  async onMessageActions(userId: string | ObjectId) {
+    const pointIncrement = 1;
+
     await User.findByIdAndUpdate(userId, {
-      $inc: { points: 1 },
+      $inc: { points: pointIncrement, messageCount: 1 },
+      // add points by message,       count messages
+      $set: { lastSeen: new Date() },
+      // set last seen to new Date()
     });
   }
 }
