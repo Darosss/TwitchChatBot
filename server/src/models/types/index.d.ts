@@ -3,6 +3,7 @@ import { Date, Document, Types } from "mongoose";
 export interface IUser {
   username: string;
   createdAt: Date;
+  points: Number;
 }
 
 export type IUserDocument = IUser & Document;
