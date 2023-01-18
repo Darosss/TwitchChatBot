@@ -1,9 +1,10 @@
 import React, { MouseEvent, useContext, useEffect, useState } from "react";
 import { SocketContext } from "../../Context/SocketContext";
+import Message from "../Message";
 
 import "./style.css";
 
-function TwitchChat() {
+export default function TwitchChat() {
   const socket = useContext(SocketContext);
 
   const [messageToSend, setMessageToSend] = useState("");
@@ -32,12 +33,12 @@ function TwitchChat() {
     return () => {
       socket.off("messageServer");
     };
-  }, []);
+  }, [socket]);
 
   return (
     <>
       <div className="twitch-chat-header">
-        CHAT BOOKSAREFUNSOMETIMES
+        <div className="twitch-chat-title">STREAM CHAT</div>
         <div className="twitch-chat-messages">
           {messages
             ? [...Object.values(messages)]
@@ -49,16 +50,12 @@ function TwitchChat() {
                 })
                 .map((message) => {
                   return (
-                    <div
-                      key={message.date.toString() + message.username}
-                      className="chat-message"
-                    >
-                      <div className="time">
-                        {message.date?.toString().split("T")[1].split(".")[0]}
-                      </div>
-                      <div className="username">{message.username}</div>
-                      <div className="message">{message.message}</div>
-                    </div>
+                    <Message
+                      key={message.date + message.username}
+                      date={message.date}
+                      username={message.username}
+                      message={message.message}
+                    />
                   );
                 })
             : null}
@@ -80,5 +77,3 @@ function TwitchChat() {
     </>
   );
 }
-
-export default TwitchChat;
