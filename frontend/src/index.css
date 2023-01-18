@@ -1,13 +1,25 @@
+:root {
+  --base-bg-color-chat: #18181b;
+  --base-bg-color-border: rgb(74, 74, 74);
+  --base-bg-hover-color-chat: hsla(0, 0%, 100%, 0.16);
+  --base-bg-textarea-chat: hsla(0, 0%, 81%, 0.456);
+  --base-color-time-message: #f7f7f8;
+  --base-color-username-message: red;
+  --base-color-message: white;
+  --base-color-button-action: #9147ff;
+  --base-color-button-action-active: #602dab;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
