@@ -11,6 +11,7 @@ const getMessages = async (req: Request, res: Response) => {
     const messages = await Message.find()
       .limit(limit * 1)
       .skip((page - 1) * limit)
+      .populate("owner", { username: 1 })
       .select({ __v: 0 })
       .exec();
 
