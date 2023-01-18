@@ -5,6 +5,7 @@ import initRoutes from "./routes";
 const expressApp = () => {
   const app = express();
   app.use(express.json());
+  app.set("json spaces", 2);
   app.use(cors({ origin: "*", methods: ["POST", "GET"] }));
 
   initRoutes(app);
