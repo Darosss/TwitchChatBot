@@ -1,0 +1,42 @@
+#messages-list {
+  font-size: 0.9rem;
+  height: 90vh;
+  overflow-y: scroll;
+}
+
+#messages-list::-webkit-scrollbar {
+  display: none;
+}
+
+#table-messages-list tbody {
+  border: 2px solid black;
+  overflow-y: scroll;
+}
+
+#table-messages-list tbody td {
+  border-top: 0.1rem solid var(--base-bg-color-border);
+}
+
+#messages-list .pagination {
+  border: 1px solid;
+}
+
+tr {
+  border: 2rem solid var(--base-bg-color-border);
+}
+
+td.message-time {
+  color: var(--base-color-time-message);
+  width: 10%;
+}
+td.message-username {
+  color: var(--base-color-username-message);
+  width: 10%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+td.message {
+  color: var(--base-color-message);
+  overflow-y: auto;
+  width: 80%;
+}
