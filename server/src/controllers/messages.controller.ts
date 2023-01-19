@@ -20,7 +20,8 @@ const getMessages = async (req: Request, res: Response) => {
     res.status(200).send({
       messages,
       totalPages: Math.ceil(count / limit),
-      currentPage: page,
+      messageCount: count,
+      currentPage: Number(page),
     });
   } catch (error) {
     console.log(error);
