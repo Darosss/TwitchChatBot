@@ -2,7 +2,7 @@ interface ServerToClientEvents {
   noArg: () => void;
   withAck: (d: string, callback: (e: number) => void) => void;
   messageServer: (date: Date, username: string, message: string) => void;
-  playRedemptionSound: (data: ISoundData) => void;
+  onRedemption: (data: ISoundData) => void;
 }
 
 interface ClientToServerEvents {
@@ -16,6 +16,7 @@ interface InterServerEvents {
 interface ISoundData {
   rewardId: string;
   userId: string;
+  userName: string;
   userDisplayName: string;
   redemptionDate: Date;
   rewardTitle: string;
