@@ -5,8 +5,13 @@ import TwitchChat from "../TwitchChat";
 import Users from "../Users";
 import Overlay from "../Overlay";
 import MessagesList from "../MessagesList";
+import useFetch from "../../hooks/useFetch.hook";
 
 export default function SideBar() {
+  const { data: authUrlRes, error: authUrlError } = useFetch<string>(
+    process.env.REACT_APP_BACKEND_URL + "/twitch-authorize-url"
+  );
+
   return (
     <BrowserRouter>
       <div className="navbar">
@@ -22,6 +27,11 @@ export default function SideBar() {
           </li>
           <li>
             <Link to="/chat">Chat</Link>
+          </li>
+          <li>
+            <a href={authUrlRes}>
+              {authUrlError ? "URL Error" : "Login to twitch"}
+            </a>
           </li>
         </ul>
       </div>
