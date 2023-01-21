@@ -1,0 +1,32 @@
+#overlay-redemption {
+  align-self: center;
+  width: 80vw;
+  height: 50vh;
+  font-size: 7vmin;
+  animation-name: change-colors;
+  animation-duration: 15s;
+  animation-iteration-count: infinite;
+}
+#overlay-redemption img {
+  float: left;
+}
+
+.overlay-hidden {
+  border: 0px;
+  visibility: hidden;
+}
+
+@keyframes change-colors {
+  0% {
+    color: red;
+  }
+  25% {
+    color: yellow;
+  }
+  50% {
+    color: blue;
+  }
+  100% {
+    color: green;
+  }
+}
