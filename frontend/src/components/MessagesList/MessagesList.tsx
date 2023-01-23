@@ -51,9 +51,13 @@ export default function MessagesList() {
                 <tr key={message._id + new Date()}>
                   <td className="message-time">{formatDate(message.date)}</td>
                   <td className="message-username">
-                    <a href={"./" + (message.owner as IUser)._id}>
-                      {(message.owner as IUser).username}
-                    </a>
+                    {!userId ? (
+                      <a href={"./messages/" + (message.owner as IUser)._id}>
+                        {(message.owner as IUser).username}
+                      </a>
+                    ) : (
+                      (message.owner as IUser).username
+                    )}
                   </td>
                   <td className="message" colSpan={4}>
                     {message.message}
