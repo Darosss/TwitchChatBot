@@ -1,8 +1,11 @@
 import "./style.css";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { IMessage, IUser } from "@backend/models/types";
 import useFetch from "../../hooks/useFetch.hook";
 import Pagination from "../Pagination";
+import { useParams } from "react-router-dom";
+import PreviousPage from "../PreviousPage";
+import formatDate from "../../utils/formatDate";
 
 interface IMessagesList {
   messages: IMessage[];
@@ -12,20 +15,26 @@ interface IMessagesList {
 }
 
 export default function MessagesList() {
+  const { userId } = useParams();
+
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
-  const { data, error } = useFetch<IMessagesList>(
-    `${process.env.REACT_APP_BACKEND_URL}/messages?page=${currentPageLoc}&limit=${pageSize}`
-  );
+  const messagesUrl =
+    process.env.REACT_APP_BACKEND_URL +
+    `/messages` +
+    (userId ? `/${userId}` : ``) +
+    `?page=${currentPageLoc}&limit=${pageSize}`;
+  const { data, error } = useFetch<IMessagesList>(messagesUrl);
 
-  if (error) return <p>There is an error.</p>;
+  if (error) return <p>There is an error. {error.message}</p>;
   if (!data) return <p>Loading...</p>;
 
-  const { messages, totalPages, messageCount, currentPage } = data;
+  const { messages, messageCount, currentPage } = data;
 
   return (
     <>
+      <PreviousPage />
       <div id="messages-list">
         <table id="table-messages-list">
           <thead>
@@ -37,16 +46,14 @@ export default function MessagesList() {
           </thead>
 
           <tbody>
-            {data.messages.map((message) => {
+            {messages.map((message) => {
               return (
                 <tr key={message._id + new Date()}>
-                  <td className="message-time">
-                    {message.date.toLocaleString().split("T")[0] +
-                      " " +
-                      message.date.toLocaleString().split("T")[1].split(".")[0]}
-                  </td>
+                  <td className="message-time">{formatDate(message.date)}</td>
                   <td className="message-username">
-                    {(message.owner as unknown as IUser).username}
+                    <a href={"./" + (message.owner as IUser)._id}>
+                      {(message.owner as IUser).username}
+                    </a>
                   </td>
                   <td className="message" colSpan={4}>
                     {message.message}
