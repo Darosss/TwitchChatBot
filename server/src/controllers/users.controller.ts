@@ -12,6 +12,7 @@ const getUsers = async (req: Request, res: Response) => {
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .select({ __v: 0 })
+      .sort({ lastSeen: -1 })
       .exec();
 
     const count = await User.countDocuments();
@@ -19,7 +20,8 @@ const getUsers = async (req: Request, res: Response) => {
     res.status(200).send({
       users,
       totalPages: Math.ceil(count / limit),
-      currentPage: page,
+      usersCount: count,
+      currentPage: Number(page),
     });
   } catch (error) {
     console.log(error);
