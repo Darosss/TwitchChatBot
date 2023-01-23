@@ -1,46 +1,83 @@
-import React from "react";
+import React, { useState } from "react";
 import useFetch from "../../hooks/useFetch.hook";
 import "./style.css";
 import { IUser } from "@backend/models/types/";
+import Pagination from "../Pagination";
+import formatDate from "../../utils/formatDate";
 
 interface IUsersRes {
   users: IUser[];
   totalPages: number;
+  usersCount: number;
   currentPage: number;
 }
 
 export default function Users() {
+  const [currentPageLoc, setCurrentPageLoc] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+
   const { data, error } = useFetch<IUsersRes>(
-    `${process.env.REACT_APP_BACKEND_URL}/users`
+    `${process.env.REACT_APP_BACKEND_URL}/users?page=${currentPageLoc}&limit=${pageSize}&`
   );
 
   if (error) return <p>There is an error.</p>;
   if (!data) return <p>Loading...</p>;
 
+  console.log(data, "l");
+  const { users, usersCount, currentPage } = data;
+
   return (
     <>
-      <table>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Last seen</th>
-            <th>Message count</th>
-            <th>Points</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.users.map((user) => {
-            return (
-              <tr key={user._id}>
-                <td>{user.username}</td>
-                <td>{user.lastSeen.toLocaleString()}</td>
-                <td>{user.messageCount.toLocaleString()}</td>
-                <td>{user.points.toLocaleString()}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div id="users-list">
+        <table id="table-users-list">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Achievements</th>
+              <th>Last seen</th>
+              <th>Created</th>
+              <th>Message count</th>
+              <th>Points</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {users.map((user) => {
+              return (
+                <tr key={user._id}>
+                  <td className="users-list-username">
+                    <a href={"messages/" + user._id}>{user.username} </a>
+                  </td>
+                  <td className="users-list-achievements"></td>
+                  <td className="users-list-last-seen">
+                    {formatDate(user.lastSeen)}
+                  </td>
+                  <td className="users-list-created-at">
+                    {formatDate(user.createdAt)}
+                  </td>
+                  <td className="users-list-message-count">
+                    {user.messageCount.toLocaleString()}
+                  </td>
+                  <td className="users-list-points">
+                    {user.points.toLocaleString()}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div className="pagination">
+        <Pagination
+          className="pagination-bar"
+          currentPage={currentPage}
+          totalCount={usersCount}
+          pageSize={pageSize}
+          onPageSizeChange={(pageSize) => setPageSize(pageSize)}
+          onPageChange={(page) => setCurrentPageLoc(page)}
+          siblingCount={1}
+        />
+      </div>
     </>
   );
 }
