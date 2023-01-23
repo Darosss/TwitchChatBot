@@ -1,0 +1,20 @@
+.user-messages-btn {
+  width: 10vw;
+  font-size: 1rem;
+  background-color: var(--base-bg-color-border);
+  color: var(--base-color-link);
+  font-weight: 700;
+}
+
+.user-messages-btn:hover {
+  background-color: var(--base-color-link);
+  color: var(--base-bg-color-border);
+}
+
+.profile-details {
+  width: 90vw;
+}
+
+.profile-details tr td:first-child {
+  width: 20vw;
+}
