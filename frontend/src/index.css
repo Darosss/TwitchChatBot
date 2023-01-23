@@ -4,10 +4,11 @@
   --base-bg-hover-color-chat: hsla(0, 0%, 100%, 0.16);
   --base-bg-textarea-chat: hsla(0, 0%, 81%, 0.456);
   --base-color-time-message: #f7f7f8;
-  --base-color-username-message: red;
+  --base-color-username-message: #ff0000;
   --base-color-message: white;
   --base-color-button-action: #9147ff;
   --base-color-button-action-active: #602dab;
+  --base-color-link: #afa241;
 }
 
 body {
@@ -19,7 +20,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body::-webkit-scrollbar {
+  display: none;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+a {
+  text-decoration: none;
+  color: hsl(var(--base-color-username-message), 100%, 50%);
+}
+
+a:visited {
+  color: hsl(var(--base-color-username-message), 32%, 50%);
 }
