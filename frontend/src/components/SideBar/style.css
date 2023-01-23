@@ -1,4 +1,18 @@
 .navbar {
   right: -20vw;
   position: absolute;
+  height: 100vh;
+  background-color: var(--base-bg-color-border);
+}
+
+.navbar ul {
+  list-style: none;
+}
+
+.navbar a {
+  color: var(--base-color-link);
+}
+
+.navbar a:visited {
+  color: var(--base-color-link);
 }
