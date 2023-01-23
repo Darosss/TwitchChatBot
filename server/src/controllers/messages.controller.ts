@@ -42,6 +42,7 @@ const getUserMessages = async (req: Request, res: Response) => {
   try {
     const messages = await Message.find({ owner: id })
       .limit(limit * 1)
+      .sort({ date: -1 })
       .skip((page - 1) * limit)
       .populate({
         path: "owner",
