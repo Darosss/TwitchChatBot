@@ -21,20 +21,18 @@
   border: 1px solid;
 }
 
-tr {
-  border: 2rem solid var(--base-bg-color-border);
-}
-
 td.message-time {
   color: var(--base-color-time-message);
   width: 10%;
 }
+
 td.message-username {
   color: var(--base-color-username-message);
   width: 10%;
   overflow-x: auto;
   overflow-y: hidden;
 }
+
 td.message {
   color: var(--base-color-message);
   overflow-y: auto;
