@@ -4,9 +4,10 @@ export interface IUser {
   _id: string | ObjectId;
   username: string;
   createdAt: Date;
-  points: Number;
+  points: number;
   lastSeen: Date;
-  messageCount: Number;
+  messageCount: number;
+  notes?: string[];
 }
 
 export type IUserDocument = IUser & Document;
