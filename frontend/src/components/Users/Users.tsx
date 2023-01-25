@@ -23,7 +23,6 @@ export default function Users() {
   if (error) return <p>There is an error.</p>;
   if (!data) return <p>Loading...</p>;
 
-  console.log(data, "l");
   const { users, usersCount, currentPage } = data;
 
   return (
@@ -46,7 +45,7 @@ export default function Users() {
               return (
                 <tr key={user._id}>
                   <td className="users-list-username">
-                    <a href={"messages/" + user._id}>{user.username} </a>
+                    <a href={"user/" + user._id}>{user.username} </a>
                   </td>
                   <td className="users-list-achievements"></td>
                   <td className="users-list-last-seen">
