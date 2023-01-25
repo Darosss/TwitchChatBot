@@ -1,5 +1,6 @@
 import "./style.css";
 import React from "react";
+import formatDate from "../../utils/formatDate";
 
 export default function Message(props: {
   date: Date;
@@ -10,7 +11,7 @@ export default function Message(props: {
 
   return (
     <div className="chat-message">
-      <div className="time">{date.toString().split("T")[1].split(".")[0]}</div>
+      <div className="time">{formatDate(date)}</div>
       <div className="username">{username}</div>
       <div className="message">{message}</div>
     </div>
