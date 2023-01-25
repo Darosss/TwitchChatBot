@@ -66,4 +66,32 @@ const getUserMessages = async (req: Request, res: Response) => {
   }
 };
 
-export { getMessages, getUserMessages };
+const getLatestAndFirstMsgs = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { limit = 6 } = req.query as unknown as IQueryMsgs;
+
+  try {
+    const messages = await Message.find({ owner: id })
+      .sort({ date: 1 })
+      .populate({
+        path: "owner",
+        select: "username",
+      })
+      .select({ __v: 0 })
+      .exec();
+
+    const firstMessages = messages.slice(0, limit);
+    const latestMessages = messages.slice(-limit);
+
+    res.status(200).send({
+      firstMessages: firstMessages,
+      latestMessages: latestMessages,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(200).send({ message: "Couldn't get messages" });
+  }
+};
+
+export { getMessages, getUserMessages, getLatestAndFirstMsgs };
