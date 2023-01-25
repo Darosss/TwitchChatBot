@@ -8,6 +8,10 @@
   display: none;
 }
 
+#table-users-list {
+  width: 100vw;
+}
+
 #table-users-list tbody {
   border: 2px solid black;
   overflow-y: scroll;
