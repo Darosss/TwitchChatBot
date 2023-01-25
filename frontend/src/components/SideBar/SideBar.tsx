@@ -7,6 +7,7 @@ import Overlay from "../Overlay";
 import MessagesList from "../MessagesList";
 import useFetch from "../../hooks/useFetch.hook";
 import UserProfile from "../UserProfile";
+import resetWindowScroll from "../../utils/resetScroll";
 
 export default function SideBar() {
   const { data: authUrlRes, error: authUrlError } = useFetch<string>(
@@ -18,16 +19,24 @@ export default function SideBar() {
       <div className="navbar">
         <ul>
           <li>
-            <Link to="/">Overlay</Link>
+            <Link onClick={resetWindowScroll} to="/">
+              Overlay
+            </Link>
           </li>
           <li>
-            <Link to="/messages">Messages</Link>
+            <Link onClick={resetWindowScroll} to="/messages">
+              Messages
+            </Link>
           </li>
           <li>
-            <Link to="/users">Users</Link>
+            <Link onClick={resetWindowScroll} to="/users">
+              Users
+            </Link>
           </li>
           <li>
-            <Link to="/chat">Chat</Link>
+            <Link onClick={resetWindowScroll} to="/chat">
+              Chat
+            </Link>
           </li>
           <li>
             <a href={authUrlRes}>
