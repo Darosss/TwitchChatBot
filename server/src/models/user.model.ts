@@ -7,6 +7,7 @@ const UserSchema: Schema<IUserDocument> = new Schema({
   createdAt: { type: Date, required: true, default: new Date() },
   lastSeen: { type: Date, required: true, default: new Date() },
   messageCount: { type: Number, required: true, default: 0 },
+  notes: { type: [String] },
 });
 
 export const User: Model<IUserDocument> = model("User", UserSchema);
