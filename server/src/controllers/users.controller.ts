@@ -26,8 +26,33 @@ const getUsers = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
 
-    res.status(200).send({ users: "Couldn't get users" });
+    res.status(400).send({ users: "Couldn't get users" });
   }
 };
 
-export { getUsers };
+const getUsersProfile = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id).select({ __v: 0 });
+
+    res.status(200).send(user);
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ message: "Couldn't get user profile" });
+  }
+};
+
+const editUserProfile = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { notes } = req.body;
+
+  console.log("notes", notes);
+  try {
+    await User.findByIdAndUpdate(id, { notes: notes });
+    res.status(200).send({ message: "Updated successfully" });
+  } catch (error) {
+    res.status(400).send({ message: "Couldn't update note" });
+  }
+};
+export { getUsers, getUsersProfile, editUserProfile };
