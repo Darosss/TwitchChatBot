@@ -9,11 +9,7 @@ const RedeptionSchema: Schema<IRedemptionDocument> = new Schema({
   redemptionDate: { type: Date, required: true },
   rewardTitle: { type: String, required: true },
   rewardCost: { type: Number, required: true },
-  rewardImage: {
-    url_1x: { type: String },
-    url_2x: { type: String },
-    url_4x: { type: String },
-  },
+  rewardImage: { type: String },
   message: { type: String },
 });
 
