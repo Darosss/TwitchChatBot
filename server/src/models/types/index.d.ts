@@ -30,7 +30,7 @@ export interface IRedemption {
   redemptionDate: Date;
   rewardTitle: string;
   rewardCost: number;
-  rewardImage: { url_1x: string; url_2x: string; url_4x: string };
+  rewardImage: string;
   message: string;
 }
 
