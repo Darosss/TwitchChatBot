@@ -17,6 +17,8 @@
   "license": "ISC",
   "dependencies": {
     "@twurple/api": "^5.3.3",
+    "@twurple/eventsub-http": "^5.3.3",
+    "@twurple/eventsub-ws": "^5.3.3",
     "@twurple/pubsub": "^5.3.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
