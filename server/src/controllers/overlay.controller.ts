@@ -1,7 +1,13 @@
 import Express, { Request, Response } from "express";
 import pubSub from "../twitch/pubsub";
+import { StaticAuthProvider } from "@twurple/auth";
+import TwitchApi from "../twitch/api";
+import eventSub from "../twitch/eventsub";
 
 export const overlay = async (req: Request, res: Response) => {
+  const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, LISTEN_TO_USER } =
+    process.env;
+
   const { code, scope, state } = req.query as unknown as {
     code: string;
     scope: string;
@@ -13,17 +19,27 @@ export const overlay = async (req: Request, res: Response) => {
       "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
     },
     body: new URLSearchParams({
-      client_id: process.env.CLIENT_ID!,
-      client_secret: process.env.CLIENT_SECRET!,
+      client_id: CLIENT_ID!,
+      client_secret: CLIENT_SECRET!,
       code: code,
       grant_type: "authorization_code",
-      redirect_uri: process.env.REDIRECT_URI!,
+      redirect_uri: REDIRECT_URI!,
     }).toString(),
   });
   if (authRes) {
     const authTwitchJson = await authRes.json();
 
-    pubSub(authTwitchJson.access_token, req.io);
+    const authProvider = new StaticAuthProvider(
+      CLIENT_ID!,
+      authTwitchJson.access_token
+    );
+
+    const twitchApi = new TwitchApi(authProvider);
+    const listenUserId = await twitchApi.getUserID(LISTEN_TO_USER!);
+    if (listenUserId) {
+      eventSub(authProvider, listenUserId, req.io);
+    }
+
     res.redirect(process.env.REDIRECT_AFTER_AUTH!);
   }
 };
