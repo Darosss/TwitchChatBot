@@ -14,7 +14,7 @@ export default function Overlay() {
 
       let redemptionAudio: HTMLAudioElement;
 
-      setRedemptionImg(rewardImage?.url_4x);
+      setRedemptionImg(rewardImage);
       setRedemptionInfo(`${userDisplayName} has redeemed - ${rewardTitle}`);
       overlayRef.current?.classList.remove("overlay-hidden");
 
