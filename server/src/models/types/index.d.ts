@@ -35,3 +35,13 @@ export interface IRedemption {
 }
 
 export type IRedemptionDocument = IRedeption & Document;
+export interface ITwitchSession {
+  _id: string | ObjectId;
+  sessionStart: Date;
+  sessionEnd: Date;
+  sessionTitles: string[];
+  categories: string[];
+  tags: string[];
+}
+
+export type ITwitchSessionDocument = ITwitchSession & Document;
