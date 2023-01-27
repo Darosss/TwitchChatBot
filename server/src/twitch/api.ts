@@ -1,26 +1,26 @@
-import { ApiClient, HelixClip } from "@twurple/api";
-import { StaticAuthProvider } from "@twurple/auth";
+import { ApiClient } from "@twurple/api";
 
-class TwitchApi {
-  apiClient: ApiClient;
-  constructor(authProvider: StaticAuthProvider) {
-    this.apiClient = new ApiClient({ authProvider });
+const apiTwitch = (apiClient: ApiClient) => {
+  async function getAuthUserId() {
+    return (await apiClient.users.getMe()).id;
   }
 
-  async getUserID(userName: string) {
-    const user = await this.apiClient.users.getUserByName(userName);
-    if (user) return user.id;
-    return null;
-  }
+  return { getAuthUserId };
+};
 
-  async streamLiveInfo(userName: string) {
-    const user = await this.apiClient.users.getUserByName(userName);
-    if (user === null) {
-      return false;
-    }
+// async getUserID(userName: string) {
+//   const user = await this.apiClient.users.getUserByName(userName);
+//   if (user) return user.id;
+//   return null;
+// }
 
-    return await this.apiClient.streams.getStreamByUserId(user.id);
-  }
-}
+// async streamLiveInfo(userName: string) {
+//   const user = await this.apiClient.users.getUserByName(userName);
+//   if (user === null) {
+//     return false;
+//   }
 
-export default TwitchApi;
+//   return await this.apiClient.streams.getStreamByUserId(user.id);
+// }
+
+export default apiTwitch;
