@@ -1,8 +1,8 @@
 import Express, { Request, Response } from "express";
-import pubSub from "../twitch/pubsub";
 import { StaticAuthProvider } from "@twurple/auth";
-import TwitchApi from "../twitch/api";
 import eventSub from "../twitch/eventsub";
+import { ApiClient } from "@twurple/api";
+import apiTwitch from "../twitch/api";
 
 export const overlay = async (req: Request, res: Response) => {
   const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, LISTEN_TO_USER } =
@@ -26,6 +26,7 @@ export const overlay = async (req: Request, res: Response) => {
       redirect_uri: REDIRECT_URI!,
     }).toString(),
   });
+  //GET auth respons with secret / access token
   if (authRes) {
     const authTwitchJson = await authRes.json();
 
@@ -34,10 +35,14 @@ export const overlay = async (req: Request, res: Response) => {
       authTwitchJson.access_token
     );
 
-    const twitchApi = new TwitchApi(authProvider);
-    const listenUserId = await twitchApi.getUserID(LISTEN_TO_USER!);
-    if (listenUserId) {
-      eventSub(authProvider, listenUserId, req.io);
+    // const twitchApi = new TwitchApi(authProvider);
+    const twitchApi = new ApiClient({ authProvider });
+
+    const { getAuthUserId } = apiTwitch(twitchApi);
+
+    const authorizedUserId = await getAuthUserId();
+    if (authorizedUserId) {
+      eventSub(twitchApi, authorizedUserId, req.io);
     }
 
     res.redirect(process.env.REDIRECT_AFTER_AUTH!);
