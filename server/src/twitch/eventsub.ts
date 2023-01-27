@@ -1,5 +1,4 @@
 import { ApiClient } from "@twurple/api";
-import { StaticAuthProvider } from "@twurple/auth";
 import { EventSubWsListener } from "@twurple/eventsub-ws";
 
 import { Server } from "socket.io";
@@ -12,7 +11,7 @@ import {
 import { Redemption } from "../models/redemption.model";
 
 const eventSub = async (
-  authProvider: StaticAuthProvider,
+  apiClient: ApiClient,
   userId: string,
   socket: Server<
     ClientToServerEvents,
@@ -21,8 +20,6 @@ const eventSub = async (
     SocketData
   >
 ) => {
-  const apiClient = new ApiClient({ authProvider });
-
   const listener = new EventSubWsListener({ apiClient });
   await listener.start();
 
