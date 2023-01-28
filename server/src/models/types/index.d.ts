@@ -8,6 +8,10 @@ export interface IUser {
   lastSeen: Date;
   messageCount: number;
   notes?: string[];
+  twitchId?: string;
+  twitchName?: string;
+  twitchCreated?: Date;
+  follower?: Date;
 }
 
 export type IUserDocument = IUser & Document;
