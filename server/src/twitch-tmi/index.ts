@@ -20,7 +20,8 @@ const clientTmi = (
     ServerToClientEvents,
     InterServerEvents,
     SocketData
-  >
+  >,
+  botStatisticDatabase: BotStatisticDatabase
 ) => {
   const client = new tmi.Client({
     options: { debug: false },
@@ -36,7 +37,6 @@ const clientTmi = (
   });
   const botLogObj = new BotLog(config);
   const botTimerObj = new BotTimer(client, bot_commands);
-  const botStatisticDatabase = new BotStatisticDatabase();
 
   client.on("connected", () => {
     console.log("CONNECTED - I set the intervals now");
@@ -49,9 +49,11 @@ const clientTmi = (
   });
 
   function logMsg(username: string, msg: string) {
-    const msgTime = new Date();
-    const wholeMessage = `${msgTime.getHours()}:${msgTime.getMinutes()}:${msgTime.getSeconds()}`;
-    console.log(`[${wholeMessage}] - ${username}:${msg}`);
+    console.log(
+      `[${
+        new Date().toISOString().split("T")[1].split(".")[0]
+      }] - ${username}:${msg}`
+    );
   }
 
   client.on("join", async (channel, username, self) => {
@@ -67,10 +69,11 @@ const clientTmi = (
 
     logMsg(senderName, message);
 
-    botLogObj.countMessages(channelName, senderName);
-    botLogObj.logMessages(channelName, senderName, message);
+    // botLogObj.countMessages(channelName, senderName);
+    // botLogObj.logMessages(channelName, senderName, message);
 
     const user = await botStatisticDatabase.isUserInDB(senderName);
+
     if (!user) return;
 
     await botStatisticDatabase.saveMessageToDatabase(user.id, message);
