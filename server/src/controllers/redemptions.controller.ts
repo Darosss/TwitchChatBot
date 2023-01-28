@@ -75,18 +75,14 @@ const getSessionRedemptions = async (req: Request, res: Response) => {
     const session = await TwitchSession.findById(id);
 
     const redemptions = await Redemption.find({
-      date: {
+      redemptionDate: {
         $gte: session?.sessionStart,
         $lte: session?.sessionEnd,
       },
     })
       .limit(limit * 1)
-      .sort({ date: -1 })
+      .sort({ redemptionDate: -1 })
       .skip((page - 1) * limit)
-      .populate({
-        path: "owner",
-        select: "username",
-      })
       .select({ __v: 0 })
       .exec();
 
