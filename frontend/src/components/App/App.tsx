@@ -1,11 +1,10 @@
-import React from "react";
 import "./style.css";
+import React from "react";
 
-import { SocketContext, socketConn } from "../../Context/SocketContext";
-import SideBar from "../SideBar";
+import { SocketContext, socketConn } from "@context/SocketContext";
+import SideBar from "@components/SideBar";
 
 import { configure } from "axios-hooks";
-
 import Axios from "axios";
 
 const axios = Axios.create({

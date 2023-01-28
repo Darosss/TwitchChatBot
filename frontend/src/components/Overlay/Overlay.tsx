@@ -1,6 +1,6 @@
 import "./style.css";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { SocketContext } from "../../Context/SocketContext";
+import { SocketContext } from "@context/SocketContext";
 
 export default function Overlay() {
   const socket = useContext(SocketContext);

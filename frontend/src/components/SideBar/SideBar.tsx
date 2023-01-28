@@ -1,14 +1,14 @@
 import "./style.css";
 import React from "react";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
-import TwitchChat from "../TwitchChat";
-import Users from "../Users";
-import Overlay from "../Overlay";
-import MessagesList from "../MessagesList";
-import UserProfile from "../UserProfile";
-import resetWindowScroll from "../../utils/resetScroll";
-import TwitchSessions from "../TwitchSessions/";
-import RedemptionsList from "../RedemptionsList";
+import TwitchChat from "@components/TwitchChat";
+import Users from "@components/Users";
+import Overlay from "@components/Overlay";
+import MessagesList from "@components/MessagesList";
+import UserProfile from "@components/UserProfile";
+import TwitchSessions from "@components/TwitchSessions/";
+import RedemptionsList from "@components/RedemptionsList";
+import resetWindowScroll from "@utils/resetScroll";
 import useAxios from "axios-hooks";
 
 export default function SideBar() {

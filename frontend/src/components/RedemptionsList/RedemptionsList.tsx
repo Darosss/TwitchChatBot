@@ -1,10 +1,10 @@
 import "./style.css";
 import React, { useState } from "react";
 import { IRedemption } from "@backend/models/types";
-import Pagination from "../Pagination";
+import Pagination from "@components/Pagination";
 import { useParams } from "react-router-dom";
-import PreviousPage from "../PreviousPage";
-import formatDate from "../../utils/formatDate";
+import PreviousPage from "@components/PreviousPage";
+import formatDate from "@utils/formatDate";
 import useAxios from "axios-hooks";
 
 interface IMessagesList {

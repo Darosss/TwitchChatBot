@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "./style.css";
 import { ITwitchSession } from "@backend/models/types/";
-import Pagination from "../Pagination";
-import formatDate from "../../utils/formatDate";
+import Pagination from "@components/Pagination";
+import formatDate from "@utils/formatDate";
 import { Link } from "react-router-dom";
 import useAxios from "axios-hooks";
 
