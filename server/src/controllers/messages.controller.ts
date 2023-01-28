@@ -1,6 +1,6 @@
 import Express, { Request, Response } from "express";
-import { Message } from "../models/message.model";
-import { TwitchSession } from "../models/twitch-session.model";
+import { Message } from "@models/message.model";
+import { TwitchSession } from "@models/twitch-session.model";
 
 interface IQueryMsgs {
   page?: number;

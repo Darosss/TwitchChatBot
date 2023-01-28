@@ -5,7 +5,7 @@ import {
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
-} from "../../../libs/types";
+} from "@libs/types";
 
 declare global {
   namespace Express {

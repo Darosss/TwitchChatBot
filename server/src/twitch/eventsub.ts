@@ -7,9 +7,9 @@ import {
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
-} from "../../../libs/types";
-import { Redemption } from "../models/redemption.model";
-import { TwitchSession } from "../models/twitch-session.model";
+} from "@libs/types";
+import { Redemption } from "@models/redemption.model";
+import { TwitchSession } from "@models/twitch-session.model";
 
 const eventSub = async (
   apiClient: ApiClient,

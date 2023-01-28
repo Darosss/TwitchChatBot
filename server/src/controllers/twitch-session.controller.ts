@@ -1,5 +1,5 @@
 import Express, { Request, Response } from "express";
-import { TwitchSession } from "../models/twitch-session.model";
+import { TwitchSession } from "@models/twitch-session.model";
 
 const getTwitchSessions = async (req: Request, res: Response) => {
   const { page = 1, limit = 50 } = req.query as unknown as {

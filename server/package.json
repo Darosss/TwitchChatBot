@@ -23,6 +23,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "module-alias": "^2.2.2",
     "mongoose": "^6.8.3",
     "socket.io": "^4.5.4",
     "tmi.js": "^1.8.5"
@@ -36,5 +37,14 @@
     "nodemon": "^2.0.20",
     "tsc-watch": "^6.0.0",
     "typescript": "^4.9.4"
+  },
+  "_moduleAliases": {
+    "@libs": "../../libs",
+    "@routes": "dist/routes",
+    "@controllers": "dist/controllers",
+    "@configs": "dist/configs",
+    "@models": "dist/models",
+    "@middlewares": "dist/middlewares",
+    "@types": "@types"
   }
 }

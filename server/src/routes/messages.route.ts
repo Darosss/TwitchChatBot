@@ -4,8 +4,8 @@ import {
   getUserMessages,
   getLatestAndFirstMsgs,
   getSessionMessages,
-} from "../controllers/messages.controller";
-import isParamObjectId from "../middlewares/isParamObjectId.middleware";
+} from "@controllers/messages.controller";
+import isParamObjectId from "@middlewares/isParamObjectId.middleware";
 
 const messagesRouter = Router();
 

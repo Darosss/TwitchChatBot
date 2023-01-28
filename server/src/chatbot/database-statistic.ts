@@ -1,8 +1,8 @@
 import { ObjectId } from "mongoose";
 import { ApiClient } from "@twurple/api";
-import { Message } from "../models/message.model";
-import { IUser } from "../models/types";
-import { User } from "../models/user.model";
+import { IUser } from "@models/types";
+import { Message } from "@models/message.model";
+import { User } from "@models/user.model";
 
 type userId = string | ObjectId;
 

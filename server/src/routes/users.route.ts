@@ -3,8 +3,8 @@ import {
   getUsers,
   getUsersProfile,
   editUserProfile,
-} from "../controllers/users.controller";
-import isParamObjectId from "../middlewares/isParamObjectId.middleware";
+} from "@controllers/users.controller";
+import isParamObjectId from "@middlewares/isParamObjectId.middleware";
 
 const usersRouter = Router();
 

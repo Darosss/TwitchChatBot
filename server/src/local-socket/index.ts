@@ -4,7 +4,7 @@ import {
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
-} from "../../../libs/types";
+} from "@libs/types";
 
 const localSocket = (httpServer: any) => {
   const io = new Server<

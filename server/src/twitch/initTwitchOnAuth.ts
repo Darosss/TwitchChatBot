@@ -9,7 +9,7 @@ import {
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
-} from "../../../libs/types";
+} from "@libs/types";
 
 const initTwitchOnAuth = async (
   authAccesToken: string,

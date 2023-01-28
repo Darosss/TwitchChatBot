@@ -1,5 +1,5 @@
 import Express, { Request, Response } from "express";
-import { User } from "../models/user.model";
+import { User } from "@models/user.model";
 
 const getUsers = async (req: Request, res: Response) => {
   const { page = 1, limit = 50 } = req.query as unknown as {

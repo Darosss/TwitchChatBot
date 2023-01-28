@@ -3,7 +3,7 @@ import {
   getRedemptions,
   getUserRedemptions,
   getSessionRedemptions,
-} from "../controllers/redemptions.controller";
+} from "@controllers/redemptions.controller";
 
 const redemptionsRouter = Router();
 

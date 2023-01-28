@@ -2,7 +2,7 @@ import Express, { Router } from "express";
 import {
   overlay,
   getTwitchAuthorizeUrl,
-} from "../controllers/overlay.controller";
+} from "@controllers/overlay.controller";
 
 const overlayRouter = Router();
 

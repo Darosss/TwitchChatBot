@@ -9,7 +9,7 @@ import {
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
-} from "../../../libs/types";
+} from "@libs/types";
 import BotStatisticDatabase from "../chatbot/database-statistic";
 require("dotenv").config();
 

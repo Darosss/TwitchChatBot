@@ -1,7 +1,7 @@
 import Express, { Request, Response } from "express";
-import { Redemption } from "../models/redemption.model";
-import { TwitchSession } from "../models/twitch-session.model";
-import { User } from "../models/user.model";
+import { Redemption } from "@models/redemption.model";
+import { TwitchSession } from "@models/twitch-session.model";
+import { User } from "@models/user.model";
 
 const getRedemptions = async (req: Request, res: Response) => {
   const { page = 1, limit = 50 } = req.query as unknown as {
