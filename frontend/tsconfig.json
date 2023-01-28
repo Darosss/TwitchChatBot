@@ -1,10 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "types": ["vite/client", "vite-plugin-svgr/client"],
     "paths": {
-      "@backend/*": ["../server/src/*"]
+      "@libs/*": ["../libs/*"],
+      "@backend/*": ["../server/src/*"],
+      "@utils/*": ["src/utils/*"],
+      "@components/*": ["src/components/*"],
+      "@context/*": ["src/Context/*"],
+      "@hooks/*": ["src/hooks/*"]
     },
+    "baseUrl": "./",
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,

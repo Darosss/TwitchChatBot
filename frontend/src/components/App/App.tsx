@@ -1,15 +1,14 @@
-import React from "react";
 import "./style.css";
+import React from "react";
 
-import { SocketContext, socketConn } from "../../Context/SocketContext";
-import SideBar from "../SideBar";
+import { SocketContext, socketConn } from "@context/SocketContext";
+import SideBar from "@components/SideBar";
 
 import { configure } from "axios-hooks";
-
 import Axios from "axios";
 
 const axios = Axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_URL,
+  baseURL: import.meta.env.VITE_BACKEND_URL,
 });
 
 configure({ axios });

@@ -1,6 +1,6 @@
 import React, { MouseEvent, useContext, useEffect, useState } from "react";
-import { SocketContext } from "../../Context/SocketContext";
-import Message from "../Message";
+import { SocketContext } from "@context/SocketContext";
+import Message from "@components/Message";
 
 import "./style.css";
 

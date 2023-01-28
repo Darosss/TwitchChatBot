@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./style.css";
 import useAxios from "axios-hooks";
-import PreviousPage from "../PreviousPage";
+
+import PreviousPage from "@components/PreviousPage";
+import Message from "@components/Message";
 import { useParams } from "react-router-dom";
 import { IMessage, IUser } from "@backend/models/types";
-import formatDate from "../../utils/formatDate";
+import formatDate from "@utils/formatDate";
 import { AxiosRequestConfig } from "axios";
-import Message from "../Message";
 
 export default function UserProfile() {
   const { userId } = useParams();
