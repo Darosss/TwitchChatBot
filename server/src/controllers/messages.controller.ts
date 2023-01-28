@@ -1,5 +1,6 @@
 import Express, { Request, Response } from "express";
 import { Message } from "../models/message.model";
+import { TwitchSession } from "../models/twitch-session.model";
 
 interface IQueryMsgs {
   page?: number;
@@ -32,7 +33,7 @@ const getMessages = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
 
-    res.status(200).send({ message: "Couldn't get messages" });
+    res.status(400).send({ message: "Couldn't get messages" });
   }
 };
 
@@ -62,7 +63,7 @@ const getUserMessages = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
 
-    res.status(200).send({ message: "Couldn't get messages" });
+    res.status(400).send({ message: "Couldn't get messages" });
   }
 };
 
@@ -90,8 +91,49 @@ const getLatestAndFirstMsgs = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
 
-    res.status(200).send({ message: "Couldn't get messages" });
+    res.status(400).send({ message: "Couldn't get messages" });
   }
 };
 
-export { getMessages, getUserMessages, getLatestAndFirstMsgs };
+const getSessionMessages = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { page = 1, limit = 50 } = req.query as unknown as IQueryMsgs;
+  try {
+    const session = await TwitchSession.findById(id);
+
+    const messages = await Message.find({
+      date: {
+        $gte: session?.sessionStart,
+        $lte: session?.sessionEnd,
+      },
+    })
+      .limit(limit * 1)
+      .sort({ date: -1 })
+      .skip((page - 1) * limit)
+      .populate({
+        path: "owner",
+        select: "username",
+      })
+      .select({ __v: 0 })
+      .exec();
+
+    const count = await Message.find().countDocuments();
+
+    res.status(200).send({
+      messages,
+      totalPages: Math.ceil(count / limit),
+      messageCount: count,
+      currentPage: Number(page),
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(400).send({ message: "Couldn't get messages from session" });
+  }
+};
+export {
+  getMessages,
+  getUserMessages,
+  getLatestAndFirstMsgs,
+  getSessionMessages,
+};
