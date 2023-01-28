@@ -65,3 +65,15 @@ textarea::-webkit-scrollbar-thumb {
 textarea::-webkit-resizer {
   background-color: var(--base-bg-color);
 }
+
+a:hover {
+  color: red;
+}
+
+a {
+  color: var(--base-color-link);
+}
+
+a:visited {
+  color: var(--base-color-link);
+}
