@@ -1,5 +1,4 @@
-var clc = require("./cli_color.js");
-const TwApi = require("./twApi.js");
+const TwApi = require("../twitch-api");
 
 //TODO do other advanced games maybe? or jsut try to implement this to stream next time?
 class BotTimer {
@@ -93,11 +92,7 @@ class BotTimer {
 
   #timeoutTrigger(trigger) {
     setTimeout(() => {
-      console.log(
-        clc.notice("TRIGGER:"),
-        clc.info(trigger.toUpperCase()),
-        clc.notice("- is up again")
-      );
+      console.log("TRIGGER:", trigger.toUpperCase(), "- is up again");
       this.triggers[trigger].enabled = true;
     }, this.triggers[trigger].delay * 1000);
   }
@@ -178,11 +173,7 @@ class BotTimer {
   #timeoutTimer(timer) {
     setTimeout(() => {
       this.timers[timer].enabled = true; // set time true after period of time(delay)
-      console.log(
-        clc.notice("TIMER:"),
-        clc.info(timer.toUpperCase()),
-        clc.notice("- is up again")
-      );
+      console.log("TIMER:", timer.toUpperCase(), "- is up again");
     }, this.timers[timer].delay * 1000); // set timeout(f(), delay timer);}
   }
 
@@ -229,11 +220,11 @@ class BotTimer {
       const diffSeconds = Math.ceil(diffTime / 1000);
       if (diffSeconds > this.maxActiveUserTime) {
         console.log(
-          clc.notice("User:"),
-          clc.name(keys),
-          clc.notice("is not active anymore after"),
+          "User:",
+          keys,
+          "is not active anymore after",
           diffSeconds,
-          clc.notice("seconds")
+          "seconds"
         );
         this.activeUsers.delete(keys);
       }
@@ -393,7 +384,7 @@ class EasyGame {
 
   checkForAnswerStage() {
     let randomActiveUser = this.chooseRandomActiveUser();
-    console.log(clc.notice(this.choosenGame[this.stages[1]]));
+    console.log(this.choosenGame[this.stages[1]]);
     let answerMsg =
       this.choosenGame[this.stages[1]][0] +
       randomActiveUser +
@@ -524,4 +515,4 @@ class SelectionGame {
   }
 }
 
-module.exports = BotTimer;
+export default BotTimer;

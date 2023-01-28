@@ -1,0 +1,49 @@
+#users-list {
+  font-size: 0.9rem;
+  height: 90vh;
+  overflow-y: scroll;
+}
+
+#users-list::-webkit-scrollbar {
+  display: none;
+}
+
+#table-users-list {
+  width: 100vw;
+}
+
+#table-users-list tbody {
+  border: 2px solid black;
+  overflow-y: scroll;
+}
+
+#table-users-list tbody td {
+  border-top: 0.1rem solid var(--base-bg-color-border);
+}
+
+#users-list .pagination {
+  border: 1px solid;
+}
+
+.users-list-username {
+  color: var(--base-color-username-message);
+  width: 10%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.users-list-achievements {
+  width: 15%;
+}
+
+.users-list-last-seen {
+  width: 15%;
+}
+
+.users-list-message-count {
+  width: 10%;
+}
+
+.users-list-points {
+  width: 10%;
+}

@@ -1,0 +1,79 @@
+:root {
+  --base-bg-color: #282c34;
+  --base-bg-color-chat: #18181b;
+  --base-bg-color-border: rgb(74, 74, 74);
+  --base-bg-hover-color-chat: hsla(0, 0%, 100%, 0.16);
+  --base-bg-textarea-chat: hsla(0, 0%, 81%, 0.456);
+  --base-color-time-message: #f7f7f8;
+  --base-color-username-message: #ff0000;
+  --base-color-message: white;
+  --base-color-button-action: #9147ff;
+  --base-color-button-action-active: #602dab;
+  --base-color-link: #afa241;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+a {
+  text-decoration: none;
+  color: hsl(var(--base-color-username-message), 100%, 50%);
+}
+
+a:visited {
+  color: hsl(var(--base-color-username-message), 32%, 50%);
+}
+
+ul::-webkit-scrollbar-track,
+div::-webkit-scrollbar-track,
+textarea::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+
+  background-color: var(--base-bg-color);
+}
+
+ul::-webkit-scrollbar,
+div::-webkit-scrollbar,
+textarea::-webkit-scrollbar {
+  width: 12px;
+  background-color: #f5f5f5;
+}
+
+ul::-webkit-scrollbar-thumb,
+div::-webkit-scrollbar-thumb,
+textarea::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: var(--base-bg-color-chat);
+}
+
+textarea::-webkit-resizer {
+  background-color: var(--base-bg-color);
+}
+
+a:hover {
+  color: red;
+}
+
+a {
+  color: var(--base-color-link);
+}
+
+a:visited {
+  color: var(--base-color-link);
+}

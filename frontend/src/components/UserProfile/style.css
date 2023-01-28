@@ -1,0 +1,83 @@
+.user-messages-btn {
+  width: 10vw;
+  font-size: 1rem;
+  background-color: var(--base-bg-color-border);
+  color: var(--base-color-link);
+  font-weight: 700;
+  border: 0;
+  border-top: 0.1rem solid black;
+}
+
+.user-messages-btn:hover {
+  background-color: var(--base-color-link);
+  color: var(--base-bg-color-border);
+}
+
+.profile-details {
+  width: 100vw;
+}
+
+.profile-details tr td:first-child {
+  width: 20vw;
+}
+
+.profile-details td {
+  border-top: 0.1rem solid var(--base-bg-color-border);
+}
+
+.profile-details td:not(:first-child) {
+  border-left: 0.1rem solid var(--base-bg-color-border);
+}
+
+.profile-btn-edit {
+  color: var(--base-color-link);
+  background-color: var(--base-bg-color-border);
+  font-size: 2rem;
+  border: 0;
+}
+
+.profile-btn-edit:hover {
+  color: var(--base-bg-color-border);
+  background-color: var(--base-color-link);
+}
+
+.textarea-edit {
+  font-size: 1.5rem;
+  height: 20vh;
+  width: 70%;
+  background-color: var(--base-bg-color-border);
+  color: var(--base-color-message);
+  float: left;
+}
+
+.notes-list {
+  overflow-y: auto;
+  width: 90%;
+  text-align: left;
+  max-height: 30vh;
+}
+
+.profile-user-messages {
+  width: 100%;
+}
+
+.profile-user-messages .profile-user-messages-inner {
+  width: 49%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 20vh;
+  font-size: 1rem;
+  text-align: left;
+}
+
+.profile-user-messages div:last-child {
+  border-left: 0.1rem solid var(--base-bg-color-border);
+}
+
+.profile-first-messages {
+  float: left;
+}
+
+.profile-last-messages {
+  float: right;
+}
