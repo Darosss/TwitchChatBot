@@ -21,9 +21,9 @@ export default function Overlay() {
       setTimeout(() => {
         redemptionAudio?.pause();
         overlayRef.current?.classList.add("overlay-hidden");
-      }, Number(process.env.REACT_APP_REDEMPTION_ALERT_MAX_TIME!) * 1000);
+      }, Number(import.meta.env.VITE_REDEMPTION_ALERT_MAX_TIME!) * 1000);
 
-      if (rewardTitle.includes(process.env.REACT_APP_PREFIX_ALERT_SOUND!)) {
+      if (rewardTitle.includes(import.meta.env.VITE_PREFIX_ALERT_SOUND!)) {
         const redemptionAudio = new Audio(
           `/alert-sounds/${rewardTitle.split(":")[1].trim()}.mp3`
         );
