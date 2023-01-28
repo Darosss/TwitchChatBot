@@ -1,3 +1,3 @@
-import TwitchStream from "./Users";
+import Users from "./Users";
 
-export default TwitchStream;
+export default Users;
