@@ -2,7 +2,6 @@ import "./style.css";
 import React from "react";
 import usePagination, { DOTS } from "../../hooks/usePagination.hook";
 import classnames from "classnames";
-import { JsxEmit } from "typescript";
 
 export default function Pagination(props: {
   onPageChange: (page: number) => void;
@@ -32,7 +31,6 @@ export default function Pagination(props: {
 
   // If no range = return;
   if (!paginationRange) {
-    console.log("no range");
     return <></>;
   }
 
