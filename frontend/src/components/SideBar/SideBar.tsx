@@ -9,6 +9,7 @@ import useFetch from "../../hooks/useFetch.hook";
 import UserProfile from "../UserProfile";
 import resetWindowScroll from "../../utils/resetScroll";
 import TwitchSessions from "../TwitchSessions/";
+import RedemptionsList from "../RedemptionsList";
 
 export default function SideBar() {
   const { data: authUrlRes, error: authUrlError } = useFetch<string>(
@@ -71,14 +72,17 @@ export default function SideBar() {
           path="/messages/twitch-session/:sessionId"
           element={<MessagesList messages="session" />}
         ></Route>
-        <Route path="/redemptions" element={<>all redemptions</>}></Route>
+        <Route
+          path="/redemptions"
+          element={<RedemptionsList messages="all" />}
+        ></Route>
         <Route
           path="/redemptions/:userId"
-          element={<> userid redemptions</>}
+          element={<RedemptionsList messages="user" />}
         ></Route>
         <Route
           path="/redemptions/twitch-session/:sessionId"
-          element={<>session id redemptions</>}
+          element={<RedemptionsList messages="session" />}
         ></Route>
         <Route path="/user/:userId" element={<UserProfile />}></Route>
         <Route path="/users" element={<Users />}></Route>
