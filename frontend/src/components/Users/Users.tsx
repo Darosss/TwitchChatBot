@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import useFetch from "../../hooks/useFetch.hook";
 import "./style.css";
 import { IUser } from "@backend/models/types/";
 import Pagination from "../Pagination";
 import formatDate from "../../utils/formatDate";
+import useAxios from "axios-hooks";
 
 interface IUsersRes {
   users: IUser[];
@@ -16,10 +16,11 @@ export default function Users() {
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
-  const { data, error } = useFetch<IUsersRes>(
-    `${process.env.REACT_APP_BACKEND_URL}/users?page=${currentPageLoc}&limit=${pageSize}&`
+  const [{ data, loading, error }] = useAxios<IUsersRes>(
+    `/users?page=${currentPageLoc}&limit=${pageSize}&`
   );
 
+  if (loading) return <p>Loading...</p>;
   if (error) return <p>There is an error.</p>;
   if (!data) return <p>Loading...</p>;
 

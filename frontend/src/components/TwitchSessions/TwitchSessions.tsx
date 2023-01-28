@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import useFetch from "../../hooks/useFetch.hook";
 import "./style.css";
 import { ITwitchSession } from "@backend/models/types/";
 import Pagination from "../Pagination";
 import formatDate from "../../utils/formatDate";
 import { Link } from "react-router-dom";
+import useAxios from "axios-hooks";
 
 interface ITwitchSessionRes {
   twitchSessions: ITwitchSession[];
@@ -17,12 +17,13 @@ export default function TwitchSessions() {
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
-  const { data, error } = useFetch<ITwitchSessionRes>(
-    `${process.env.REACT_APP_BACKEND_URL}/twitch-sessions?page=${currentPageLoc}&limit=${pageSize}&`
+  const [{ data, loading, error }] = useAxios<ITwitchSessionRes>(
+    `/twitch-sessions?page=${currentPageLoc}&limit=${pageSize}`
   );
 
-  if (error) return <p>There is an error.</p>;
-  if (!data) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error!</p>;
+  if (!data) return <>Something went wrong!</>;
 
   const { twitchSessions, usersCount, currentPage } = data;
 

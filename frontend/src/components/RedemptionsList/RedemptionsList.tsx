@@ -1,11 +1,11 @@
 import "./style.css";
 import React, { useState } from "react";
-import { IRedemption, IUser } from "@backend/models/types";
-import useFetch from "../../hooks/useFetch.hook";
+import { IRedemption } from "@backend/models/types";
 import Pagination from "../Pagination";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import PreviousPage from "../PreviousPage";
 import formatDate from "../../utils/formatDate";
+import useAxios from "axios-hooks";
 
 interface IMessagesList {
   redemptions: IRedemption[];
@@ -22,26 +22,27 @@ export default function MessagesList(props: {
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
-  let redemptionsApiUrl = `${process.env.REACT_APP_BACKEND_URL}/redemptions`;
-  let redemptionsHref = ``;
+  let redemptionsApiUrl = `/redemptions`;
+  // let redemptionsHref = ``;
 
   switch (props.messages) {
     case "session":
       redemptionsApiUrl += `/twitch-session/${sessionId}`;
-      redemptionsHref += "../";
+      // redemptionsHref += "../";
       break;
     case "user":
       redemptionsApiUrl += `/${userId}`;
       break;
     default:
-      redemptionsHref += "messages/";
+    // redemptionsHref += "messages/";
   }
   redemptionsApiUrl += `?page=${currentPageLoc}&limit=${pageSize}`;
 
-  const { data, error } = useFetch<IMessagesList>(redemptionsApiUrl);
+  const [{ data, loading, error }] = useAxios<IMessagesList>(redemptionsApiUrl);
 
-  if (error) return <p>There is an error. {error.message}</p>;
-  if (!data) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error!</p>;
+  if (!data) return <>Something went wrong!</>;
 
   const { redemptions, messageCount, currentPage } = data;
   return (

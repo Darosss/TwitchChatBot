@@ -1,11 +1,11 @@
 import "./style.css";
 import React, { useState } from "react";
 import { IMessage, IUser } from "@backend/models/types";
-import useFetch from "../../hooks/useFetch.hook";
 import Pagination from "../Pagination";
 import { useParams } from "react-router-dom";
 import PreviousPage from "../PreviousPage";
 import formatDate from "../../utils/formatDate";
+import useAxios from "axios-hooks";
 
 interface IMessagesList {
   messages: IMessage[];
@@ -22,7 +22,7 @@ export default function MessagesList(props: {
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
-  let messageApiUrl = `${process.env.REACT_APP_BACKEND_URL}/messages`;
+  let messageApiUrl = `/messages`;
   let messageHref = ``;
 
   switch (props.messages) {
@@ -38,13 +38,15 @@ export default function MessagesList(props: {
   }
   messageApiUrl += `?page=${currentPageLoc}&limit=${pageSize}`;
 
-  const { data, error } = useFetch<IMessagesList>(messageApiUrl);
+  // const { data, error } = useFetch<IMessagesList>(messageApiUrl);
+  const [{ data, loading, error }] = useAxios<IMessagesList>(messageApiUrl);
 
-  if (error) return <p>There is an error. {error.message}</p>;
-  if (!data) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error!</p>;
+  if (!data) return <>Something went wrong!</>;
 
   const { messages, messageCount, currentPage } = data;
-  console.log(messages);
+
   return (
     <>
       <PreviousPage />

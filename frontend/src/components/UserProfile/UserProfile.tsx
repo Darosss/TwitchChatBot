@@ -3,7 +3,6 @@ import "./style.css";
 import useAxios from "axios-hooks";
 import PreviousPage from "../PreviousPage";
 import { useParams } from "react-router-dom";
-import useFetch from "../../hooks/useFetch.hook";
 import { IMessage, IUser } from "@backend/models/types";
 import formatDate from "../../utils/formatDate";
 import { AxiosRequestConfig } from "axios";
@@ -14,9 +13,9 @@ export default function UserProfile() {
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notes, setNotes] = useState("");
 
-  const [{ data: postData, error: postError }, executePost] = useAxios(
+  const [, executePost] = useAxios(
     {
-      url: `${process.env.REACT_APP_BACKEND_URL}/users/${userId}`,
+      url: `/users/${userId}`,
       method: "POST",
     } as AxiosRequestConfig,
     { manual: true }
@@ -24,7 +23,7 @@ export default function UserProfile() {
 
   const [{ data: msgsData, error: msgsError, loading: msgsLoading }] =
     useAxios<{ firstMessages: IMessage[]; latestMessages: IMessage[] }>({
-      url: `${process.env.REACT_APP_BACKEND_URL}/messages/${userId}/latest-first-msgs`,
+      url: `/messages/${userId}/latest-first-msgs`,
       method: "GET",
     } as AxiosRequestConfig);
 
@@ -44,16 +43,16 @@ export default function UserProfile() {
     });
   };
 
-  const { data, error } = useFetch<IUser>(
-    `${process.env.REACT_APP_BACKEND_URL}/users/${userId}`
-  );
+  const [{ data: userData, loading: userLoading, error: userError }] =
+    useAxios<IUser>(`/users/${userId}`);
 
   useEffect(() => {
-    setNotes(data?.notes?.join("\n") || "");
-  }, [data]);
+    setNotes(userData?.notes?.join("\n") || "");
+  }, [userData]);
 
-  if (error || msgsError) return <p>There is an error.</p>;
-  if (!data || !msgsData) return <p>Loading...</p>;
+  if (msgsLoading || userLoading) return <p> Loading </p>;
+  if (userError || msgsError) return <p>There is an error.</p>;
+  if (!userData || !msgsData) return <p>Someting went wrong</p>;
 
   return (
     <>
@@ -68,7 +67,7 @@ export default function UserProfile() {
         <tbody>
           <tr>
             <td>Username:</td>
-            <td>{data.username}</td>
+            <td>{userData.username}</td>
           </tr>
           <tr>
             <td>
@@ -80,7 +79,7 @@ export default function UserProfile() {
             <td>
               {!isEditingNotes ? (
                 <ul className="notes-list">
-                  {data.notes?.map((note, ind) => {
+                  {userData.notes?.map((note, ind) => {
                     return <li key={ind}>{note}</li>;
                   })}
                 </ul>
@@ -88,7 +87,7 @@ export default function UserProfile() {
                 <>
                   <textarea
                     className="textarea-edit"
-                    defaultValue={data.notes?.join("\n")}
+                    defaultValue={userData.notes?.join("\n")}
                     onChange={(e) => setNotes(e.target.value)}
                   />
                   <button className="profile-btn-edit" onClick={saveNote}>
@@ -100,15 +99,15 @@ export default function UserProfile() {
           </tr>
           <tr>
             <td>Created:</td>
-            <td>{formatDate(data.createdAt)}</td>
+            <td>{formatDate(userData.createdAt)}</td>
           </tr>
           <tr>
             <td>Points:</td>
-            <td>{data.points.toLocaleString()}</td>
+            <td>{userData.points.toLocaleString()}</td>
           </tr>
           <tr>
             <td>Messages count:</td>
-            <td>{data.messageCount.toLocaleString()}</td>
+            <td>{userData.messageCount.toLocaleString()}</td>
           </tr>
           <tr>
             <td>Messages:</td>

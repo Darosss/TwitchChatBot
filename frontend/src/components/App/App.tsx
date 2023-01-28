@@ -4,6 +4,16 @@ import "./style.css";
 import { SocketContext, socketConn } from "../../Context/SocketContext";
 import SideBar from "../SideBar";
 
+import { configure } from "axios-hooks";
+
+import Axios from "axios";
+
+const axios = Axios.create({
+  baseURL: process.env.REACT_APP_BACKEND_URL,
+});
+
+configure({ axios });
+
 function App() {
   return (
     <SocketContext.Provider value={socketConn}>

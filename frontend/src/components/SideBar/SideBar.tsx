@@ -5,16 +5,18 @@ import TwitchChat from "../TwitchChat";
 import Users from "../Users";
 import Overlay from "../Overlay";
 import MessagesList from "../MessagesList";
-import useFetch from "../../hooks/useFetch.hook";
 import UserProfile from "../UserProfile";
 import resetWindowScroll from "../../utils/resetScroll";
 import TwitchSessions from "../TwitchSessions/";
 import RedemptionsList from "../RedemptionsList";
+import useAxios from "axios-hooks";
 
 export default function SideBar() {
-  const { data: authUrlRes, error: authUrlError } = useFetch<string>(
-    process.env.REACT_APP_BACKEND_URL + "/twitch-authorize-url"
-  );
+  const [{ data, loading, error }] = useAxios<string>("/twitch-authorize-url");
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error!</p>;
+  if (!data) return <>Something went wrong!</>;
 
   return (
     <BrowserRouter>
@@ -51,9 +53,7 @@ export default function SideBar() {
             </Link>
           </li>
           <li>
-            <a href={authUrlRes}>
-              {authUrlError ? "URL Error" : "Login to twitch"}
-            </a>
+            <a href={data}>{error ? "URL Error" : "Login to twitch"}</a>
           </li>
         </ul>
       </div>
