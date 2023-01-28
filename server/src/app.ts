@@ -26,7 +26,7 @@ const expressApp = () => {
 
   initRoutes(app);
 
-  return { server, localSocketIO };
+  return server;
 };
 
 export default expressApp;
