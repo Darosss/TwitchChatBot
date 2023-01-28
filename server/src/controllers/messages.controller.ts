@@ -27,7 +27,7 @@ const getMessages = async (req: Request, res: Response) => {
     res.status(200).send({
       messages,
       totalPages: Math.ceil(count / limit),
-      messageCount: count,
+      count: count,
       currentPage: Number(page),
     });
   } catch (error) {
@@ -57,7 +57,7 @@ const getUserMessages = async (req: Request, res: Response) => {
     res.status(200).send({
       messages,
       totalPages: Math.ceil(count / limit),
-      messageCount: count,
+      count: count,
       currentPage: Number(page),
     });
   } catch (error) {
@@ -122,7 +122,7 @@ const getSessionMessages = async (req: Request, res: Response) => {
     res.status(200).send({
       messages,
       totalPages: Math.ceil(count / limit),
-      messageCount: count,
+      count: count,
       currentPage: Number(page),
     });
   } catch (error) {
