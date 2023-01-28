@@ -61,7 +61,9 @@ export default function UserProfile() {
       <button className="user-messages-btn">
         <a href={`../messages/${userId}`}>User messages</a>
       </button>
-
+      <button className="user-messages-btn">
+        <a href={`../redemptions/${userId}`}>User redemptions</a>
+      </button>
       <table className="profile-details">
         <tbody>
           <tr>
