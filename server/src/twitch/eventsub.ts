@@ -64,12 +64,11 @@ const eventSub = async (
       console.log(`${e.broadcasterDisplayName} just went live!`);
       e.getStream()
         .then((stream) => {
-          console.log("swtream tag", stream.tags);
           new TwitchSession({
             sessionStart: e.startDate,
             sessionTitles: stream.title,
             categories: stream.gameName,
-            tags: stream.tags || "",
+            // tags: stream.tags || "",
           }).save((err, doc) => {
             if (err) console.log("err save", err);
             onUpdateStreamDetails(doc.id);
