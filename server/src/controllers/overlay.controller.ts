@@ -1,8 +1,6 @@
 import Express, { Request, Response } from "express";
-import { StaticAuthProvider } from "@twurple/auth";
-import eventSub from "../twitch/eventsub";
-import { ApiClient } from "@twurple/api";
-import apiTwitch from "../twitch/api";
+
+import initTwitchOnAuth from "../twitch/initTwitchOnAuth";
 
 export const overlay = async (req: Request, res: Response) => {
   const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, LISTEN_TO_USER } =
@@ -30,20 +28,7 @@ export const overlay = async (req: Request, res: Response) => {
   if (authRes) {
     const authTwitchJson = await authRes.json();
 
-    const authProvider = new StaticAuthProvider(
-      CLIENT_ID!,
-      authTwitchJson.access_token
-    );
-
-    // const twitchApi = new TwitchApi(authProvider);
-    const twitchApi = new ApiClient({ authProvider });
-
-    const { getAuthUserId } = apiTwitch(twitchApi);
-
-    const authorizedUserId = await getAuthUserId();
-    if (authorizedUserId) {
-      eventSub(twitchApi, authorizedUserId, req.io);
-    }
+    initTwitchOnAuth(authTwitchJson.access_token, req.io);
 
     res.redirect(process.env.REDIRECT_AFTER_AUTH!);
   }
