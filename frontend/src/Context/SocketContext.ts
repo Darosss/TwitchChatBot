@@ -1,9 +1,6 @@
 import React from "react";
 import { io, Socket } from "socket.io-client";
-import {
-  ServerToClientEvents,
-  ClientToServerEvents,
-} from "../../../libs/types";
+import { ClientToServerEvents, ServerToClientEvents } from "@libs/types";
 
 export const socketConn = io(
   import.meta.env.VITE_SOCKET_URL as string
