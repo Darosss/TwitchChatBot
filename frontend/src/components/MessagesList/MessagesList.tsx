@@ -14,24 +14,37 @@ interface IMessagesList {
   currentPage: number;
 }
 
-export default function MessagesList() {
-  const { userId } = useParams();
+export default function MessagesList(props: {
+  messages: "all" | "session" | "user";
+}) {
+  const { userId, sessionId } = useParams();
 
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
-  const messagesUrl =
-    process.env.REACT_APP_BACKEND_URL +
-    `/messages` +
-    (userId ? `/${userId}` : ``) +
-    `?page=${currentPageLoc}&limit=${pageSize}`;
-  const { data, error } = useFetch<IMessagesList>(messagesUrl);
+  let messageApiUrl = `${process.env.REACT_APP_BACKEND_URL}/messages`;
+  let messageHref = ``;
+
+  switch (props.messages) {
+    case "session":
+      messageApiUrl += `/twitch-session/${sessionId}`;
+      messageHref += "../";
+      break;
+    case "user":
+      messageApiUrl += `/${userId}`;
+      break;
+    default:
+      messageHref += "messages/";
+  }
+  messageApiUrl += `?page=${currentPageLoc}&limit=${pageSize}`;
+
+  const { data, error } = useFetch<IMessagesList>(messageApiUrl);
 
   if (error) return <p>There is an error. {error.message}</p>;
   if (!data) return <p>Loading...</p>;
 
   const { messages, messageCount, currentPage } = data;
-
+  console.log(messages);
   return (
     <>
       <PreviousPage />
@@ -51,13 +64,9 @@ export default function MessagesList() {
                 <tr key={message._id + new Date()}>
                   <td className="message-time">{formatDate(message.date)}</td>
                   <td className="message-username">
-                    {!userId ? (
-                      <a href={"./messages/" + (message.owner as IUser)._id}>
-                        {(message.owner as IUser).username}
-                      </a>
-                    ) : (
-                      (message.owner as IUser).username
-                    )}
+                    <a href={`${messageHref}` + (message.owner as IUser)._id}>
+                      {(message.owner as IUser).username}
+                    </a>
                   </td>
                   <td className="message" colSpan={4}>
                     {message.message}
