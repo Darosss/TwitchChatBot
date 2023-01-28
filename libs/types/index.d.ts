@@ -21,8 +21,7 @@ interface ISoundData {
   redemptionDate: Date;
   rewardTitle: string;
   rewardCost: number;
-  rewardImage: { url_1x: string; url_2x: string; url_4x: string };
-  message: string;
+  rewardImage: string;
 }
 
 interface SocketData {
