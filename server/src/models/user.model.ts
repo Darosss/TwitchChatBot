@@ -8,6 +8,9 @@ const UserSchema: Schema<IUserDocument> = new Schema({
   lastSeen: { type: Date, required: true, default: new Date() },
   messageCount: { type: Number, required: true, default: 0 },
   notes: { type: [String] },
+  twitchId: { type: String },
+  twitchName: { type: String },
+  follower: { type: Date },
 });
 
 export const User: Model<IUserDocument> = model("User", UserSchema);
