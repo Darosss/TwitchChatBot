@@ -106,6 +106,10 @@ class BotStatisticDatabase {
         }, your messages: ${user.messageCount.toLocaleString()}`;
         break;
       }
+      case "commands": {
+        message = `Available commands: (--points, --messages)`;
+        break;
+      }
       default:
         message = `Not found command. Check commands with: ${this.commandPrefix}commands`;
         break;
