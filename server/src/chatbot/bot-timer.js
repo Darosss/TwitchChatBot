@@ -260,7 +260,6 @@ class ChatGames {
 
   checkTimeBetweenGames() {
     let lastGameDate = this.options.lastTimeEnded;
-    console.log(lastGameDate, "test");
     if (isNaN(lastGameDate)) return true;
     const diffTime = Math.abs(new Date() - lastGameDate);
     const diffSeconds = Math.ceil(diffTime / 1000);

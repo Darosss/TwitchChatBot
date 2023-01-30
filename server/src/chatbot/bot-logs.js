@@ -1,7 +1,6 @@
 class BotLog {
-  constructor(config) {
-    this.config = config;
-    this.chanels = this.config.channels;
+  constructor(channel) {
+    this.channel = channel;
     this.logMsgDir = [];
     this.logMsg = [];
     this.usersDir = [];
@@ -9,25 +8,22 @@ class BotLog {
     this.#createNonExistingJsons();
   }
   #createNonExistingJsons() {
-    if (this.config.channelsSeparately) {
-      //TODO create else condition where == false
-      // and add users from all channels to one file
-      // not needed for now
-      var today = new Date();
-      today = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
-      var dir = [];
-      this.chanels.forEach((channel) => {
-        channel = channel.slice(1);
-        const folderOfProgram = __dirname.slice(0, __dirname.lastIndexOf("\\"));
-        dir[
-          channel
-        ] = `${folderOfProgram}/${this.config.folderChannels}/${channel}`;
+    var today = new Date();
+    today = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+    var dir = [];
 
-        this.#createUsersJson(dir[channel], channel, "users");
-        this.#createSentencesJson(dir[channel], channel, today, "sentences");
-      });
-    }
+    const folderOfProgram = __dirname.slice(0, __dirname.lastIndexOf("\\"));
+    dir[this.channel] = `${folderOfProgram}/data/${this.channel}`;
+
+    this.#createUsersJson(dir[this.channel], this.channel, "users");
+    this.#createSentencesJson(
+      dir[this.channel],
+      this.channel,
+      today,
+      "sentences"
+    );
   }
+
   #createUsersJson(dir, channel, suffix) {
     this.usersDir[channel] = `${dir}/${channel}-${suffix}.json`;
 
