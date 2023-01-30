@@ -25,15 +25,19 @@ const initTwitchOnAuth = async (
     authAccesToken
   );
   const twitchApi = new ApiClient({ authProvider });
+  const authorizedUser = await twitchApi.users.getMe();
+
+  if (!authorizedUser) return;
 
   const botStatisticDatabase = new BotStatisticDatabase(twitchApi);
-  const TwitchTmi = ClientTmi.default(socketIO, botStatisticDatabase);
+  const TwitchTmi = ClientTmi.default(
+    socketIO,
+    botStatisticDatabase,
+    authorizedUser.name
+  );
   TwitchTmi.connect();
 
-  const authorizedUserId = (await twitchApi.users.getMe()).id;
-  if (authorizedUserId) {
-    eventSub(twitchApi, authorizedUserId, socketIO);
-  }
+  eventSub(twitchApi, authorizedUser.id, socketIO);
 };
 
 export default initTwitchOnAuth;
