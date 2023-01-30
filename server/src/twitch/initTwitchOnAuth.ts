@@ -30,6 +30,8 @@ const initTwitchOnAuth = async (
   if (!authorizedUser) return;
 
   const botStatisticDatabase = new BotStatisticDatabase(twitchApi);
+  await botStatisticDatabase.init();
+
   const TwitchTmi = ClientTmi.default(
     socketIO,
     botStatisticDatabase,
