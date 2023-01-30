@@ -62,3 +62,14 @@ export interface ITrigger {
 }
 
 export type ITriggerDocument = ITrigger & Document;
+
+export interface IConfig {
+  _id: string | ObjectId;
+  commandsPrefix: string;
+  timersIntervalDelay: number;
+  activeUserTimeDelay: number;
+  chatGamesIntervalDelay: number;
+  minActiveUsersThreshold: number;
+}
+
+export type IConfigDocument = IConfig & Document;
