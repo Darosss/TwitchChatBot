@@ -1,7 +1,6 @@
 import tmi from "tmi.js";
 import BotTimer from "../chatbot/bot-timer";
 import BotLog from "../chatbot/bot-logs";
-import config from "../configs/config-tmi.json";
 import bot_commands from "../configs/bot_commands.json";
 import { Server } from "socket.io";
 import {
@@ -13,7 +12,6 @@ import {
 import BotStatisticDatabase from "../chatbot/database-statistic";
 require("dotenv").config();
 
-const channelsToJoin: string[] = config["channels"];
 const clientTmi = (
   socket: Server<
     ClientToServerEvents,
@@ -21,7 +19,8 @@ const clientTmi = (
     InterServerEvents,
     SocketData
   >,
-  botStatisticDatabase: BotStatisticDatabase
+  botStatisticDatabase: BotStatisticDatabase,
+  userNameToListen: string
 ) => {
   const client = new tmi.Client({
     options: { debug: false },
@@ -33,17 +32,16 @@ const clientTmi = (
       password: process.env.password,
       username: process.env.username,
     },
-    channels: channelsToJoin,
+    channels: [userNameToListen],
   });
-  const botLogObj = new BotLog(config);
+  const botLogObj = new BotLog(userNameToListen);
   const botTimerObj = new BotTimer(client, bot_commands);
 
   client.on("connected", () => {
     console.log("CONNECTED - I set the intervals now");
-    channelsToJoin.forEach((channel) => {
-      botTimerObj.initOnJoinToChannel(channel.slice(1));
-    });
+    botTimerObj.initOnJoinToChannel(userNameToListen);
   });
+
   client.on("disconnected", () => {
     console.log("DISCONNECTED - clearing interval");
   });
@@ -79,6 +77,8 @@ const clientTmi = (
     await botStatisticDatabase.saveMessageToDatabase(user.id, message);
     await botStatisticDatabase.updateUserStatistics(user.id);
 
+    if (self) return; //echoed msg from bot
+
     const commandAnswer = await botStatisticDatabase.checkMessageForCommand(
       user,
       message
@@ -86,9 +86,6 @@ const clientTmi = (
 
     commandAnswer ? client.say(channel, commandAnswer) : null;
 
-    if (self) return; //echoed msg from bot
-
-    if (senderName == config.bot_username) return;
     botTimerObj.initOnMessage(client, channel, message, senderName);
   });
 
