@@ -79,14 +79,18 @@ const clientTmi = (
 
     if (self) return; //echoed msg from bot
 
+    const triggerAnswer = await botStatisticDatabase.checkMessageToTriggerWord(
+      message
+    );
     const commandAnswer = await botStatisticDatabase.checkMessageForCommand(
       user,
       message
     );
 
     commandAnswer ? client.say(channel, commandAnswer) : null;
+    triggerAnswer ? client.say(channel, triggerAnswer) : null;
 
-    botTimerObj.initOnMessage(client, channel, message, senderName);
+    //botTimerObj.initOnMessage(client, channel, message, senderName);
   });
 
   return client;
