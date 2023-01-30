@@ -50,3 +50,15 @@ export interface ITwitchSession {
 }
 
 export type ITwitchSessionDocument = ITwitchSession & Document;
+export interface ITrigger {
+  _id: string | ObjectId;
+  name: string;
+  enabled: boolean;
+  chance: number;
+  delay: number;
+  onDelay: boolean;
+  words: string[];
+  messages: string[];
+}
+
+export type ITriggerDocument = ITrigger & Document;
