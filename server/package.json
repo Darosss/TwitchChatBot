@@ -45,6 +45,7 @@
     "@configs": "dist/configs",
     "@models": "dist/models",
     "@middlewares": "dist/middlewares",
+    "@utils": "dist/utils",
     "@types": "@types"
   }
 }
