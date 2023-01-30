@@ -1,28 +1,35 @@
 import { ObjectId } from "mongoose";
 import { ApiClient } from "@twurple/api";
-import { ITriggerDocument, IUser } from "@models/types";
+import { IConfigDocument, ITriggerDocument, IUser } from "@models/types";
 import { Message } from "@models/message.model";
 import { User } from "@models/user.model";
 import { Trigger } from "@models/trigger.model";
 import { percentChance, randomWithMax } from "@utils/random-numbers.util";
+import { Config } from "@models/config.model";
 
 type userId = string | ObjectId;
 
 class BotStatisticDatabase {
-  commandPrefix: string;
+  config?: IConfigDocument | null;
   twitchApi: ApiClient;
   triggerWords: string[];
   triggersOnDelay: Map<string, NodeJS.Timeout>;
 
   constructor(twitchApi: ApiClient) {
     this.twitchApi = twitchApi;
-    this.commandPrefix = "--";
+    this.config;
     this.triggerWords = [];
     this.triggersOnDelay = new Map();
   }
+
   public async init() {
     await this.updateEveryUserTwitchDetails();
     await this.getAllTrigersWordsFromDB();
+    await this.updateConfigs();
+  }
+
+  async updateConfigs() {
+    this.config = await Config.findOne();
   }
 
   async updateEveryUserTwitchDetails() {
@@ -141,9 +148,9 @@ class BotStatisticDatabase {
   }
 
   async checkMessageForCommand(user: IUser, message: string) {
-    if (!message.startsWith(this.commandPrefix)) return false;
+    if (!message.startsWith(this.config?.commandsPrefix!)) return false;
     let messageWithoutPrefix = message.slice(
-      this.commandPrefix.length,
+      this.config?.commandsPrefix.length,
       message.length
     );
 
@@ -165,7 +172,7 @@ class BotStatisticDatabase {
         break;
       }
       default:
-        message = `Not found command. Check commands with: ${this.commandPrefix}commands`;
+        message = `Not found command. Check commands with: ${this.config?.commandsPrefix}commands`;
         break;
     }
 
