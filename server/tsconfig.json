@@ -7,7 +7,8 @@
       "@configs/*": ["configs/*"],
       "@middlewares/*": ["middlewares/*"],
       "@models/*": ["models/*"],
-      "@types/*": ["@types/*"]
+      "@types/*": ["@types/*"],
+      "@utils/*": ["utils/*"]
     },
     "target": "es2017",
     "module": "commonjs",
