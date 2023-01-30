@@ -10,6 +10,7 @@
   --base-color-button-action: #9147ff;
   --base-color-button-action-active: #602dab;
   --base-color-link: #afa241;
+  --base-color-info: #c6c9ad;
 }
 
 body {
@@ -67,7 +68,8 @@ textarea::-webkit-resizer {
 }
 
 a:hover {
-  color: red;
+  color: var(--base-bg-color-border);
+  background-color: var(--base-color-link);
 }
 
 a {
@@ -76,4 +78,8 @@ a {
 
 a:visited {
   color: var(--base-color-link);
+}
+
+.float-right {
+  float: right;
 }
