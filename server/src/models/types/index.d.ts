@@ -11,6 +11,7 @@ export interface IUser {
   twitchId?: string;
   twitchName?: string;
   twitchCreated?: Date;
+  userDisplayName?: string;
   follower?: Date;
 }
 
@@ -35,7 +36,7 @@ export interface IRedemption {
   rewardTitle: string;
   rewardCost: number;
   rewardImage: string;
-  message: string;
+  message?: string;
 }
 
 export type IRedemptionDocument = IRedeption & Document;

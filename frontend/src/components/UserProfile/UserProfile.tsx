@@ -4,7 +4,7 @@ import useAxios from "axios-hooks";
 
 import PreviousPage from "@components/PreviousPage";
 import Message from "@components/Message";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { IMessage, IUser } from "@backend/models/types";
 import formatDate from "@utils/formatDate";
 import { AxiosRequestConfig } from "axios";
@@ -54,30 +54,58 @@ export default function UserProfile() {
   if (msgsLoading || userLoading) return <p> Loading </p>;
   if (userError || msgsError) return <p>There is an error.</p>;
   if (!userData || !msgsData) return <p>Someting went wrong</p>;
-
+  console.log(userData);
   return (
     <>
       <PreviousPage />
-      <button className="user-messages-btn">
-        <a href={`../messages/${userId}`}>User messages</a>
-      </button>
-      <button className="user-messages-btn">
-        <a href={`../redemptions/${userId}`}>User redemptions</a>
-      </button>
+
       <table className="profile-details">
         <tbody>
           <tr>
-            <td>Username:</td>
-            <td>{userData.username}</td>
+            <td>
+              <Link className="user-details-btn" to={`../messages/${userId}`}>
+                Messages
+              </Link>
+
+              <Link
+                className="user-details-btn"
+                to={`../redemptions/${userId}`}
+              >
+                Redemptions
+              </Link>
+            </td>
           </tr>
           <tr>
-            <td>
-              Notes:
-              <button onClick={showEdit} className="profile-btn-edit">
+            <th>Username</th>
+            <td>{userData.username}</td>
+            <th>Display name</th>
+            <td>{userData.userDisplayName}</td>
+          </tr>
+          <tr>
+            <th>Messages</th>
+            <td>{userData.messageCount.toLocaleString()}</td>
+            <th>Points</th>
+            <td>{userData.points.toLocaleString()}</td>
+          </tr>
+          <tr>
+            <th>Created</th>
+            <td>{formatDate(userData.createdAt)}</td>
+            <th>Follower</th>
+            <td colSpan={3}>
+              {userData.follower ? formatDate(userData.follower) : "False"}
+            </td>
+          </tr>
+          <tr>
+            <th className="profile-details-notes">
+              Notes
+              <button
+                onClick={showEdit}
+                className="user-details-btn float-right"
+              >
                 Edit
               </button>
-            </td>
-            <td>
+            </th>
+            <td colSpan={5}>
               {!isEditingNotes ? (
                 <ul className="notes-list">
                   {userData.notes?.map((note, ind) => {
@@ -91,7 +119,11 @@ export default function UserProfile() {
                     defaultValue={userData.notes?.join("\n")}
                     onChange={(e) => setNotes(e.target.value)}
                   />
-                  <button className="profile-btn-edit" onClick={saveNote}>
+                  <button
+                    className="user-details-btn"
+                    style={{ width: "20vw" }}
+                    onClick={saveNote}
+                  >
                     Save
                   </button>
                 </>
@@ -99,20 +131,10 @@ export default function UserProfile() {
             </td>
           </tr>
           <tr>
-            <td>Created:</td>
-            <td>{formatDate(userData.createdAt)}</td>
-          </tr>
-          <tr>
-            <td>Points:</td>
-            <td>{userData.points.toLocaleString()}</td>
-          </tr>
-          <tr>
-            <td>Messages count:</td>
-            <td>{userData.messageCount.toLocaleString()}</td>
-          </tr>
-          <tr>
-            <td>Messages:</td>
-            <td>
+            <th>
+              First / Last <br /> Messages
+            </th>
+            <td colSpan={5}>
               <div className="profile-user-messages">
                 <div className="profile-first-messages profile-user-messages-inner">
                   {msgsData.firstMessages.map((msg) => {
@@ -139,35 +161,19 @@ export default function UserProfile() {
                   })}
                 </div>
               </div>
-              {/* <table className="user-last-first-messages">
-                <tbody>
-                  <tr>
-                    <td>first message 1</td>
-                    <td> last message 1</td>
-                  </tr>
-                  <tr>
-                    <td>first message 2</td>
-                    <td>last message 2</td>
-                  </tr>
-                </tbody>
-              </table> */}
             </td>
           </tr>
           <tr>
-            <td>Categories:</td>
-            <td>soon</td>
+            <th>Zjeb</th>
+            <td colSpan={3}>soon</td>
           </tr>
           <tr>
-            <td>Times seen:</td>
-            <td>soon</td>
+            <th>Times seen</th>
+            <td colSpan={3}>soon</td>
           </tr>
           <tr>
-            <td>Most used word:</td>
-            <td>soon</td>
-          </tr>
-          <tr>
-            <td>Zjeb:</td>
-            <td>soon</td>
+            <th>Categories</th>
+            <td colSpan={3}>soon</td>
           </tr>
         </tbody>
       </table>
