@@ -1,11 +1,12 @@
 import dotenv from "dotenv";
 
-import initMongoDataBase from "./mongoDBConn";
+import initMongoDataBase, { initDefaultsDB } from "./mongoDBConn";
 import expressApp from "./app";
 
 dotenv.config();
 
 initMongoDataBase();
+initDefaultsDB();
 
 const server = expressApp();
 
