@@ -1,19 +1,28 @@
 import { ObjectId } from "mongoose";
 import { ApiClient } from "@twurple/api";
-import { IUser } from "@models/types";
+import { ITriggerDocument, IUser } from "@models/types";
 import { Message } from "@models/message.model";
 import { User } from "@models/user.model";
+import { Trigger } from "@models/trigger.model";
+import { percentChance, randomWithMax } from "@utils/random-numbers.util";
 
 type userId = string | ObjectId;
 
 class BotStatisticDatabase {
   commandPrefix: string;
   twitchApi: ApiClient;
+  triggerWords: string[];
+  triggersOnDelay: Map<string, NodeJS.Timeout>;
 
   constructor(twitchApi: ApiClient) {
     this.twitchApi = twitchApi;
     this.commandPrefix = "--";
-    this.updateEveryUserTwitchDetails();
+    this.triggerWords = [];
+    this.triggersOnDelay = new Map();
+  }
+  public async init() {
+    await this.updateEveryUserTwitchDetails();
+    await this.getAllTrigersWordsFromDB();
   }
 
   async updateEveryUserTwitchDetails() {
@@ -36,6 +45,51 @@ class BotStatisticDatabase {
     } catch (error) {
       console.log("Couldn't save twitch details ");
     }
+  }
+
+  async getAllTrigersWordsFromDB() {
+    const triggers = await Trigger.find();
+    for (const index in triggers) {
+      this.triggerWords = this.triggerWords.concat(triggers[index].words);
+    }
+  }
+
+  async checkMessageToTriggerWord(message: string) {
+    for (const index in this.triggerWords) {
+      const trigger = this.triggerWords[index];
+      if (!message.includes(trigger)) continue;
+
+      return await this.getTriggerByTriggerWord(trigger);
+    }
+  }
+
+  async getTriggerByTriggerWord(trigger: string) {
+    const foundTrigger = await Trigger.findOne({ words: { $all: trigger } });
+
+    if (!foundTrigger || !percentChance(foundTrigger.chance)) return false;
+
+    foundTrigger.onDelay = true;
+    await foundTrigger.save();
+
+    if (foundTrigger.onDelay && !this.triggersOnDelay.has(foundTrigger.name)) {
+      //If trigger is on delay and Timeout is not set do
+      await this.setTimeoutRefreshTrigerDelay(foundTrigger);
+
+      return foundTrigger.messages[randomWithMax(foundTrigger.messages.length)];
+    }
+  }
+
+  async setTimeoutRefreshTrigerDelay(trigger: ITriggerDocument) {
+    this.triggersOnDelay.set(
+      trigger.name,
+      setTimeout(async () => {
+        trigger.onDelay = false;
+        await trigger.save();
+
+        this.triggersOnDelay.delete(trigger.name);
+        console.log(`${trigger.name} - is now turn on again!`);
+      }, trigger.delay * 1000)
+    );
   }
 
   async saveMessageToDatabase(senderId: userId, message: string) {
