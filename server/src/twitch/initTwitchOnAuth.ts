@@ -10,6 +10,7 @@ import {
   InterServerEvents,
   SocketData,
 } from "@libs/types";
+import { Config } from "@models/config.model";
 
 const initTwitchOnAuth = async (
   authAccesToken: string,
@@ -29,7 +30,8 @@ const initTwitchOnAuth = async (
 
   if (!authorizedUser) return;
 
-  const botStatisticDatabase = new BotStatisticDatabase(twitchApi);
+  const configDB = await Config.findOne();
+  const botStatisticDatabase = new BotStatisticDatabase(twitchApi, configDB!);
   await botStatisticDatabase.init();
 
   const TwitchTmi = ClientTmi.default(
