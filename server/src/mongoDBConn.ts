@@ -22,12 +22,14 @@ const defaultCommands = async () => {
       name: "messages",
       messages: ["@{username}, your messages: {messageCount}"],
       aliases: ["messages", "msgs", "msg"],
+      description: "Send information about user's message count",
     }).save();
 
     await new ChatCommand({
       name: "points",
       messages: ["@{username}, your points: {points}"],
       aliases: ["pts", "points"],
+      description: "Send information about user's points",
     }).save();
 
     await new ChatCommand({
@@ -37,6 +39,7 @@ const defaultCommands = async () => {
         "This is example command message 2",
       ],
       aliases: ["example", "exampleCommand"],
+      description: "Example command description",
     }).save();
   }
 };
