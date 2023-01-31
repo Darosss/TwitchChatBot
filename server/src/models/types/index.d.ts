@@ -70,6 +70,19 @@ export interface IConfig {
   activeUserTimeDelay: number;
   chatGamesIntervalDelay: number;
   minActiveUsersThreshold: number;
+  permissionLevels: Map<string, number>;
 }
 
 export type IConfigDocument = IConfig & Document;
+
+export interface IChatCommand {
+  _id: string | ObjectId;
+  name: string;
+  enabled: boolean;
+  aliases: string[];
+  messages: string[];
+  privilage: number;
+  useCount: number;
+}
+
+export type IChatCommandDocument = IChatCommand & Document;
