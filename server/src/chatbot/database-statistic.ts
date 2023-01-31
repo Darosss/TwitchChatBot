@@ -5,11 +5,13 @@ import { Message } from "@models/message.model";
 import { User } from "@models/user.model";
 import { Trigger } from "@models/trigger.model";
 import { percentChance, randomWithMax } from "@utils/random-numbers.util";
+import { ChatCommand } from "@models/chat-command.model";
 
 type userId = string | ObjectId;
 
 class BotStatisticDatabase {
   config: IConfigDocument;
+  commandsWords: string[];
   twitchApi: ApiClient;
   triggerWords: string[];
   triggersOnDelay: Map<string, NodeJS.Timeout>;
@@ -17,6 +19,7 @@ class BotStatisticDatabase {
   constructor(twitchApi: ApiClient, config: IConfigDocument) {
     this.twitchApi = twitchApi;
     this.config = config;
+    this.commandsWords = [];
     this.triggerWords = [];
     this.triggersOnDelay = new Map();
   }
@@ -24,6 +27,7 @@ class BotStatisticDatabase {
   public async init() {
     await this.updateEveryUserTwitchDetails();
     await this.getAllTrigersWordsFromDB();
+    await this.getAllCommandWords();
   }
 
   async updateEveryUserTwitchDetails() {
@@ -142,35 +146,73 @@ class BotStatisticDatabase {
   }
 
   async checkMessageForCommand(user: IUser, message: string) {
-    if (!message.startsWith(this.config?.commandsPrefix!)) return false;
-    let messageWithoutPrefix = message.slice(
-      this.config?.commandsPrefix.length,
-      message.length
-    );
+    if (!message.startsWith(this.config.commandsPrefix)) return false;
 
-    switch (messageWithoutPrefix) {
-      case "points": {
-        message = `@${
-          user.username
-        }, your points: ${user.points.toLocaleString()}`;
-        break;
-      }
-      case "messages" || "msgs": {
-        message = `@${
-          user.username
-        }, your messages: ${user.messageCount.toLocaleString()}`;
-        break;
-      }
-      case "commands": {
-        message = `Available commands: (--points, --messages)`;
-        break;
-      }
-      default:
-        message = `Not found command. Check commands with: ${this.config.commandsPrefix}commands`;
-        break;
+    let foundCommand = null;
+
+    for (const index in this.commandsWords) {
+      const aliasCommand = this.commandsWords[index];
+      if (!message.includes(aliasCommand)) continue;
+
+      foundCommand = await this.getCommandByAlias(aliasCommand);
+
+      if (!foundCommand) return;
+
+      foundCommand.useCount++;
+      await foundCommand.save();
+
+      return this.formatCommandMessage(user, foundCommand.messages[0]);
+    }
+    if (!foundCommand) return await this.notFoundCommand();
+  }
+
+  formatCommandMessage(user: IUser, message?: string) {
+    let formatMsg = message || "";
+
+    let matches = formatMsg.match(/\{(.*?)\}/);
+
+    while (matches !== null) {
+      const userDetail = this.formatUserDetail(user[matches[1] as keyof IUser]);
+      formatMsg = formatMsg.replace(matches[0], userDetail);
+
+      matches = formatMsg.match(/\{(.*?)\}/);
     }
 
-    return message;
+    return formatMsg;
+  }
+
+  formatUserDetail(detail: any) {
+    if (typeof detail === "number") return detail.toLocaleString();
+    else if (detail instanceof Date) return detail.toLocaleString();
+
+    return detail;
+  }
+
+  async getAllCommandWords() {
+    const commands = await ChatCommand.find();
+    for (const index in commands) {
+      this.commandsWords = this.commandsWords.concat(commands[index].aliases);
+    }
+  }
+
+  async notFoundCommand() {
+    //Hard codded
+    let notFoundCommandMessage = "Not found command. Most used commands are:";
+
+    const mostUsedCommands = await ChatCommand.find()
+      .sort({ useCount: -1 })
+      .select({ aliases: 1 })
+      .limit(5);
+
+    mostUsedCommands.forEach((command) => {
+      notFoundCommandMessage += ` [${command.aliases.join(", ")}]`;
+    });
+
+    return notFoundCommandMessage;
+  }
+
+  async getCommandByAlias(alias: string) {
+    return await ChatCommand.findOne({ aliases: { $all: alias } });
   }
 }
 
