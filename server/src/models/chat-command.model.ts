@@ -3,6 +3,7 @@ import { IChatCommandDocument } from "./types";
 
 const ChatCommandSchema: Schema<IChatCommandDocument> = new Schema({
   name: { type: String, required: true },
+  description: { type: String },
   enabled: { type: Boolean, default: true },
   aliases: [String],
   messages: [String],
