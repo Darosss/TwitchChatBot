@@ -5,19 +5,18 @@ import { Message } from "@models/message.model";
 import { User } from "@models/user.model";
 import { Trigger } from "@models/trigger.model";
 import { percentChance, randomWithMax } from "@utils/random-numbers.util";
-import { Config } from "@models/config.model";
 
 type userId = string | ObjectId;
 
 class BotStatisticDatabase {
-  config?: IConfigDocument | null;
+  config: IConfigDocument;
   twitchApi: ApiClient;
   triggerWords: string[];
   triggersOnDelay: Map<string, NodeJS.Timeout>;
 
-  constructor(twitchApi: ApiClient) {
+  constructor(twitchApi: ApiClient, config: IConfigDocument) {
     this.twitchApi = twitchApi;
-    this.config;
+    this.config = config;
     this.triggerWords = [];
     this.triggersOnDelay = new Map();
   }
@@ -25,11 +24,6 @@ class BotStatisticDatabase {
   public async init() {
     await this.updateEveryUserTwitchDetails();
     await this.getAllTrigersWordsFromDB();
-    await this.updateConfigs();
-  }
-
-  async updateConfigs() {
-    this.config = await Config.findOne();
   }
 
   async updateEveryUserTwitchDetails() {
@@ -172,7 +166,7 @@ class BotStatisticDatabase {
         break;
       }
       default:
-        message = `Not found command. Check commands with: ${this.config?.commandsPrefix}commands`;
+        message = `Not found command. Check commands with: ${this.config.commandsPrefix}commands`;
         break;
     }
 
