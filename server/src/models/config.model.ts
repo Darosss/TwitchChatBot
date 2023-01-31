@@ -7,6 +7,15 @@ const ConfigSchema: Schema<IConfigDocument> = new Schema({
   activeUserTimeDelay: { type: Number, required: true, default: 150 },
   chatGamesIntervalDelay: { type: Number, required: true, default: 20 },
   minActiveUsersThreshold: { type: Number, required: true, default: 3 },
+  permissionLevels: {
+    type: Map,
+    default: new Map([
+      ["broadcaster", 10],
+      ["mod", 8],
+      ["vip", 5],
+      ["all", 0],
+    ]),
+  },
 });
 
 export const Config: Model<IConfigDocument> = model("Configs", ConfigSchema);
