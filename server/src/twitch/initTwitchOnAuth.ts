@@ -31,7 +31,9 @@ const initTwitchOnAuth = async (
   if (!authorizedUser) return;
 
   const configDB = await Config.findOne();
-  const botStatisticDatabase = new BotStatisticDatabase(twitchApi, configDB!);
+  if (!configDB) return;
+
+  const botStatisticDatabase = new BotStatisticDatabase(twitchApi, configDB);
   await botStatisticDatabase.init();
 
   const TwitchTmi = ClientTmi.default(
