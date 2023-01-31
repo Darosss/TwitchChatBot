@@ -78,6 +78,7 @@ export type IConfigDocument = IConfig & Document;
 export interface IChatCommand {
   _id: string | ObjectId;
   name: string;
+  description?: string;
   enabled: boolean;
   aliases: string[];
   messages: string[];
