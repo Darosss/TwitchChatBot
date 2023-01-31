@@ -56,7 +56,10 @@ const clientTmi = (
 
   client.on("join", async (channel, username, self) => {
     console.log(`${username} joined the chat -- checking if user is in DB`);
-    await botStatisticDatabase.isUserInDB(username);
+    const user = await botStatisticDatabase.isUserInDB(username);
+
+    if (!user) return;
+    await botStatisticDatabase.updateUserStatistics(user.id);
   });
 
   client.on("message", async (channel, tags, message, self) => {
@@ -90,7 +93,7 @@ const clientTmi = (
     commandAnswer ? client.say(channel, commandAnswer) : null;
     triggerAnswer ? client.say(channel, triggerAnswer) : null;
 
-    //botTimerObj.initOnMessage(client, channel, message, senderName);
+    // botTimerObj.initOnMessage(client, channel, message, senderName);
   });
 
   return client;
