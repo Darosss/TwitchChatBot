@@ -2,6 +2,9 @@
   --base-bg-color: #282c34;
   --base-bg-color-chat: #18181b;
   --base-bg-color-border: rgb(74, 74, 74);
+  --base-bg-color-action: #2f2fb5;
+  --base-bg-color-head: rgb(148, 145, 145);
+  --base-bg-color-danger: #a01010;
   --base-bg-hover-color-chat: hsla(0, 0%, 100%, 0.16);
   --base-bg-textarea-chat: hsla(0, 0%, 81%, 0.456);
   --base-color-time-message: #f7f7f8;
@@ -67,7 +70,8 @@ textarea::-webkit-resizer {
   background-color: var(--base-bg-color);
 }
 
-a:hover {
+a:hover,
+button:hover {
   color: var(--base-bg-color-border);
   background-color: var(--base-color-link);
 }
@@ -82,4 +86,12 @@ a:visited {
 
 .float-right {
   float: right;
+}
+
+textarea,
+input,
+button {
+  border: 0;
+  background-color: var(--base-bg-color-border);
+  color: var(--base-color-message);
 }
