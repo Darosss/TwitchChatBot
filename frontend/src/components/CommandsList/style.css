@@ -1,0 +1,97 @@
+#commands-list {
+  font-size: 1.2rem;
+  height: 90vh;
+  overflow-y: scroll;
+}
+
+#commands-list thead th {
+  background-color: var(--base-bg-color-head);
+  position: sticky;
+  top: 0;
+}
+
+#commands-list::-webkit-scrollbar {
+  display: none;
+}
+
+#table-commands-list {
+  width: 100vw;
+}
+
+#table-commands-list tbody {
+  border: 2px solid black;
+  overflow-y: scroll;
+}
+
+#table-commands-list tbody td {
+  border-top: 0.1rem solid var(--base-bg-color-border);
+}
+
+#commands-list .pagination {
+  border: 1px solid;
+}
+
+.commands-textarea {
+  font-size: 1.1rem;
+  height: 15vh;
+  max-height: 15vh;
+  width: 15vw;
+  max-width: 20vw;
+  min-width: 8vw;
+  min-height: 5vw;
+}
+
+.commands-messages-textarea {
+  font-size: 0.9rem;
+  width: 25vw;
+  max-width: 25vw;
+  min-width: 8vw;
+  min-height: 5vw;
+}
+
+.commands-td-radio {
+  width: 5vw;
+  max-width: 5vw;
+  overflow-wrap: break-word;
+  overflow-x: auto;
+}
+
+.commands-list-name {
+  width: 15vw;
+  height: 5vh;
+  font-size: 1.1rem;
+  overflow: hidden;
+}
+
+#commands-list button {
+  width: 7vw;
+  max-width: 7vw;
+  font-size: 1.7rem;
+  overflow: hidden;
+  background-color: var(--base-bg-color-action);
+}
+
+#commands-list button.create-command {
+  margin-right: 1rem;
+}
+
+#commands-list button.command-action {
+  width: 100%;
+  max-width: 100%;
+}
+
+#commands-list button.command-delete {
+  background-color: var(--base-bg-color-danger);
+}
+
+#commands-list button:hover {
+  background-color: hsl(var(--base-bg-color-action), 55, 44);
+  border: 0.1rem solid black;
+}
+
+.commands-text {
+  font-size: 1.4rem;
+  width: 100%;
+  max-width: 10vw;
+  overflow-x: auto;
+}
