@@ -42,8 +42,7 @@
   font-size: 1.1rem;
   height: 20vh;
   width: 70%;
-  background-color: var(--base-bg-color-border);
-  color: var(--base-color-message);
+
   float: left;
 }
 
