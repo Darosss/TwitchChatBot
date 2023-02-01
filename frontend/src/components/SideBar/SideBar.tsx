@@ -10,6 +10,7 @@ import TwitchSessions from "@components/TwitchSessions/";
 import RedemptionsList from "@components/RedemptionsList";
 import resetWindowScroll from "@utils/resetScroll";
 import useAxios from "axios-hooks";
+import CommandsList from "@components/CommandsList";
 
 export default function SideBar() {
   const [{ data, loading, error }] = useAxios<string>("/twitch-authorize-url");
@@ -53,6 +54,16 @@ export default function SideBar() {
             </Link>
           </li>
           <li>
+            <Link onClick={resetWindowScroll} to="/commands">
+              Commands
+            </Link>
+          </li>
+          <li>
+            <Link onClick={resetWindowScroll} to="/configs">
+              Configs
+            </Link>
+          </li>
+          <li>
             <a href={data}>{error ? "URL Error" : "Login to twitch"}</a>
           </li>
         </ul>
@@ -87,6 +98,10 @@ export default function SideBar() {
         <Route path="/user/:userId" element={<UserProfile />}></Route>
         <Route path="/users" element={<Users />}></Route>
         <Route path="/chat" element={<TwitchChat />}></Route>
+
+        <Route path="/commands" element={<CommandsList />}></Route>
+        <Route path="/commands/:commandId" element={<CommandsList />}></Route>
+        <Route path="/configs" element={<>Configs</>}></Route>
       </Routes>
     </BrowserRouter>
   );
