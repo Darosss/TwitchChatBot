@@ -7,15 +7,15 @@ import PreviousPage from "@components/PreviousPage";
 import formatDate from "@utils/formatDate";
 import useAxios from "axios-hooks";
 
-interface IMessagesList {
+interface IRedemptionsList {
   redemptions: IRedemption[];
   totalPages: number;
   count: number;
   currentPage: number;
 }
 
-export default function MessagesList(props: {
-  messages: "all" | "session" | "user";
+export default function RedemptionsList(props: {
+  redemptions: "all" | "session" | "user";
 }) {
   const { userId, sessionId } = useParams();
 
@@ -25,7 +25,7 @@ export default function MessagesList(props: {
   let redemptionsApiUrl = `/redemptions`;
   // let redemptionsHref = ``;
 
-  switch (props.messages) {
+  switch (props.redemptions) {
     case "session":
       redemptionsApiUrl += `/twitch-session/${sessionId}`;
       // redemptionsHref += "../";
@@ -34,11 +34,11 @@ export default function MessagesList(props: {
       redemptionsApiUrl += `/${userId}`;
       break;
     default:
-    // redemptionsHref += "messages/";
   }
   redemptionsApiUrl += `?page=${currentPageLoc}&limit=${pageSize}`;
 
-  const [{ data, loading, error }] = useAxios<IMessagesList>(redemptionsApiUrl);
+  const [{ data, loading, error }] =
+    useAxios<IRedemptionsList>(redemptionsApiUrl);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error!</p>;

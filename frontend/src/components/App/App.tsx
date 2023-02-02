@@ -79,7 +79,7 @@ function App() {
               path="redemptions"
               element={
                 <div className="main-other">
-                  <RedemptionsList messages="all" />
+                  <RedemptionsList redemptions="all" />
                 </div>
               }
             ></Route>
@@ -87,7 +87,7 @@ function App() {
               path="redemptions/:userId"
               element={
                 <div className="main-other">
-                  <RedemptionsList messages="user" />
+                  <RedemptionsList redemptions="user" />
                 </div>
               }
             ></Route>
@@ -95,7 +95,7 @@ function App() {
               path="redemptions/twitch-session/:sessionId"
               element={
                 <div className="main-other">
-                  <RedemptionsList messages="session" />
+                  <RedemptionsList redemptions="session" />
                 </div>
               }
             ></Route>

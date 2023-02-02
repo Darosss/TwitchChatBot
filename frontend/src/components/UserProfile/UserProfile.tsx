@@ -14,6 +14,9 @@ export default function UserProfile() {
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notes, setNotes] = useState("");
 
+  const [{ data: userData, loading: userLoading, error: userError }] =
+    useAxios<IUser>(`/users/${userId}`);
+
   const [, executePost] = useAxios(
     {
       url: `/users/${userId}`,
@@ -43,9 +46,6 @@ export default function UserProfile() {
       }, 500);
     });
   };
-
-  const [{ data: userData, loading: userLoading, error: userError }] =
-    useAxios<IUser>(`/users/${userId}`);
 
   useEffect(() => {
     setNotes(userData?.notes?.join("\n") || "");
