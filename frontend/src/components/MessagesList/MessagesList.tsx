@@ -10,7 +10,7 @@ import useAxios from "axios-hooks";
 interface IMessagesList {
   messages: IMessage[];
   totalPages: number;
-  messageCount: number;
+  count: number;
   currentPage: number;
 }
 
@@ -45,12 +45,12 @@ export default function MessagesList(props: {
   if (error) return <p>Error!</p>;
   if (!data) return <>Something went wrong!</>;
 
-  const { messages, messageCount, currentPage } = data;
+  const { messages, count, currentPage } = data;
 
   return (
     <>
       <PreviousPage />
-      <div id="messages-list">
+      <div id="messages-list" className="table-list-wrapper">
         <table id="table-messages-list">
           <thead>
             <tr>
@@ -79,11 +79,11 @@ export default function MessagesList(props: {
           </tbody>
         </table>
       </div>
-      <div className="pagination">
+      <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
           currentPage={currentPage}
-          totalCount={messageCount}
+          totalCount={count}
           pageSize={pageSize}
           onPageSizeChange={(pageSize) => setPageSize(pageSize)}
           onPageChange={(page) => setCurrentPageLoc(page)}

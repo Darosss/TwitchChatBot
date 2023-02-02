@@ -8,7 +8,7 @@ import useAxios from "axios-hooks";
 interface IUsersRes {
   users: IUser[];
   totalPages: number;
-  usersCount: number;
+  count: number;
   currentPage: number;
 }
 
@@ -24,11 +24,11 @@ export default function Users() {
   if (error) return <p>There is an error.</p>;
   if (!data) return <p>Loading...</p>;
 
-  const { users, usersCount, currentPage } = data;
+  const { users, count, currentPage } = data;
 
   return (
     <>
-      <div id="users-list">
+      <div id="users-list" className="table-list-wrapper">
         <table id="table-users-list">
           <thead>
             <tr>
@@ -67,11 +67,11 @@ export default function Users() {
           </tbody>
         </table>
       </div>
-      <div className="pagination">
+      <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
           currentPage={currentPage}
-          totalCount={usersCount}
+          totalCount={count}
           pageSize={pageSize}
           onPageSizeChange={(pageSize) => setPageSize(pageSize)}
           onPageChange={(page) => setCurrentPageLoc(page)}

@@ -1,3 +1,8 @@
+#overlay-header {
+  min-height: 100vh;
+  background-color: transparent;
+}
+
 #overlay-redemption {
   align-self: center;
   width: 80vw;
@@ -7,6 +12,7 @@
   animation-duration: 15s;
   animation-iteration-count: infinite;
 }
+
 #overlay-redemption img {
   float: left;
 }

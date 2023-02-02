@@ -172,7 +172,7 @@ export default function CommandsList() {
 
   return (
     <>
-      <div id="commands-list">
+      <div id="commands-list" className="table-list-wrapper">
         <table id="table-commands-list">
           <thead>
             <tr>
@@ -279,7 +279,7 @@ export default function CommandsList() {
           </tbody>
         </table>
       </div>
-      <div className="pagination">
+      <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
           currentPage={currentPage}

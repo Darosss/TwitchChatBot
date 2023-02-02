@@ -9,7 +9,7 @@ import useAxios from "axios-hooks";
 interface ITwitchSessionRes {
   twitchSessions: ITwitchSession[];
   totalPages: number;
-  usersCount: number;
+  count: number;
   currentPage: number;
 }
 
@@ -25,12 +25,12 @@ export default function TwitchSessions() {
   if (error) return <p>Error!</p>;
   if (!data) return <>Something went wrong!</>;
 
-  const { twitchSessions, usersCount, currentPage } = data;
+  const { twitchSessions, count, currentPage } = data;
 
   return (
     <>
-      <div id="users-list">
-        <table id="table-users-list">
+      <div id="twitch-session-list" className="table-list-wrapper">
+        <table id="table-twitch-session-list">
           <thead>
             <tr>
               <th>Messages</th>
@@ -67,11 +67,11 @@ export default function TwitchSessions() {
           </tbody>
         </table>
       </div>
-      <div className="pagination">
+      <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
           currentPage={currentPage}
-          totalCount={usersCount}
+          totalCount={count}
           pageSize={pageSize}
           onPageSizeChange={(pageSize) => setPageSize(pageSize)}
           onPageChange={(page) => setCurrentPageLoc(page)}
