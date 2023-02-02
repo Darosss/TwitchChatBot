@@ -4,20 +4,8 @@ import { Link } from "react-router-dom";
 import resetWindowScroll from "@utils/resetScroll";
 import useAxios from "axios-hooks";
 
-export default function SideBar(props: {
-  mainDiv: React.MutableRefObject<HTMLDivElement | null>;
-}) {
+export default function SideBar() {
   const [{ data, loading, error }] = useAxios<string>("/twitch-authorize-url");
-
-  const { mainDiv } = props;
-
-  const changeMainBackground = (transparent = false) => {
-    if (!mainDiv.current) return;
-
-    console.log(transparent);
-    if (transparent) mainDiv.current.classList.remove("not-overlay");
-    else mainDiv.current.classList.add("not-overlay");
-  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error!</p>;
@@ -27,90 +15,42 @@ export default function SideBar(props: {
     <div className="navbar">
       <ul>
         <li>
-          <Link
-            onClick={() => {
-              resetWindowScroll();
-              changeMainBackground(true);
-            }}
-            to="/"
-          >
+          <Link onClick={resetWindowScroll} to="/">
             Overlay
           </Link>
         </li>
         <li>
-          <Link
-            onClick={() => {
-              resetWindowScroll();
-              changeMainBackground();
-            }}
-            to="/messages"
-          >
+          <Link onClick={resetWindowScroll} to="/messages">
             Messages
           </Link>
         </li>
         <li>
-          <Link
-            onClick={() => {
-              resetWindowScroll();
-              changeMainBackground();
-            }}
-            to="/users"
-          >
+          <Link onClick={resetWindowScroll} to="/users">
             Users
           </Link>
         </li>
         <li>
-          <Link
-            onClick={() => {
-              resetWindowScroll();
-              changeMainBackground();
-            }}
-            to="/chat"
-          >
+          <Link onClick={resetWindowScroll} to="/chat">
             Chat
           </Link>
         </li>
         <li>
-          <Link
-            onClick={() => {
-              resetWindowScroll();
-              changeMainBackground();
-            }}
-            to="/twitch-sessions"
-          >
+          <Link onClick={resetWindowScroll} to="/twitch-sessions">
             Sessions
           </Link>
         </li>
         <li>
-          <Link
-            onClick={() => {
-              resetWindowScroll();
-              changeMainBackground();
-            }}
-            to="/redemptions"
-          >
+          <Link onClick={resetWindowScroll} to="/redemptions">
             Redemptions
           </Link>
         </li>
         <li>
-          <Link
-            onClick={() => {
-              resetWindowScroll();
-              changeMainBackground();
-            }}
-            to="/commands"
-          >
+          <Link onClick={resetWindowScroll} to="/commands">
             Commands
           </Link>
         </li>
         <li>
-          <Link
-            onClick={() => {
-              resetWindowScroll();
-              changeMainBackground();
-            }}
-            to="/configs"
-          >
+          <Link onClick={resetWindowScroll} to="/configs">
             Configs
           </Link>
         </li>
