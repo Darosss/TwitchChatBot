@@ -1,5 +1,5 @@
 import "./style.css";
-import React, { useRef } from "react";
+import React from "react";
 
 import { SocketContext, socketConn } from "@context/SocketContext";
 import SideBar from "@components/SideBar";
@@ -7,7 +7,7 @@ import SideBar from "@components/SideBar";
 import { configure } from "axios-hooks";
 import Axios from "axios";
 
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import TwitchChat from "@components/TwitchChat";
 import Users from "@components/Users";
 import Overlay from "@components/Overlay";
@@ -24,55 +24,129 @@ const axios = Axios.create({
 configure({ axios });
 
 function App() {
-  const main = useRef<HTMLDivElement | null>(null);
-
   return (
     <SocketContext.Provider value={socketConn}>
       <BrowserRouter>
         <div className="App">
           <header className="App-header">
-            <SideBar mainDiv={main} />
+            <SideBar />
           </header>
         </div>
-        <div className="main" ref={main}>
+
+        <div className="main">
           <Routes>
-            <Route path="/" element={<Overlay />}></Route>
-
             <Route
-              path="/messages"
-              element={<MessagesList messages="all" />}
-            ></Route>
-            <Route path="/twitch-sessions" element={<TwitchSessions />}></Route>
-            <Route
-              path="/messages/:userId"
-              element={<MessagesList messages="user" />}
+              path="/"
+              element={
+                <div className="main-overlay">
+                  <Overlay />
+                </div>
+              }
             ></Route>
             <Route
-              path="/messages/twitch-session/:sessionId"
-              element={<MessagesList messages="session" />}
+              path="messages"
+              element={
+                <div className="main-other">
+                  <MessagesList messages="all" />
+                </div>
+              }
             ></Route>
             <Route
-              path="/redemptions"
-              element={<RedemptionsList messages="all" />}
+              path="twitch-sessions"
+              element={
+                <div className="main-other">
+                  <TwitchSessions />
+                </div>
+              }
             ></Route>
             <Route
-              path="/redemptions/:userId"
-              element={<RedemptionsList messages="user" />}
+              path="messages/:userId"
+              element={
+                <div className="main-other">
+                  <MessagesList messages="user" />
+                </div>
+              }
             ></Route>
             <Route
-              path="/redemptions/twitch-session/:sessionId"
-              element={<RedemptionsList messages="session" />}
+              path="messages/twitch-session/:sessionId"
+              element={
+                <div className="main-other">
+                  <MessagesList messages="session" />
+                </div>
+              }
             ></Route>
-            <Route path="/user/:userId" element={<UserProfile />}></Route>
-            <Route path="/users" element={<Users />}></Route>
-            <Route path="/chat" element={<TwitchChat />}></Route>
-
-            <Route path="/commands" element={<CommandsList />}></Route>
             <Route
-              path="/commands/:commandId"
-              element={<CommandsList />}
+              path="redemptions"
+              element={
+                <div className="main-other">
+                  <RedemptionsList messages="all" />
+                </div>
+              }
             ></Route>
-            <Route path="/configs" element={<>Configs</>}></Route>
+            <Route
+              path="redemptions/:userId"
+              element={
+                <div className="main-other">
+                  <RedemptionsList messages="user" />
+                </div>
+              }
+            ></Route>
+            <Route
+              path="redemptions/twitch-session/:sessionId"
+              element={
+                <div className="main-other">
+                  <RedemptionsList messages="session" />
+                </div>
+              }
+            ></Route>
+            <Route
+              path="user/:userId"
+              element={
+                <div className="main-other">
+                  <UserProfile />
+                </div>
+              }
+            ></Route>
+            <Route
+              path="users"
+              element={
+                <div className="main-other">
+                  <Users />
+                </div>
+              }
+            ></Route>
+            <Route
+              path="chat"
+              element={
+                <div className="main-other">
+                  <TwitchChat />
+                </div>
+              }
+            ></Route>
+            <Route
+              path="commands"
+              element={
+                <div className="main-other">
+                  <CommandsList />
+                </div>
+              }
+            ></Route>
+            <Route
+              path="commands/:commandId"
+              element={
+                <div className="main-other">
+                  <CommandsList />
+                </div>
+              }
+            ></Route>
+            <Route
+              path="configs"
+              element={
+                <div className="main-other">
+                  <>Configs</>
+                </div>
+              }
+            ></Route>
           </Routes>
         </div>
       </BrowserRouter>
