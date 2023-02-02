@@ -100,13 +100,14 @@ export default function Pagination(props: {
         <select
           name="pageSize"
           id="pageSize"
-          defaultValue={20}
+          defaultValue={pageSize}
           onChange={(e) => onPageSizeChange(Number(e.target.value))}
         >
           <option value="5">5</option>
           <option value="20">20</option>
           <option value="50">50</option>
           <option value="100">100</option>
+          <option value="500">500</option>
         </select>
       </ul>
     </>
