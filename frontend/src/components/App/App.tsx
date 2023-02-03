@@ -16,6 +16,7 @@ import UserProfile from "@components/UserProfile";
 import TwitchSessions from "@components/TwitchSessions/";
 import RedemptionsList from "@components/RedemptionsList";
 import CommandsList from "@components/CommandsList";
+import ConfigsList from "@components/ConfigsList";
 
 const axios = Axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -143,7 +144,7 @@ function App() {
               path="configs"
               element={
                 <div className="main-other">
-                  <>Configs</>
+                  <ConfigsList />
                 </div>
               }
             ></Route>
