@@ -32,8 +32,8 @@ export default function Pagination(props: {
   const PageSizeSelect = () => {
     return (
       <select
-        name="pageSize"
-        id="pageSize"
+        name="page-size"
+        id="page-size"
         defaultValue={pageSize}
         onChange={(e) => onPageSizeChange(Number(e.target.value))}
       >
