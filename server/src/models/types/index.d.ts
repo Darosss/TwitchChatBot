@@ -70,7 +70,12 @@ export interface IConfig {
   activeUserTimeDelay: number;
   chatGamesIntervalDelay: number;
   minActiveUsersThreshold: number;
-  permissionLevels: Map<string, number>;
+  permissionLevels: {
+    broadcaster: number;
+    mod: number;
+    vip: number;
+    all: number;
+  };
 }
 
 export type IConfigDocument = IConfig & Document;
