@@ -11,7 +11,7 @@ const getChatCommands = async (req: Request, res: Response) => {
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .select({ __v: 0 })
-      .sort({ name: 1 })
+      .sort({ createdAt: -1 })
       .exec();
 
     const count = await ChatCommand.countDocuments();
