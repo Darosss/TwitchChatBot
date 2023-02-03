@@ -14,7 +14,7 @@
 }
 
 .modal-content {
-  width: 500px;
+  width: 50vw;
   background-color: var(--base-bg-color);
   transform: translateY(-10vh);
   transition: all 0.1s ease-out;
