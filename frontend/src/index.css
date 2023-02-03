@@ -1,4 +1,5 @@
 :root {
+  --base-color: #ffffff;
   --base-bg-color: #282c34;
   --base-bg-color-chat: #18181b;
   --base-bg-color-border: rgb(74, 74, 74);
@@ -7,13 +8,14 @@
   --base-bg-color-danger: #a01010;
   --base-bg-hover-color-chat: hsla(0, 0%, 100%, 0.16);
   --base-bg-textarea-chat: hsla(0, 0%, 81%, 0.456);
+  --base-bg-color-info: #474117;
   --base-color-time-message: #f7f7f8;
   --base-color-username-message: #ff0000;
   --base-color-message: white;
   --base-color-button-action: #9147ff;
   --base-color-button-action-active: #602dab;
   --base-color-link: #afa241;
-  --base-color-info: #c6c9ad;
+  --base-color-info: #ecf2b4;
 }
 
 body {
@@ -104,7 +106,7 @@ table tbody {
 }
 
 table tbody td {
-  border-top: 0.1rem solid var(--base-bg-color-border);
+  border-top: 0.2rem solid var(--base-bg-color-border);
 }
 
 .table-list-wrapper {
