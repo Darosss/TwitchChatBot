@@ -1,9 +1,11 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useState } from "react";
 import "./style.css";
 import { IChatCommand } from "@backend/models/types/";
 import Pagination from "@components/Pagination";
 import useAxios from "axios-hooks";
 import { AxiosRequestConfig } from "axios";
+import Modal from "@components/Modal";
+import formatDate from "@utils/formatDate";
 
 interface IChatCommandRes {
   chatCommands: IChatCommand[];
@@ -14,17 +16,20 @@ interface IChatCommandRes {
 
 export default function CommandsList() {
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [pageSize, setPageSize] = useState(13);
 
-  const [name, setName] = useState(new Map<string, string>());
-  const [description, setDescription] = useState(new Map<string, string>());
-  const [enabled, setEnabled] = useState(new Map<string, boolean>());
-  const [aliases, setAliases] = useState(new Map<string, string[]>());
-  const [messages, setMessages] = useState(new Map<string, string[]>());
-  const [privilege, setPrivilege] = useState(new Map<string, number>());
+  const [showModal, setShowModal] = useState(false);
 
-  const [{ data, loading, error }] = useAxios<IChatCommandRes>(
+  const [editingCommand, setEditingCommand] = useState("");
+
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [enabled, setEnabled] = useState(true);
+  const [aliases, setAliases] = useState([""]);
+  const [messages, setMessages] = useState([""]);
+  const [privilege, setPrivilege] = useState<number>();
+
+  const [{ data, loading, error }, refetchCommands] = useAxios<IChatCommandRes>(
     `/chat-commands?page=${currentPageLoc}&limit=${pageSize}&`
   );
 
@@ -37,33 +42,6 @@ export default function CommandsList() {
     { manual: true }
   );
 
-  useEffect(() => {
-    data?.chatCommands.forEach((command) => {
-      setName((prevState) => {
-        prevState.set(command._id, command.name);
-        return prevState;
-      });
-      setDescription((prevState) => {
-        return prevState.set(command._id, command.description || "");
-      });
-      setEnabled((prevState) => {
-        prevState.set(command._id, command.enabled);
-        return prevState;
-      });
-      setAliases((prevState) => {
-        return prevState.set(command._id, command.aliases);
-      });
-      setMessages((prevState) => {
-        return prevState.set(command._id, command.messages);
-      });
-      setPrivilege((prevState) => {
-        return prevState.set(command._id, command.privilage);
-      });
-
-      forceUpdate();
-    });
-  }, [data]);
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p>There is an error.</p>;
   if (!data) return <p>Loading...</p>;
@@ -71,14 +49,12 @@ export default function CommandsList() {
   const { chatCommands, count, currentPage } = data;
 
   const removeCommand = (id: string) => {
-    if (confirm(`Are you sure you want delete command: ${name.get(id)}`))
+    if (confirm(`Are you sure you want delete command: }`))
       postChatCommand({
         url: `/chat-commands/delete/${id}`,
         method: "DELETE",
       } as AxiosRequestConfig).then(() => {
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
+        refetchCommands();
       });
   };
 
@@ -95,79 +71,46 @@ export default function CommandsList() {
         privilege: 0,
       },
     } as AxiosRequestConfig).then(() => {
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+      refetchCommands();
     });
   };
 
-  const editCommand = (id: string) => {
+  const editCommand = () => {
     postChatCommand({
-      url: `/chat-commands/${id}`,
+      url: `/chat-commands/${editingCommand}`,
       method: "POST",
       data: {
-        name: name.get(id),
-        description: description.get(id),
-        enabled: enabled.get(id),
-        aliases: aliases.get(id),
-        messages: messages.get(id),
-        privilege: privilege.get(id),
+        name: name,
+        description: description,
+        enabled: enabled,
+        aliases: aliases,
+        messages: messages,
+        privilege: privilege,
       },
     } as AxiosRequestConfig).then(() => {
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+      refetchCommands();
     });
   };
 
-  const toggleOnOffCommand = (commandId: string) => {
+  const changeColorOnChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    e.target.classList.add("changed-field");
+  };
+
+  const resetOnChangeClasses = () => {
+    document.querySelectorAll(".changed-field").forEach((changed) => {
+      changed.classList.remove("changed-field");
+    });
+  };
+
+  const toggleOnOffCommand = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    (e.target as HTMLButtonElement).classList.toggle("command-disabled");
     setEnabled((prevState) => {
-      const prevBoolean = prevState.get(commandId);
-
-      prevState.set(commandId, !prevBoolean);
-
-      return prevState;
+      return !prevState;
     });
-
-    forceUpdate();
-  };
-
-  const createRadioPrivileges = (_id: string, checked: number) => {
-    const setPrivilageState = (value: number) => {
-      setPrivilege((prevState) => {
-        prevState.set(_id, Number(value));
-        return prevState;
-      });
-
-      console.log(privilege);
-    };
-
-    let radioHTML = [];
-    for (let i = 0; i <= 10; i++) {
-      radioHTML.push(
-        <label key={"radioPrivilege" + i}>
-          {i}
-          {checked === i ? (
-            <input
-              type="radio"
-              onChange={(e) => setPrivilageState(Number(e.target.value))}
-              name={_id}
-              defaultChecked
-              value={i}
-            />
-          ) : (
-            <input
-              type="radio"
-              name={_id}
-              onChange={(e) => setPrivilageState(Number(e.target.value))}
-              value={i}
-            />
-          )}
-        </label>
-      );
-    }
-
-    return radioHTML;
   };
 
   return (
@@ -177,14 +120,16 @@ export default function CommandsList() {
           <thead>
             <tr>
               <th>
+                Actions
                 <button
-                  className="create-command"
+                  className="create-command command-list-button"
                   onClick={(e) => createNewCommand()}
                 >
                   New
                 </button>
-                Name
               </th>
+              <th>Name</th>
+              <th>Created</th>
               <th>Uses</th>
               <th>Enabled</th>
               <th>Privilage</th>
@@ -200,78 +145,38 @@ export default function CommandsList() {
                 <tr key={command._id}>
                   <td>
                     <button
-                      className="command-action"
-                      onClick={(e) => editCommand(command._id)}
+                      className="command-action command-list-button"
+                      onClick={() => {
+                        setEditingCommand(command._id);
+                        setName(command.name);
+                        setDescription(command.description || "");
+                        setAliases(command.aliases);
+                        setMessages(command.messages);
+                        setPrivilege(command.privilage);
+                        setEnabled(command.enabled);
+                        setShowModal(true);
+                      }}
                     >
                       Edit
                     </button>
-                    <input
-                      className="commands-list-name"
-                      type="text"
-                      defaultValue={name.get(command._id)}
-                      onChange={(e) =>
-                        setName((prevState) => {
-                          prevState.set(command._id, e.target.value);
-                          return prevState;
-                        })
-                      }
-                    />
                     <button
-                      className="command-action command-delete"
+                      className="command-action command-list-button command-delete"
                       onClick={(e) => removeCommand(command._id)}
                     >
                       Delete
                     </button>
                   </td>
+                  <td> {command.name} </td>
+                  <td> {formatDate(command.createdAt)} </td>
 
-                  <td className="commands-text">{command.useCount}</td>
-                  <td>
-                    <button onClick={(e) => toggleOnOffCommand(command._id)}>
-                      {enabled.get(command._id)?.toString()}
-                    </button>
-                  </td>
-                  <td className="commands-td-radio">
-                    {createRadioPrivileges(command._id, command.privilage)}
-                  </td>
-                  <td>
-                    <textarea
-                      className="commands-textarea"
-                      defaultValue={description.get(command._id)}
-                      onChange={(e) =>
-                        setDescription((prevState) => {
-                          return prevState.set(command._id, e.target.value);
-                        })
-                      }
-                    ></textarea>
-                  </td>
+                  <td>{command.useCount}</td>
+                  <td>{command.enabled.toString()}</td>
+                  <td>{command.privilage.toString()}</td>
+                  <td className="commands-big">{command.description}</td>
 
-                  <td>
-                    <textarea
-                      className="commands-textarea"
-                      defaultValue={aliases.get(command._id)?.join("\n")}
-                      onChange={(e) =>
-                        setAliases((prevState) => {
-                          return prevState.set(
-                            command._id,
-                            e.target.value?.split("\n")
-                          );
-                        })
-                      }
-                    ></textarea>
-                  </td>
-                  <td>
-                    <textarea
-                      className="commands-textarea commands-messages-textarea"
-                      defaultValue={messages.get(command._id)?.join("\n")}
-                      onChange={(e) =>
-                        setMessages((prevState) => {
-                          return prevState.set(
-                            command._id,
-                            e.target.value?.split("\n")
-                          );
-                        })
-                      }
-                    ></textarea>
+                  <td className="commands-big">{command.aliases.join("\n")}</td>
+                  <td className="commands-big">
+                    {command.messages.join("\n")}
                   </td>
                 </tr>
               );
@@ -290,6 +195,105 @@ export default function CommandsList() {
           siblingCount={1}
         />
       </div>
+      <Modal
+        title="Edit command"
+        onClose={() => {
+          setShowModal(false);
+          resetOnChangeClasses();
+        }}
+        onSubmit={() => {
+          editCommand();
+          resetOnChangeClasses();
+          setShowModal(false);
+        }}
+        show={showModal}
+      >
+        <table className="commands-list-modal-wrapper">
+          <tbody>
+            <tr>
+              <td>Name </td>
+              <td>
+                <input
+                  className="commands-list-name"
+                  type="text"
+                  defaultValue={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    changeColorOnChange(e);
+                  }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td> Enabled </td>
+              <td>
+                <button
+                  onClick={(e) => toggleOnOffCommand(e)}
+                  className={
+                    `${!true ? "command-disabled" : ""} ` +
+                    "command-list-button"
+                  }
+                >
+                  {enabled.toString()}
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>Privilege</td>
+              <td>
+                <input
+                  className="commands-list-name"
+                  type="number"
+                  defaultValue={privilege}
+                  onChange={(e) => {
+                    setPrivilege(Number(e.target.value));
+                    changeColorOnChange(e);
+                  }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Description </td>
+              <td>
+                <textarea
+                  className="commands-textarea"
+                  defaultValue={description}
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                    changeColorOnChange(e);
+                  }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Aliases </td>
+              <td>
+                <textarea
+                  className="commands-textarea"
+                  defaultValue={aliases?.join("\n")}
+                  onChange={(e) => {
+                    setAliases(e.target.value?.split("\n"));
+                    changeColorOnChange(e);
+                  }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Messages </td>
+              <td>
+                <textarea
+                  className="commands-textarea"
+                  defaultValue={messages?.join("\n")}
+                  onChange={(e) => {
+                    setMessages(e.target.value?.split("\n"));
+                    changeColorOnChange(e);
+                  }}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </Modal>
     </>
   );
 }

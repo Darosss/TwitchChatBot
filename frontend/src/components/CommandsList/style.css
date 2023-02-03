@@ -1,64 +1,64 @@
+#table-commands-list td:not(:first-child) {
+  border-left: 0.1rem solid var(--base-bg-color-border);
+  text-align: center;
+}
+
+.commands-list-modal-wrapper {
+  width: 45vw;
+}
+
+.commands-big {
+  word-wrap: break-word;
+  width: 18%;
+}
+
 .commands-textarea {
   font-size: 1.1rem;
   height: 15vh;
   max-height: 15vh;
-  width: 15vw;
-  max-width: 20vw;
-  min-width: 8vw;
-  min-height: 5vw;
-}
-
-.commands-messages-textarea {
-  font-size: 0.9rem;
   width: 25vw;
   max-width: 25vw;
   min-width: 8vw;
   min-height: 5vw;
 }
 
-.commands-td-radio {
-  width: 5vw;
-  max-width: 5vw;
-  overflow-wrap: break-word;
-  overflow-x: auto;
-}
-
 .commands-list-name {
-  width: 15vw;
+  width: 25vw;
   height: 5vh;
   font-size: 1.1rem;
   overflow: hidden;
 }
 
-#commands-list button {
+.command-list-button {
   width: 7vw;
   max-width: 7vw;
-  font-size: 1.7rem;
+  font-size: calc(0.5rem + 1vw);
   overflow: hidden;
   background-color: var(--base-bg-color-action);
+  display: flex;
+  border-radius: 0.2rem;
+  align-items: center;
+  justify-content: center;
 }
 
-#commands-list button.create-command {
-  margin-right: 1rem;
+button.create-command {
+  float: left;
 }
 
-#commands-list button.command-action {
-  width: 100%;
+button.command-action {
+  width: 7vw;
   max-width: 100%;
 }
 
-#commands-list button.command-delete {
+button.command-delete {
   background-color: var(--base-bg-color-danger);
 }
 
-#commands-list button:hover {
-  background-color: hsl(var(--base-bg-color-action), 55, 44);
-  border: 0.1rem solid black;
+.command-disabled {
+  background-color: var(--base-bg-color-danger);
 }
 
-.commands-text {
-  font-size: 1.4rem;
-  width: 100%;
-  max-width: 10vw;
-  overflow-x: auto;
+.changed-field {
+  color: var(--base-color-info);
+  background-color: var(--base-bg-color-info);
 }
