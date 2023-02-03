@@ -4,7 +4,7 @@ export interface IUser {
   _id: string | ObjectId;
   username: string;
   createdAt: Date;
-  privileges: Number;
+  privileges: number;
   points: number;
   lastSeen: Date;
   messageCount: number;
