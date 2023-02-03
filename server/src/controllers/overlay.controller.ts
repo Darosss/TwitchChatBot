@@ -39,6 +39,8 @@ export const getTwitchAuthorizeUrl = (req: Request, res: Response) => {
     "channel:manage:polls",
     "channel:read:polls",
     "channel:read:redemptions",
+    "channel:read:vips",
+    "moderation:read",
   ];
   const response_type = "code";
   const state = "c3ab8aa609ea11e793ae92361f002671";
