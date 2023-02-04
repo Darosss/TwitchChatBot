@@ -45,9 +45,8 @@ export default function CommandsList() {
     { manual: true }
   );
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>There is an error.</p>;
-  if (!data) return <p>Loading...</p>;
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (loading || !data) return <> Loading...</>;
 
   const { chatCommands, count, currentPage } = data;
 
@@ -222,7 +221,7 @@ export default function CommandsList() {
         <table className="commands-list-modal-wrapper">
           <tbody>
             <tr>
-              <td>Name </td>
+              <th>Name </th>
               <td>
                 <input
                   className="commands-list-name"
@@ -236,7 +235,7 @@ export default function CommandsList() {
               </td>
             </tr>
             <tr>
-              <td> Enabled </td>
+              <th> Enabled </th>
               <td>
                 <button
                   onClick={(e) => toggleOnOffCommand(e)}
@@ -250,7 +249,7 @@ export default function CommandsList() {
               </td>
             </tr>
             <tr>
-              <td>Privilege</td>
+              <th>Privilege</th>
               <td>
                 <input
                   className="commands-list-name"
@@ -264,7 +263,7 @@ export default function CommandsList() {
               </td>
             </tr>
             <tr>
-              <td>Description </td>
+              <th>Description </th>
               <td>
                 <textarea
                   className="commands-textarea"
@@ -277,7 +276,7 @@ export default function CommandsList() {
               </td>
             </tr>
             <tr>
-              <td>Aliases </td>
+              <th>Aliases </th>
               <td>
                 <textarea
                   className="commands-textarea"
@@ -290,7 +289,7 @@ export default function CommandsList() {
               </td>
             </tr>
             <tr>
-              <td>Messages </td>
+              <th>Messages </th>
               <td>
                 <textarea
                   className="commands-textarea"

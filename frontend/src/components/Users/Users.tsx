@@ -21,9 +21,8 @@ export default function Users() {
     `/users?page=${currentPageLoc}&limit=${pageSize}&`
   );
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>There is an error.</p>;
-  if (!data) return <p>Loading...</p>;
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading...</>;
 
   const { users, count, currentPage } = data;
 

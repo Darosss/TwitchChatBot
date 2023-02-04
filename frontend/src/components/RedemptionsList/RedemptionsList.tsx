@@ -42,9 +42,8 @@ export default function RedemptionsList(props: {
   const [{ data, loading, error }] =
     useAxios<IRedemptionsList>(redemptionsApiUrl);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error!</p>;
-  if (!data) return <>Something went wrong!</>;
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading</>;
 
   const { redemptions, count, currentPage } = data;
   return (

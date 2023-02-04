@@ -42,9 +42,8 @@ export default function MessagesList(props: {
   // const { data, error } = useFetch<IMessagesList>(messageApiUrl);
   const [{ data, loading, error }] = useAxios<IMessagesList>(messageApiUrl);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error!</p>;
-  if (!data) return <>Something went wrong!</>;
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading!</>;
 
   const { messages, count, currentPage } = data;
 
