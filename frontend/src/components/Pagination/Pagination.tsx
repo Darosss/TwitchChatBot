@@ -29,14 +29,41 @@ export default function Pagination(props: {
     currentPage
   );
 
+  const PageSizeSelect = () => {
+    return (
+      <select
+        name="page-size"
+        id="page-size"
+        defaultValue={pageSize}
+        onChange={(e) => onPageSizeChange(Number(e.target.value))}
+      >
+        <option value="5">5</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+        <option value="500">500</option>
+      </select>
+    );
+  };
+
   // If no range = return;
   if (!paginationRange) {
-    return <></>;
+    return (
+      <>
+        Page size
+        <PageSizeSelect />
+      </>
+    );
   }
 
   // If there are less than 2 times in pagination range we shall not render the component
   if (currentPage === 0 || paginationRange.length < 2) {
-    return <></>;
+    return (
+      <div className="page-size-alone">
+        <label>Page size</label>
+        <PageSizeSelect />
+      </div>
+    );
   }
 
   const onNext = () => {
@@ -97,17 +124,7 @@ export default function Pagination(props: {
         >
           <div className="arrow right" />
         </li>
-        <select
-          name="pageSize"
-          id="pageSize"
-          defaultValue={20}
-          onChange={(e) => onPageSizeChange(Number(e.target.value))}
-        >
-          <option value="5">5</option>
-          <option value="20">20</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
+        <PageSizeSelect />
       </ul>
     </>
   );

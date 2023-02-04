@@ -8,6 +8,7 @@ export default function Overlay() {
 
   const [redemptionInfo, setRedemptionInfo] = useState("");
   const [redemptionImg, setRedemptionImg] = useState("");
+
   useEffect(() => {
     socket?.on("onRedemption", (data) => {
       const { rewardTitle, userDisplayName, rewardImage } = data;
@@ -38,11 +39,11 @@ export default function Overlay() {
   }, [socket]);
 
   return (
-    <>
+    <div id="overlay-header">
       <div ref={overlayRef} id="overlay-redemption" className="overlay-hidden">
         {redemptionInfo}
         {redemptionImg ? <img alt="no" src={redemptionImg} /> : null}
       </div>
-    </>
+    </div>
   );
 }

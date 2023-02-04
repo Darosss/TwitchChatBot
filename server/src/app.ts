@@ -14,7 +14,7 @@ const expressApp = () => {
   app.use(express.json());
 
   app.set("json spaces", 2);
-  app.use(cors({ origin: "*", methods: ["POST", "GET"] }));
+  app.use(cors({ origin: "*", methods: ["POST", "GET", "DELETE"] }));
   app.use(express.urlencoded({ extended: true }));
 
   const localSocketIO = localSocket(server);

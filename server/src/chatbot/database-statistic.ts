@@ -32,20 +32,23 @@ class BotStatisticDatabase {
 
   async updateEveryUserTwitchDetails() {
     const broadcasterId = (await this.twitchApi.users.getMe()).id;
-    const users = await User.find({});
+
     try {
-      for (let indx = 0; indx < users.length; indx++) {
+      for await (const user of User.find()) {
         const userTwitch = await this.twitchApi.users.getUserByName(
-          users[indx].username
+          user.username
         );
         const follower = await userTwitch?.getFollowTo(broadcasterId);
 
-        await User.findByIdAndUpdate(users[indx].id, {
-          twitchId: userTwitch?.id,
-          twitchName: userTwitch?.name,
-          follower: follower?.followDate,
-        });
+        if (!userTwitch) return;
+
+        user.twitchId = userTwitch.id;
+        user.twitchName = userTwitch.name;
+        user.follower = follower?.followDate;
+
+        await user.save();
       }
+
       console.log("Finished checking users in twitch details");
     } catch (error) {
       console.log("Couldn't save twitch details ");
@@ -157,6 +160,7 @@ class BotStatisticDatabase {
       foundCommand = await this.getCommandByAlias(aliasCommand);
 
       if (!foundCommand) return;
+      if (user.privileges < foundCommand.privilage) return;
 
       foundCommand.useCount++;
       await foundCommand.save();

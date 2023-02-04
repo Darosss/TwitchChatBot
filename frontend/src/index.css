@@ -1,16 +1,21 @@
 :root {
+  --base-color: #ffffff;
   --base-bg-color: #282c34;
   --base-bg-color-chat: #18181b;
   --base-bg-color-border: rgb(74, 74, 74);
+  --base-bg-color-action: #2f2fb5;
+  --base-bg-color-head: rgb(91, 89, 89);
+  --base-bg-color-danger: #a01010;
   --base-bg-hover-color-chat: hsla(0, 0%, 100%, 0.16);
   --base-bg-textarea-chat: hsla(0, 0%, 81%, 0.456);
+  --base-bg-color-info: #474117;
   --base-color-time-message: #f7f7f8;
   --base-color-username-message: #ff0000;
   --base-color-message: white;
   --base-color-button-action: #9147ff;
   --base-color-button-action-active: #602dab;
   --base-color-link: #afa241;
-  --base-color-info: #c6c9ad;
+  --base-color-info: #ecf2b4;
 }
 
 body {
@@ -20,24 +25,21 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-body::-webkit-scrollbar {
-  display: none;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  overflow-y: hidden;
 }
 
 a {
   text-decoration: none;
-  color: hsl(var(--base-color-username-message), 100%, 50%);
+  color: var(--base-color-link);
 }
 
 a:visited {
-  color: hsl(var(--base-color-username-message), 32%, 50%);
+  color: var(--base-color-link);
+}
+
+/* DEFAULTS SCROLLBARS */
+body::-webkit-scrollbar {
+  display: none;
 }
 
 ul::-webkit-scrollbar-track,
@@ -62,24 +64,59 @@ textarea::-webkit-scrollbar-thumb {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   background-color: var(--base-bg-color-chat);
 }
+/* DEFAULTS SCROLLBARS */
 
 textarea::-webkit-resizer {
   background-color: var(--base-bg-color);
 }
 
-a:hover {
+a:hover,
+button:hover {
   color: var(--base-bg-color-border);
   background-color: var(--base-color-link);
 }
 
-a {
-  color: var(--base-color-link);
-}
-
-a:visited {
-  color: var(--base-color-link);
-}
-
 .float-right {
   float: right;
+}
+
+textarea,
+input,
+button {
+  border: 0;
+  background-color: var(--base-bg-color-border);
+  color: var(--base-color-message);
+}
+
+/* DEFAULTS TABLES */
+table {
+  width: 100vw;
+}
+
+table thead th {
+  background-color: var(--base-bg-color-head);
+  position: sticky;
+  top: 0;
+  font-size: 1.2rem;
+}
+
+table tbody {
+  border: 2px solid black;
+  overflow-y: scroll;
+}
+
+table tbody td {
+  border-top: 0.2rem solid var(--base-bg-color-border);
+}
+
+.table-list-wrapper {
+  font-size: 0.9rem;
+  height: 90vh;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+/* DEFAULTS TABLES */
+
+.table-list-pagination {
+  border-top: 0.3rem solid var(--base-bg-color-border);
 }

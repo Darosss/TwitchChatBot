@@ -4,19 +4,27 @@
 }
 
 .pagination-item {
-  padding: 0 12px;
-  height: 32px;
-  text-align: center;
+  padding: 0 0.1rem;
   margin: auto 0.6rem;
   color: rgba(0, 0, 0, 0.87);
+
   display: flex;
-  box-sizing: border-box;
+  flex-flow: column;
   align-items: center;
-  letter-spacing: 0.01071em;
-  border-radius: 16px;
-  line-height: 1.43;
-  font-size: 2rem;
-  min-width: 32px;
+  justify-content: center;
+
+  box-sizing: border-box;
+  letter-spacing: 0.1rem;
+  border-radius: 0.5rem;
+  font-size: 1.5rem;
+  min-width: 3vw;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .dots:hover {
@@ -26,11 +34,12 @@
 
 .pagination-item:hover {
   background-color: rgba(0, 0, 0, 0.04);
+
   cursor: pointer;
 }
 
 .pagination-item.selected {
-  background-color: rgba(0, 0, 0, 0.08);
+  background-color: rgba(0, 0, 0, 0.28);
 }
 
 .arrow::before {
@@ -61,4 +70,30 @@
 .disabled:hover {
   background-color: transparent;
   cursor: default;
+}
+
+#page-size {
+  font-size: 1.5rem;
+  background-color: var(--base-bg-color-action);
+  text-align: center;
+  border-radius: 0.5rem;
+  appearance: none;
+}
+
+#page-size::selection {
+  color: red;
+}
+
+#page-size::-ms-expand {
+  display: none; /* Hide the default arrow in Internet Explorer 10 and Internet Explorer 11 */
+}
+
+.page-size-alone {
+  margin-left: 3vw;
+  margin-top: 0.2rem;
+}
+
+.page-size-alone label {
+  font-size: 1.2rem;
+  margin-right: 1rem;
 }

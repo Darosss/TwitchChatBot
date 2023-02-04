@@ -1,0 +1,64 @@
+#table-commands-list td:not(:first-child) {
+  border-left: 0.1rem solid var(--base-bg-color-border);
+  text-align: center;
+}
+
+.commands-list-modal-wrapper {
+  width: 45vw;
+}
+
+.commands-big {
+  word-wrap: break-word;
+  width: 18%;
+}
+
+.commands-textarea {
+  font-size: 1.1rem;
+  height: 15vh;
+  max-height: 15vh;
+  width: 25vw;
+  max-width: 25vw;
+  min-width: 8vw;
+  min-height: 5vw;
+}
+
+.commands-list-name {
+  width: 25vw;
+  height: 5vh;
+  font-size: 1.1rem;
+  overflow: hidden;
+}
+
+.command-list-button {
+  width: 7vw;
+  max-width: 7vw;
+  font-size: calc(0.5rem + 1vw);
+  overflow: hidden;
+  background-color: var(--base-bg-color-action);
+  display: flex;
+  border-radius: 0.2rem;
+  align-items: center;
+  justify-content: center;
+}
+
+button.create-command {
+  float: left;
+}
+
+button.command-action {
+  width: 7vw;
+  max-width: 100%;
+}
+
+button.command-delete {
+  background-color: var(--base-bg-color-danger);
+}
+
+.command-disabled {
+  background-color: var(--base-bg-color-danger);
+}
+
+.changed-field {
+  color: var(--base-color-info);
+  background-color: var(--base-bg-color-info);
+}

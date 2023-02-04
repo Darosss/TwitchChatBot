@@ -2,7 +2,7 @@ import "./style.css";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Message() {
+export default function PreviousPage() {
   const navigate = useNavigate();
   const goBack = () => {
     navigate(-1);

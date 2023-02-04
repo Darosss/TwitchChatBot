@@ -4,6 +4,7 @@ import { ChatCommand } from "./models/chat-command.model";
 
 const initMongoDataBase = async () => {
   mongoose.set("strictQuery", false);
+
   await mongoose.connect(
     process.env.DB_CONN_STRING as string,
     { useNewUrlParser: true } as ConnectOptions
@@ -11,8 +12,10 @@ const initMongoDataBase = async () => {
 };
 
 export const initDefaultsDB = async () => {
-  if ((await Config.countDocuments()) === 0) await new Config().save();
   //If Config does not exist create new with default values
+  if ((await Config.count()) === 0) await new Config().save();
+
+  //If not commands are in DB, create defaults
   defaultCommands();
 };
 

@@ -47,7 +47,6 @@ const editUserProfile = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { notes } = req.body;
 
-  console.log("notes", notes);
   try {
     await User.findByIdAndUpdate(id, { notes: notes });
     res.status(200).send({ message: "Updated successfully" });

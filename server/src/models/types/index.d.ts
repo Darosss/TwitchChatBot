@@ -4,6 +4,7 @@ export interface IUser {
   _id: string | ObjectId;
   username: string;
   createdAt: Date;
+  privileges: number;
   points: number;
   lastSeen: Date;
   messageCount: number;
@@ -70,7 +71,12 @@ export interface IConfig {
   activeUserTimeDelay: number;
   chatGamesIntervalDelay: number;
   minActiveUsersThreshold: number;
-  permissionLevels: Map<string, number>;
+  permissionLevels: {
+    broadcaster: number;
+    mod: number;
+    vip: number;
+    all: number;
+  };
 }
 
 export type IConfigDocument = IConfig & Document;
@@ -78,6 +84,7 @@ export type IConfigDocument = IConfig & Document;
 export interface IChatCommand {
   _id: string | ObjectId;
   name: string;
+  createdAt: Date;
   description?: string;
   enabled: boolean;
   aliases: string[];

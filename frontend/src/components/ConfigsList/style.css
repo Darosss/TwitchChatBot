@@ -1,0 +1,50 @@
+.config-table {
+  font-size: 1.4rem;
+  width: 70vw;
+}
+
+.config-table td {
+  border: 0.2rem solid var(--base-bg-color-border);
+  text-align: center;
+  width: 20vw;
+}
+
+.config-table th {
+  text-align: left;
+  color: var(--base-color-info);
+  background-color: var(--base-bg-color-border);
+  width: 70vw;
+  border: 0.2rem solid var(--base-bg-color-border);
+  border-radius: 0.2rem;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  outline: 0;
+}
+
+.th-wide-col {
+  text-align: center !important;
+  letter-spacing: 0.5rem;
+  font-size: 2rem;
+}
+
+.edit-config-button {
+  color: var(--base-color-link);
+  background-color: var(--base-bg-color-border);
+  border: 0;
+  font-size: 1.5rem;
+  margin-left: 0.5rem;
+  width: 14vw;
+}
+
+.config-table input {
+  text-align: center;
+  background-color: var(--base-bg-color-info);
+  border: 0.4rem solid var(--base-bg-color-border);
+  width: auto;
+  max-width: 5vw;
+  font-size: 1.1rem;
+}
