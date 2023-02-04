@@ -1,11 +1,9 @@
 import Express, { Request, Response } from "express";
 import { User } from "@models/user.model";
+import { IRequestQuery } from "@types";
 
 const getUsers = async (req: Request, res: Response) => {
-  const { page = 1, limit = 50 } = req.query as unknown as {
-    page: number;
-    limit: number;
-  };
+  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
 
   try {
     const users = await User.find()
@@ -20,7 +18,7 @@ const getUsers = async (req: Request, res: Response) => {
     res.status(200).send({
       users,
       totalPages: Math.ceil(count / limit),
-      usersCount: count,
+      count: count,
       currentPage: Number(page),
     });
   } catch (error) {

@@ -19,3 +19,8 @@ declare global {
     }
   }
 }
+
+interface IRequestQuery {
+  limit: number;
+  page: number;
+}

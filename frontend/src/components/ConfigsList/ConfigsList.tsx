@@ -58,9 +58,8 @@ export default function UserProfile() {
     setPermissions(permissionLevels);
   };
 
-  if (configsLoading) return <p> Loading </p>;
-  if (configsError) return <p>There is an error.</p>;
-  if (!configsData) return <p>Someting went wrong</p>;
+  if (configsError) return <>There is an error.</>;
+  if (!configsData || configsLoading) return <>Someting went wrong</>;
 
   const {
     commandsPrefix,

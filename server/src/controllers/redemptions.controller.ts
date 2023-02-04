@@ -2,12 +2,10 @@ import Express, { Request, Response } from "express";
 import { Redemption } from "@models/redemption.model";
 import { TwitchSession } from "@models/twitch-session.model";
 import { User } from "@models/user.model";
+import { IRequestQuery } from "@types";
 
 const getRedemptions = async (req: Request, res: Response) => {
-  const { page = 1, limit = 50 } = req.query as unknown as {
-    page: number;
-    limit: number;
-  };
+  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
 
   try {
     const redemptions = await Redemption.find()
@@ -32,10 +30,7 @@ const getRedemptions = async (req: Request, res: Response) => {
 };
 
 const getUserRedemptions = async (req: Request, res: Response) => {
-  const { page = 1, limit = 50 } = req.query as unknown as {
-    page: number;
-    limit: number;
-  };
+  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
   const { id } = req.params;
   try {
     const user = await User.findById(id);
@@ -67,10 +62,7 @@ const getUserRedemptions = async (req: Request, res: Response) => {
 
 const getSessionRedemptions = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { page = 1, limit = 50 } = req.query as unknown as {
-    page: number;
-    limit: number;
-  };
+  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
   try {
     const session = await TwitchSession.findById(id);
 

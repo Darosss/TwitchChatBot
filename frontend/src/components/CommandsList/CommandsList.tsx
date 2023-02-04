@@ -16,7 +16,10 @@ interface IChatCommandRes {
 
 export default function CommandsList() {
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
-  const [pageSize, setPageSize] = useState(13);
+
+  const [pageSize, setPageSize] = useState(
+    Number(localStorage.getItem("commandsListPageSize")) || 15
+  );
 
   const [showModal, setShowModal] = useState(false);
 
@@ -30,7 +33,7 @@ export default function CommandsList() {
   const [privilege, setPrivilege] = useState<number>();
 
   const [{ data, loading, error }, refetchCommands] = useAxios<IChatCommandRes>(
-    `/chat-commands?page=${currentPageLoc}&limit=${pageSize}&`
+    `/chat-commands?page=${currentPageLoc}&limit=${pageSize}`
   );
 
   const [{}, postChatCommand] = useAxios<{
@@ -42,9 +45,8 @@ export default function CommandsList() {
     { manual: true }
   );
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>There is an error.</p>;
-  if (!data) return <p>Loading...</p>;
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (loading || !data) return <> Loading...</>;
 
   const { chatCommands, count, currentPage } = data;
 
@@ -194,6 +196,7 @@ export default function CommandsList() {
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
+          localStorageName="commandsListPageSize"
           currentPage={currentPage}
           totalCount={count}
           pageSize={pageSize}
@@ -218,7 +221,7 @@ export default function CommandsList() {
         <table className="commands-list-modal-wrapper">
           <tbody>
             <tr>
-              <td>Name </td>
+              <th>Name </th>
               <td>
                 <input
                   className="commands-list-name"
@@ -232,7 +235,7 @@ export default function CommandsList() {
               </td>
             </tr>
             <tr>
-              <td> Enabled </td>
+              <th> Enabled </th>
               <td>
                 <button
                   onClick={(e) => toggleOnOffCommand(e)}
@@ -246,7 +249,7 @@ export default function CommandsList() {
               </td>
             </tr>
             <tr>
-              <td>Privilege</td>
+              <th>Privilege</th>
               <td>
                 <input
                   className="commands-list-name"
@@ -260,7 +263,7 @@ export default function CommandsList() {
               </td>
             </tr>
             <tr>
-              <td>Description </td>
+              <th>Description </th>
               <td>
                 <textarea
                   className="commands-textarea"
@@ -273,7 +276,7 @@ export default function CommandsList() {
               </td>
             </tr>
             <tr>
-              <td>Aliases </td>
+              <th>Aliases </th>
               <td>
                 <textarea
                   className="commands-textarea"
@@ -286,7 +289,7 @@ export default function CommandsList() {
               </td>
             </tr>
             <tr>
-              <td>Messages </td>
+              <th>Messages </th>
               <td>
                 <textarea
                   className="commands-textarea"

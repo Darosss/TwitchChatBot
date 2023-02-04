@@ -51,9 +51,15 @@ export default function UserProfile() {
     setNotes(userData?.notes?.join("\n") || "");
   }, [userData]);
 
-  if (msgsLoading || userLoading) return <p> Loading </p>;
-  if (userError || msgsError) return <p>There is an error.</p>;
-  if (!userData || !msgsData) return <p>Someting went wrong</p>;
+  if (userError || msgsError)
+    return (
+      <>
+        There is an error. {userError?.response?.data.message}
+        {msgsError?.response?.data.message}
+      </>
+    );
+  if (!userData || !msgsData || msgsLoading || userLoading)
+    return <>Someting went wrong</>;
 
   return (
     <>

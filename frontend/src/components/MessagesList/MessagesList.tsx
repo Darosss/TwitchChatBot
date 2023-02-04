@@ -20,8 +20,9 @@ export default function MessagesList(props: {
   const { userId, sessionId } = useParams();
 
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-
+  const [pageSize, setPageSize] = useState(
+    Number(localStorage.getItem("messagesListPageSize")) || 15
+  );
   let messageApiUrl = `/messages`;
   let messageHref = ``;
 
@@ -41,9 +42,8 @@ export default function MessagesList(props: {
   // const { data, error } = useFetch<IMessagesList>(messageApiUrl);
   const [{ data, loading, error }] = useAxios<IMessagesList>(messageApiUrl);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error!</p>;
-  if (!data) return <>Something went wrong!</>;
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading!</>;
 
   const { messages, count, currentPage } = data;
 
@@ -93,6 +93,7 @@ export default function MessagesList(props: {
           currentPage={currentPage}
           totalCount={count}
           pageSize={pageSize}
+          localStorageName="messagesListPageSize"
           onPageSizeChange={(pageSize) => setPageSize(pageSize)}
           onPageChange={(page) => setCurrentPageLoc(page)}
           siblingCount={1}

@@ -10,6 +10,7 @@ export default function Pagination(props: {
   siblingCount: number;
   currentPage: number;
   pageSize: number;
+  localStorageName?: string;
   className: string;
 }) {
   const {
@@ -19,6 +20,7 @@ export default function Pagination(props: {
     siblingCount,
     currentPage,
     pageSize,
+    localStorageName,
     className,
   } = props;
 
@@ -35,8 +37,14 @@ export default function Pagination(props: {
         name="page-size"
         id="page-size"
         defaultValue={pageSize}
-        onChange={(e) => onPageSizeChange(Number(e.target.value))}
+        onChange={(e) => {
+          onPageSizeChange(Number(e.target.value));
+          localStorageName
+            ? localStorage.setItem(localStorageName, e.target.value)
+            : null;
+        }}
       >
+        <option value={pageSize}>{pageSize}</option>
         <option value="5">5</option>
         <option value="20">20</option>
         <option value="50">50</option>
