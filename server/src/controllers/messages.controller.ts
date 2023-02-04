@@ -73,7 +73,7 @@ const getLatestAndFirstMsgs = async (req: Request, res: Response) => {
 
   try {
     const messages = await Message.find({ owner: id })
-      .sort({ date: 1 })
+      .sort({ date: -1 })
       .populate({
         path: "owner",
         select: "username",
