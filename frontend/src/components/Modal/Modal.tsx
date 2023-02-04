@@ -12,8 +12,8 @@ export default function Modal(props: {
   const { show = false, title = "Modal", onClose, onSubmit, children } = props;
 
   return createPortal(
-    <div className={`modal ${show ? "show" : ""}`} onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className={`modal ${show ? "show" : ""}`} onMouseDown={onClose}>
+      <div className="modal-content" onMouseDown={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h4 className="modal-title"> {title} </h4>
         </div>
