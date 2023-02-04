@@ -16,7 +16,10 @@ interface IChatCommandRes {
 
 export default function CommandsList() {
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
-  const [pageSize, setPageSize] = useState(13);
+
+  const [pageSize, setPageSize] = useState(
+    Number(localStorage.getItem("commandsListPageSize")) || 15
+  );
 
   const [showModal, setShowModal] = useState(false);
 
@@ -30,7 +33,7 @@ export default function CommandsList() {
   const [privilege, setPrivilege] = useState<number>();
 
   const [{ data, loading, error }, refetchCommands] = useAxios<IChatCommandRes>(
-    `/chat-commands?page=${currentPageLoc}&limit=${pageSize}&`
+    `/chat-commands?page=${currentPageLoc}&limit=${pageSize}`
   );
 
   const [{}, postChatCommand] = useAxios<{
@@ -194,6 +197,7 @@ export default function CommandsList() {
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
+          localStorageName="commandsListPageSize"
           currentPage={currentPage}
           totalCount={count}
           pageSize={pageSize}

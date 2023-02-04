@@ -20,8 +20,9 @@ export default function MessagesList(props: {
   const { userId, sessionId } = useParams();
 
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-
+  const [pageSize, setPageSize] = useState(
+    Number(localStorage.getItem("messagesListPageSize")) || 15
+  );
   let messageApiUrl = `/messages`;
   let messageHref = ``;
 
@@ -93,6 +94,7 @@ export default function MessagesList(props: {
           currentPage={currentPage}
           totalCount={count}
           pageSize={pageSize}
+          localStorageName="messagesListPageSize"
           onPageSizeChange={(pageSize) => setPageSize(pageSize)}
           onPageChange={(page) => setCurrentPageLoc(page)}
           siblingCount={1}

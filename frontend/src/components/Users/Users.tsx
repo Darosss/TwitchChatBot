@@ -14,8 +14,9 @@ interface IUsersRes {
 
 export default function Users() {
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-
+  const [pageSize, setPageSize] = useState(
+    Number(localStorage.getItem("usersPageSize")) || 15
+  );
   const [{ data, loading, error }] = useAxios<IUsersRes>(
     `/users?page=${currentPageLoc}&limit=${pageSize}&`
   );
@@ -83,6 +84,7 @@ export default function Users() {
           currentPage={currentPage}
           totalCount={count}
           pageSize={pageSize}
+          localStorageName="usersPageSize"
           onPageSizeChange={(pageSize) => setPageSize(pageSize)}
           onPageChange={(page) => setCurrentPageLoc(page)}
           siblingCount={1}

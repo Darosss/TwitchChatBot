@@ -15,8 +15,9 @@ interface ITwitchSessionRes {
 
 export default function TwitchSessions() {
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
-
+  const [pageSize, setPageSize] = useState(
+    Number(localStorage.getItem("twitchSessionPageSize")) || 15
+  );
   const [{ data, loading, error }] = useAxios<ITwitchSessionRes>(
     `/twitch-sessions?page=${currentPageLoc}&limit=${pageSize}`
   );
@@ -87,6 +88,7 @@ export default function TwitchSessions() {
           currentPage={currentPage}
           totalCount={count}
           pageSize={pageSize}
+          localStorageName="twitchSessionPageSize"
           onPageSizeChange={(pageSize) => setPageSize(pageSize)}
           onPageChange={(page) => setCurrentPageLoc(page)}
           siblingCount={1}
