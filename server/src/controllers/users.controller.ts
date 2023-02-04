@@ -18,7 +18,7 @@ const getUsers = async (req: Request, res: Response) => {
     res.status(200).send({
       users,
       totalPages: Math.ceil(count / limit),
-      usersCount: count,
+      count: count,
       currentPage: Number(page),
     });
   } catch (error) {
