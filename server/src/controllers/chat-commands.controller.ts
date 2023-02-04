@@ -1,11 +1,10 @@
 import Express, { Request, Response } from "express";
 import { ChatCommand } from "@models/chat-command.model";
+import { IRequestQuery } from "@types";
 
 const getChatCommands = async (req: Request, res: Response) => {
-  const { page = 1, limit = 25 } = req.query as unknown as {
-    page: number;
-    limit: number;
-  };
+  const { page = 1, limit = 25 } = req.query as unknown as IRequestQuery;
+
   try {
     const chatCommands = await ChatCommand.find()
       .limit(limit * 1)
@@ -15,7 +14,6 @@ const getChatCommands = async (req: Request, res: Response) => {
       .exec();
 
     const count = await ChatCommand.countDocuments();
-
     res.status(200).send({
       chatCommands,
       totalPages: Math.ceil(count / limit),

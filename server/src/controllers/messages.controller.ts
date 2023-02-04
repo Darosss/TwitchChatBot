@@ -1,14 +1,10 @@
 import Express, { Request, Response } from "express";
 import { Message } from "@models/message.model";
 import { TwitchSession } from "@models/twitch-session.model";
-
-interface IQueryMsgs {
-  page?: number;
-  limit?: number;
-}
+import { IRequestQuery } from "@types";
 
 const getMessages = async (req: Request, res: Response) => {
-  const { page = 1, limit = 50 } = req.query as unknown as IQueryMsgs;
+  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
 
   try {
     const messages = await Message.find()
@@ -38,7 +34,7 @@ const getMessages = async (req: Request, res: Response) => {
 };
 
 const getUserMessages = async (req: Request, res: Response) => {
-  const { page = 1, limit = 50 } = req.query as unknown as IQueryMsgs;
+  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
   const { id } = req.params;
   try {
     const messages = await Message.find({ owner: id })
@@ -69,7 +65,7 @@ const getUserMessages = async (req: Request, res: Response) => {
 
 const getLatestAndFirstMsgs = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { limit = 6 } = req.query as unknown as IQueryMsgs;
+  const { limit = 6 } = req.query as unknown as IRequestQuery;
 
   try {
     const messages = await Message.find({ owner: id })
@@ -97,7 +93,7 @@ const getLatestAndFirstMsgs = async (req: Request, res: Response) => {
 
 const getSessionMessages = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { page = 1, limit = 50 } = req.query as unknown as IQueryMsgs;
+  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
   try {
     const session = await TwitchSession.findById(id);
 
