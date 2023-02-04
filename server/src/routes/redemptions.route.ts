@@ -4,11 +4,16 @@ import {
   getUserRedemptions,
   getSessionRedemptions,
 } from "@controllers/redemptions.controller";
+import checkSearchParams from "@middlewares/checkSearchParams.middleware";
 
 const redemptionsRouter = Router();
 
-redemptionsRouter.get("/", getRedemptions);
+redemptionsRouter.get("/", checkSearchParams, getRedemptions);
 redemptionsRouter.get("/:id", getUserRedemptions);
-redemptionsRouter.get("/twitch-session/:id", getSessionRedemptions);
+redemptionsRouter.get(
+  "/twitch-session/:id",
+  checkSearchParams,
+  getSessionRedemptions
+);
 
 export default redemptionsRouter;
