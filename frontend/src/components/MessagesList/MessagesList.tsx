@@ -64,7 +64,15 @@ export default function MessagesList(props: {
             {messages.map((message) => {
               return (
                 <tr key={message._id + new Date()}>
-                  <td className="message-time">{formatDate(message.date)}</td>
+                  <td className="message-time">
+                    <div className="tooltip">
+                      {formatDate(message.date, "days+time")}
+                      <span className="tooltiptext">
+                        {formatDate(message.date)}
+                      </span>
+                    </div>
+                  </td>
+
                   <td className="message-username">
                     <a href={`${messageHref}` + (message.owner as IUser)._id}>
                       {(message.owner as IUser).username}

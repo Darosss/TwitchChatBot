@@ -167,7 +167,14 @@ export default function CommandsList() {
                     </button>
                   </td>
                   <td> {command.name} </td>
-                  <td> {formatDate(command.createdAt)} </td>
+                  <td>
+                    <div className="tooltip">
+                      {formatDate(command.createdAt, "days+time")}
+                      <span className="tooltiptext">
+                        {formatDate(command.createdAt)}
+                      </span>
+                    </div>
+                  </td>
 
                   <td>{command.useCount}</td>
                   <td>{command.enabled.toString()}</td>

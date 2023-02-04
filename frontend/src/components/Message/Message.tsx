@@ -11,7 +11,12 @@ export default function Message(props: {
 
   return (
     <div className="chat-message">
-      <div className="time">{formatDate(date)}</div>
+      <div className="time">
+        <div className="tooltip">
+          {formatDate(date, "days+time")}
+          <span className="tooltiptext">{formatDate(date)}</span>
+        </div>
+      </div>
       <div className="username">{username}</div>
       <div className="message">{message}</div>
     </div>

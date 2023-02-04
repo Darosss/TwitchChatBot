@@ -57,8 +57,22 @@ export default function TwitchSessions() {
                     </Link>
                   </td>
                   <td>{session.sessionTitles.join(", ")}</td>
-                  <td>{formatDate(session.sessionStart)}</td>
-                  <td>{formatDate(session.sessionEnd)}</td>
+                  <td>
+                    <div className="tooltip">
+                      {formatDate(session.sessionStart, "days+time")}
+                      <span className="tooltiptext">
+                        {formatDate(session.sessionStart)}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="tooltip">
+                      {formatDate(session.sessionEnd, "days+time")}
+                      <span className="tooltiptext">
+                        {formatDate(session.sessionEnd)}
+                      </span>
+                    </div>
+                  </td>
                   <td>{session.tags.join(", ")}</td>
                   <td>{session.categories.join(", ")}</td>
                 </tr>

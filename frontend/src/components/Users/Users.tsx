@@ -50,10 +50,20 @@ export default function Users() {
                   </td>
                   <td className="users-list-achievements"></td>
                   <td className="users-list-last-seen">
-                    {formatDate(user.lastSeen)}
+                    <div className="tooltip">
+                      {formatDate(user.lastSeen, "days+time")}
+                      <span className="tooltiptext">
+                        {formatDate(user.lastSeen)}
+                      </span>
+                    </div>
                   </td>
                   <td className="users-list-created-at">
-                    {formatDate(user.createdAt)}
+                    <div className="tooltip">
+                      {formatDate(user.createdAt, "days+time")}
+                      <span className="tooltiptext">
+                        {formatDate(user.createdAt)}
+                      </span>
+                    </div>
                   </td>
                   <td className="users-list-message-count">
                     {user.messageCount.toLocaleString()}

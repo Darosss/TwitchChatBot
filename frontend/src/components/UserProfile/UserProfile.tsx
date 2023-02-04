@@ -54,7 +54,7 @@ export default function UserProfile() {
   if (msgsLoading || userLoading) return <p> Loading </p>;
   if (userError || msgsError) return <p>There is an error.</p>;
   if (!userData || !msgsData) return <p>Someting went wrong</p>;
-  console.log(userData);
+
   return (
     <>
       <PreviousPage />
@@ -89,10 +89,26 @@ export default function UserProfile() {
           </tr>
           <tr>
             <th>Created</th>
-            <td>{formatDate(userData.createdAt)}</td>
+            <td>
+              <div className="tooltip">
+                {formatDate(userData.createdAt, "days+time")}
+                <span className="tooltiptext">
+                  {formatDate(userData.createdAt)}
+                </span>
+              </div>
+            </td>
             <th>Follower</th>
             <td colSpan={3}>
-              {userData.follower ? formatDate(userData.follower) : "False"}
+              {userData.follower ? (
+                <div className="tooltip">
+                  {formatDate(userData.follower, "days+time")}
+                  <span className="tooltiptext">
+                    {formatDate(userData.follower)}
+                  </span>
+                </div>
+              ) : (
+                "False"
+              )}
             </td>
           </tr>
           <tr>

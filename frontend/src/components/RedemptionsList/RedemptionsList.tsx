@@ -70,7 +70,14 @@ export default function RedemptionsList(props: {
                     {redemption.userName}
                     {/* </Link> */}
                   </td>
-                  <td>{formatDate(redemption.redemptionDate)}</td>
+                  <td>
+                    <div className="tooltip">
+                      {formatDate(redemption.redemptionDate, "days+time")}
+                      <span className="tooltiptext">
+                        {formatDate(redemption.redemptionDate)}
+                      </span>
+                    </div>
+                  </td>
                   <td>{redemption.rewardCost}</td>
                   <td>{redemption.message}</td>
                 </tr>
