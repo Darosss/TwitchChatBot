@@ -62,14 +62,16 @@
   transform: rotate(45deg);
 }
 
-.disabled.arrow::before {
+.disabled .arrow::before {
   border-right: 0.12em solid rgba(0, 0, 0, 0.43);
   border-top: 0.12em solid rgba(0, 0, 0, 0.43);
+  pointer-events: none;
+  opacity: 0.4;
 }
 
 .disabled:hover {
   background-color: transparent;
-  cursor: default;
+  pointer-events: none;
 }
 
 #page-size {

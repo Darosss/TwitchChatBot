@@ -88,7 +88,9 @@ export default function Pagination(props: {
           className={classnames("pagination-item", {
             disabled: currentPage === 1,
           })}
-          onClick={onPrevious}
+          onClick={() => {
+            currentPage > 1 ? onPrevious() : "";
+          }}
         >
           <div className="arrow left" />
         </li>
@@ -120,7 +122,9 @@ export default function Pagination(props: {
           className={classnames("pagination-item", {
             disabled: currentPage === lastPage,
           })}
-          onClick={onNext}
+          onClick={() => {
+            currentPage < lastPage ? onNext() : "";
+          }}
         >
           <div className="arrow right" />
         </li>
