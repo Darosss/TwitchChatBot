@@ -59,6 +59,11 @@ const clientTmi = (
     const user = await botStatisticDatabase.isUserInDB(username);
 
     if (!user) return;
+    socket.emit(
+      "userJoinTwitchChat",
+      { eventDate: new Date(), eventName: "Join chat" },
+      user
+    );
     await botStatisticDatabase.updateUserStatistics(user.id);
   });
 
