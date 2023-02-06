@@ -1,7 +1,16 @@
+import { IUser } from "../../server/src/models/types";
+
+interface IEvent {
+  eventDate: Date;
+  eventName: string;
+}
+
+interface IEventAndIUser extends IEvent, IUser {}
 interface ServerToClientEvents {
   noArg: () => void;
   withAck: (d: string, callback: (e: number) => void) => void;
   messageServer: (date: Date, username: string, message: string) => void;
+  userJoinTwitchChat: (eventDate: IEvent, user: IUser) => void;
   onRedemption: (data: ISoundData) => void;
 }
 
@@ -34,4 +43,5 @@ export {
   SocketData,
   InterServerEvents,
   ServerToClientEvents,
+  IEventAndIUser,
 };
