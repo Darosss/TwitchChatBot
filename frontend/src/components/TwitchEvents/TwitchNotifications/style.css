@@ -1,0 +1,110 @@
+.user-info {
+  position: relative;
+  background-color: var(--bg-color-popup);
+  font-size: 0.7rem;
+  margin: 0.5rem;
+  height: 12vh;
+  max-height: 12vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-left: 1rem;
+  padding-top: 1rem;
+  display: grid;
+  grid-template-areas:
+    "event event event event date date"
+    "username username username username username username"
+    "messages messages messages points points points"
+    "created-date created-date created-date last-seen last-seen last-seen"
+    "follower follower follower subsriber subsriber subsriber";
+}
+
+.user-info-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.user-info div:not(div > span) {
+  font-weight: 700;
+}
+
+.user-info.warn {
+  border: 0.2rem solid var(--color-user-warn);
+}
+
+.user-info.new-user {
+  border: 0.2rem solid var(--color-user-new-user);
+}
+
+.user-info.usual {
+  border: 0.2rem solid var(--color-user-usual);
+}
+
+.user-info.blacklist {
+  border: 0.2rem solid var(--color-user-blacklist);
+}
+
+.user-info span {
+  color: var(--base-color-info);
+  margin-left: 0.5rem;
+  font-weight: 400;
+}
+
+.user-info-created-date {
+  grid-area: created-date;
+}
+
+.user-info-event {
+  color: var(--base-color-info);
+  font-size: 1rem;
+  grid-area: event;
+}
+
+.user-info-date {
+  grid-area: date;
+  color: var(--base-color-info);
+}
+
+.user-info-last-seen {
+  grid-area: last-seen;
+}
+
+.user-info-username {
+  grid-area: username;
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: center;
+  margin-left: -3rem;
+}
+
+.user-info-messages {
+  grid-area: messages;
+}
+
+.user-info-points {
+  grid-area: points;
+}
+
+.user-info-follower {
+  grid-area: follower;
+}
+
+.user-info-subsriber {
+  grid-area: subsriber;
+}
+
+#button-close {
+  position: absolute;
+  background: var(--base-bg-color-danger);
+  color: white;
+  top: 0px;
+  right: 0px;
+}
+
+#button-close:hover {
+  color: var(--base-bg-color-danger);
+  background: white;
+}
+
+#button-close:active {
+  background: var(--base-bg-color-danger);
+}

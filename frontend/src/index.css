@@ -9,6 +9,7 @@
   --base-bg-hover-color-chat: hsla(0, 0%, 100%, 0.16);
   --base-bg-textarea-chat: hsla(0, 0%, 81%, 0.456);
   --base-bg-color-info: #474117;
+
   --base-color-time-message: #f7f7f8;
   --base-color-username-message: #ff0000;
   --base-color-message: white;
@@ -101,6 +102,12 @@ table thead th {
   font-size: 1.2rem;
 }
 
+table th {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
 table tbody {
   border: 2px solid black;
   overflow-y: scroll;
@@ -136,13 +143,13 @@ table tbody td {
   top: -0.7rem;
   left: 105%;
   background-color: black;
-  color: #fff;
+  color: var(--base-color);
   align-items: center;
   justify-content: center;
   text-align: center;
   border-radius: 6px;
   padding: 5px 0;
-  background-color: rgba(85, 85, 85, 0.7);
+  background-color: rgba(0, 0, 0, 0.863);
 
   transition: opacity 0.5s, visibility 1s;
   opacity: 0;
@@ -160,7 +167,7 @@ table tbody td {
   margin-top: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: transparent var(--base-bg-color-border) transparent transparent;
+  border-color: transparent rgba(0, 0, 0, 0.863) transparent transparent;
 }
 
 .tooltip:hover .tooltiptext {

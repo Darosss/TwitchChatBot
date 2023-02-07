@@ -26,7 +26,6 @@ const daysAndHoursAgoFormat = (date: Date) => {
   const seconds = Math.floor(
     (new Date().getTime() - new Date(date).getTime()) / 1000
   );
-
   const hours = Math.floor(seconds / 60 / 60);
   const days = Math.floor(hours / 24);
 
@@ -34,8 +33,10 @@ const daysAndHoursAgoFormat = (date: Date) => {
     formated += `${days}d`;
     let leftHours = hours - days * 24;
     if (leftHours > 0) formated += ` ${leftHours}h,`;
-  } else {
+  } else if (hours > 0) {
     formated += `${hours}h`;
+  } else {
+    formated += `today`;
   }
 
   formated += ` ${date?.toString().split("T")[1].split(".")[0]}`;

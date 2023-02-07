@@ -1,0 +1,37 @@
+:root {
+  --bg-color-popup: rgba(128, 128, 128, 0.131);
+
+  --color-user-warn: rgb(127, 127, 11);
+  --color-user-usual: rgb(40, 18, 182);
+  --color-user-new-user: rgb(18, 114, 20);
+  --color-user-blacklist: rgb(71, 17, 17);
+
+  --bg-color-active: rgba(163, 158, 12, 0.853);
+  --bg-color-not-active: rgba(100, 97, 17, 0.153);
+}
+
+.twitch-btn {
+  border-radius: 1rem;
+}
+
+.twitch-btn.active {
+  background-color: var(--bg-color-active);
+}
+
+.twitch-btn.not-active {
+  background-color: var(--bg-color-not-active);
+}
+
+.twitch-wrapper {
+  display: flex;
+}
+
+.twitch-wrapper > div {
+  margin: 0.5rem 0 0 0.5rem;
+}
+
+.menu-widgets {
+  position: absolute;
+  right: 0;
+  z-index: 1;
+}

@@ -1,23 +1,28 @@
-.twitch-chat-header {
+.twitch-chat {
   background-color: var(--base-bg-color-chat);
-  width: 98vw;
-  height: 90vh;
+  height: 99%;
+  border: 0.1rem solid yellow;
+  text-align: center;
+  overflow: auto;
 }
 
 .twitch-chat-messages {
-  height: 75%;
-  flex-flow: row;
   overflow-y: scroll;
+  border-top: 1px solid yellow;
+  border-bottom: 1px solid yellow;
+  height: 70%;
 }
 
 .twitch-chat-title {
-  height: 10%;
-  border-bottom: 0.1rem solid var(--base-bg-color-border);
+  height: 5%;
+  font-size: smaller;
+  overflow: hidden;
 }
 
 .twitch-chat-send-message {
   margin-top: 0.5rem;
-  height: 5%;
+  bottom: 10%;
+  height: 10%;
   width: 100%;
 }
 
@@ -25,13 +30,12 @@
   color: white;
   background-color: var(--base-bg-textarea-chat);
   border-radius: 0.3rem;
-  min-width: 99%;
-  max-width: 99%;
-  min-height: 100%;
-  max-height: 100%;
+  min-width: 90%;
+  max-width: 90%;
+  min-height: 3vh;
+  max-height: 10vmin;
   width: 100%;
-  font-size: 1.2rem;
-  overflow: hidden;
+  font-size: calc(0.9rem + 1vmin);
 }
 
 .twitch-chat-messages::-webkit-scrollbar {
@@ -46,12 +50,13 @@
   background-color: var(--base-color-button-action);
   border: 0;
   border-radius: 0.3rem;
-  height: 2.5rem;
+  height: 5vh;
   margin-right: 1rem;
   float: right;
   color: white;
   font-weight: 700;
-  width: 5%;
+  width: 7vw;
+  font-size: smaller;
 }
 
 .twitch-chat-btn-send-message:active {
