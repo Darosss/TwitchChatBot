@@ -1,14 +1,32 @@
-.window-draggable {
-  width: 100%;
-  height: 2vh;
-  background-color: rgba(22, 22, 22, 0.548);
+.twitch-last-chatters {
+  resize: both;
 }
 
-.window-draggable:hover {
-  background-color: rgba(22, 22, 22, 1);
-  cursor: grab;
+.twitch-last-chatters > div:not(:last-child) {
+  border: 0.1rem solid var(--color-user-usual);
 }
 
-.window-draggable:active {
-  cursor: grabbing;
+.twitch-last-chatters > div:last-child {
+  border: 0.1rem solid var(--color-user-warn);
+}
+
+.user-chatter {
+  display: flex;
+  background-color: var(--bg-color-popup);
+  min-height: 6vh;
+  align-items: center;
+  margin: 0.5rem;
+  padding-left: 1rem;
+}
+
+.user-chatter-username {
+  width: 60%;
+  overflow-x: auto;
+}
+
+.user-chatter-last-seen {
+  overflow-x: auto;
+  text-align: center;
+  width: 35%;
+  color: var(--base-color-info);
 }

@@ -7,8 +7,9 @@ import formatDate from "@utils/formatDate";
 import { Link } from "react-router-dom";
 import { IEventAndIUser } from "@libs/types";
 
-export default function TwitchNotifications() {
+export default function TwitchNotifications(props: { className: string }) {
   const LIMIT_NOTIFICATIONS = 5;
+  const { className } = props;
 
   const socket = useContext(SocketContext);
 
@@ -44,7 +45,10 @@ export default function TwitchNotifications() {
   }, [socket]);
 
   return (
-    <div className="twitch-notifications twitch-window">
+    <div
+      id="twitch-notifications"
+      className={`twitch-notifications ${className ? className : ""}`}
+    >
       <DragableParent />
 
       {userNotif.map((notif) => {

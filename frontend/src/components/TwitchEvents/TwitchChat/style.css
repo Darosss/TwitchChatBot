@@ -1,14 +1,78 @@
-.window-draggable {
+.twitch-window {
+  position: absolute;
+  width: 25vw;
+  min-width: 25vw;
+  max-width: 50vw;
+  height: 90vh;
+  min-height: 50vh;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-bottom: 0.1rem solid var(--base-bg-color-border);
+  resize: both;
+}
+
+.twitch-chat {
+  background-color: var(--base-bg-color-chat);
+  border: 0.1rem solid yellow;
+  text-align: center;
+  overflow: auto;
+  resize: both;
+}
+
+.twitch-chat-messages {
+  overflow-y: scroll;
+  border-top: 1px solid yellow;
+  border-bottom: 1px solid yellow;
+  height: 70%;
+}
+
+.twitch-chat-title {
+  height: 5%;
+  font-size: smaller;
+  overflow: hidden;
+}
+
+.twitch-chat-send-message {
+  margin-top: 0.5rem;
+  bottom: 10%;
+  height: 10%;
   width: 100%;
-  height: 2vh;
-  background-color: rgba(22, 22, 22, 0.548);
 }
 
-.window-draggable:hover {
-  background-color: rgba(22, 22, 22, 1);
-  cursor: grab;
+.twitch-chat-textarea {
+  color: white;
+  background-color: var(--base-bg-textarea-chat);
+  border-radius: 0.3rem;
+  min-width: 90%;
+  max-width: 90%;
+  min-height: 3vh;
+  max-height: 10vmin;
+  width: 100%;
+  font-size: calc(0.9rem + 1vmin);
 }
 
-.window-draggable:active {
-  cursor: grabbing;
+.twitch-chat-messages::-webkit-scrollbar {
+  display: none;
+}
+
+.twitch-chat-messages div:first-child {
+  border-left: 0;
+}
+
+.twitch-chat-btn-send-message {
+  background-color: var(--base-color-button-action);
+  border: 0;
+  border-radius: 0.3rem;
+  height: 5vh;
+  margin-right: 1rem;
+  float: right;
+  color: white;
+  font-weight: 700;
+  width: 7vw;
+  font-size: smaller;
+}
+
+.twitch-chat-btn-send-message:active {
+  background-color: var(--base-color-button-action-active);
 }

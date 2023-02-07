@@ -5,7 +5,8 @@ import DragableParent from "@components/DragableParent";
 import Message from "@components/Message";
 import { SocketContext } from "@context/SocketContext";
 
-export default function TwitchChat() {
+export default function TwitchChat(props: { className: string }) {
+  const { className } = props;
   const socket = useContext(SocketContext);
 
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -41,7 +42,10 @@ export default function TwitchChat() {
   }, [socket]);
 
   return (
-    <div className="twitch-chat twitch-window">
+    <div
+      id="twitch-chat"
+      className={`twitch-chat ${className ? className : ""}`}
+    >
       <DragableParent />
       <div className="twitch-chat-title">STREAM CHAT</div>
       <div className="twitch-chat-messages">
