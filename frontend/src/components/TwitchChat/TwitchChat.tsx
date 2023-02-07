@@ -3,7 +3,6 @@ import React, {
   useContext,
   useEffect,
   useReducer,
-  useRef,
   useState,
 } from "react";
 import { SocketContext } from "@context/SocketContext";
@@ -16,10 +15,10 @@ import { IEventAndIUser } from "@libs/types";
 
 export default function TwitchChat() {
   const LIMIT_NOTIFICATIONS = 5;
+  const LIMIT_LAST_CHATTERS = 5;
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const socket = useContext(SocketContext);
-  const notifications = useRef<HTMLDivElement>(null);
 
   const [messageToSend, setMessageToSend] = useState("");
   const [messages, setMessages] = useState<{
@@ -27,6 +26,7 @@ export default function TwitchChat() {
   }>();
 
   const [userNotif, setUserNotif] = useState<IEventAndIUser[]>([]);
+  const [lastChatters, setLastChatters] = useState(new Map<string, Date>());
 
   const sendMessage = (e: MouseEvent<HTMLButtonElement>) => {
     console.log("SEND MESSAGE", messageToSend);
@@ -49,6 +49,27 @@ export default function TwitchChat() {
         };
         return newMessages;
       });
+      setLastChatters((prevState) => {
+        prevState.set(username, date);
+
+        let newState = new Map(
+          [...prevState.entries()].sort(
+            (a, b) => new Date(b[1]).getTime() - new Date(a[1]).getTime()
+          )
+        );
+
+        if (newState.size > LIMIT_LAST_CHATTERS) {
+          const lastChatterInMap = [...newState.keys()].pop();
+
+          if (lastChatterInMap) {
+            newState.delete(lastChatterInMap);
+          }
+        }
+
+        return newState;
+      });
+
+      forceUpdate();
     });
 
     socket?.on("userJoinTwitchChat", (event, user) => {
@@ -71,8 +92,9 @@ export default function TwitchChat() {
       socket.off("userJoinTwitchChat");
     };
   }, [socket]);
+
   return (
-    <>
+    <div className="twitch-wrapper">
       <div className="twitch-chat twitch-window">
         <div className="twitch-chat-title">STREAM CHAT</div>
         <div className="twitch-chat-messages">
@@ -110,7 +132,22 @@ export default function TwitchChat() {
           </button>
         </div>
       </div>
-      <div className="twitch-notifications twitch-window" ref={notifications}>
+      <div className="twitch-last-chatters twitch-window">
+        {[...lastChatters.keys()].map((chatter) => {
+          return (
+            <div
+              className="user-chatter"
+              key={chatter + lastChatters.get(chatter)}
+            >
+              <div className="user-chatter-username">{chatter}</div>
+              <div className="user-chatter-last-seen">
+                {formatDate(lastChatters.get(chatter) || new Date(), "time")}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="twitch-notifications twitch-window">
         {userNotif.map((notif) => {
           return (
             <div
@@ -199,6 +236,6 @@ export default function TwitchChat() {
           );
         })}
       </div>
-    </>
+    </div>
   );
 }
