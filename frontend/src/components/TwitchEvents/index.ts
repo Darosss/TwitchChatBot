@@ -1,3 +1,3 @@
-import TwitchChat from "./TwitchChat";
+import TwitchEvents from "./TwitchEvents";
 
-export default TwitchChat;
+export default TwitchEvents;
