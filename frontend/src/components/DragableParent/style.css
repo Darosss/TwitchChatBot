@@ -1,5 +1,9 @@
 .window-draggable {
+  position: relative;
   width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1;
   height: 2vh;
   background-color: rgba(22, 22, 22, 0.548);
 }
