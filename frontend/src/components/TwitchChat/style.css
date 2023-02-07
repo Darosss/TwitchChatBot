@@ -7,30 +7,34 @@
   --color-user-blacklist: rgb(71, 17, 17);
 }
 
+.show-hide-twitch-btn {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
 .twitch-wrapper {
-  position: relative;
   display: flex;
 }
 
 .twitch-wrapper > div {
   margin: 0.5rem 0 0 0.5rem;
-  border-top: 1rem solid var(--base-bg-color-chat);
 }
 
 .twitch-window {
-  position: relative;
+  position: absolute;
   width: 25vw;
   min-width: 25vw;
   max-width: 50vw;
   height: 90vh;
   min-height: 50vh;
   max-height: 90vh;
-  border: 2px solid red;
   overflow-y: auto;
+  overflow-x: hidden;
+  border-bottom: 0.1rem solid var(--base-bg-color-border);
 }
 
 .twitch-last-chatters {
-  position: relative;
   resize: both;
 }
 
@@ -64,9 +68,7 @@
 }
 
 .twitch-notifications {
-  position: relative;
   resize: both;
-  border-bottom: 0.1rem solid var(--base-bg-color-border);
 }
 
 .user-info {
@@ -184,7 +186,6 @@
   background-color: var(--base-bg-color-chat);
   border: 0.1rem solid yellow;
   text-align: center;
-  position: relative;
   overflow: auto;
   resize: both;
 }
@@ -204,7 +205,6 @@
 
 .twitch-chat-send-message {
   margin-top: 0.5rem;
-  position: absolute;
   bottom: 10%;
   height: 10%;
   width: 100%;
