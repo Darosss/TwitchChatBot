@@ -1,23 +1,9 @@
-.twitch-window {
-  position: absolute;
-  width: 25vw;
-  min-width: 25vw;
-  max-width: 50vw;
-  height: 90vh;
-  min-height: 50vh;
-  max-height: 90vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  border-bottom: 0.1rem solid var(--base-bg-color-border);
-  resize: both;
-}
-
 .twitch-chat {
   background-color: var(--base-bg-color-chat);
+  height: 99%;
   border: 0.1rem solid yellow;
   text-align: center;
   overflow: auto;
-  resize: both;
 }
 
 .twitch-chat-messages {
