@@ -1,15 +1,21 @@
 import "./style.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import TwitchChat from "./TwitchChat";
 import TwitchNotifications from "./TwitchNotifications";
 import TwitchChatters from "./TwitchChatters";
 import HiddenMenu from "@components/HiddenMenu";
+import WidgetWrapper from "@components/WidgetWrapper";
+
+interface IWidget {
+  enabled: boolean;
+  size?: { width: string; height: string }; // TODO: add size later
+}
 
 export default function TwitchEvents() {
-  const [showChat, setShowChat] = useState<boolean>();
-  const [showLastChatters, setShowLastChatters] = useState<boolean>();
-  const [showNotifications, setShowNotifications] = useState<boolean>();
+  const [showChat, setShowChat] = useState<IWidget>();
+  const [showLastChatters, setShowLastChatters] = useState<IWidget>();
+  const [showNotifications, setShowNotifications] = useState<IWidget>();
 
   useEffect(() => {
     const localWidgets = localStorage.getItem("widgets-info");
@@ -41,7 +47,14 @@ export default function TwitchEvents() {
             <button
               className={`twitch-btn ${showChat ? "active" : "not-active"}`}
               onClick={(e) => {
-                setShowChat(!showChat);
+                setShowChat((prevState) => {
+                  if (prevState) {
+                    prevState.enabled = !prevState.enabled;
+                    return prevState;
+                  }
+
+                  return { enabled: true };
+                });
               }}
             >
               Toggle chat
@@ -53,7 +66,14 @@ export default function TwitchEvents() {
                 showLastChatters ? "active" : "not-active"
               }`}
               onClick={(e) => {
-                setShowLastChatters(!showLastChatters);
+                setShowLastChatters((prevState) => {
+                  if (prevState) {
+                    prevState.enabled = !prevState.enabled;
+                    return prevState;
+                  }
+
+                  return { enabled: true };
+                });
               }}
             >
               Toggle chatters
@@ -65,7 +85,14 @@ export default function TwitchEvents() {
                 showNotifications ? "active" : "not-active"
               }`}
               onClick={(e) => {
-                setShowNotifications(!showNotifications);
+                setShowNotifications((prevState) => {
+                  if (prevState) {
+                    prevState.enabled = !prevState.enabled;
+                    return prevState;
+                  }
+
+                  return { enabled: true };
+                });
               }}
             >
               Toggle notifications
@@ -74,10 +101,20 @@ export default function TwitchEvents() {
         </HiddenMenu>
       </div>
 
-      {showChat ? <TwitchChat className="twitch-window" /> : null}
-      {showLastChatters ? <TwitchChatters className="twitch-window" /> : null}
-      {showNotifications ? (
-        <TwitchNotifications className="twitch-window" />
+      {showChat?.enabled ? (
+        <WidgetWrapper id="twitch-window">
+          <TwitchChat className="twitch-window" />
+        </WidgetWrapper>
+      ) : null}
+      {showLastChatters?.enabled ? (
+        <WidgetWrapper id="twitch-last-chatters">
+          <TwitchChatters className="twitch-window" />
+        </WidgetWrapper>
+      ) : null}
+      {showNotifications?.enabled ? (
+        <WidgetWrapper id="twitch-notifications">
+          <TwitchNotifications className="twitch-window" />
+        </WidgetWrapper>
       ) : null}
     </div>
   );
