@@ -1,13 +1,12 @@
 import "./style.css";
 import React, { useContext, useEffect, useReducer, useState } from "react";
 
-import DragableParent from "@components/DragableParent";
 import { SocketContext } from "@context/SocketContext";
 import formatDate from "@utils/formatDate";
 import { Link } from "react-router-dom";
 import { IEventAndIUser } from "@libs/types";
 
-export default function TwitchNotifications(props: { className: string }) {
+export default function TwitchNotifications(props: { className?: string }) {
   const LIMIT_NOTIFICATIONS = 5;
   const { className } = props;
 
@@ -49,8 +48,6 @@ export default function TwitchNotifications(props: { className: string }) {
       id="twitch-notifications"
       className={`twitch-notifications ${className ? className : ""}`}
     >
-      <DragableParent />
-
       {userNotif.map((notif) => {
         return (
           <div

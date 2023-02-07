@@ -1,11 +1,10 @@
 import "./style.css";
 import React, { useContext, useEffect, useReducer, useState } from "react";
 
-import DragableParent from "@components/DragableParent";
 import Message from "@components/Message";
 import { SocketContext } from "@context/SocketContext";
 
-export default function TwitchChat(props: { className: string }) {
+export default function TwitchChat(props: { className?: string }) {
   const { className } = props;
   const socket = useContext(SocketContext);
 
@@ -46,7 +45,6 @@ export default function TwitchChat(props: { className: string }) {
       id="twitch-chat"
       className={`twitch-chat ${className ? className : ""}`}
     >
-      <DragableParent />
       <div className="twitch-chat-title">STREAM CHAT</div>
       <div className="twitch-chat-messages">
         {messages

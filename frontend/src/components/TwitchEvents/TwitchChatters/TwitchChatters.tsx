@@ -1,11 +1,10 @@
 import "./style.css";
 import React, { useContext, useEffect, useReducer, useState } from "react";
 
-import DragableParent from "@components/DragableParent";
 import { SocketContext } from "@context/SocketContext";
 import formatDate from "@utils/formatDate";
 
-export default function TwitchChatters(props: { className: string }) {
+export default function TwitchChatters(props: { className?: string }) {
   const LIMIT_LAST_CHATTERS = 5;
   const { className } = props;
 
@@ -50,8 +49,6 @@ export default function TwitchChatters(props: { className: string }) {
       id="twitch-last-chatters"
       className={`twitch-last-chatters ${className ? className : ""}`}
     >
-      <DragableParent />
-
       {[...lastChatters.keys()].map((chatter) => {
         return (
           <div
