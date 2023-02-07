@@ -8,7 +8,7 @@ import { configure } from "axios-hooks";
 import Axios from "axios";
 
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
-import TwitchChat from "@components/TwitchChat";
+import TwitchEvents from "@components/TwitchEvents";
 import Users from "@components/Users";
 import Overlay from "@components/Overlay";
 import MessagesList from "@components/MessagesList";
@@ -120,7 +120,7 @@ function App() {
               path="chat"
               element={
                 <div className="main-other">
-                  <TwitchChat />
+                  <TwitchEvents />
                 </div>
               }
             ></Route>
