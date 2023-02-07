@@ -1,0 +1,14 @@
+.window-draggable {
+  width: 100%;
+  height: 2vh;
+  background-color: rgba(22, 22, 22, 0.548);
+}
+
+.window-draggable:hover {
+  background-color: rgba(22, 22, 22, 1);
+  cursor: grab;
+}
+
+.window-draggable:active {
+  cursor: grabbing;
+}
