@@ -1,12 +1,9 @@
 import Express, { Router } from "express";
-import {
-  overlay,
-  getTwitchAuthorizeUrl,
-} from "@controllers/overlay.controller";
+import { overlay, getTwitchAuthorizeUrl } from "@controllers/auth.controller";
 
-const overlayRouter = Router();
+const auth = Router();
 
-overlayRouter.get("/twitch/callback", overlay);
-overlayRouter.get("/authorize-url", getTwitchAuthorizeUrl);
+auth.get("/twitch/callback", overlay);
+auth.get("/authorize-url", getTwitchAuthorizeUrl);
 
-export default overlayRouter;
+export default auth;
