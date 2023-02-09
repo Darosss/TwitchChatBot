@@ -25,6 +25,16 @@ interface IRequestQuery {
   page: number;
 }
 
+interface IRequestSearch extends IRequestQuery {
+  search_name?: string;
+}
+
+interface IRequestQueryMessage extends IRequestSearch {
+  owner: string;
+  start_date: Date;
+  end_date: Date;
+}
+
 interface IAuthorizationTwitch {
   access_token: string;
   expires_in: number;
