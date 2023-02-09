@@ -5,7 +5,7 @@ import { SocketContext } from "@context/SocketContext";
 import formatDate from "@utils/formatDate";
 
 export default function TwitchChatters(props: { className?: string }) {
-  const LIMIT_LAST_CHATTERS = 5;
+  const LIMIT_LAST_CHATTERS = 14;
   const { className } = props;
 
   const socket = useContext(SocketContext);
@@ -49,10 +49,12 @@ export default function TwitchChatters(props: { className?: string }) {
       id="twitch-last-chatters"
       className={`twitch-last-chatters ${className ? className : ""}`}
     >
-      {[...lastChatters.keys()].map((chatter) => {
+      {[...lastChatters.keys()].map((chatter, index) => {
         return (
           <div
-            className="user-chatter"
+            className={`user-chatter ${
+              index + 1 === LIMIT_LAST_CHATTERS ? "limit" : ""
+            }`}
             key={chatter + lastChatters.get(chatter)}
           >
             <div className="user-chatter-username">{chatter}</div>

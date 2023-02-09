@@ -2,12 +2,12 @@
   resize: both;
 }
 
-.twitch-last-chatters > div:not(:last-child) {
+.twitch-last-chatters > div {
   border: 0.1rem solid var(--color-user-usual);
 }
 
-.twitch-last-chatters > div:last-child {
-  border: 0.1rem solid var(--color-user-warn);
+.twitch-last-chatters .limit {
+  border: 0.1rem solid var(--color-user-warn) !important;
 }
 
 .user-chatter {
