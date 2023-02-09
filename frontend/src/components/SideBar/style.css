@@ -9,3 +9,9 @@
 .navbar ul {
   list-style: none;
 }
+
+.connect-twitch {
+  font-size: 0.7rem;
+  border: 0.1rem solid black;
+  background-color: purple;
+}

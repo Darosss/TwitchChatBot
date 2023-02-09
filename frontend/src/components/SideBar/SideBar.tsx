@@ -5,11 +5,10 @@ import resetWindowScroll from "@utils/resetScroll";
 import useAxios from "axios-hooks";
 
 export default function SideBar() {
-  const [{ data, loading, error }] = useAxios<string>("/twitch-authorize-url");
+  const [{ data, loading, error }] = useAxios<string>("auth/authorize-url");
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error!</p>;
-  if (!data) return <>Something went wrong!</>;
+  if (error) return <>Error!</>;
+  if (loading) return <>Loading...</>;
 
   return (
     <div className="navbar">
@@ -55,7 +54,9 @@ export default function SideBar() {
           </Link>
         </li>
         <li>
-          <a href={data}>{error ? "URL Error" : "Login to twitch"}</a>
+          <a className="connect-twitch" href={data ? data : "_blank"}>
+            {error ? "URL Error" : "Connect with twitch"}
+          </a>
         </li>
       </ul>
     </div>
