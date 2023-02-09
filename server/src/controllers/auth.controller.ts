@@ -29,7 +29,7 @@ export const overlay = async (req: Request, res: Response) => {
   if (authRes) {
     const authTwitchJson = (await authRes.json()) as IAuthorizationTwitch;
 
-    initTwitchOnAuth(authTwitchJson, req.io, res);
+    initTwitchOnAuth(authTwitchJson, req.io);
 
     res.redirect(process.env.REDIRECT_AFTER_AUTH!);
   }
