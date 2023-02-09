@@ -109,7 +109,7 @@ export default function TwitchNotifications(props: { className?: string }) {
                 alt="seen"
                 className="user-info-icon"
               />
-              : <span>today, 15:12:12</span>
+              : <span>{formatDate(notif.lastSeen, "days+time")}</span>
             </div>
             <div className="user-info-follower">
               <img
