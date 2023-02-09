@@ -94,3 +94,13 @@ export interface IChatCommand {
 }
 
 export type IChatCommandDocument = IChatCommand & Document;
+
+export interface IAuth {
+  _id: string | ObjectId;
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  obtainmentTimestamp: number;
+}
+
+export type IAuthDocument = IAuth & Document;
