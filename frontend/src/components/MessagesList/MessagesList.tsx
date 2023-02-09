@@ -2,7 +2,7 @@ import "./style.css";
 import React, { useState } from "react";
 import { IMessage, IUser } from "@backend/models/types";
 import Pagination from "@components/Pagination";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import PreviousPage from "@components/PreviousPage";
 import formatDate from "@utils/formatDate";
 import useAxios from "axios-hooks";
@@ -23,6 +23,9 @@ export default function MessagesList(props: {
   const [pageSize, setPageSize] = useState(
     Number(localStorage.getItem("messagesListPageSize")) || 15
   );
+
+  let [searchParams, setSearchParams] = useSearchParams();
+
   let messageApiUrl = `/messages`;
   let messageHref = ``;
 
@@ -37,9 +40,8 @@ export default function MessagesList(props: {
     default:
       messageHref += "messages/";
   }
-  messageApiUrl += `?page=${currentPageLoc}&limit=${pageSize}`;
+  messageApiUrl += `?page=${currentPageLoc}&limit=${pageSize}&${searchParams}`;
 
-  // const { data, error } = useFetch<IMessagesList>(messageApiUrl);
   const [{ data, loading, error }] = useAxios<IMessagesList>(messageApiUrl);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
@@ -47,9 +49,71 @@ export default function MessagesList(props: {
 
   const { messages, count, currentPage } = data;
 
+  const onBlurOrKeySearchParamsChange = (queryName: string, e: string) => {
+    setSearchParams((prevState) => {
+      const value = e;
+      if (value) {
+        prevState.set(queryName, e);
+      } else {
+        prevState.delete(queryName);
+      }
+      return prevState;
+    });
+  };
+
   return (
     <>
       <PreviousPage />
+      <input
+        type="text"
+        placeholder={"Message contains"}
+        defaultValue={searchParams.get("search_name") || ""}
+        onBlur={(e) => {
+          onBlurOrKeySearchParamsChange("search_name", e.target.value);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            onBlurOrKeySearchParamsChange("search_name", e.currentTarget.value);
+          }
+        }}
+      />
+      <input
+        type="text"
+        placeholder={"Message of user"}
+        defaultValue={searchParams.get("owner") || ""}
+        onBlur={(e) => {
+          onBlurOrKeySearchParamsChange("owner", e.target.value);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            onBlurOrKeySearchParamsChange("owner", e.currentTarget.value);
+          }
+        }}
+      />
+      <input
+        type="date"
+        defaultValue={searchParams.get("start_date") || ""}
+        onBlur={(e) => {
+          onBlurOrKeySearchParamsChange("start_date", e.target.value);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            onBlurOrKeySearchParamsChange("start_date", e.currentTarget.value);
+          }
+        }}
+      />
+      <input
+        type="date"
+        defaultValue={searchParams.get("end_date") || ""}
+        onBlur={(e) => {
+          onBlurOrKeySearchParamsChange("end_date", e.target.value);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            onBlurOrKeySearchParamsChange("end_date", e.currentTarget.value);
+          }
+        }}
+      />
       <div id="messages-list" className="table-list-wrapper">
         <table id="table-messages-list">
           <thead>
