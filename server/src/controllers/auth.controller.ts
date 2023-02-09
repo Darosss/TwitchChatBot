@@ -1,3 +1,4 @@
+import { IAuthorizationTwitch } from "@types";
 import Express, { Request, Response } from "express";
 
 import initTwitchOnAuth from "../twitch/initTwitchOnAuth";
@@ -26,9 +27,9 @@ export const overlay = async (req: Request, res: Response) => {
   });
   //GET auth respons with secret / access token
   if (authRes) {
-    const authTwitchJson = await authRes.json();
+    const authTwitchJson = (await authRes.json()) as IAuthorizationTwitch;
 
-    initTwitchOnAuth(authTwitchJson.access_token, req.io);
+    initTwitchOnAuth(authTwitchJson, req.io, res);
 
     res.redirect(process.env.REDIRECT_AFTER_AUTH!);
   }
