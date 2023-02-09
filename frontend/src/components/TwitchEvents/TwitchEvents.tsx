@@ -1,11 +1,12 @@
 import "./style.css";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useReducer } from "react";
 
 import TwitchChat from "./TwitchChat";
 import TwitchNotifications from "./TwitchNotifications";
 import TwitchChatters from "./TwitchChatters";
 import HiddenMenu from "@components/HiddenMenu";
 import WidgetWrapper from "@components/WidgetWrapper";
+import useLocalStorage from "@hooks/useLocalStorage.hook";
 
 interface IWidget {
   enabled: boolean;
@@ -13,31 +14,19 @@ interface IWidget {
 }
 
 export default function TwitchEvents() {
-  const [showChat, setShowChat] = useState<IWidget>();
-  const [showLastChatters, setShowLastChatters] = useState<IWidget>();
-  const [showNotifications, setShowNotifications] = useState<IWidget>();
-
-  useEffect(() => {
-    const localWidgets = localStorage.getItem("widgets-info");
-    if (localWidgets) {
-      const localWidgetsParsed = JSON.parse(localWidgets);
-
-      setShowChat(localWidgetsParsed.twitchChat);
-      setShowLastChatters(localWidgetsParsed.twitchChatters);
-      setShowNotifications(localWidgetsParsed.twitchNotifications);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(
-      "widgets-info",
-      JSON.stringify({
-        twitchChat: showChat,
-        twitchChatters: showLastChatters,
-        twitchNotifications: showNotifications,
-      })
-    );
-  }, [showChat, showLastChatters, showNotifications]);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [chatWidget, setChatWidget] = useLocalStorage<IWidget>(
+    "twitch-chat-widget-data",
+    { enabled: true }
+  );
+  const [chattersWidget, setChattersWidget] = useLocalStorage<IWidget>(
+    "twitch-chatters-widget-data",
+    { enabled: true }
+  );
+  const [notificationsWidget, setNotificationsWidget] =
+    useLocalStorage<IWidget>("twitch-notifications-widget-data", {
+      enabled: true,
+    });
 
   return (
     <div className="twitch-wrapper">
@@ -45,16 +34,15 @@ export default function TwitchEvents() {
         <HiddenMenu>
           <li>
             <button
-              className={`twitch-btn ${showChat ? "active" : "not-active"}`}
-              onClick={(e) => {
-                setShowChat((prevState) => {
-                  if (prevState) {
-                    prevState.enabled = !prevState.enabled;
-                    return prevState;
-                  }
-
-                  return { enabled: true };
+              className={`twitch-btn ${
+                chatWidget.enabled ? "active" : "not-active"
+              }`}
+              onClick={() => {
+                setChatWidget((prevLocalStorage) => {
+                  prevLocalStorage.enabled = !prevLocalStorage.enabled;
+                  return prevLocalStorage;
                 });
+                forceUpdate();
               }}
             >
               Toggle chat
@@ -63,17 +51,14 @@ export default function TwitchEvents() {
           <li>
             <button
               className={`twitch-btn ${
-                showLastChatters ? "active" : "not-active"
+                chattersWidget.enabled ? "active" : "not-active"
               }`}
-              onClick={(e) => {
-                setShowLastChatters((prevState) => {
-                  if (prevState) {
-                    prevState.enabled = !prevState.enabled;
-                    return prevState;
-                  }
-
-                  return { enabled: true };
+              onClick={() => {
+                setChattersWidget((prevLocalStorage) => {
+                  prevLocalStorage.enabled = !prevLocalStorage.enabled;
+                  return prevLocalStorage;
                 });
+                forceUpdate();
               }}
             >
               Toggle chatters
@@ -82,17 +67,14 @@ export default function TwitchEvents() {
           <li>
             <button
               className={`twitch-btn ${
-                showNotifications ? "active" : "not-active"
+                notificationsWidget.enabled ? "active" : "not-active"
               }`}
-              onClick={(e) => {
-                setShowNotifications((prevState) => {
-                  if (prevState) {
-                    prevState.enabled = !prevState.enabled;
-                    return prevState;
-                  }
-
-                  return { enabled: true };
+              onClick={() => {
+                setNotificationsWidget((prevLocalStorage) => {
+                  prevLocalStorage.enabled = !prevLocalStorage.enabled;
+                  return prevLocalStorage;
                 });
+                forceUpdate();
               }}
             >
               Toggle notifications
@@ -101,17 +83,17 @@ export default function TwitchEvents() {
         </HiddenMenu>
       </div>
 
-      {showChat?.enabled ? (
+      {chatWidget?.enabled ? (
         <WidgetWrapper id="twitch-window">
           <TwitchChat className="twitch-window" />
         </WidgetWrapper>
       ) : null}
-      {showLastChatters?.enabled ? (
+      {chattersWidget?.enabled ? (
         <WidgetWrapper id="twitch-last-chatters">
           <TwitchChatters className="twitch-window" />
         </WidgetWrapper>
       ) : null}
-      {showNotifications?.enabled ? (
+      {notificationsWidget?.enabled ? (
         <WidgetWrapper id="twitch-notifications">
           <TwitchNotifications className="twitch-window" />
         </WidgetWrapper>
