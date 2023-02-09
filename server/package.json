@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.ts",
-    "dev": "cross-env NODE_ENV=development tsc-watch --onSuccess \"nodemon dist/index.js\"",
+    "dev": "cross-env NODE_ENV=development tsc-watch --onSuccess \"nodemon --ignore '*.json' dist/index.js\"",
     "build": "tsc"
   },
   "keywords": [],
