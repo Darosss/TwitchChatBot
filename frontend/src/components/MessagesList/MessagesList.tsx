@@ -6,7 +6,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import PreviousPage from "@components/PreviousPage";
 import formatDate from "@utils/formatDate";
 import useAxios from "axios-hooks";
-import FilterMessages from "./FilterMessages";
+import FilterBarMessages from "./FilterBarMessages";
 
 interface IMessagesList {
   messages: IMessage[];
@@ -51,10 +51,8 @@ export default function MessagesList(props: {
 
   return (
     <>
-      <div className="messages-action">
-        <PreviousPage />
-        <FilterMessages />
-      </div>
+      <PreviousPage />
+      <FilterBarMessages />
       <div id="messages-list" className="table-list-wrapper">
         <table id="table-messages-list">
           <thead>

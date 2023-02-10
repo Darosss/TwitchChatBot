@@ -1,3 +1,3 @@
-import FilterMessages from "./FilterMessages";
+import FilterBarMessages from "./FilterBarMessages";
 
-export default FilterMessages;
+export default FilterBarMessages;
