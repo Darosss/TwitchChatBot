@@ -6,7 +6,11 @@ const checkSearchParams = (req: Request, res: Response, next: NextFunction) => {
 
   let message = ``;
 
-  if ((page > 0 && limit > 0) || page === undefined || limit === undefined)
+  if (
+    (page && limit && page > 0 && limit > 0) ||
+    page === undefined ||
+    limit === undefined
+  )
     return next();
 
   if (page <= 0) message += `Page key must be > 0;`;
