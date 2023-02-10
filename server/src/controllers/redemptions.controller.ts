@@ -2,20 +2,25 @@ import Express, { Request, Response } from "express";
 import { Redemption } from "@models/redemption.model";
 import { TwitchSession } from "@models/twitch-session.model";
 import { User } from "@models/user.model";
-import { IRequestQuery } from "@types";
+import { IRequestParams, IRequestRedemptionQuery } from "@types";
+import { filterRedemptionsByUrlParams } from "./filters/redemptions.filter";
 
-const getRedemptions = async (req: Request, res: Response) => {
-  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
+const getRedemptions = async (
+  req: Request<{}, {}, {}, IRequestRedemptionQuery>,
+  res: Response
+) => {
+  const { page = 1, limit = 50 } = req.query;
 
+  const searchFilter = filterRedemptionsByUrlParams(req.query);
   try {
-    const redemptions = await Redemption.find()
+    const redemptions = await Redemption.find(searchFilter)
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .select({ __v: 0 })
-      .sort({ sessionStart: -1 })
+      .sort({ redemptionDate: -1 })
       .exec();
 
-    const count = await Redemption.countDocuments();
+    const count = await Redemption.countDocuments(searchFilter);
 
     res.status(200).send({
       redemptions,
@@ -29,13 +34,24 @@ const getRedemptions = async (req: Request, res: Response) => {
   }
 };
 
-const getUserRedemptions = async (req: Request, res: Response) => {
-  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
+const getUserRedemptions = async (
+  req: Request<IRequestParams, {}, {}, IRequestRedemptionQuery>,
+  res: Response
+) => {
   const { id } = req.params;
+  const { page = 1, limit = 50 } = req.query;
+
+  const searchFilter = filterRedemptionsByUrlParams(req.query);
+
   try {
     const user = await User.findById(id);
 
-    const redemptions = await Redemption.find({ userId: user?.twitchId })
+    const searchFilterWithUser = Object.assign(
+      { userId: user?.twitchId },
+      searchFilter
+    );
+
+    const redemptions = await Redemption.find(searchFilterWithUser)
       .limit(limit * 1)
       .sort({ date: -1 })
       .skip((page - 1) * limit)
@@ -43,9 +59,7 @@ const getUserRedemptions = async (req: Request, res: Response) => {
       .select({ __v: 0 })
       .exec();
 
-    const count = await Redemption.find({
-      userId: user?.twitchId,
-    }).countDocuments();
+    const count = await Redemption.countDocuments(searchFilterWithUser);
 
     res.status(200).send({
       redemptions,
@@ -60,25 +74,34 @@ const getUserRedemptions = async (req: Request, res: Response) => {
   }
 };
 
-const getSessionRedemptions = async (req: Request, res: Response) => {
+const getSessionRedemptions = async (
+  req: Request<IRequestParams, {}, {}, IRequestRedemptionQuery>,
+  res: Response
+) => {
   const { id } = req.params;
-  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
+  const { page = 1, limit = 50 } = req.query;
+
   try {
     const session = await TwitchSession.findById(id);
 
-    const redemptions = await Redemption.find({
-      redemptionDate: {
-        $gte: session?.sessionStart,
-        $lte: session?.sessionEnd,
+    const searchFilter = Object.assign(
+      {
+        redemptionDate: {
+          $gte: session?.sessionStart,
+          $lte: session?.sessionEnd,
+        },
       },
-    })
+      filterRedemptionsByUrlParams(req.query)
+    );
+
+    const redemptions = await Redemption.find(searchFilter)
       .limit(limit * 1)
       .sort({ redemptionDate: -1 })
       .skip((page - 1) * limit)
       .select({ __v: 0 })
       .exec();
 
-    const count = await Redemption.find().countDocuments();
+    const count = await Redemption.countDocuments(searchFilter);
 
     res.status(200).send({
       redemptions,
