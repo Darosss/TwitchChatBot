@@ -33,10 +33,38 @@ interface IRequestSearch extends IRequestQuery {
   search_name?: string;
 }
 
-interface IRequestQueryMessage extends IRequestSearch {
-  owner?: string;
+interface IRequestSearchDate {
   start_date?: Date;
   end_date?: Date;
+}
+
+interface IRequestQueryMessage extends IRequestSearch, IRequestSearchDate {
+  owner?: string;
+}
+
+interface IRequestQueryUser extends IRequestSearch {
+  seen_start?: Date;
+  seen_end?: Date;
+  privilege?: number;
+  created_start?: Date;
+  created_end?: Date;
+}
+interface IRequestQuerySession extends IRequestSearch, IRequestSearchDate {
+  tags?: string;
+  categories?: string;
+}
+
+interface IRequestRedemptionQuery extends IRequestSearch, IRequestSearchDate {
+  receiver?: string;
+  cost?: number;
+  message?: string;
+}
+interface IRequestCommandsQuery extends IRequestSearch, IRequestSearchDate {
+  created?: string;
+  privilege?: number;
+  description?: string;
+  aliases?: string;
+  messages?: string;
 }
 
 interface IAuthorizationTwitch {
