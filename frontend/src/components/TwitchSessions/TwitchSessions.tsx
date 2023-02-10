@@ -3,8 +3,10 @@ import "./style.css";
 import { ITwitchSession } from "@backend/models/types/";
 import Pagination from "@components/Pagination";
 import formatDate from "@utils/formatDate";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import useAxios from "axios-hooks";
+import PreviousPage from "@components/PreviousPage";
+import FilterBarSessions from "./FilterBarSessions";
 
 interface ITwitchSessionRes {
   twitchSessions: ITwitchSession[];
@@ -14,22 +16,25 @@ interface ITwitchSessionRes {
 }
 
 export default function TwitchSessions() {
+  const [searchParams] = useSearchParams();
+
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
   const [pageSize, setPageSize] = useState(
     Number(localStorage.getItem("twitchSessionPageSize")) || 15
   );
   const [{ data, loading, error }] = useAxios<ITwitchSessionRes>(
-    `/twitch-sessions?page=${currentPageLoc}&limit=${pageSize}`
+    `/twitch-sessions?page=${currentPageLoc}&limit=${pageSize}&${searchParams}`
   );
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error!</p>;
-  if (!data) return <>Something went wrong!</>;
+  if (error) return <>Error! {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading...</>;
 
   const { twitchSessions, count, currentPage } = data;
 
   return (
     <>
+      <PreviousPage />
+      <FilterBarSessions />
       <div id="twitch-session-list" className="table-list-wrapper">
         <table id="table-twitch-session-list">
           <thead>

@@ -6,6 +6,9 @@ import useAxios from "axios-hooks";
 import { AxiosRequestConfig } from "axios";
 import Modal from "@components/Modal";
 import formatDate from "@utils/formatDate";
+import PreviousPage from "@components/PreviousPage";
+import FilterBarCommands from "./FilterBarCommands";
+import { useSearchParams } from "react-router-dom";
 
 interface IChatCommandRes {
   chatCommands: IChatCommand[];
@@ -15,6 +18,8 @@ interface IChatCommandRes {
 }
 
 export default function CommandsList() {
+  const [searchParams] = useSearchParams();
+
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
 
   const [pageSize, setPageSize] = useState(
@@ -33,7 +38,7 @@ export default function CommandsList() {
   const [privilege, setPrivilege] = useState<number>();
 
   const [{ data, loading, error }, refetchCommands] = useAxios<IChatCommandRes>(
-    `/chat-commands?page=${currentPageLoc}&limit=${pageSize}`
+    `/chat-commands?page=${currentPageLoc}&limit=${pageSize}&${searchParams}`
   );
 
   const [{}, postChatCommand] = useAxios<{
@@ -117,6 +122,9 @@ export default function CommandsList() {
 
   return (
     <>
+      <PreviousPage />
+      <FilterBarCommands />
+
       <div id="commands-list" className="table-list-wrapper">
         <table id="table-commands-list">
           <thead>
@@ -134,7 +142,7 @@ export default function CommandsList() {
               <th>Created</th>
               <th>Uses</th>
               <th>Enabled</th>
-              <th>Privilage</th>
+              <th>Privilege</th>
               <th>Description</th>
               <th>Aliases</th>
               <th>Messages</th>
@@ -154,7 +162,7 @@ export default function CommandsList() {
                         setDescription(command.description || "");
                         setAliases(command.aliases);
                         setMessages(command.messages);
-                        setPrivilege(command.privilage);
+                        setPrivilege(command.privilege);
                         setEnabled(command.enabled);
                         setShowModal(true);
                       }}
@@ -180,7 +188,7 @@ export default function CommandsList() {
 
                   <td>{command.useCount}</td>
                   <td>{command.enabled.toString()}</td>
-                  <td>{command.privilage.toString()}</td>
+                  <td>{command.privilege.toString()}</td>
                   <td className="commands-big">{command.description}</td>
 
                   <td className="commands-big">{command.aliases.join("\n")}</td>

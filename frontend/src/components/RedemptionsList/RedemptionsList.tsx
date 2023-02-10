@@ -2,10 +2,11 @@ import "./style.css";
 import React, { useState } from "react";
 import { IRedemption } from "@backend/models/types";
 import Pagination from "@components/Pagination";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import PreviousPage from "@components/PreviousPage";
 import formatDate from "@utils/formatDate";
 import useAxios from "axios-hooks";
+import FilterBarRedemptions from "./FilterBarRedemptions";
 
 interface IRedemptionsList {
   redemptions: IRedemption[];
@@ -18,6 +19,7 @@ export default function RedemptionsList(props: {
   redemptions: "all" | "session" | "user";
 }) {
   const { userId, sessionId } = useParams();
+  const [searchParams] = useSearchParams();
 
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
   const [pageSize, setPageSize] = useState(
@@ -37,7 +39,7 @@ export default function RedemptionsList(props: {
       break;
     default:
   }
-  redemptionsApiUrl += `?page=${currentPageLoc}&limit=${pageSize}`;
+  redemptionsApiUrl += `?page=${currentPageLoc}&limit=${pageSize}&${searchParams}`;
 
   const [{ data, loading, error }] =
     useAxios<IRedemptionsList>(redemptionsApiUrl);
@@ -49,6 +51,8 @@ export default function RedemptionsList(props: {
   return (
     <>
       <PreviousPage />
+      <FilterBarRedemptions />
+
       <div id="redemptions-list" className="table-list-wrapper">
         <table id="table-redemptions-list">
           <thead>

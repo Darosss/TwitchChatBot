@@ -4,6 +4,9 @@ import { IUser } from "@backend/models/types/";
 import Pagination from "@components/Pagination";
 import formatDate from "@utils/formatDate";
 import useAxios from "axios-hooks";
+import PreviousPage from "@components/PreviousPage";
+import FilterBarUsers from "./FilterBarUsers";
+import { useSearchParams } from "react-router-dom";
 
 interface IUsersRes {
   users: IUser[];
@@ -13,12 +16,14 @@ interface IUsersRes {
 }
 
 export default function Users() {
+  const [searchParams] = useSearchParams();
+
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
   const [pageSize, setPageSize] = useState(
     Number(localStorage.getItem("usersPageSize")) || 15
   );
   const [{ data, loading, error }] = useAxios<IUsersRes>(
-    `/users?page=${currentPageLoc}&limit=${pageSize}&`
+    `/users?page=${currentPageLoc}&limit=${pageSize}&${searchParams}`
   );
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
@@ -28,6 +33,8 @@ export default function Users() {
 
   return (
     <>
+      <PreviousPage />
+      <FilterBarUsers />
       <div id="users-list" className="table-list-wrapper">
         <table id="table-users-list">
           <thead>
