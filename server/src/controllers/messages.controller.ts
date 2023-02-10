@@ -1,32 +1,16 @@
 import Express, { Request, Response } from "express";
 import { Message } from "@models/message.model";
 import { TwitchSession } from "@models/twitch-session.model";
-import { IRequestQuery, IRequestQueryMessage } from "@types";
-import { User } from "@models/user.model";
+import { IRequestParams, IRequestQuery, IRequestQueryMessage } from "@types";
+import { filterMessagesByUrlParams } from "./filters/messages.filter";
 
-const getMessages = async (req: Request, res: Response) => {
-  const {
-    page = 1,
-    limit = 50,
-    search_name,
-    owner,
-    start_date,
-    end_date,
-  } = req.query as unknown as IRequestQueryMessage;
+const getMessages = async (
+  req: Request<{}, {}, {}, IRequestQueryMessage>,
+  res: Response
+) => {
+  const { page = 1, limit = 50 } = req.query;
 
-  const searchingUserId = (await User.findOne({ username: owner }))?.id;
-
-  const searchFilter = {
-    ...(search_name && { message: { $regex: search_name } }),
-    ...(owner && { owner: { $eq: searchingUserId } }),
-    ...(start_date && end_date === undefined && { date: { $gte: start_date } }),
-    ...(end_date && start_date === undefined && { date: { $lte: end_date } }),
-    ...(start_date &&
-      end_date && {
-        $and: [{ date: { $gte: start_date } }, { date: { $lte: end_date } }],
-      }),
-  };
-
+  const searchFilter = await filterMessagesByUrlParams(req.query);
   try {
     const messages = await Message.find(searchFilter)
       .limit(limit * 1)
@@ -54,11 +38,21 @@ const getMessages = async (req: Request, res: Response) => {
   }
 };
 
-const getUserMessages = async (req: Request, res: Response) => {
-  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
+const getUserMessages = async (
+  req: Request<IRequestParams, {}, {}, IRequestQueryMessage>,
+  res: Response
+) => {
+  const { page = 1, limit = 50 } = req.query;
+
   const { id } = req.params;
+
+  const searchFilter = Object.assign(
+    { owner: id },
+    await filterMessagesByUrlParams(req.query)
+  );
+
   try {
-    const messages = await Message.find({ owner: id })
+    const messages = await Message.find(Object.assign(searchFilter))
       .limit(limit * 1)
       .sort({ date: -1 })
       .skip((page - 1) * limit)
@@ -69,7 +63,7 @@ const getUserMessages = async (req: Request, res: Response) => {
       .select({ __v: 0 })
       .exec();
 
-    const count = await Message.find({ owner: id }).countDocuments();
+    const count = await Message.find(searchFilter).countDocuments();
 
     res.status(200).send({
       messages,
@@ -112,18 +106,28 @@ const getLatestAndFirstMsgs = async (req: Request, res: Response) => {
   }
 };
 
-const getSessionMessages = async (req: Request, res: Response) => {
+const getSessionMessages = async (
+  req: Request<IRequestParams, {}, {}, IRequestQueryMessage>,
+  res: Response
+) => {
+  const { page = 1, limit = 50 } = req.query;
+
   const { id } = req.params;
-  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
+
   try {
     const session = await TwitchSession.findById(id);
 
-    const messages = await Message.find({
-      date: {
-        $gte: session?.sessionStart,
-        $lte: session?.sessionEnd,
+    const searchFilter = Object.assign(
+      {
+        date: {
+          $gte: session?.sessionStart,
+          $lte: session?.sessionEnd,
+        },
       },
-    })
+      await filterMessagesByUrlParams(req.query)
+    );
+
+    const messages = await Message.find(searchFilter)
       .limit(limit * 1)
       .sort({ date: -1 })
       .skip((page - 1) * limit)
@@ -134,7 +138,7 @@ const getSessionMessages = async (req: Request, res: Response) => {
       .select({ __v: 0 })
       .exec();
 
-    const count = await Message.find().countDocuments();
+    const count = await Message.find(searchFilter).countDocuments();
 
     res.status(200).send({
       messages,
