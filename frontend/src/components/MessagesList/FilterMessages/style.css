@@ -1,0 +1,13 @@
+.filter-messages {
+  display: flex;
+}
+
+.filter-messages input {
+  margin-left: 0.2rem;
+  text-align: center;
+  height: 10vh;
+}
+
+.filter-messages button {
+  margin-left: 0.2rem;
+}
