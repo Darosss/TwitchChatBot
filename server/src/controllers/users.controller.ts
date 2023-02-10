@@ -1,19 +1,25 @@
 import Express, { Request, Response } from "express";
 import { User } from "@models/user.model";
-import { IRequestQuery } from "@types";
+import { IRequestQueryUser } from "@types";
+import { filterUsersByUrlParams } from "./filters/users.filter";
 
-const getUsers = async (req: Request, res: Response) => {
-  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
+const getUsers = async (
+  req: Request<{}, {}, {}, IRequestQueryUser>,
+  res: Response
+) => {
+  const { page = 1, limit = 50 } = req.query;
+
+  const searchFilter = filterUsersByUrlParams(req.query);
 
   try {
-    const users = await User.find()
+    const users = await User.find(searchFilter)
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .select({ __v: 0 })
       .sort({ lastSeen: -1 })
       .exec();
 
-    const count = await User.countDocuments();
+    const count = await User.countDocuments(searchFilter);
 
     res.status(200).send({
       users,
