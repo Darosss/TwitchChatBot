@@ -8,7 +8,7 @@ const ChatCommandSchema: Schema<IChatCommandDocument> = new Schema({
   enabled: { type: Boolean, default: true },
   aliases: [String],
   messages: [String],
-  privilage: {
+  privilege: {
     type: Number,
     default: 0,
     min: 0,
