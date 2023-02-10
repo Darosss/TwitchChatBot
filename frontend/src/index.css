@@ -108,6 +108,11 @@ table th {
   user-select: none; /* Standard syntax */
 }
 
+table th:hover {
+  color: var(--base-color-link);
+  background-color: var(--base-bg-color-border);
+}
+
 table tbody {
   border: 2px solid black;
   overflow-y: scroll;
@@ -119,7 +124,7 @@ table tbody td {
 
 .table-list-wrapper {
   font-size: 0.9rem;
-  height: 90vh;
+  height: 80vh;
   overflow-x: hidden;
   overflow-y: scroll;
 }
