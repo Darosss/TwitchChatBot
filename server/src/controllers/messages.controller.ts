@@ -23,7 +23,7 @@ const getMessages = async (
       .select({ __v: 0 })
       .exec();
 
-    const count = await Message.find(searchFilter).countDocuments();
+    const count = await Message.countDocuments(searchFilter);
 
     res.status(200).send({
       messages,
@@ -42,9 +42,8 @@ const getUserMessages = async (
   req: Request<IRequestParams, {}, {}, IRequestQueryMessage>,
   res: Response
 ) => {
-  const { page = 1, limit = 50 } = req.query;
-
   const { id } = req.params;
+  const { page = 1, limit = 50 } = req.query;
 
   const searchFilter = Object.assign(
     { owner: id },
@@ -63,7 +62,7 @@ const getUserMessages = async (
       .select({ __v: 0 })
       .exec();
 
-    const count = await Message.find(searchFilter).countDocuments();
+    const count = await Message.countDocuments(searchFilter);
 
     res.status(200).send({
       messages,
@@ -110,9 +109,8 @@ const getSessionMessages = async (
   req: Request<IRequestParams, {}, {}, IRequestQueryMessage>,
   res: Response
 ) => {
-  const { page = 1, limit = 50 } = req.query;
-
   const { id } = req.params;
+  const { page = 1, limit = 50 } = req.query;
 
   try {
     const session = await TwitchSession.findById(id);
@@ -138,7 +136,7 @@ const getSessionMessages = async (
       .select({ __v: 0 })
       .exec();
 
-    const count = await Message.find(searchFilter).countDocuments();
+    const count = await Message.countDocuments(searchFilter);
 
     res.status(200).send({
       messages,
