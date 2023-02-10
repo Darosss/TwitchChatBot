@@ -160,7 +160,7 @@ class BotStatisticDatabase {
       foundCommand = await this.getCommandByAlias(aliasCommand);
 
       if (!foundCommand) return;
-      if (user.privileges < foundCommand.privilage) return;
+      if (user.privileges < foundCommand.privilege) return;
 
       foundCommand.useCount++;
       await foundCommand.save();
