@@ -20,9 +20,13 @@ declare global {
   }
 }
 
+interface IRequestParams {
+  id?: string;
+}
+
 interface IRequestQuery {
-  limit: number;
-  page: number;
+  limit?: number;
+  page?: number;
 }
 
 interface IRequestSearch extends IRequestQuery {
@@ -30,9 +34,9 @@ interface IRequestSearch extends IRequestQuery {
 }
 
 interface IRequestQueryMessage extends IRequestSearch {
-  owner: string;
-  start_date: Date;
-  end_date: Date;
+  owner?: string;
+  start_date?: Date;
+  end_date?: Date;
 }
 
 interface IAuthorizationTwitch {
