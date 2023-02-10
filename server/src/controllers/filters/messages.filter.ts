@@ -7,7 +7,7 @@ const filterMessagesByUrlParams = async (params: IRequestQueryMessage) => {
   const searchingUserId = (await User.findOne({ username: owner }))?.id;
 
   const searchFilter = {
-    ...(search_name && { message: { $regex: search_name } }),
+    ...(search_name && { message: { $regex: search_name, $options: "i" } }),
     ...(owner && { owner: { $eq: searchingUserId } }),
     ...(start_date &&
       end_date === undefined && { date: { $gte: new Date(start_date) } }),
