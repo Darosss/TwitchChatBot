@@ -1,19 +1,24 @@
 import Express, { Request, Response } from "express";
 import { TwitchSession } from "@models/twitch-session.model";
-import { IRequestQuery } from "@types";
+import { IRequestQuerySession } from "@types";
+import { filterSessionByUrlParams } from "./filters/session.filter";
 
-const getTwitchSessions = async (req: Request, res: Response) => {
-  const { page = 1, limit = 50 } = req.query as unknown as IRequestQuery;
+const getTwitchSessions = async (
+  req: Request<{}, {}, {}, IRequestQuerySession>,
+  res: Response
+) => {
+  const { page = 1, limit = 50 } = req.query;
 
+  const searchFilter = filterSessionByUrlParams(req.query);
   try {
-    const twitchSessions = await TwitchSession.find()
+    const twitchSessions = await TwitchSession.find(searchFilter)
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .select({ __v: 0 })
       .sort({ sessionStart: -1 })
       .exec();
 
-    const count = await TwitchSession.countDocuments();
+    const count = await TwitchSession.countDocuments(searchFilter);
 
     res.status(200).send({
       twitchSessions,
