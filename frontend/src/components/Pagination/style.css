@@ -103,3 +103,19 @@
   font-size: 1.2rem;
   margin-right: 1rem;
 }
+
+.total-count {
+  position: absolute;
+  right: 0;
+
+  color: var(--base-color);
+  width: 15vw;
+  height: 4vh;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.total-count span {
+  color: var(--base-color-info);
+}

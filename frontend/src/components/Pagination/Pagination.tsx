@@ -54,6 +54,14 @@ export default function Pagination(props: {
     );
   };
 
+  const TotalResults = () => {
+    return (
+      <div className="total-count">
+        Results: <span>{totalCount}</span>
+      </div>
+    );
+  };
+
   // If no range = return;
   if (!paginationRange) {
     return (
@@ -67,10 +75,13 @@ export default function Pagination(props: {
   // If there are less than 2 times in pagination range we shall not render the component
   if (currentPage === 0 || paginationRange.length < 2) {
     return (
-      <div className="page-size-alone">
-        <label>Page size</label>
-        <PageSizeSelect />
-      </div>
+      <>
+        <TotalResults />
+        <div className="page-size-alone">
+          <label>Page size</label>
+          <PageSizeSelect />
+        </div>
+      </>
     );
   }
 
@@ -137,6 +148,7 @@ export default function Pagination(props: {
           <div className="arrow right" />
         </li>
         <PageSizeSelect />
+        <TotalResults />
       </ul>
     </>
   );
