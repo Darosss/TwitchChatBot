@@ -6,6 +6,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import PreviousPage from "@components/PreviousPage";
 import formatDate from "@utils/formatDate";
 import useAxios from "axios-hooks";
+import FilterMessages from "./FilterMessages";
 
 interface IMessagesList {
   messages: IMessage[];
@@ -18,13 +19,12 @@ export default function MessagesList(props: {
   messages: "all" | "session" | "user";
 }) {
   const { userId, sessionId } = useParams();
+  const [searchParams] = useSearchParams();
 
   const [currentPageLoc, setCurrentPageLoc] = useState(1);
   const [pageSize, setPageSize] = useState(
     Number(localStorage.getItem("messagesListPageSize")) || 15
   );
-
-  let [searchParams, setSearchParams] = useSearchParams();
 
   let messageApiUrl = `/messages`;
   let messageHref = ``;
@@ -49,71 +49,12 @@ export default function MessagesList(props: {
 
   const { messages, count, currentPage } = data;
 
-  const onBlurOrKeySearchParamsChange = (queryName: string, e: string) => {
-    setSearchParams((prevState) => {
-      const value = e;
-      if (value) {
-        prevState.set(queryName, e);
-      } else {
-        prevState.delete(queryName);
-      }
-      return prevState;
-    });
-  };
-
   return (
     <>
-      <PreviousPage />
-      <input
-        type="text"
-        placeholder={"Message contains"}
-        defaultValue={searchParams.get("search_name") || ""}
-        onBlur={(e) => {
-          onBlurOrKeySearchParamsChange("search_name", e.target.value);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            onBlurOrKeySearchParamsChange("search_name", e.currentTarget.value);
-          }
-        }}
-      />
-      <input
-        type="text"
-        placeholder={"Message of user"}
-        defaultValue={searchParams.get("owner") || ""}
-        onBlur={(e) => {
-          onBlurOrKeySearchParamsChange("owner", e.target.value);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            onBlurOrKeySearchParamsChange("owner", e.currentTarget.value);
-          }
-        }}
-      />
-      <input
-        type="date"
-        defaultValue={searchParams.get("start_date") || ""}
-        onBlur={(e) => {
-          onBlurOrKeySearchParamsChange("start_date", e.target.value);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            onBlurOrKeySearchParamsChange("start_date", e.currentTarget.value);
-          }
-        }}
-      />
-      <input
-        type="date"
-        defaultValue={searchParams.get("end_date") || ""}
-        onBlur={(e) => {
-          onBlurOrKeySearchParamsChange("end_date", e.target.value);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            onBlurOrKeySearchParamsChange("end_date", e.currentTarget.value);
-          }
-        }}
-      />
+      <div className="messages-action">
+        <PreviousPage />
+        <FilterMessages />
+      </div>
       <div id="messages-list" className="table-list-wrapper">
         <table id="table-messages-list">
           <thead>
