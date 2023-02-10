@@ -1,19 +1,24 @@
 import Express, { Request, Response } from "express";
 import { ChatCommand } from "@models/chat-command.model";
-import { IRequestQuery } from "@types";
+import { IRequestCommandsQuery } from "@types";
+import { filterCommandsByUrlParams } from "./filters/commands.filter";
 
-const getChatCommands = async (req: Request, res: Response) => {
-  const { page = 1, limit = 25 } = req.query as unknown as IRequestQuery;
+const getChatCommands = async (
+  req: Request<{}, {}, {}, IRequestCommandsQuery>,
+  res: Response
+) => {
+  const { page = 1, limit = 25 } = req.query;
 
+  const searchFilter = filterCommandsByUrlParams(req.query);
   try {
-    const chatCommands = await ChatCommand.find()
+    const chatCommands = await ChatCommand.find(searchFilter)
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .select({ __v: 0 })
       .sort({ createdAt: -1 })
       .exec();
 
-    const count = await ChatCommand.countDocuments();
+    const count = await ChatCommand.countDocuments(searchFilter);
     res.status(200).send({
       chatCommands,
       totalPages: Math.ceil(count / limit),
@@ -37,7 +42,7 @@ const addNewCommand = async (req: Request, res: Response) => {
       enabled: enabled,
       aliases: aliases,
       messages: messages,
-      privilage: privilege,
+      privilege: privilege,
     }).save();
     res.status(200).send({ message: "Added successfully" });
   } catch (error) {
@@ -56,7 +61,7 @@ const editChatCommand = async (req: Request, res: Response) => {
       enabled: enabled,
       aliases: aliases,
       messages: messages,
-      privilage: privilege,
+      privilege: privilege,
     });
     res.status(200).send({ message: "Updated successfully" });
   } catch (error) {
