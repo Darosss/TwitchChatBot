@@ -89,7 +89,7 @@ export interface IChatCommand {
   enabled: boolean;
   aliases: string[];
   messages: string[];
-  privilage: number;
+  privilege: number;
   useCount: number;
 }
 
