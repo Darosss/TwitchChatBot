@@ -6,9 +6,7 @@ const filterMessagesByUrlParams = async (params: IRequestQueryMessage) => {
 
   const searchingUserId = (await User.findOne({ username: owner }))?.id;
 
-  const searchFilter = {
-    ...(search_name && { message: { $regex: search_name, $options: "i" } }),
-    ...(owner && { owner: { $eq: searchingUserId } }),
+  const filterDate = {
     ...(start_date &&
       end_date === undefined && { date: { $gte: new Date(start_date) } }),
     ...(end_date &&
@@ -22,6 +20,15 @@ const filterMessagesByUrlParams = async (params: IRequestQueryMessage) => {
       }),
   };
 
+  const filterMessage = {
+    ...(search_name && { message: { $regex: search_name, $options: "i" } }),
+  };
+
+  const filterOwner = { ...(owner && { owner: { $eq: searchingUserId } }) };
+
+  const searchFilter = {
+    $and: [filterDate, filterMessage, filterOwner],
+  };
   return searchFilter;
 };
 
