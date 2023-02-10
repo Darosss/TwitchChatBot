@@ -1,5 +1,9 @@
 .pagination-container {
+  width: 100%;
+  border-top: 0.2rem solid black;
+  padding-top: 0.2rem;
   display: flex;
+  bottom: 0;
   list-style-type: none;
 }
 
