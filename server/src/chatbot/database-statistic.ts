@@ -6,6 +6,14 @@ import { User } from "@models/user.model";
 import { Trigger } from "@models/trigger.model";
 import { percentChance, randomWithMax } from "@utils/random-numbers.util";
 import { ChatCommand } from "@models/chat-command.model";
+import { Server } from "socket.io";
+import {
+  ClientToServerEvents,
+  InterServerEvents,
+  ServerToClientEvents,
+  SocketData,
+} from "@libs/types";
+import removeDifferenceFromSet from "@utils/remove-difference-set.util";
 
 type userId = string | ObjectId;
 
@@ -15,19 +23,82 @@ class BotStatisticDatabase {
   twitchApi: ApiClient;
   triggerWords: string[];
   triggersOnDelay: Map<string, NodeJS.Timeout>;
+  socketIO: Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >;
 
-  constructor(twitchApi: ApiClient, config: IConfigDocument) {
+  constructor(
+    twitchApi: ApiClient,
+    config: IConfigDocument,
+    socketIO: Server<
+      ClientToServerEvents,
+      ServerToClientEvents,
+      InterServerEvents,
+      SocketData
+    >
+  ) {
     this.twitchApi = twitchApi;
     this.config = config;
     this.commandsWords = [];
     this.triggerWords = [];
     this.triggersOnDelay = new Map();
+    this.socketIO = socketIO;
   }
 
   public async init() {
+    await this.checkChattersInterval();
     await this.updateEveryUserTwitchDetails();
     await this.getAllTrigersWordsFromDB();
     await this.getAllCommandWords();
+  }
+
+  async checkChattersInterval() {
+    const broadcasterId = (await this.twitchApi.users.getMe()).id;
+    let usersBefore = new Set<string>();
+    setInterval(async () => {
+      const usersNow = new Set<string>();
+      const listOfChatters = await this.twitchApi.chat.getChatters(
+        broadcasterId,
+        broadcasterId
+      );
+      const { data } = listOfChatters;
+
+      // loop through all chatters visible by api
+      for await (const user of data) {
+        const { userName } = user;
+
+        usersNow.add(userName);
+        //if users exist emit event
+        const userDB = await this.isUserInDB(userName);
+        if (!usersBefore.has(userName) && userDB) {
+          this.socketIO.emit(
+            "userJoinTwitchChat",
+            { eventDate: new Date(), eventName: "Join chat" },
+            userDB
+          );
+        }
+
+        usersBefore.add(userName);
+      }
+      removeDifferenceFromSet(usersBefore, usersNow);
+
+      //after remove difference of sets loop on users that have been and emit left chat
+      for await (const userLeft of usersBefore) {
+        const userDB = await this.isUserInDB(userLeft);
+        if (userDB) {
+          this.socketIO.emit(
+            "userJoinTwitchChat",
+            { eventDate: new Date(), eventName: "Left chat" },
+            userDB
+          );
+        }
+      }
+      usersBefore = usersNow;
+      usersNow.clear();
+    }, 150000);
   }
 
   async updateEveryUserTwitchDetails() {
