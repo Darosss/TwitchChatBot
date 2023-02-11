@@ -5,6 +5,7 @@
   --color-user-usual: rgb(40, 18, 182);
   --color-user-new-user: rgb(18, 114, 20);
   --color-user-blacklist: rgb(71, 17, 17);
+  --color-user-danger: rgba(99, 52, 52, 0.2);
 
   --bg-color-active: rgba(163, 158, 12, 0.853);
   --bg-color-not-active: rgba(100, 97, 17, 0.153);

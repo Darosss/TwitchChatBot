@@ -31,6 +31,10 @@
   border: 0.2rem solid var(--color-user-warn);
 }
 
+.user-info.left-chat {
+  background-color: var(--color-user-danger);
+}
+
 .user-info.new-user {
   border: 0.2rem solid var(--color-user-new-user);
 }

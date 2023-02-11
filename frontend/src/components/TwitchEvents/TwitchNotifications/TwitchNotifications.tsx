@@ -52,6 +52,8 @@ export default function TwitchNotifications(props: { className?: string }) {
         return (
           <div
             className={`user-info ${
+              notif.eventName === "Left chat" ? "left-chat" : ""
+            } ${
               Math.floor(
                 new Date(notif.eventDate).getTime() / 1000 -
                   new Date(notif.createdAt).getTime() / 1000
@@ -59,7 +61,7 @@ export default function TwitchNotifications(props: { className?: string }) {
                 ? "new-user"
                 : "usual"
             } `}
-            key={notif._id}
+            key={notif._id + notif.eventDate}
           >
             <button
               id="button-close"
