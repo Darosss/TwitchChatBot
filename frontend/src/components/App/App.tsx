@@ -17,6 +17,7 @@ import TwitchSessions from "@components/TwitchSessions/";
 import RedemptionsList from "@components/RedemptionsList";
 import CommandsList from "@components/CommandsList";
 import ConfigsList from "@components/ConfigsList";
+import TriggersList from "@components/TriggersList";
 
 const axios = Axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -145,6 +146,14 @@ function App() {
               element={
                 <div className="main-other">
                   <ConfigsList />
+                </div>
+              }
+            ></Route>
+            <Route
+              path="triggers"
+              element={
+                <div className="main-other">
+                  <TriggersList />
                 </div>
               }
             ></Route>

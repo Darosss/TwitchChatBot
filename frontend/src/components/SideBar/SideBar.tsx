@@ -49,6 +49,11 @@ export default function SideBar() {
           </Link>
         </li>
         <li>
+          <Link onClick={resetWindowScroll} to="/triggers">
+            Triggers
+          </Link>
+        </li>
+        <li>
           <Link onClick={resetWindowScroll} to="/configs">
             Configs
           </Link>
