@@ -33,47 +33,36 @@ const clientTmi = (
       username: process.env.username,
     },
     channels: [userNameToListen],
+    logger: {
+      info(message) {
+        console.log(
+          `${new Date().toISOString().split("T")[1].split(".")[0]} ${message}`
+        );
+      },
+      warn(message) {
+        console.log("WARN", message);
+      },
+      error(message) {
+        console.log("ERROR", message);
+      },
+    },
   });
-  const botLogObj = new BotLog(userNameToListen);
-  const botTimerObj = new BotTimer(client, bot_commands);
+  // const botLogObj = new BotLog(userNameToListen);
+  // const botTimerObj = new BotTimer(client, bot_commands);
 
   client.on("connected", () => {
     console.log("CONNECTED - I set the intervals now");
-    botTimerObj.initOnJoinToChannel(userNameToListen);
+    // botTimerObj.initOnJoinToChannel(userNameToListen);
   });
 
   client.on("disconnected", () => {
     console.log("DISCONNECTED - clearing interval");
   });
 
-  function logMsg(username: string, msg: string) {
-    console.log(
-      `[${
-        new Date().toISOString().split("T")[1].split(".")[0]
-      }] - ${username}:${msg}`
-    );
-  }
-
-  client.on("join", async (channel, username, self) => {
-    console.log(`${username} joined the chat -- checking if user is in DB`);
-    const user = await botStatisticDatabase.isUserInDB(username);
-
-    if (!user) return;
-    socket.emit(
-      "userJoinTwitchChat",
-      { eventDate: new Date(), eventName: "Join chat" },
-      user
-    );
-    await botStatisticDatabase.updateUserStatistics(user.id);
-  });
-
   client.on("message", async (channel, tags, message, self) => {
-    let channelName = channel.slice(1);
     let senderName = tags.username || "undefined";
 
     socket.emit("messageServer", new Date(), senderName, message); // emit for socket
-
-    logMsg(senderName, message);
 
     // botLogObj.countMessages(channelName, senderName);
     // botLogObj.logMessages(channelName, senderName, message);
