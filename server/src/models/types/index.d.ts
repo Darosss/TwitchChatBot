@@ -60,6 +60,7 @@ export interface ITrigger {
   onDelay: boolean;
   words: string[];
   messages: string[];
+  createdAt: Date;
 }
 
 export type ITriggerDocument = ITrigger & Document;
