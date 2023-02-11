@@ -67,6 +67,11 @@ interface IRequestCommandsQuery extends IRequestSearch, IRequestSearchDate {
   messages?: string;
 }
 
+interface IRequestTriggerQuery extends IRequestSearch, IRequestSearchDate {
+  words?: string;
+  messages?: string;
+}
+
 interface IAuthorizationTwitch {
   access_token: string;
   expires_in: number;
