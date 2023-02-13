@@ -1,6 +1,6 @@
 import Express, { Router } from "express";
 import {
-  getMessages,
+  getMessagesList,
   getUserMessages,
   getLatestAndFirstMsgs,
   getSessionMessages,
@@ -10,9 +10,10 @@ import checkSearchParams from "@middlewares/checkSearchParams.middleware";
 
 const messagesRouter = Router();
 
-messagesRouter.get("/", checkSearchParams, checkSearchParams, getMessages);
+messagesRouter.get("/", checkSearchParams, checkSearchParams, getMessagesList);
 messagesRouter.get(
   "/twitch-session/:id",
+  isParamObjectId,
   checkSearchParams,
   getSessionMessages
 );

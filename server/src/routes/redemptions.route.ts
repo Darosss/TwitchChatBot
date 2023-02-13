@@ -1,6 +1,6 @@
 import Express, { Router } from "express";
 import {
-  getRedemptions,
+  getRedemptionsList,
   getUserRedemptions,
   getSessionRedemptions,
 } from "@controllers/redemptions.controller";
@@ -8,7 +8,7 @@ import checkSearchParams from "@middlewares/checkSearchParams.middleware";
 
 const redemptionsRouter = Router();
 
-redemptionsRouter.get("/", checkSearchParams, getRedemptions);
+redemptionsRouter.get("/", checkSearchParams, getRedemptionsList);
 redemptionsRouter.get("/:id", getUserRedemptions);
 redemptionsRouter.get(
   "/twitch-session/:id",

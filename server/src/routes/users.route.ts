@@ -1,6 +1,6 @@
 import Express, { Router } from "express";
 import {
-  getUsers,
+  getUsersList,
   getUsersProfile,
   editUserProfile,
 } from "@controllers/users.controller";
@@ -9,7 +9,7 @@ import checkSearchParams from "@middlewares/checkSearchParams.middleware";
 
 const usersRouter = Router();
 
-usersRouter.get("/", checkSearchParams, getUsers);
+usersRouter.get("/", checkSearchParams, getUsersList);
 usersRouter.get("/:id", isParamObjectId, getUsersProfile);
 usersRouter.post("/:id", isParamObjectId, editUserProfile);
 
