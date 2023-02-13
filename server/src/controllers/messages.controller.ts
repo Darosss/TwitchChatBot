@@ -1,10 +1,10 @@
 import Express, { Request, Response } from "express";
-import { Message } from "@models/message.model";
-import { TwitchSession } from "@models/twitch-session.model";
 import { IRequestParams, IRequestQuery, IRequestQueryMessage } from "@types";
 import { filterMessagesByUrlParams } from "./filters/messages.filter";
+import { getMessages, getMessagesCount } from "@services/Message";
+import { getTwitchSessionById } from "@services/TwitchSession";
 
-const getMessages = async (
+const getMessagesList = async (
   req: Request<{}, {}, {}, IRequestQueryMessage>,
   res: Response
 ) => {
@@ -12,29 +12,24 @@ const getMessages = async (
 
   const searchFilter = await filterMessagesByUrlParams(req.query);
   try {
-    const messages = await Message.find(searchFilter)
-      .limit(limit * 1)
-      .sort({ date: -1 })
-      .skip((page - 1) * limit)
-      .populate({
-        path: "owner",
-        select: "username",
-      })
-      .select({ __v: 0 })
-      .exec();
+    const messages = await getMessages(searchFilter, {
+      limit: limit,
+      skip: page,
+      sort: { date: -1 },
+      select: { __v: 0 },
+    });
 
-    const count = await Message.countDocuments(searchFilter);
-
-    res.status(200).send({
+    const count = await getMessagesCount(searchFilter);
+    return res.status(200).send({
       messages,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
-    res.status(400).send({ message: "Couldn't get messages" });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 
@@ -51,57 +46,60 @@ const getUserMessages = async (
   );
 
   try {
-    const messages = await Message.find(Object.assign(searchFilter))
-      .limit(limit * 1)
-      .sort({ date: -1 })
-      .skip((page - 1) * limit)
-      .populate({
-        path: "owner",
-        select: "username",
-      })
-      .select({ __v: 0 })
-      .exec();
+    const messages = await getMessages(searchFilter, {
+      limit: limit,
+      skip: page,
+      sort: { date: -1 },
+      select: { __v: 0 },
+    });
+    const count = await getMessagesCount(searchFilter);
 
-    const count = await Message.countDocuments(searchFilter);
-
-    res.status(200).send({
+    return res.status(200).send({
       messages,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
-    res.status(400).send({ message: "Couldn't get messages" });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 
-const getLatestAndFirstMsgs = async (req: Request, res: Response) => {
+const getLatestAndFirstMsgs = async (
+  req: Request<IRequestParams, {}, {}, IRequestQuery>,
+  res: Response
+) => {
   const { id } = req.params;
-  const { limit = 6 } = req.query as unknown as IRequestQuery;
+  const { limit = 6 } = req.query;
 
   try {
-    const messages = await Message.find({ owner: id })
-      .sort({ date: -1 })
-      .populate({
-        path: "owner",
-        select: "username",
-      })
-      .select({ __v: 0 })
-      .exec();
+    const firstMessages = await getMessages(
+      { owner: id },
+      {
+        limit: limit,
+        sort: { date: 1 },
+        select: { __v: 0 },
+      }
+    );
+    const latestMessages = await getMessages(
+      { owner: id },
+      {
+        limit: limit,
+        sort: { date: -1 },
+        select: { __v: 0 },
+      }
+    );
 
-    const firstMessages = messages.slice(0, limit);
-    const latestMessages = messages.slice(-limit);
-
-    res.status(200).send({
+    return res.status(200).send({
       firstMessages: firstMessages,
       latestMessages: latestMessages,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
-    res.status(400).send({ message: "Couldn't get messages" });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 
@@ -112,8 +110,13 @@ const getSessionMessages = async (
   const { id } = req.params;
   const { page = 1, limit = 50 } = req.query;
 
+  if (!id)
+    return res
+      .status(400)
+      .send({ message: "There is problem with session id" });
+
   try {
-    const session = await TwitchSession.findById(id);
+    const session = await getTwitchSessionById(id, { select: { __v: 0 } });
 
     const searchFilter = Object.assign(
       {
@@ -125,33 +128,29 @@ const getSessionMessages = async (
       await filterMessagesByUrlParams(req.query)
     );
 
-    const messages = await Message.find(searchFilter)
-      .limit(limit * 1)
-      .sort({ date: -1 })
-      .skip((page - 1) * limit)
-      .populate({
-        path: "owner",
-        select: "username",
-      })
-      .select({ __v: 0 })
-      .exec();
+    const messages = await getMessages(searchFilter, {
+      limit: limit,
+      skip: page,
+      sort: { date: -1 },
+      select: { __v: 0 },
+    });
 
-    const count = await Message.countDocuments(searchFilter);
+    const count = await getMessagesCount(searchFilter);
 
-    res.status(200).send({
+    return res.status(200).send({
       messages,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
-    res.status(400).send({ message: "Couldn't get messages from session" });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 export {
-  getMessages,
+  getMessagesList,
   getUserMessages,
   getLatestAndFirstMsgs,
   getSessionMessages,

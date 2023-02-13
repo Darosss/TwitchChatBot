@@ -1,9 +1,15 @@
 import Express, { Request, Response } from "express";
-import { ChatCommand } from "@models/chat-command.model";
 import { IRequestCommandsQuery } from "@types";
 import { filterCommandsByUrlParams } from "./filters/commands.filter";
+import {
+  createChatCommand,
+  deleteChatCommandById,
+  getChatCommands,
+  getChatCommandsCount,
+  updateChatCommandById,
+} from "@services/ChatCommand";
 
-const getChatCommands = async (
+const getChatCommandsList = async (
   req: Request<{}, {}, {}, IRequestCommandsQuery>,
   res: Response
 ) => {
@@ -11,24 +17,24 @@ const getChatCommands = async (
 
   const searchFilter = filterCommandsByUrlParams(req.query);
   try {
-    const chatCommands = await ChatCommand.find(searchFilter)
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
-      .select({ __v: 0 })
-      .sort({ createdAt: -1 })
-      .exec();
+    const chatCommands = await getChatCommands(searchFilter, {
+      limit: limit,
+      skip: page,
+      sort: { createdAt: -1 },
+    });
 
-    const count = await ChatCommand.countDocuments(searchFilter);
-    res.status(200).send({
+    const count = await getChatCommandsCount(searchFilter);
+
+    return res.status(200).send({
       chatCommands,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
-    res.status(400).send({ message: "Couldn't get chat commands" });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 
@@ -36,26 +42,7 @@ const addNewCommand = async (req: Request, res: Response) => {
   const { name, description, enabled, aliases, messages, privilege } = req.body;
 
   try {
-    await new ChatCommand({
-      name: name,
-      description: description,
-      enabled: enabled,
-      aliases: aliases,
-      messages: messages,
-      privilege: privilege,
-    }).save();
-    res.status(200).send({ message: "Added successfully" });
-  } catch (error) {
-    res.status(400).send({ message: "Couldn't add command" });
-  }
-};
-
-const editChatCommand = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { name, description, enabled, aliases, messages, privilege } = req.body;
-
-  try {
-    await ChatCommand.findByIdAndUpdate(id, {
+    const newChatCommand = await createChatCommand({
       name: name,
       description: description,
       enabled: enabled,
@@ -63,21 +50,63 @@ const editChatCommand = async (req: Request, res: Response) => {
       messages: messages,
       privilege: privilege,
     });
-    res.status(200).send({ message: "Updated successfully" });
+
+    return res
+      .status(201)
+      .send({ message: "Added successfully", chatCommand: newChatCommand });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).send({ message: "Internal server error" });
+  }
+};
+
+const editChatCommandById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { name, description, enabled, aliases, messages, privilege } = req.body;
+
+  try {
+    const updatedChatCommand = await updateChatCommandById(id, {
+      name: name,
+      description: description,
+      enabled: enabled,
+      aliases: aliases,
+      messages: messages,
+      privilege: privilege,
+    });
+
+    return res.status(200).send({
+      message: "Updated successfully",
+      chatCommand: updatedChatCommand,
+    });
   } catch (error) {
     res.status(400).send({ message: "Couldn't update command" });
   }
 };
 
-const deleteChatCommand = async (req: Request, res: Response) => {
+const deleteCommandById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    await ChatCommand.findByIdAndDelete(id);
-    res.status(200).send({ message: "Deleted successfully" });
+    const deletedChatCommand = await deleteChatCommandById(id);
+
+    if (!deletedChatCommand) {
+      return res.status(404).send({ message: "Chat command not found" });
+    }
+
+    return res
+      .status(200)
+      .send({ message: "Chat command deleted successfully" });
   } catch (error) {
-    res.status(400).send({ message: "Couldn't delete command" });
+    console.error(error);
+
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 
-export { getChatCommands, addNewCommand, editChatCommand, deleteChatCommand };
+export {
+  getChatCommandsList,
+  addNewCommand,
+  editChatCommandById,
+  deleteCommandById,
+};
