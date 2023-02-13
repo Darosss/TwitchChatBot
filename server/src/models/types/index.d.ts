@@ -1,15 +1,15 @@
 import { Document, Types } from "mongoose";
 
 export interface IUser {
-  _id: string | ObjectId;
+  _id: string;
+  twitchId: string;
   username: string;
   createdAt: Date;
   privileges: number;
-  points: number;
+  points?: number;
   lastSeen: Date;
-  messageCount: number;
+  messageCount?: number;
   notes?: string[];
-  twitchId?: string;
   twitchName?: string;
   twitchCreated?: Date;
   userDisplayName?: string;
@@ -19,18 +19,19 @@ export interface IUser {
 export type IUserDocument = IUser & Document;
 
 export interface IMessage {
-  _id: string | ObjectId;
+  _id: string;
   message: string;
   date: Date;
-  owner: Types.ObjectId | string | IUser;
+  owner: string | IUser;
 }
 
 export type IMessageDocument = IMessage & Document;
 
 export interface IRedemption {
-  _id: string | ObjectId;
+  _id: string;
   rewardId: string;
   userId: string;
+  twitchId: string;
   userName: string;
   userDisplayName: string;
   redemptionDate: Date;
@@ -42,7 +43,7 @@ export interface IRedemption {
 
 export type IRedemptionDocument = IRedeption & Document;
 export interface ITwitchSession {
-  _id: string | ObjectId;
+  _id: string;
   sessionStart: Date;
   sessionEnd: Date;
   sessionTitles: string[];
@@ -52,7 +53,7 @@ export interface ITwitchSession {
 
 export type ITwitchSessionDocument = ITwitchSession & Document;
 export interface ITrigger {
-  _id: string | ObjectId;
+  _id: string;
   name: string;
   enabled: boolean;
   chance: number;
@@ -66,7 +67,7 @@ export interface ITrigger {
 export type ITriggerDocument = ITrigger & Document;
 
 export interface IConfig {
-  _id: string | ObjectId;
+  _id: string;
   commandsPrefix: string;
   timersIntervalDelay: number;
   activeUserTimeDelay: number;
@@ -83,7 +84,7 @@ export interface IConfig {
 export type IConfigDocument = IConfig & Document;
 
 export interface IChatCommand {
-  _id: string | ObjectId;
+  _id: string;
   name: string;
   createdAt: Date;
   description?: string;
@@ -97,11 +98,12 @@ export interface IChatCommand {
 export type IChatCommandDocument = IChatCommand & Document;
 
 export interface IAuth {
-  _id: string | ObjectId;
+  _id: string;
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
   obtainmentTimestamp: number;
+  scope: string[];
 }
 
 export type IAuthDocument = IAuth & Document;
