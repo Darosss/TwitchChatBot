@@ -3,11 +3,11 @@ import { ITriggerDocument } from "./types";
 
 const TriggerSchema: Schema<ITriggerDocument> = new Schema({
   name: { type: String, required: true },
-  enabled: { type: Boolean, required: true, default: true },
-  chance: { type: Number, required: true, default: 50 },
-  delay: { type: Number, required: true, default: 360 },
+  enabled: { type: Boolean, default: true },
+  chance: { type: Number, default: 50 },
+  delay: { type: Number, default: 360 },
   onDelay: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, required: true, default: Date.now },
   words: [String],
   messages: [String],
 });
