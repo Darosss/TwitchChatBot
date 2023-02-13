@@ -28,6 +28,24 @@ export const getChatCommands = async (
   return chatCommands;
 };
 
+export const getAllChatCommands = async () => {
+  const chatCommands = await ChatCommand.find({});
+
+  return chatCommands;
+};
+
+export const getOneChatCommand = async (
+  filter: FilterQuery<IChatCommandDocument> = {}
+) => {
+  try {
+    const chatCommand = await ChatCommand.findOne(filter);
+    return chatCommand;
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to get chat command");
+  }
+};
+
 export const getChatCommandsCount = async (
   filter: FilterQuery<IChatCommandDocument> = {}
 ) => {
