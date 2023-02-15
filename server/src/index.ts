@@ -1,9 +1,10 @@
 import dotenv from "dotenv";
+import path from "node:path";
 
 import initMongoDataBase, { initDefaultsDB } from "./mongoDBConn";
 import expressApp from "./app";
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 initMongoDataBase();
 initDefaultsDB();
