@@ -1,16 +1,14 @@
 import { IChatCommand } from "@models/types";
+import { SortQuery, SelectQuery } from "@services/types";
 import { PopulateOption, PopulateOptions } from "mongoose";
 
-type SortQuery = { [P in keyof IChatCommand]?: 1 | -1 };
-type SelectQuery = { [P in keyof IChatCommand]?: 1 | 0 };
-
 export interface ChatCommandsFindOptions {
-  select?: SelectQuery | {};
+  select?: SelectQuery<IChatCommand> | {};
   populateSelect?: PopulateOption.select;
 }
 
 export interface ManyChatCommandsFindOptions extends ChatCommandsFindOptions {
-  sort?: SortQuery | {};
+  sort?: SortQuery<IChatCommand> | {};
   skip?: number;
   limit?: number;
 }
@@ -27,6 +25,6 @@ export interface ChatCommandCreateData extends ChatCommandOptionalData {
   name: string;
 }
 
-export interface ChatCommandUpdateData extends ChatCommandOptionalData {
-  name?: string;
-}
+export interface ChatCommandUpdateData
+  extends ChatCommandOptionalData,
+    Partial<ChatCommandCreateData> {}

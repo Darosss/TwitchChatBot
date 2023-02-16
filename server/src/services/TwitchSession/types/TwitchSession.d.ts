@@ -1,11 +1,13 @@
 import { PopulateOption, PopulateOptions } from "mongoose";
+import { SortQuery, SelectQuery } from "@services/types";
+import { ITwitchSession } from "@models/types";
 
 export interface TwitchSessionFindOptions {
-  select?: SelectQuery | {};
+  select?: SelectQuery<ITwitchSession> | {};
 }
 
 export interface ManyTwitchSessionFindOptions extends TwitchSessionFindOptions {
-  sort?: SortQuery | {};
+  sort?: SortQuery<ITwitchSession> | {};
   skip?: number;
   limit?: number;
 }

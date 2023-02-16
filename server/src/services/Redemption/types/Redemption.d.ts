@@ -1,16 +1,15 @@
 import { IRedemption } from "@models/types";
 import { PopulateOption, PopulateOptions } from "mongoose";
 
-type SortQuery = { [P in keyof IRedemption]?: 1 | -1 };
-type SelectQuery = { [P in keyof IRedemption]?: 1 | 0 };
+import { SortQuery, SelectQuery } from "@services/types";
 
 export interface RedemptionFindOptions {
-  select?: SelectQuery | {};
+  select?: SelectQuery<IRedemption> | {};
   populateSelect?: PopulateOption.select;
 }
 
 export interface ManyRedemptionsFindOptions extends RedemptionFindOptions {
-  sort?: SortQuery | {};
+  sort?: SortQuery<IRedemption> | {};
   skip?: number;
   limit?: number;
 }

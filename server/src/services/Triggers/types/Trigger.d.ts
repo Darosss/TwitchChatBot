@@ -1,16 +1,14 @@
 import { ITrigger } from "@models/types";
 import { PopulateOption, PopulateOptions } from "mongoose";
-
-type SortQuery = { [P in keyof ITrigger]?: 1 | -1 };
-type SelectQuery = { [P in keyof ITrigger]?: 1 | 0 };
+import { SortQuery, SelectQuery } from "@services/types";
 
 export interface TriggerFindOptions {
-  select?: SelectQuery | {};
+  select?: SelectQuery<ITrigger> | {};
   populateSelect?: PopulateOption.select;
 }
 
 export interface ManyTriggersFindOptions extends TriggerFindOptions {
-  sort?: SortQuery | {};
+  sort?: SortQuery<ITrigger> | {};
   skip?: number;
   limit?: number;
 }
@@ -28,6 +26,6 @@ export interface TriggerCreateData extends TriggerOptionalData {
   name: string;
 }
 
-export interface TriggerUpdateData extends TriggerOptionalData {
-  name?: string;
-}
+export interface TriggerUpdateData
+  extends TriggerOptionalData,
+    Partial<TriggerCreateData> {}

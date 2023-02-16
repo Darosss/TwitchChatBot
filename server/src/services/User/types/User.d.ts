@@ -1,14 +1,11 @@
 import { IUser, IUserDocument } from "@models/types";
-
-type SortQuery = { [P in keyof IUser]?: 1 | -1 };
-type SelectQuery = { [P in keyof IUser]?: 1 | 0 };
-
+import { SortQuery, SelectQuery } from "@services/types";
 export interface UserFindOptions {
-  select?: SelectQuery | {};
+  select?: SelectQuery<IUser> | {};
 }
 
 export interface ManyUsersFindOptions extends UserFindOptions {
-  sort?: SortQuery | {};
+  sort?: SortQuery<IUser> | {};
   skip?: number;
   limit?: number;
 }
@@ -28,7 +25,6 @@ export interface UserCreateData extends UserOptionalData {
   twitchName: string;
 }
 
-export interface UserUpdateData extends UserOptionalData {
-  username?: string;
-  twitchName?: string;
-}
+export interface UserUpdateData
+  extends UserOptionalData,
+    Partial<Omit<UserCreateData, "twitchId">> {}

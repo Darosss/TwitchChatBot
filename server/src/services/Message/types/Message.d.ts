@@ -1,7 +1,5 @@
 import { PopulateOption, PopulateOptions } from "mongoose";
-
-type SortQuery = { [P in keyof IMessage]?: 1 | -1 };
-type SelectQuery = { [P in keyof IMessage]?: 1 | 0 };
+import { SortQuery, SelectQuery } from "@services/types";
 
 export interface MessageCreateData {
   message: string;
@@ -10,12 +8,12 @@ export interface MessageCreateData {
 }
 
 export interface MessageFindOptions {
-  select?: SelectQuery | {};
+  select?: SelectQuery<IMessage> | {};
   populateSelect?: PopulateOption.select;
 }
 
 export interface ManyMessageFindOptions extends MessageFindOptions {
-  sort?: SortQuery | {};
+  sort?: SortQuery<IMessage> | {};
   skip?: number;
   limit?: number;
 }

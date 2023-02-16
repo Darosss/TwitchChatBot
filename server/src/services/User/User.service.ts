@@ -1,4 +1,4 @@
-import { IUserDocument } from "@models/types";
+import { IUser, IUserDocument } from "@models/types";
 import { User } from "@models/user.model";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
@@ -140,7 +140,7 @@ export const createUser = async (userData: UserCreateData) => {
 export const createUserIfNotExist = async (
   userFilter: FilterQuery<IUserDocument>,
   userData: UserCreateData
-) => {
+): Promise<IUser> => {
   let user = await isUserInDB(userFilter);
   if (user) return user;
 
