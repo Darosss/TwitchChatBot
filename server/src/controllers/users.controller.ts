@@ -13,7 +13,7 @@ const getUsersList = async (
   res: Response
 ) => {
   const { page = 1, limit = 50 } = req.query;
-
+  console.log(req.query, "test");
   const searchFilter = filterUsersByUrlParams(req.query);
 
   try {
@@ -26,7 +26,7 @@ const getUsersList = async (
     const count = await getUserCount(searchFilter);
 
     return res.status(200).send({
-      users,
+      data: users,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
@@ -46,7 +46,7 @@ const getUsersProfile = async (req: Request, res: Response) => {
 
     if (!user) return res.status(404).send({ message: "Not found user" });
 
-    return res.status(200).send(user);
+    return res.status(200).send({ data: user });
   } catch (error) {
     console.error(error);
     return res.status(500).send({ message: "Internal server error" });

@@ -23,7 +23,7 @@ const getRedemptionsList = async (
     const count = await getRedemptionsCount(searchFilter);
 
     return res.status(200).send({
-      redemptions,
+      data: redemptions,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
@@ -57,7 +57,7 @@ const getUserRedemptions = async (
     const count = await getRedemptionsCount(searchFilter);
 
     return res.status(200).send({
-      redemptions,
+      data: redemptions,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
@@ -102,7 +102,7 @@ const getSessionRedemptions = async (
     const count = await getRedemptionsCount(searchFilter);
 
     return res.status(200).send({
-      redemptions,
+      data: redemptions,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),

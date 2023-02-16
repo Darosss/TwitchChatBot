@@ -26,7 +26,7 @@ const getTriggersList = async (
     const count = await getTriggersCount(searchFilter);
 
     return res.status(200).send({
-      triggers,
+      data: triggers,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
@@ -77,7 +77,7 @@ const editTriggerById = async (req: Request, res: Response) => {
 
     return res.status(200).send({
       message: "Trigger updated successfully",
-      trigger: updatedTrigger,
+      data: updatedTrigger,
     });
   } catch (error) {
     console.error(error);

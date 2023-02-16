@@ -54,5 +54,5 @@ export const getTwitchAuthorizeUrl = (req: Request, res: Response) => {
   authUrl.searchParams.append("scope", scopes.join(" "));
   authUrl.searchParams.append("state", state);
 
-  res.status(200).send(authUrl);
+  res.status(200).send({ data: authUrl });
 };

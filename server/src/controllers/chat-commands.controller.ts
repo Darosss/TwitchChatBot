@@ -26,7 +26,7 @@ const getChatCommandsList = async (
     const count = await getChatCommandsCount(searchFilter);
 
     return res.status(200).send({
-      chatCommands,
+      data: chatCommands,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),

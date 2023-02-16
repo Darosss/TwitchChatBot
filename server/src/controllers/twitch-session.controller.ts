@@ -23,7 +23,7 @@ const getTwitchSessionsList = async (
     const count = await getTwitchSessionsCount(searchFilter);
 
     res.status(200).send({
-      twitchSessions,
+      data: twitchSessions,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),

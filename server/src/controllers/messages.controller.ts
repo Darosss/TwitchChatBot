@@ -21,7 +21,7 @@ const getMessagesList = async (
 
     const count = await getMessagesCount(searchFilter);
     return res.status(200).send({
-      messages,
+      data: messages,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
@@ -55,7 +55,7 @@ const getUserMessages = async (
     const count = await getMessagesCount(searchFilter);
 
     return res.status(200).send({
-      messages,
+      data: messages,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
@@ -93,8 +93,7 @@ const getLatestAndFirstMsgs = async (
     );
 
     return res.status(200).send({
-      firstMessages: firstMessages,
-      latestMessages: latestMessages,
+      data: { firstMessages: firstMessages, latestMessages: latestMessages },
     });
   } catch (error) {
     console.error(error);
@@ -138,7 +137,7 @@ const getSessionMessages = async (
     const count = await getMessagesCount(searchFilter);
 
     return res.status(200).send({
-      messages,
+      data: messages,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
