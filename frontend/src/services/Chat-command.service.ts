@@ -4,6 +4,7 @@ export interface IChatCommand {
   _id: string;
   name: string;
   createdAt: Date;
+  updatedAt: Date;
   description?: string;
   enabled: boolean;
   aliases: string[];

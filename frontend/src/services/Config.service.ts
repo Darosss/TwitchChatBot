@@ -13,6 +13,8 @@ export interface IConfig {
     vip: number;
     all: number;
   };
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const getConfigs = () => {

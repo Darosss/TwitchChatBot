@@ -10,6 +10,7 @@ export interface ITrigger {
   words: string[];
   messages: string[];
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const getTriggers = () => {

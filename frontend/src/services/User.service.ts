@@ -5,6 +5,7 @@ export interface IUser {
   twitchId: string;
   username: string;
   createdAt: Date;
+  updatedAt: Date;
   privileges: number;
   points?: number;
   lastSeen: Date;
