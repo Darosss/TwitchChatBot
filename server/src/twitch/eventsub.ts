@@ -8,7 +8,7 @@ import {
   InterServerEvents,
   SocketData,
 } from "@libs/types";
-import { getOneUser } from "@services/User";
+import { createUserIfNotExist } from "@services/User";
 import { createRedemption } from "@services/Redemption";
 import {
   createTwitchSession,
@@ -40,15 +40,19 @@ const eventSub = async (
         rewardCost,
       } = e;
 
-      const user = await getOneUser(
+      const user = await createUserIfNotExist(
         { twitchId: userId },
-        { select: { id: 1 } }
+        {
+          twitchId: userId,
+          username: userDisplayName,
+          twitchName: userName,
+        }
       );
 
       const reward = await e.getReward();
 
       const rewardData = {
-        userId: user?.id,
+        userId: user?._id,
         rewardId: rewardId,
         twitchId: userId,
         userName: userName,
