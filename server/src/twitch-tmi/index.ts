@@ -76,8 +76,8 @@ const clientTmi = (
 
     if (!user) return;
 
-    await botStatisticDatabase.saveMessageToDatabase(user.id, message);
-    await botStatisticDatabase.updateUserStatistics(user.id);
+    await botStatisticDatabase.saveMessageToDatabase(user._id, message);
+    await botStatisticDatabase.updateUserStatistics(user._id);
 
     if (self) return; //echoed msg from bot
 
