@@ -5,6 +5,7 @@ export interface IUser {
   twitchId: string;
   username: string;
   createdAt: Date;
+  updatedAt: Date;
   privileges: number;
   points?: number;
   lastSeen: Date;
@@ -42,6 +43,7 @@ export interface IRedemption {
 }
 
 export type IRedemptionDocument = IRedeption & Document;
+
 export interface ITwitchSession {
   _id: string;
   sessionStart: Date;
@@ -52,6 +54,7 @@ export interface ITwitchSession {
 }
 
 export type ITwitchSessionDocument = ITwitchSession & Document;
+
 export interface ITrigger {
   _id: string;
   name: string;
@@ -62,6 +65,7 @@ export interface ITrigger {
   words: string[];
   messages: string[];
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export type ITriggerDocument = ITrigger & Document;
@@ -79,6 +83,8 @@ export interface IConfig {
     vip: number;
     all: number;
   };
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type IConfigDocument = IConfig & Document;
@@ -87,6 +93,7 @@ export interface IChatCommand {
   _id: string;
   name: string;
   createdAt: Date;
+  updatedAt: Date;
   description?: string;
   enabled: boolean;
   aliases: string[];

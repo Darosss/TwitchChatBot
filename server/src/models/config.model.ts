@@ -17,6 +17,7 @@ const ConfigSchema: Schema<IConfigDocument> = new Schema(
   },
   {
     capped: { size: 100000, max: 1 },
+    timestamps: true,
   }
 );
 
