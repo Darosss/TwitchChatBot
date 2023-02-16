@@ -7,6 +7,7 @@ const AuthSchema: Schema<IAuthDocument> = new Schema(
     refreshToken: { type: String, required: true },
     expiresIn: { type: Number, require: true, default: 0 },
     obtainmentTimestamp: { type: Number, required: true, default: 0 },
+    scope: [String],
   },
   {
     capped: { size: 100000, max: 1 },

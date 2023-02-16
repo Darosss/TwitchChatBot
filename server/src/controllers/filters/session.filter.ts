@@ -2,7 +2,6 @@ import { IRequestQuerySession } from "@types";
 
 const filterSessionByUrlParams = (params: IRequestQuerySession) => {
   const { search_name, start_date, end_date, tags, categories } = params;
-  console.log(params);
 
   const filterTitles = {
     ...(search_name && {

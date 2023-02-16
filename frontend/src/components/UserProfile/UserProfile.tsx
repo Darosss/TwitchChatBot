@@ -1,35 +1,35 @@
 import React, { useEffect, useState } from "react";
 import "./style.css";
-import useAxios from "axios-hooks";
 
 import PreviousPage from "@components/PreviousPage";
 import Message from "@components/Message";
 import { useParams, Link } from "react-router-dom";
-import { IMessage, IUser } from "@backend/models/types";
 import formatDate from "@utils/formatDate";
-import { AxiosRequestConfig } from "axios";
+import UserService from "src/services/User.service";
+import MessageService from "src/services/Message.service";
 
 export default function UserProfile() {
   const { userId } = useParams();
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notes, setNotes] = useState("");
 
-  const [{ data: userData, loading: userLoading, error: userError }] =
-    useAxios<IUser>(`/users/${userId}`);
+  const {
+    data: userData,
+    loading,
+    error,
+    refetchData,
+  } = UserService.getUser(userId || "");
 
-  const [, executePost] = useAxios(
-    {
-      url: `/users/${userId}`,
-      method: "POST",
-    } as AxiosRequestConfig,
-    { manual: true }
-  );
+  const { refetchData: fetchEditUser } = UserService.editUser(userId || "", {
+    notes: notes.split("\n"),
+  });
 
-  const [{ data: msgsData, error: msgsError, loading: msgsLoading }] =
-    useAxios<{ firstMessages: IMessage[]; latestMessages: IMessage[] }>({
-      url: `/messages/${userId}/latest-first-msgs`,
-      method: "GET",
-    } as AxiosRequestConfig);
+  const {
+    data: msgsData,
+    loading: msgLoading,
+    error: msgsError,
+    refetchData: refetchLatestAndFirstMsgs,
+  } = MessageService.getLatestAndFirstMsgs(userId || "");
 
   const showEdit = () => {
     setIsEditingNotes((prevState) => {
@@ -38,12 +38,8 @@ export default function UserProfile() {
   };
 
   const saveNote = () => {
-    executePost({
-      data: { notes: notes.split("\n") },
-    } as AxiosRequestConfig).then(() => {
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+    fetchEditUser().then(() => {
+      refetchData();
     });
   };
 
@@ -51,15 +47,14 @@ export default function UserProfile() {
     setNotes(userData?.notes?.join("\n") || "");
   }, [userData]);
 
-  if (userError || msgsError)
+  if (error || msgsError)
     return (
       <>
-        There is an error. {userError?.response?.data.message}
+        There is an error. {error?.response?.data.message}
         {msgsError?.response?.data.message}
       </>
     );
-  if (!userData || !msgsData || msgsLoading || userLoading)
-    return <>Someting went wrong</>;
+  if (!userData || !msgsData || msgLoading || loading) return <>Loading</>;
 
   return (
     <>
@@ -89,9 +84,9 @@ export default function UserProfile() {
           </tr>
           <tr>
             <th>Messages</th>
-            <td>{userData.messageCount.toLocaleString()}</td>
+            <td>{userData.messageCount?.toLocaleString() || "0"}</td>
             <th>Points</th>
-            <td>{userData.points.toLocaleString()}</td>
+            <td>{userData.points?.toLocaleString() || ""}</td>
           </tr>
           <tr>
             <th>Created</th>
@@ -164,7 +159,7 @@ export default function UserProfile() {
                       <Message
                         key={msg._id}
                         date={msg.date}
-                        username={(msg.owner as IUser).username}
+                        username={msg.owner.username}
                         message={msg.message}
                       />
                     );
@@ -176,7 +171,7 @@ export default function UserProfile() {
                       <Message
                         key={msg._id}
                         date={msg.date}
-                        username={(msg.owner as IUser).username}
+                        username={msg.owner.username}
                         message={msg.message}
                       />
                     );

@@ -1,34 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./style.css";
-import { ITrigger } from "@backend/models/types/";
 import Pagination from "@components/Pagination";
-import useAxios from "axios-hooks";
-import { AxiosRequestConfig } from "axios";
 import Modal from "@components/Modal";
 import formatDate from "@utils/formatDate";
 import PreviousPage from "@components/PreviousPage";
 import FilterBarTriggers from "./FilterBarTriggers";
-import { useSearchParams } from "react-router-dom";
-
-interface ITriggerRes {
-  triggers: ITrigger[];
-  totalPages: number;
-  count: number;
-  currentPage: number;
-}
+import TriggerService from "src/services/Trigger.service";
 
 export default function TriggersList() {
-  const [searchParams] = useSearchParams();
-
-  const [currentPageLoc, setCurrentPageLoc] = useState(1);
-
-  const [pageSize, setPageSize] = useState(
-    Number(localStorage.getItem("triggersListPageSize")) || 15
-  );
-
   const [showModal, setShowModal] = useState(false);
 
   const [editingTrigger, setEditingTrigger] = useState("");
+  const [triggerIdDelete, setTriggerIdDelete] = useState<string | null>(null);
 
   const [name, setName] = useState("");
   const [chance, setChance] = useState<number>();
@@ -37,67 +20,73 @@ export default function TriggersList() {
   const [messages, setMessages] = useState([""]);
   const [words, setWords] = useState([""]);
 
-  const [{ data, loading, error }, refetchTriggers] = useAxios<ITriggerRes>(
-    `/triggers?page=${currentPageLoc}&limit=${pageSize}&${searchParams}`
+  const {
+    data: commandsData,
+    loading,
+    error,
+    refetchData,
+  } = TriggerService.getTriggers();
+
+  const { refetchData: fetchEditTrigger } = TriggerService.editTrigger(
+    editingTrigger,
+    {
+      name: name,
+      enabled: enabled,
+      chance: chance || 50,
+      delay: delay,
+      messages: messages,
+      words: words,
+    }
   );
 
-  const [{}, postTrigger] = useAxios<{
-    message: string;
-  }>(
-    {
-      method: "POST",
-    } as AxiosRequestConfig,
-    { manual: true }
+  const { refetchData: fetchCreateTrigger } = TriggerService.createTrigger({
+    name: `New trigger${commandsData?.count}`,
+    delay: 180,
+    enabled: true,
+    chance: chance,
+    words: [`New trigger${commandsData?.count} default word`],
+    messages: [`New trigger${commandsData?.count} default message`],
+  });
+
+  const { refetchData: fetchDeleteCommand } = TriggerService.deleteTrigger(
+    triggerIdDelete ? triggerIdDelete : ""
   );
+  useEffect(() => {
+    if (
+      triggerIdDelete !== null &&
+      confirm(`Are you sure you want to delete command: ${triggerIdDelete}?`)
+    ) {
+      fetchDeleteCommand().then(() => {
+        refetchData();
+        setTriggerIdDelete(null);
+      });
+    } else {
+      setTriggerIdDelete(null);
+    }
+  }, [triggerIdDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (loading || !data) return <> Loading...</>;
+  if (loading || !commandsData) return <> Loading...</>;
 
-  const { triggers, count, currentPage } = data;
-
-  const removeTrigger = (id: string) => {
-    if (confirm(`Are you sure you want delete trigger: }`))
-      postTrigger({
-        url: `/triggers/delete/${id}`,
-        method: "DELETE",
-      } as AxiosRequestConfig).then(() => {
-        refetchTriggers();
-      });
-  };
+  const { data, count, currentPage } = commandsData;
 
   const createNewTrigger = () => {
-    postTrigger({
-      url: `/triggers/create`,
-      method: "POST",
-      data: {
-        name: `New trigger${count}`,
-        delay: 180,
-        enabled: true,
-        chance: chance,
-        words: [`New trigger${count} default word`],
-        messages: [`New trigger${count} default message`],
-      },
-    } as AxiosRequestConfig).then(() => {
-      refetchTriggers();
+    fetchCreateTrigger().then(() => {
+      refetchData();
     });
   };
 
-  const editTrigger = () => {
-    postTrigger({
-      url: `/triggers/${editingTrigger}`,
-      method: "POST",
-      data: {
-        name: name,
-        description: chance,
-        enabled: enabled,
-        chance: chance,
-        delay: delay,
-        messages: messages,
-        words: words,
-      },
-    } as AxiosRequestConfig).then(() => {
-      refetchTriggers();
+  const onSubmitEditModal = () => {
+    fetchEditTrigger().then(() => {
+      refetchData();
     });
+    resetOnChangeClasses();
+    setShowModal(false);
+  };
+
+  const onCloseModal = () => {
+    setShowModal(false);
+    resetOnChangeClasses();
   };
 
   const changeColorOnChange = (
@@ -150,7 +139,7 @@ export default function TriggersList() {
           </thead>
 
           <tbody>
-            {triggers.map((trigger) => {
+            {data.map((trigger) => {
               return (
                 <tr key={trigger._id}>
                   <td>
@@ -170,7 +159,7 @@ export default function TriggersList() {
                     </button>
                     <button
                       className="triggers-action triggers-list-button triggers-delete"
-                      onClick={(e) => removeTrigger(trigger._id)}
+                      onClick={() => setTriggerIdDelete(trigger._id)}
                     >
                       Delete
                     </button>
@@ -203,22 +192,14 @@ export default function TriggersList() {
           localStorageName="triggersListPageSize"
           currentPage={currentPage}
           totalCount={count}
-          pageSize={pageSize}
-          onPageSizeChange={(pageSize) => setPageSize(pageSize)}
-          onPageChange={(page) => setCurrentPageLoc(page)}
           siblingCount={1}
         />
       </div>
       <Modal
         title="Edit trigger"
-        onClose={() => {
-          setShowModal(false);
-          resetOnChangeClasses();
-        }}
+        onClose={() => onCloseModal()}
         onSubmit={() => {
-          editTrigger();
-          resetOnChangeClasses();
-          setShowModal(false);
+          onSubmitEditModal();
         }}
         show={showModal}
       >

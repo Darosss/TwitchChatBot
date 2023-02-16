@@ -46,6 +46,7 @@
     "@models": "dist/models",
     "@middlewares": "dist/middlewares",
     "@utils": "dist/utils",
+    "@services": "dist/services",
     "@types": "@types"
   }
 }

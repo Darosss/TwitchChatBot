@@ -10,10 +10,9 @@ import {
   InterServerEvents,
   SocketData,
 } from "@libs/types";
-import { Config } from "@models/config.model";
 import { IAuthorizationTwitch } from "@types";
-import { AuthToken } from "@models/auth.model";
-import { IAuth } from "@models/types";
+import { createNewAuth } from "@services/Auth";
+import { getConfigs } from "@services/Configs";
 
 const initTwitchOnAuth = async (
   authAccesToken: IAuthorizationTwitch,
@@ -27,20 +26,20 @@ const initTwitchOnAuth = async (
   const clientId = process.env.CLIENT_ID!;
   const clientSecret = process.env.CLIENT_SECRET!;
 
-  await new AuthToken({
+  const newAuthToken = await createNewAuth({
     accessToken: authAccesToken.access_token,
     refreshToken: authAccesToken.refresh_token,
-  }).save();
+  });
 
   const authProvider = new RefreshingAuthProvider(
     {
       clientId,
       clientSecret,
       onRefresh: async (newTokenData) => {
-        await new AuthToken(newTokenData).save();
+        await createNewAuth(newTokenData);
       },
     },
-    (await AuthToken.findOne({})) as IAuth
+    newAuthToken
   );
 
   const twitchApi = new ApiClient({ authProvider });
@@ -48,7 +47,7 @@ const initTwitchOnAuth = async (
 
   if (!authorizedUser) return;
 
-  const configDB = await Config.findOne();
+  const configDB = await getConfigs();
   if (!configDB) return;
 
   const botStatisticDatabase = new BotStatisticDatabase(

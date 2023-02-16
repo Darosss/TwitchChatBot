@@ -3,7 +3,7 @@ import { IMessageDocument } from "./types";
 
 const MessageSchema: Schema<IMessageDocument> = new Schema({
   message: { type: String, required: true },
-  date: { type: Date, required: true },
+  date: { type: Date, required: true, default: Date.now },
   owner: { type: Schema.Types.ObjectId, require: true, ref: "User" },
 });
 

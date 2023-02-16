@@ -2,7 +2,7 @@ import isParamObjectId from "@middlewares/isParamObjectId.middleware";
 import Express, { Router } from "express";
 
 import {
-  getTriggers,
+  getTriggersList,
   addNewTrigger,
   //   getTriggerById,
   editTriggerById,
@@ -12,7 +12,7 @@ import checkSearchParams from "@middlewares/checkSearchParams.middleware";
 
 const triggersRouter = Router();
 
-triggersRouter.get("/", checkSearchParams, getTriggers);
+triggersRouter.get("/", checkSearchParams, getTriggersList);
 triggersRouter.post("/create", addNewTrigger);
 // triggersRouter.get("/:id", isParamObjectId, getTriggerById);
 triggersRouter.post("/:id", isParamObjectId, editTriggerById);

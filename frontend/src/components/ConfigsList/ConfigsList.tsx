@@ -1,10 +1,7 @@
-import React, { useReducer, useState } from "react";
+import React, { useState } from "react";
 import "./style.css";
-import useAxios from "axios-hooks";
-
 import PreviousPage from "@components/PreviousPage";
-import { AxiosRequestConfig } from "axios";
-import { IConfig } from "@backend/models/types";
+import ConfigService from "src/services/Config.service";
 
 export default function UserProfile() {
   const [showEdit, setShowEdit] = useState(false);
@@ -21,33 +18,16 @@ export default function UserProfile() {
     all: 0,
   });
 
-  const [
-    { data: configsData, loading: configsLoading, error: configsError },
-    refetchConfigs,
-  ] = useAxios<IConfig>(`/configs`);
+  const { data, loading, error, refetchData } = ConfigService.getConfigs();
 
-  const [, executeSaveConfig] = useAxios(
-    {
-      url: `/configs/edit`,
-      method: "POST",
-    } as AxiosRequestConfig,
-    { manual: true }
-  );
-
-  const saveConfig = () => {
-    executeSaveConfig({
-      data: {
-        commandsPrefix: prefix,
-        timersIntervalDelay: timersInterval,
-        activeUserTimeDelay: activeUserTime,
-        chatGamesIntervalDelay: chatGamesInterval,
-        minActiveUsersThreshold: minActiveUsers,
-        permissionLevels: permissions,
-      },
-    } as AxiosRequestConfig).then(() => {
-      refetchConfigs();
-    });
-  };
+  const { refetchData: fetchEditConfig } = ConfigService.editConfig({
+    commandsPrefix: prefix,
+    timersIntervalDelay: timersInterval,
+    activeUserTimeDelay: activeUserTime,
+    chatGamesIntervalDelay: chatGamesInterval,
+    minActiveUsersThreshold: minActiveUsers,
+    permissionLevels: permissions,
+  });
 
   const setConfigStates = () => {
     setPrefix(commandsPrefix);
@@ -58,8 +38,15 @@ export default function UserProfile() {
     setPermissions(permissionLevels);
   };
 
-  if (configsError) return <>There is an error.</>;
-  if (!configsData || configsLoading) return <>Someting went wrong</>;
+  const onClickEditConfig = () => {
+    setShowEdit(false);
+    fetchEditConfig().then(() => {
+      refetchData();
+    });
+  };
+
+  if (error) return <>There is an error.</>;
+  if (!data || loading) return <>Someting went wrong</>;
 
   const {
     commandsPrefix,
@@ -68,7 +55,7 @@ export default function UserProfile() {
     chatGamesIntervalDelay,
     minActiveUsersThreshold,
     permissionLevels,
-  } = configsData;
+  } = data;
 
   return (
     <>
@@ -87,10 +74,7 @@ export default function UserProfile() {
       {showEdit ? (
         <button
           className="edit-config-button"
-          onClick={() => {
-            setShowEdit(false);
-            saveConfig();
-          }}
+          onClick={() => onClickEditConfig()}
         >
           Save
         </button>

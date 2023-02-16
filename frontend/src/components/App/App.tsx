@@ -4,10 +4,7 @@ import React from "react";
 import { SocketContext, socketConn } from "@context/SocketContext";
 import SideBar from "@components/SideBar";
 
-import { configure } from "axios-hooks";
-import Axios from "axios";
-
-import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import TwitchEvents from "@components/TwitchEvents";
 import Users from "@components/Users";
 import Overlay from "@components/Overlay";
@@ -18,12 +15,6 @@ import RedemptionsList from "@components/RedemptionsList";
 import CommandsList from "@components/CommandsList";
 import ConfigsList from "@components/ConfigsList";
 import TriggersList from "@components/TriggersList";
-
-const axios = Axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
-});
-
-configure({ axios });
 
 function App() {
   return (

@@ -1,7 +1,7 @@
 import tmi from "tmi.js";
-import BotTimer from "../chatbot/bot-timer";
-import BotLog from "../chatbot/bot-logs";
-import bot_commands from "../configs/bot_commands.json";
+// import BotTimer from "../chatbot/bot-timer";
+// import BotLog from "../chatbot/bot-logs";
+// import bot_commands from "../configs/bot_commands.json";
 import { Server } from "socket.io";
 import {
   ClientToServerEvents,
@@ -10,6 +10,7 @@ import {
   SocketData,
 } from "@libs/types";
 import BotStatisticDatabase from "../chatbot/database-statistic";
+import { createUserIfNotExist } from "@services/User";
 require("dotenv").config();
 
 const clientTmi = (
@@ -60,14 +61,18 @@ const clientTmi = (
   });
 
   client.on("message", async (channel, tags, message, self) => {
-    let senderName = tags.username || "undefined";
+    const userData = {
+      username: tags["display-name"] || "undefinedUsername",
+      twitchName: tags.username || "undefinedTwitchName",
+      twitchId: tags["user-id"] || "undefinedTwitchId",
+    };
 
-    socket.emit("messageServer", new Date(), senderName, message); // emit for socket
+    socket.emit("messageServer", new Date(), userData.username, message); // emit for socket
 
     // botLogObj.countMessages(channelName, senderName);
     // botLogObj.logMessages(channelName, senderName, message);
 
-    const user = await botStatisticDatabase.isUserInDB(senderName);
+    const user = await createUserIfNotExist(userData, userData);
 
     if (!user) return;
 

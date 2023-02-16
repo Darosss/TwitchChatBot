@@ -1,11 +1,10 @@
 import Express, { Request, Response } from "express";
-import { Redemption } from "@models/redemption.model";
-import { TwitchSession } from "@models/twitch-session.model";
-import { User } from "@models/user.model";
 import { IRequestParams, IRequestRedemptionQuery } from "@types";
 import { filterRedemptionsByUrlParams } from "./filters/redemptions.filter";
+import { getRedemptions, getRedemptionsCount } from "@services/Redemption";
+import { getTwitchSessionById } from "@services/TwitchSession";
 
-const getRedemptions = async (
+const getRedemptionsList = async (
   req: Request<{}, {}, {}, IRequestRedemptionQuery>,
   res: Response
 ) => {
@@ -13,24 +12,26 @@ const getRedemptions = async (
 
   const searchFilter = filterRedemptionsByUrlParams(req.query);
   try {
-    const redemptions = await Redemption.find(searchFilter)
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
-      .select({ __v: 0 })
-      .sort({ redemptionDate: -1 })
-      .exec();
+    const redemptions = await getRedemptions(searchFilter, {
+      limit: limit,
+      skip: page,
+      sort: {
+        redemptionDate: -1,
+      },
+    });
 
-    const count = await Redemption.countDocuments(searchFilter);
+    const count = await getRedemptionsCount(searchFilter);
 
-    res.status(200).send({
-      redemptions,
+    return res.status(200).send({
+      data: redemptions,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
     });
   } catch (error) {
-    console.log(error);
-    res.status(400).send({ message: "Couldn't get redemptions" });
+    console.error(error);
+
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 
@@ -41,36 +42,30 @@ const getUserRedemptions = async (
   const { id } = req.params;
   const { page = 1, limit = 50 } = req.query;
 
-  const searchFilter = filterRedemptionsByUrlParams(req.query);
+  const searchFilter = Object.assign(
+    { userId: id },
+    filterRedemptionsByUrlParams(req.query)
+  );
 
   try {
-    const user = await User.findById(id);
+    const redemptions = await getRedemptions(searchFilter, {
+      limit: limit,
+      skip: page,
+      sort: { redemptionDate: -1 },
+    });
 
-    const searchFilterWithUser = Object.assign(
-      { userId: user?.twitchId },
-      searchFilter
-    );
+    const count = await getRedemptionsCount(searchFilter);
 
-    const redemptions = await Redemption.find(searchFilterWithUser)
-      .limit(limit * 1)
-      .sort({ date: -1 })
-      .skip((page - 1) * limit)
-
-      .select({ __v: 0 })
-      .exec();
-
-    const count = await Redemption.countDocuments(searchFilterWithUser);
-
-    res.status(200).send({
-      redemptions,
+    return res.status(200).send({
+      data: redemptions,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
-    res.status(400).send({ message: "Couldn't get user redemptions" });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 
@@ -81,8 +76,13 @@ const getSessionRedemptions = async (
   const { id } = req.params;
   const { page = 1, limit = 50 } = req.query;
 
+  if (!id)
+    return res
+      .status(400)
+      .send({ message: "There is problem with session id" });
+
   try {
-    const session = await TwitchSession.findById(id);
+    const session = await getTwitchSessionById(id, { select: { __v: 0 } });
 
     const searchFilter = Object.assign(
       {
@@ -93,27 +93,25 @@ const getSessionRedemptions = async (
       },
       filterRedemptionsByUrlParams(req.query)
     );
+    const redemptions = await getRedemptions(searchFilter, {
+      limit: limit,
+      skip: page,
+      sort: { redemptionDate: -1 },
+    });
 
-    const redemptions = await Redemption.find(searchFilter)
-      .limit(limit * 1)
-      .sort({ redemptionDate: -1 })
-      .skip((page - 1) * limit)
-      .select({ __v: 0 })
-      .exec();
+    const count = await getRedemptionsCount(searchFilter);
 
-    const count = await Redemption.countDocuments(searchFilter);
-
-    res.status(200).send({
-      redemptions,
+    return res.status(200).send({
+      data: redemptions,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
-    res.status(400).send({ message: "Couldn't get redemptions from session" });
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 
-export { getRedemptions, getUserRedemptions, getSessionRedemptions };
+export { getRedemptionsList, getUserRedemptions, getSessionRedemptions };
