@@ -1,32 +1,51 @@
 import "./style.css";
-import React from "react";
+import React, { useEffect } from "react";
 import usePagination, { DOTS } from "@hooks/usePagination.hook";
 import classnames from "classnames";
+import { useSearchParams } from "react-router-dom";
+import useLocalStorage from "@hooks/useLocalStorage.hook";
 
 export default function Pagination(props: {
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (page: number) => void;
   totalCount: number;
   siblingCount: number;
   currentPage: number;
-  pageSize: number;
-  localStorageName?: string;
+  localStorageName: string;
   className: string;
 }) {
-  const {
-    onPageChange,
-    onPageSizeChange,
-    totalCount,
-    siblingCount,
-    currentPage,
-    pageSize,
+  const { totalCount, siblingCount, currentPage, localStorageName, className } =
+    props;
+
+  const [, setSearchParams] = useSearchParams();
+
+  const [pageSizeT, setPageSize] = useLocalStorage<number>(
     localStorageName,
-    className,
-  } = props;
+    15
+  );
+
+  const onPageChangeSearchParam = (value: string) => {
+    setSearchParams((prevState) => {
+      prevState.set("page", value);
+      return prevState;
+    });
+  };
+
+  useEffect(() => {
+    setSearchParams((prevState) => {
+      prevState.set("limit", String(pageSizeT));
+      return prevState;
+    });
+  }, [pageSizeT]);
+
+  useEffect(() => {
+    setSearchParams((prevState) => {
+      prevState.set("limit", String(pageSizeT));
+      return prevState;
+    });
+  }, [pageSizeT]);
 
   const paginationRange = usePagination(
     totalCount,
-    pageSize,
+    pageSizeT,
     siblingCount,
     currentPage
   );
@@ -36,20 +55,22 @@ export default function Pagination(props: {
       <select
         name="page-size"
         id="page-size"
-        defaultValue={pageSize}
+        defaultValue={pageSizeT}
         onChange={(e) => {
-          onPageSizeChange(Number(e.target.value));
-          localStorageName
-            ? localStorage.setItem(localStorageName, e.target.value)
-            : null;
+          setSearchParams((prevState) => {
+            prevState.set("limit", e.target.value);
+            return prevState;
+          });
+
+          setPageSize(Number(e.target.value));
         }}
       >
-        <option value={pageSize}>{pageSize}</option>
-        <option value="5">5</option>
-        <option value="20">20</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
-        <option value="500">500</option>
+        <option value={pageSizeT}>{pageSizeT}</option>
+        <option value={5}>5</option>
+        <option value={20}>20</option>
+        <option value={50}>50</option>
+        <option value={100}>100</option>
+        <option value={500}>500</option>
       </select>
     );
   };
@@ -86,11 +107,11 @@ export default function Pagination(props: {
   }
 
   const onNext = () => {
-    onPageChange(currentPage + 1);
+    onPageChangeSearchParam(String(currentPage + 1));
   };
 
   const onPrevious = () => {
-    onPageChange(currentPage - 1);
+    onPageChangeSearchParam(String(currentPage - 1));
   };
 
   let lastPage = paginationRange[paginationRange.length - 1];
@@ -129,7 +150,9 @@ export default function Pagination(props: {
               className={classnames("pagination-item", {
                 selected: pageNumber === currentPage,
               })}
-              onClick={() => onPageChange(pageNumber as number)}
+              onClick={() => {
+                onPageChangeSearchParam(String(pageNumber));
+              }}
             >
               {pageNumber}
             </li>
