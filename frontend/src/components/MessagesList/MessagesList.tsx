@@ -21,11 +21,6 @@ export default function MessagesList(props: {
   const { userId, sessionId } = useParams();
   const [searchParams] = useSearchParams();
 
-  const [currentPageLoc, setCurrentPageLoc] = useState(1);
-  const [pageSize, setPageSize] = useState(
-    Number(localStorage.getItem("messagesListPageSize")) || 15
-  );
-
   let messageApiUrl = `/messages`;
   let messageHref = ``;
 
@@ -40,7 +35,7 @@ export default function MessagesList(props: {
     default:
       messageHref += "messages/";
   }
-  messageApiUrl += `?page=${currentPageLoc}&limit=${pageSize}&${searchParams}`;
+  messageApiUrl += `?${searchParams}`;
 
   const [{ data, loading, error }] = useAxios<IMessagesList>(messageApiUrl);
 
@@ -95,10 +90,7 @@ export default function MessagesList(props: {
           className="pagination-bar"
           currentPage={currentPage}
           totalCount={count}
-          pageSize={pageSize}
           localStorageName="messagesListPageSize"
-          onPageSizeChange={(pageSize) => setPageSize(pageSize)}
-          onPageChange={(page) => setCurrentPageLoc(page)}
           siblingCount={1}
         />
       </div>

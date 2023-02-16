@@ -20,12 +20,6 @@ interface ITriggerRes {
 export default function TriggersList() {
   const [searchParams] = useSearchParams();
 
-  const [currentPageLoc, setCurrentPageLoc] = useState(1);
-
-  const [pageSize, setPageSize] = useState(
-    Number(localStorage.getItem("triggersListPageSize")) || 15
-  );
-
   const [showModal, setShowModal] = useState(false);
 
   const [editingTrigger, setEditingTrigger] = useState("");
@@ -38,7 +32,7 @@ export default function TriggersList() {
   const [words, setWords] = useState([""]);
 
   const [{ data, loading, error }, refetchTriggers] = useAxios<ITriggerRes>(
-    `/triggers?page=${currentPageLoc}&limit=${pageSize}&${searchParams}`
+    `/triggers?${searchParams}`
   );
 
   const [{}, postTrigger] = useAxios<{
@@ -203,9 +197,6 @@ export default function TriggersList() {
           localStorageName="triggersListPageSize"
           currentPage={currentPage}
           totalCount={count}
-          pageSize={pageSize}
-          onPageSizeChange={(pageSize) => setPageSize(pageSize)}
-          onPageChange={(page) => setCurrentPageLoc(page)}
           siblingCount={1}
         />
       </div>

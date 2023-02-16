@@ -20,12 +20,6 @@ interface IChatCommandRes {
 export default function CommandsList() {
   const [searchParams] = useSearchParams();
 
-  const [currentPageLoc, setCurrentPageLoc] = useState(1);
-
-  const [pageSize, setPageSize] = useState(
-    Number(localStorage.getItem("commandsListPageSize")) || 15
-  );
-
   const [showModal, setShowModal] = useState(false);
 
   const [editingCommand, setEditingCommand] = useState("");
@@ -38,7 +32,7 @@ export default function CommandsList() {
   const [privilege, setPrivilege] = useState<number>();
 
   const [{ data, loading, error }, refetchCommands] = useAxios<IChatCommandRes>(
-    `/chat-commands?page=${currentPageLoc}&limit=${pageSize}&${searchParams}`
+    `/chat-commands?${searchParams}`
   );
 
   const [{}, postChatCommand] = useAxios<{
@@ -207,9 +201,6 @@ export default function CommandsList() {
           localStorageName="commandsListPageSize"
           currentPage={currentPage}
           totalCount={count}
-          pageSize={pageSize}
-          onPageSizeChange={(pageSize) => setPageSize(pageSize)}
-          onPageChange={(page) => setCurrentPageLoc(page)}
           siblingCount={1}
         />
       </div>

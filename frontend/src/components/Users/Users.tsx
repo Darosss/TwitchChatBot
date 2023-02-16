@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./style.css";
 import { IUser } from "@backend/models/types/";
 import Pagination from "@components/Pagination";
@@ -7,6 +7,7 @@ import useAxios from "axios-hooks";
 import PreviousPage from "@components/PreviousPage";
 import FilterBarUsers from "./FilterBarUsers";
 import { useSearchParams } from "react-router-dom";
+// import { getUsersList } from "src/services/api.service";
 
 interface IUsersRes {
   users: IUser[];
@@ -18,13 +19,15 @@ interface IUsersRes {
 export default function Users() {
   const [searchParams] = useSearchParams();
 
-  const [currentPageLoc, setCurrentPageLoc] = useState(1);
-  const [pageSize, setPageSize] = useState(
-    Number(localStorage.getItem("usersPageSize")) || 15
-  );
+  // const { data: test, refetch } = getUsersList(searchParams);
+
   const [{ data, loading, error }] = useAxios<IUsersRes>(
-    `/users?page=${currentPageLoc}&limit=${pageSize}&${searchParams}`
+    `/users?${searchParams}`
   );
+
+  useEffect(() => {
+    console.log(searchParams);
+  }, [searchParams]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!data || loading) return <>Loading...</>;
@@ -73,10 +76,10 @@ export default function Users() {
                     </div>
                   </td>
                   <td className="users-list-message-count">
-                    {user.messageCount.toLocaleString()}
+                    {user.messageCount?.toLocaleString()}
                   </td>
                   <td className="users-list-points">
-                    {user.points.toLocaleString()}
+                    {user.points?.toLocaleString()}
                   </td>
                 </tr>
               );
@@ -89,10 +92,7 @@ export default function Users() {
           className="pagination-bar"
           currentPage={currentPage}
           totalCount={count}
-          pageSize={pageSize}
           localStorageName="usersPageSize"
-          onPageSizeChange={(pageSize) => setPageSize(pageSize)}
-          onPageChange={(page) => setCurrentPageLoc(page)}
           siblingCount={1}
         />
       </div>

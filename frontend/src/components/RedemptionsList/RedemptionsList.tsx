@@ -21,11 +21,6 @@ export default function RedemptionsList(props: {
   const { userId, sessionId } = useParams();
   const [searchParams] = useSearchParams();
 
-  const [currentPageLoc, setCurrentPageLoc] = useState(1);
-  const [pageSize, setPageSize] = useState(
-    Number(localStorage.getItem("redemptionsListPageSize")) || 15
-  );
-
   let redemptionsApiUrl = `/redemptions`;
   // let redemptionsHref = ``;
 
@@ -39,7 +34,7 @@ export default function RedemptionsList(props: {
       break;
     default:
   }
-  redemptionsApiUrl += `?page=${currentPageLoc}&limit=${pageSize}&${searchParams}`;
+  redemptionsApiUrl += `?${searchParams}`;
 
   const [{ data, loading, error }] =
     useAxios<IRedemptionsList>(redemptionsApiUrl);
@@ -96,10 +91,7 @@ export default function RedemptionsList(props: {
           className="pagination-bar"
           currentPage={currentPage}
           totalCount={count}
-          pageSize={pageSize}
           localStorageName="redemptionsListPageSize"
-          onPageSizeChange={(pageSize) => setPageSize(pageSize)}
-          onPageChange={(page) => setCurrentPageLoc(page)}
           siblingCount={1}
         />
       </div>

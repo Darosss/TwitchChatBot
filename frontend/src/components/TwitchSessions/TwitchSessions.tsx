@@ -18,12 +18,8 @@ interface ITwitchSessionRes {
 export default function TwitchSessions() {
   const [searchParams] = useSearchParams();
 
-  const [currentPageLoc, setCurrentPageLoc] = useState(1);
-  const [pageSize, setPageSize] = useState(
-    Number(localStorage.getItem("twitchSessionPageSize")) || 15
-  );
   const [{ data, loading, error }] = useAxios<ITwitchSessionRes>(
-    `/twitch-sessions?page=${currentPageLoc}&limit=${pageSize}&${searchParams}`
+    `/twitch-sessions${searchParams}`
   );
 
   if (error) return <>Error! {error.response?.data.message}</>;
@@ -92,10 +88,7 @@ export default function TwitchSessions() {
           className="pagination-bar"
           currentPage={currentPage}
           totalCount={count}
-          pageSize={pageSize}
           localStorageName="twitchSessionPageSize"
-          onPageSizeChange={(pageSize) => setPageSize(pageSize)}
-          onPageChange={(page) => setCurrentPageLoc(page)}
           siblingCount={1}
         />
       </div>
