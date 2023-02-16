@@ -1,31 +1,24 @@
-import React, { useState } from "react";
+import React from "react";
 import "./style.css";
-import { ITwitchSession } from "@backend/models/types/";
 import Pagination from "@components/Pagination";
 import formatDate from "@utils/formatDate";
-import { Link, useSearchParams } from "react-router-dom";
-import useAxios from "axios-hooks";
+import { Link } from "react-router-dom";
 import PreviousPage from "@components/PreviousPage";
 import FilterBarSessions from "./FilterBarSessions";
-
-interface ITwitchSessionRes {
-  twitchSessions: ITwitchSession[];
-  totalPages: number;
-  count: number;
-  currentPage: number;
-}
+import twitchSessionService from "src/services/Twitch-session.service";
 
 export default function TwitchSessions() {
-  const [searchParams] = useSearchParams();
-
-  const [{ data, loading, error }] = useAxios<ITwitchSessionRes>(
-    `/twitch-sessions${searchParams}`
-  );
+  const {
+    data: sessionsData,
+    loading,
+    error,
+    refetchData,
+  } = twitchSessionService.getSessions();
 
   if (error) return <>Error! {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading...</>;
+  if (!sessionsData || loading) return <>Loading...</>;
 
-  const { twitchSessions, count, currentPage } = data;
+  const { data, count, currentPage } = sessionsData;
 
   return (
     <>
@@ -45,7 +38,7 @@ export default function TwitchSessions() {
             </tr>
           </thead>
           <tbody>
-            {twitchSessions.map((session) => {
+            {data.map((session) => {
               return (
                 <tr key={session._id}>
                   <td>

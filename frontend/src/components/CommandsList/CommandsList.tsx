@@ -1,28 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./style.css";
-import { IChatCommand } from "@backend/models/types/";
 import Pagination from "@components/Pagination";
-import useAxios from "axios-hooks";
-import { AxiosRequestConfig } from "axios";
 import Modal from "@components/Modal";
 import formatDate from "@utils/formatDate";
 import PreviousPage from "@components/PreviousPage";
 import FilterBarCommands from "./FilterBarCommands";
-import { useSearchParams } from "react-router-dom";
-
-interface IChatCommandRes {
-  chatCommands: IChatCommand[];
-  totalPages: number;
-  count: number;
-  currentPage: number;
-}
+import ChatCommandService from "src/services/Chat-command.service";
 
 export default function CommandsList() {
-  const [searchParams] = useSearchParams();
-
   const [showModal, setShowModal] = useState(false);
 
   const [editingCommand, setEditingCommand] = useState("");
+  const [commandIdDelete, setCommandIdDelete] = useState<string | null>(null);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -31,65 +20,60 @@ export default function CommandsList() {
   const [messages, setMessages] = useState([""]);
   const [privilege, setPrivilege] = useState<number>();
 
-  const [{ data, loading, error }, refetchCommands] = useAxios<IChatCommandRes>(
-    `/chat-commands?${searchParams}`
+  const {
+    data: commandsData,
+    loading,
+    error,
+    refetchData,
+  } = ChatCommandService.getCommands();
+
+  useEffect(() => {
+    if (
+      commandIdDelete !== null &&
+      confirm(`Are you sure you want to delete command: ${commandIdDelete}?`)
+    ) {
+      fetchDeleteCommand().then(() => {
+        refetchData();
+        setCommandIdDelete(null);
+      });
+    } else {
+      setCommandIdDelete(null);
+    }
+  }, [commandIdDelete]);
+
+  const { refetchData: fetchEditComman } = ChatCommandService.editCommand(
+    editingCommand,
+    {
+      name: name,
+      description: description,
+      enabled: enabled,
+      aliases: aliases,
+      messages: messages,
+      privilege: privilege || 0,
+    }
   );
 
-  const [{}, postChatCommand] = useAxios<{
-    message: string;
-  }>(
-    {
-      method: "POST",
-    } as AxiosRequestConfig,
-    { manual: true }
+  const { refetchData: fetchCreateCommand } = ChatCommandService.createCommand({
+    name: `New command${commandsData?.count}`,
+    description: `New command description${commandsData?.count}`,
+    enabled: true,
+    aliases: [`New command${commandsData?.count} default alias`],
+    messages: [`New command${commandsData?.count} default message`],
+    privilege: 0,
+  });
+
+  const { refetchData: fetchDeleteCommand } = ChatCommandService.deleteCommand(
+    commandIdDelete ? commandIdDelete : ""
   );
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (loading || !data) return <> Loading...</>;
+  if (loading || !commandsData) return <> Loading...</>;
 
-  const { chatCommands, count, currentPage } = data;
-
-  const removeCommand = (id: string) => {
-    if (confirm(`Are you sure you want delete command: }`))
-      postChatCommand({
-        url: `/chat-commands/delete/${id}`,
-        method: "DELETE",
-      } as AxiosRequestConfig).then(() => {
-        refetchCommands();
-      });
-  };
+  const { data, count, currentPage } = commandsData;
 
   const createNewCommand = () => {
-    postChatCommand({
-      url: `/chat-commands/create`,
-      method: "POST",
-      data: {
-        name: `New command${count}`,
-        description: `New command description${count}`,
-        enabled: true,
-        aliases: [`New command${count} default alias`],
-        messages: [`New command${count} default message`],
-        privilege: 0,
-      },
-    } as AxiosRequestConfig).then(() => {
-      refetchCommands();
-    });
-  };
-
-  const editCommand = () => {
-    postChatCommand({
-      url: `/chat-commands/${editingCommand}`,
-      method: "POST",
-      data: {
-        name: name,
-        description: description,
-        enabled: enabled,
-        aliases: aliases,
-        messages: messages,
-        privilege: privilege,
-      },
-    } as AxiosRequestConfig).then(() => {
-      refetchCommands();
+    fetchCreateCommand().then(() => {
+      refetchData();
     });
   };
 
@@ -112,6 +96,19 @@ export default function CommandsList() {
     setEnabled((prevState) => {
       return !prevState;
     });
+  };
+
+  const onSubmitEditModal = () => {
+    fetchEditComman().then(() => {
+      refetchData();
+    });
+    resetOnChangeClasses();
+    setShowModal(false);
+  };
+
+  const onCloseModal = () => {
+    setShowModal(false);
+    resetOnChangeClasses();
   };
 
   return (
@@ -144,7 +141,7 @@ export default function CommandsList() {
           </thead>
 
           <tbody>
-            {chatCommands.map((command) => {
+            {data.map((command) => {
               return (
                 <tr key={command._id}>
                   <td>
@@ -165,7 +162,7 @@ export default function CommandsList() {
                     </button>
                     <button
                       className="command-action command-list-button command-delete"
-                      onClick={(e) => removeCommand(command._id)}
+                      onClick={() => setCommandIdDelete(command._id)}
                     >
                       Delete
                     </button>
@@ -206,15 +203,8 @@ export default function CommandsList() {
       </div>
       <Modal
         title="Edit command"
-        onClose={() => {
-          setShowModal(false);
-          resetOnChangeClasses();
-        }}
-        onSubmit={() => {
-          editCommand();
-          resetOnChangeClasses();
-          setShowModal(false);
-        }}
+        onClose={() => onCloseModal()}
+        onSubmit={() => onSubmitEditModal()}
         show={showModal}
       >
         <table className="commands-list-modal-wrapper">

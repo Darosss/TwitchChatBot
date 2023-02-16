@@ -2,11 +2,10 @@ import "./style.css";
 import React from "react";
 import { Link } from "react-router-dom";
 import resetWindowScroll from "@utils/resetScroll";
-import useAxios from "axios-hooks";
+import AuthService from "src/services/Auth.service";
 
 export default function SideBar() {
-  const [{ data, loading, error }] = useAxios<string>("auth/authorize-url");
-
+  const { data: authData, loading, error } = AuthService.getAuthorizeUrl();
   if (error) return <>Error!</>;
   if (loading) return <>Loading...</>;
 
@@ -59,7 +58,7 @@ export default function SideBar() {
           </Link>
         </li>
         <li>
-          <a className="connect-twitch" href={data ? data : "_blank"}>
+          <a className="connect-twitch" href={authData ? authData : "_blank"}>
             {error ? "URL Error" : "Connect with twitch"}
           </a>
         </li>

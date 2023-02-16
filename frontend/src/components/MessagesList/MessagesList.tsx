@@ -1,89 +1,75 @@
 import "./style.css";
-import React, { useState } from "react";
-import { IMessage, IUser } from "@backend/models/types";
+import React from "react";
 import Pagination from "@components/Pagination";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import PreviousPage from "@components/PreviousPage";
 import formatDate from "@utils/formatDate";
-import useAxios from "axios-hooks";
 import FilterBarMessages from "./FilterBarMessages";
+import MessageService, { IMessage } from "src/services/Message.service";
 
-interface IMessagesList {
+type MessagesDetailsProp = {
   messages: IMessage[];
-  totalPages: number;
-  count: number;
-  currentPage: number;
-}
+};
+
+const MessagesDetails = ({ messages }: MessagesDetailsProp) => (
+  <table id="table-messages-list">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Username</th>
+        <th colSpan={4}>Message</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {messages.map((message) => {
+        return (
+          <tr key={message._id + new Date()}>
+            <td className="message-time">
+              <div className="tooltip">
+                {formatDate(message.date, "days+time")}
+                <span className="tooltiptext">{formatDate(message.date)}</span>
+              </div>
+            </td>
+
+            <td className="message-username">
+              <a href={`${"link"}` + message.owner._id}>
+                {message.owner.username}
+              </a>
+            </td>
+            <td className="message" colSpan={4}>
+              {message.message}
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+);
 
 export default function MessagesList(props: {
   messages: "all" | "session" | "user";
 }) {
+  const { messages } = props;
   const { userId, sessionId } = useParams();
-  const [searchParams] = useSearchParams();
 
-  let messageApiUrl = `/messages`;
-  let messageHref = ``;
-
-  switch (props.messages) {
-    case "session":
-      messageApiUrl += `/twitch-session/${sessionId}`;
-      messageHref += "../";
-      break;
-    case "user":
-      messageApiUrl += `/${userId}`;
-      break;
-    default:
-      messageHref += "messages/";
-  }
-  messageApiUrl += `?${searchParams}`;
-
-  const [{ data, loading, error }] = useAxios<IMessagesList>(messageApiUrl);
+  const {
+    data: messagesData,
+    loading,
+    error,
+  } = MessageService.getMessages(messages, sessionId, userId);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
+  if (!messagesData || loading) return <>Loading!</>;
 
-  const { messages, count, currentPage } = data;
+  const { data, count, currentPage } = messagesData;
 
   return (
     <>
       <PreviousPage />
       <FilterBarMessages />
       <div id="messages-list" className="table-list-wrapper">
-        <table id="table-messages-list">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Username</th>
-              <th colSpan={4}>Message</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {messages.map((message) => {
-              return (
-                <tr key={message._id + new Date()}>
-                  <td className="message-time">
-                    <div className="tooltip">
-                      {formatDate(message.date, "days+time")}
-                      <span className="tooltiptext">
-                        {formatDate(message.date)}
-                      </span>
-                    </div>
-                  </td>
-
-                  <td className="message-username">
-                    <a href={`${messageHref}` + (message.owner as IUser)._id}>
-                      {(message.owner as IUser).username}
-                    </a>
-                  </td>
-                  <td className="message" colSpan={4}>
-                    {message.message}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <MessagesDetails messages={data} />
       </div>
       <div className="table-list-pagination">
         <Pagination
