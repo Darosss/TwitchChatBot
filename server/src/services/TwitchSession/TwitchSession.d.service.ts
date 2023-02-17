@@ -1,5 +1,12 @@
 import { TwitchSession } from "@models/twitch-session.model";
 import { ITwitchSessionDocument } from "@models/types";
+import {
+  getMostActiveUsersByMsgs,
+  getMessagesCount,
+  getMostUsedWord,
+} from "@services/Message";
+import { getMostActiveUsersByRedemptions } from "@services/Redemption";
+import { getFollowersCount } from "@services/User";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
   ManyTwitchSessionFindOptions,
@@ -37,6 +44,67 @@ export const getTwitchSessionById = async (
   const twitchSession = await TwitchSession.findById(id).select(select);
 
   return twitchSession;
+};
+
+export const getCurrentTwitchSession = async (
+  twitchSessionFindOptions: TwitchSessionFindOptions
+) => {
+  const { select = { __v: 0 } } = twitchSessionFindOptions;
+
+  const currentDate = new Date();
+  const filter = {
+    $and: [
+      { sessionStart: { $lte: currentDate } },
+      {
+        $or: [
+          { sessionEnd: { $gte: currentDate } },
+          { sessionEnd: { $exists: false } },
+        ],
+      },
+    ],
+  };
+  const twitchSession = await TwitchSession.find(filter)
+    .sort({ sessionStart: -1 })
+    .limit(1)
+    .select(select);
+
+  return twitchSession[0];
+};
+
+export const getCurrentTwitchSessionStatistics = async () => {
+  const currSession = await getCurrentTwitchSession({});
+  const messagesCount = await getMessagesCount({
+    date: {
+      $gte: currSession.sessionStart,
+      $lte: currSession.sessionEnd,
+    },
+  });
+
+  const topActiveUsersByMsgs = await getMostActiveUsersByMsgs(
+    3,
+    currSession.sessionStart,
+    currSession.sessionEnd
+  );
+  const topActiveUsersByRedemptions = await getMostActiveUsersByRedemptions(3);
+
+  const topUsedWords = await getMostUsedWord(
+    3,
+    currSession.sessionStart,
+    currSession.sessionEnd
+  );
+
+  const followersSession = await getFollowersCount(
+    currSession.sessionStart,
+    currSession.sessionEnd
+  );
+
+  return {
+    messagesCount: messagesCount,
+    topMsgsUsers: topActiveUsersByMsgs,
+    topRedemptionsUsers: topActiveUsersByRedemptions,
+    topUsedWords: topUsedWords,
+    followersCount: followersSession,
+  };
 };
 
 export const getTwitchSessionsCount = async (
