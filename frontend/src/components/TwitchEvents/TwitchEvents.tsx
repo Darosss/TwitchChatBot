@@ -7,6 +7,7 @@ import TwitchChatters from "./TwitchChatters";
 import HiddenMenu from "@components/HiddenMenu";
 import WidgetWrapper from "@components/WidgetWrapper";
 import useLocalStorage from "@hooks/useLocalStorage.hook";
+import TwitchStatistics from "./TwitchStatistics";
 
 interface IWidget {
   enabled: boolean;
@@ -27,7 +28,12 @@ export default function TwitchEvents() {
     useLocalStorage<IWidget>("twitch-notifications-widget-data", {
       enabled: true,
     });
-
+  const [statisticSession, setStatisticSession] = useLocalStorage<IWidget>(
+    "twitch-statistic-widget-data",
+    {
+      enabled: true,
+    }
+  );
   return (
     <div className="twitch-wrapper">
       <div className="menu-widgets">
@@ -80,6 +86,22 @@ export default function TwitchEvents() {
               Toggle notifications
             </button>
           </li>
+          <li>
+            <button
+              className={`twitch-btn ${
+                statisticSession.enabled ? "active" : "not-active"
+              }`}
+              onClick={() => {
+                setStatisticSession((prevLocalStorage) => {
+                  prevLocalStorage.enabled = !prevLocalStorage.enabled;
+                  return prevLocalStorage;
+                });
+                forceUpdate();
+              }}
+            >
+              Toggle statistics
+            </button>
+          </li>
         </HiddenMenu>
       </div>
 
@@ -96,6 +118,12 @@ export default function TwitchEvents() {
       {notificationsWidget?.enabled ? (
         <WidgetWrapper id="twitch-notifications">
           <TwitchNotifications className="twitch-window" />
+        </WidgetWrapper>
+      ) : null}
+
+      {statisticSession?.enabled ? (
+        <WidgetWrapper id="twitch-statistics" horizontal={true}>
+          <TwitchStatistics className="twitch-window" />
         </WidgetWrapper>
       ) : null}
     </div>
