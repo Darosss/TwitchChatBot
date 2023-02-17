@@ -1,4 +1,4 @@
-import useAxiosCustom, { IPagination } from "./Api.service";
+import useAxiosCustom, { IPagination, ResponseData } from "./Api.service";
 
 export interface ITwitchSession {
   _id: string;
@@ -9,10 +9,40 @@ export interface ITwitchSession {
   tags: string[];
 }
 
+interface TopMsgsUsers {
+  _id: string;
+  messageCount: number;
+  username: string;
+}
+
+interface TopRedemptionsUsers {
+  _id: string;
+  redemptionsCount: number;
+  redemptionsCost: number;
+  username: string;
+}
+
+interface TopUsedWords {
+  _id: number;
+  count: number;
+}
+export interface ITwitchSessionStatistics {
+  messagesCount: number;
+  topMsgsUsers: TopMsgsUsers[];
+  topRedemptionsUsers: TopRedemptionsUsers[];
+  topUsedWords: TopUsedWords[];
+}
+
 const getSessions = () => {
   return useAxiosCustom<IPagination<ITwitchSession>>({
     url: `/twitch-sessions`,
   });
 };
 
-export default { getSessions };
+const getSessionStatistics = () => {
+  return useAxiosCustom<{ data: ITwitchSessionStatistics }>({
+    url: `/twitch-sessions/current-session/statistics`,
+  });
+};
+
+export default { getSessions, getSessionStatistics };
