@@ -2,9 +2,12 @@ import Express, { Request, Response } from "express";
 import { IRequestQuerySession } from "@types";
 import { filterSessionByUrlParams } from "./filters/session.filter";
 import {
+  getCurrentTwitchSession,
+  getCurrentTwitchSessionStatistics,
   getTwitchSessions,
   getTwitchSessionsCount,
 } from "@services/TwitchSession";
+import { getMessagesCount } from "@services/Message";
 
 const getTwitchSessionsList = async (
   req: Request<{}, {}, {}, IRequestQuerySession>,
@@ -35,4 +38,36 @@ const getTwitchSessionsList = async (
   }
 };
 
-export { getTwitchSessionsList };
+const getCurrentSession = async (req: Request, res: Response) => {
+  try {
+    const twitchSession = await getCurrentTwitchSession({});
+
+    res.status(200).send({
+      data: twitchSession,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).send({ message: "Internal server error" });
+  }
+};
+
+const getCurrentSessionStatistics = async (req: Request, res: Response) => {
+  try {
+    const sessionStatstics = await getCurrentTwitchSessionStatistics();
+
+    res.status(200).send({
+      data: sessionStatstics,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).send({ message: "Internal server error" });
+  }
+};
+
+export {
+  getTwitchSessionsList,
+  getCurrentSession,
+  getCurrentSessionStatistics,
+};
