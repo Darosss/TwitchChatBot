@@ -20,7 +20,8 @@ export default function TwitchNotifications(props: { className?: string }) {
       id="twitch-statistics"
       className={`twitch-statistics ${className ? className : ""}`}
     >
-      <div>
+      <div className="statistics-wrapper">
+        <div> Messages</div>
         <table className="session-statistics-msgs-count table-statistic">
           <thead>
             <tr>
@@ -36,7 +37,8 @@ export default function TwitchNotifications(props: { className?: string }) {
         </table>
       </div>
 
-      <div>
+      <div className="statistics-wrapper">
+        <div> Most messages</div>
         <table className="session-statistics-msgs table-statistic">
           <thead>
             <tr>
@@ -56,7 +58,8 @@ export default function TwitchNotifications(props: { className?: string }) {
           })}
         </table>
       </div>
-      <div>
+      <div className="statistics-wrapper">
+        <div>Redemptions</div>
         <table className="session-statistics-redemptions table-statistic">
           <thead>
             <tr>
@@ -78,7 +81,8 @@ export default function TwitchNotifications(props: { className?: string }) {
           })}
         </table>
       </div>
-      <div>
+      <div className="statistics-wrapper">
+        <div> Most words</div>
         <table className="session-statistics-words table-statistic">
           <thead>
             <tr>

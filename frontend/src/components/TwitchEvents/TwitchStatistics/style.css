@@ -5,10 +5,19 @@
 }
 
 .table-statistic {
-  width: 25%;
+  width: 100%;
 }
 
 .table-statistic thead th {
   height: 20px;
   font-size: 0.6rem;
+}
+
+.statistics-wrapper {
+  margin-right: 0.5rem;
+}
+
+.statistics-wrapper div:first-child {
+  font-weight: 700;
+  text-align: center;
 }
