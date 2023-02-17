@@ -3,7 +3,7 @@ import { IRedemptionDocument } from "./types";
 
 const RedeptionSchema: Schema<IRedemptionDocument> = new Schema({
   rewardId: { type: String, required: true },
-  userId: { type: String, required: true, ref: "User" },
+  userId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
   twitchId: { type: String, required: true },
   userName: { type: String, required: true },
   userDisplayName: { type: String, required: true },
