@@ -9,8 +9,12 @@ export interface IAuth {
   scope: string[];
 }
 
+export interface IAuthLink {
+  data: string;
+}
+
 const getAuthorizeUrl = () => {
-  return useAxiosCustom<string>({
+  return useAxiosCustom<IAuthLink>({
     url: `/auth/authorize-url`,
   });
 };
