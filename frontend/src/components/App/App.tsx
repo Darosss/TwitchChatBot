@@ -109,7 +109,7 @@ function App() {
               }
             ></Route>
             <Route
-              path="chat"
+              path="events"
               element={
                 <div className="main-other">
                   <TwitchEvents />
