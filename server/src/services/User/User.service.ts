@@ -163,3 +163,18 @@ export const updateUser = async (
     throw new Error("Failed to update user");
   }
 };
+
+export const getFollowersCount = async (startDate?: Date, endDate?: Date) => {
+  try {
+    const followersCount = await getUserCount({
+      ...(startDate &&
+        endDate && {
+          follower: { $gte: startDate, $lt: endDate },
+        }),
+    });
+    return followersCount;
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to  get followers count");
+  }
+};
