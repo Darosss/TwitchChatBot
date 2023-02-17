@@ -4,8 +4,7 @@ import Express, { Request, Response } from "express";
 import initTwitchOnAuth from "../twitch/initTwitchOnAuth";
 
 export const overlay = async (req: Request, res: Response) => {
-  const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, LISTEN_TO_USER } =
-    process.env;
+  const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
 
   const { code, scope, state } = req.query as unknown as {
     code: string;
