@@ -1,0 +1,14 @@
+.twitch-statistics {
+  background-color: var(--base-bg-color-chat);
+  display: flex;
+  border: 1px solid;
+}
+
+.table-statistic {
+  width: 25%;
+}
+
+.table-statistic thead th {
+  height: 20px;
+  font-size: 0.6rem;
+}
