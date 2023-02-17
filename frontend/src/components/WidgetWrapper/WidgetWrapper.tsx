@@ -5,14 +5,18 @@ import Modal from "@components/Modal";
 
 export default function WidgetWrapper(props: {
   id: string;
+  horizontal?: boolean;
   children?: React.ReactNode;
 }) {
-  const { id, children } = props;
+  const { id, horizontal, children } = props;
 
   const [showOptionsModal, setShowModal] = useState(false);
 
   return (
-    <div id={id} className="widget-wrapper">
+    <div
+      id={id}
+      className={`widget-wrapper ${horizontal ? "widget-wrapper-small" : ""}`}
+    >
       {/* <div
         onClick={(e) => {
           setShowModal(true);
