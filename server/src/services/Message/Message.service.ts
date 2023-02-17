@@ -40,3 +40,70 @@ export const getMessagesCount = async (
 ) => {
   return await Message.countDocuments(filter);
 };
+
+export const getMostActiveUsersByMsgs = async (
+  limit: number = 3,
+  startDate?: Date,
+  endDate?: Date
+) => {
+  const activeUsers = await Message.aggregate([
+    {
+      $match: {
+        ...(startDate &&
+          endDate && { date: { $gte: startDate, $lt: endDate } }),
+      },
+    },
+    { $group: { _id: "$owner", messageCount: { $sum: 1 } } },
+    {
+      $sort: { messageCount: -1 },
+    },
+    { $limit: limit },
+    {
+      $lookup: {
+        from: "users",
+        localField: "_id",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+    { $unwind: "$user" },
+    {
+      $project: {
+        _id: 1,
+        username: "$user.username",
+        messageCount: 1,
+      },
+    },
+  ]);
+
+  return activeUsers;
+};
+
+export const getMostUsedWord = async (
+  limit: number = 3,
+  startDate?: Date,
+  endDate?: Date
+) => {
+  const mostUsedWords = await Message.aggregate([
+    {
+      $match: {
+        ...(startDate &&
+          endDate && {
+            date: { $gte: startDate, $lt: endDate },
+          }),
+      },
+    },
+    { $project: { words: { $split: ["$message", " "] } } },
+    { $unwind: "$words" },
+    {
+      $group: {
+        _id: "$words",
+        count: { $sum: 1 },
+      },
+    },
+    { $sort: { count: -1 } },
+    { $limit: limit },
+  ]);
+
+  return mostUsedWords;
+};
