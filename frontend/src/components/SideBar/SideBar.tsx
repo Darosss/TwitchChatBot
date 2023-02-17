@@ -28,8 +28,8 @@ export default function SideBar() {
           </Link>
         </li>
         <li>
-          <Link onClick={resetWindowScroll} to="/chat">
-            Chat
+          <Link onClick={resetWindowScroll} to="/events">
+            Events
           </Link>
         </li>
         <li>
@@ -58,7 +58,10 @@ export default function SideBar() {
           </Link>
         </li>
         <li>
-          <a className="connect-twitch" href={authData ? authData : "_blank"}>
+          <a
+            className="connect-twitch"
+            href={authData ? authData.data : "_blank"}
+          >
             {error ? "URL Error" : "Connect with twitch"}
           </a>
         </li>
