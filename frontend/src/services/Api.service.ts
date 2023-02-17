@@ -1,12 +1,12 @@
 import useAxios, { configure } from "axios-hooks";
 import Axios, { AxiosRequestConfig } from "axios";
 import { useSearchParams } from "react-router-dom";
-import IMessage from "./Message.service";
-import IRedemption from "./Redemption.service";
-import IChatCommand from "./Chat-command.service";
 
-export interface IPagination<T> {
+export interface ResponseData<T> {
   data: T[];
+}
+
+export interface IPagination<T> extends ResponseData<T> {
   totalPages: number;
   count: number;
   currentPage: number;
