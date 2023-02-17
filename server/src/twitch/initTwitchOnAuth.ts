@@ -11,7 +11,7 @@ import {
   SocketData,
 } from "@libs/types";
 import { IAuthorizationTwitch } from "@types";
-import { createNewAuth } from "@services/Auth";
+import { createNewAuth, createOrGetIfAuthValid } from "@services/Auth";
 import { getConfigs } from "@services/Configs";
 
 const initTwitchOnAuth = async (
@@ -26,9 +26,12 @@ const initTwitchOnAuth = async (
   const clientId = process.env.CLIENT_ID!;
   const clientSecret = process.env.CLIENT_SECRET!;
 
-  const newAuthToken = await createNewAuth({
+  const newAuthToken = await createOrGetIfAuthValid({
     accessToken: authAccesToken.access_token,
     refreshToken: authAccesToken.refresh_token,
+    expiresIn: authAccesToken.expires_in,
+    obtainmentTimestamp: new Date().getTime(),
+    scope: authAccesToken.scope,
   });
 
   const authProvider = new RefreshingAuthProvider(
