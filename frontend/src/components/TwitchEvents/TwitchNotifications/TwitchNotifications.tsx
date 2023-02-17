@@ -42,13 +42,12 @@ export default function TwitchNotifications(props: { className?: string }) {
       socket.off("userJoinTwitchChat");
     };
   }, [socket]);
-
   return (
     <div
       id="twitch-notifications"
       className={`twitch-notifications ${className ? className : ""}`}
     >
-      {userNotif.map((notif) => {
+      {userNotif.map((notif, index) => {
         return (
           <div
             className={`user-info ${
@@ -61,7 +60,7 @@ export default function TwitchNotifications(props: { className?: string }) {
                 ? "new-user"
                 : "usual"
             } `}
-            key={notif._id + notif.eventDate}
+            key={notif._id + notif.eventDate + index}
           >
             <button
               id="button-close"
@@ -86,7 +85,7 @@ export default function TwitchNotifications(props: { className?: string }) {
                 alt="msg"
                 className="user-info-icon"
               />
-              :<span>{notif.messageCount.toLocaleString()}</span>
+              :<span>{notif.messageCount?.toLocaleString()}</span>
             </div>
 
             <div className="user-info-points">
@@ -95,7 +94,7 @@ export default function TwitchNotifications(props: { className?: string }) {
                 alt="points"
                 className="user-info-icon"
               />
-              : <span>{notif.points.toLocaleString()}</span>
+              : <span>{notif.points?.toLocaleString()}</span>
             </div>
             <div className="user-info-created-date">
               <img
