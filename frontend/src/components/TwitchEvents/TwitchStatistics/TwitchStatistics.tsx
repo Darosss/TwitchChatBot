@@ -61,7 +61,7 @@ export default function TwitchStatistics(props: { className?: string }) {
         <MostRedemptions users={data.topRedemptionsUsers} />
       </div>
       <div className="statistics-wrapper">
-        <TopUsedWords words={data.topUsedWords} />
+        <MostUsedWords words={data.topUsedWords} />
       </div>
     </div>
   );
@@ -141,7 +141,7 @@ function MostRedemptions({ users }: TopRedemptionProps) {
   );
 }
 
-function TopUsedWords({ words }: TopUsedWordsProps) {
+function MostUsedWords({ words }: TopUsedWordsProps) {
   return (
     <>
       <div> Most words</div>
