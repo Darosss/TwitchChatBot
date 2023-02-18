@@ -66,7 +66,12 @@ const getSessionStatisticsById = async (req: Request, res: Response) => {
       return res.status(400).send({ message: "Couldn't find any session" });
     }
 
-    const sessionStatstics = await getTwitchSessionStatistics(twitchSession);
+    const sessionStatstics = await getTwitchSessionStatistics(twitchSession, {
+      limitMostUsedWords: 10,
+      limitTopMessageUsers: 10,
+      limitTopRedemptionsUsers: 10,
+      limitViewers: 0,
+    });
 
     if (!sessionStatstics) {
       return res
@@ -90,7 +95,10 @@ const getCurrentSessionStatistics = async (req: Request, res: Response) => {
       return res.status(400).send({ message: "Couldn't find any session" });
     }
 
-    const sessionStatstics = await getTwitchSessionStatistics(twitchSession);
+    const sessionStatstics = await getTwitchSessionStatistics(
+      twitchSession,
+      {}
+    );
 
     if (!sessionStatstics) {
       return res
