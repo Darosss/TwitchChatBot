@@ -9,20 +9,20 @@ export interface ITwitchSession {
   tags: string[];
 }
 
-interface TopMsgsUsers {
+export interface TopMsgsUsers {
   _id: string;
   messageCount: number;
   username: string;
 }
 
-interface TopRedemptionsUsers {
+export interface TopRedemptionsUsers {
   _id: string;
   redemptionsCount: number;
   redemptionsCost: number;
   username: string;
 }
 
-interface TopUsedWords {
+export interface TopUsedWords {
   _id: number;
   count: number;
 }
