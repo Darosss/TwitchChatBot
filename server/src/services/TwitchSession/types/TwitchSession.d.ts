@@ -12,12 +12,8 @@ export interface ManyTwitchSessionFindOptions extends TwitchSessionFindOptions {
   limit?: number;
 }
 
-export interface TwitchSessionOptionalData {
-  sessionEnd?: Date;
-  sessionTitles?: string[];
-  categories?: string[];
-  tags?: string[];
-}
+export interface TwitchSessionOptionalData
+  extends Partial<Omit<ITwitchSession, "sessionStart">> {}
 
 export interface TwitchSessionCreateData extends TwitchSessionOptionalData {
   sessionStart: Date;
