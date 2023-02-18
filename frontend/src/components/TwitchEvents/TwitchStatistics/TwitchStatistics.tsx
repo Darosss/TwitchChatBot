@@ -1,6 +1,26 @@
 import "./style.css";
 import React, { useEffect } from "react";
-import TwitchSessionService from "src/services/Twitch-session.service";
+import TwitchSessionService, {
+  TopMsgsUsers,
+  TopRedemptionsUsers,
+  TopUsedWords,
+} from "src/services/Twitch-session.service";
+
+type SessionMessagesProps = {
+  count: number;
+};
+
+type TopUsersMessagesProps = {
+  users: TopMsgsUsers[];
+};
+
+type TopRedemptionProps = {
+  users: TopRedemptionsUsers[];
+};
+
+type TopUsedWordsProps = {
+  words: TopUsedWords[];
+};
 
 export default function TwitchStatistics(props: { className?: string }) {
   const FETCH_INTERVAL = 60;
@@ -31,87 +51,118 @@ export default function TwitchStatistics(props: { className?: string }) {
       className={`twitch-statistics ${className ? className : ""}`}
     >
       <div className="statistics-wrapper">
-        <div> Messages</div>
-        <table className="session-statistics-msgs-count table-statistic">
-          <thead>
-            <tr>
-              <th>Session msgs</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr>
-              <td> {data.messagesCount}</td>
-            </tr>
-          </tbody>
-        </table>
+        <SessionMessages count={data.messagesCount} />
       </div>
 
       <div className="statistics-wrapper">
-        <div> Most messages</div>
-        <table className="session-statistics-msgs table-statistic">
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Messages count</th>
-            </tr>
-          </thead>
-          {data.topMsgsUsers?.map((user, index) => {
-            return (
-              <tbody key={user._id + index}>
-                <tr>
-                  <td> {user.username}</td>
-                  <td> {user.messageCount}</td>
-                </tr>
-              </tbody>
-            );
-          })}
-        </table>
+        <TopUsersMessages users={data.topMsgsUsers} />
       </div>
       <div className="statistics-wrapper">
-        <div>Redemptions</div>
-        <table className="session-statistics-redemptions table-statistic">
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Redemptions count</th>
-              <th>Redemptions cost</th>
-            </tr>
-          </thead>
-          {data.topRedemptionsUsers?.map((user, index) => {
-            return (
-              <tbody key={user._id + index}>
-                <tr>
-                  <td> {user.username}</td>
-                  <td> {user.redemptionsCount}</td>
-                  <td> {user.redemptionsCost}</td>
-                </tr>
-              </tbody>
-            );
-          })}
-        </table>
+        <MostRedemptions users={data.topRedemptionsUsers} />
       </div>
       <div className="statistics-wrapper">
-        <div> Most words</div>
-        <table className="session-statistics-words table-statistic">
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Redemptions count</th>
-            </tr>
-          </thead>
-          {data.topUsedWords?.map((word, index) => {
-            return (
-              <tbody key={word._id + index}>
-                <tr>
-                  <td> {word._id}</td>
-                  <td> {word.count}</td>
-                </tr>
-              </tbody>
-            );
-          })}
-        </table>
+        <TopUsedWords words={data.topUsedWords} />
       </div>
     </div>
+  );
+}
+function SessionMessages({ count }: SessionMessagesProps) {
+  return (
+    <>
+      <div> Messages</div>
+      <table className="session-statistics-msgs-count table-statistic">
+        <thead>
+          <tr>
+            <th>Session msgs</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td> {count}</td>
+          </tr>
+        </tbody>
+      </table>
+    </>
+  );
+}
+
+function TopUsersMessages({ users }: TopUsersMessagesProps) {
+  return (
+    <>
+      <div> Most messages</div>
+      <table className="session-statistics-msgs table-statistic">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Messages count</th>
+          </tr>
+        </thead>
+        {users?.map((user, index) => {
+          return (
+            <tbody key={user._id + index}>
+              <tr>
+                <td> {user.username}</td>
+                <td> {user.messageCount}</td>
+              </tr>
+            </tbody>
+          );
+        })}
+      </table>
+    </>
+  );
+}
+
+function MostRedemptions({ users }: TopRedemptionProps) {
+  return (
+    <>
+      <div>Redemptions</div>
+      <table className="session-statistics-redemptions table-statistic">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Redemptions count</th>
+            <th>Redemptions cost</th>
+          </tr>
+        </thead>
+        {users?.map((user, index) => {
+          return (
+            <tbody key={user._id + index}>
+              <tr>
+                <td> {user.username}</td>
+                <td> {user.redemptionsCount}</td>
+                <td> {user.redemptionsCost}</td>
+              </tr>
+            </tbody>
+          );
+        })}
+      </table>
+    </>
+  );
+}
+
+function TopUsedWords({ words }: TopUsedWordsProps) {
+  return (
+    <>
+      <div> Most words</div>
+      <table className="session-statistics-words table-statistic">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Redemptions count</th>
+          </tr>
+        </thead>
+        {words.map((word, index) => {
+          return (
+            <tbody key={word._id + index}>
+              <tr>
+                <td> {word._id}</td>
+                <td> {word.count}</td>
+              </tr>
+            </tbody>
+          );
+        })}
+      </table>
+    </>
   );
 }
