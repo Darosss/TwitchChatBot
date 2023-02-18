@@ -154,7 +154,7 @@ export default function UserProfile() {
             <td colSpan={5}>
               <div className="profile-user-messages">
                 <div className="profile-first-messages profile-user-messages-inner">
-                  {msgsData.firstMessages.map((msg) => {
+                  {msgsData.data.firstMessages.map((msg) => {
                     return (
                       <Message
                         key={msg._id}
@@ -166,7 +166,7 @@ export default function UserProfile() {
                   })}
                 </div>
                 <div className="profile-last-messages profile-user-messages-inner">
-                  {msgsData.latestMessages.map((msg) => {
+                  {msgsData.data.latestMessages.map((msg) => {
                     return (
                       <Message
                         key={msg._id}
