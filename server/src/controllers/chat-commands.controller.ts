@@ -80,7 +80,8 @@ const editChatCommandById = async (req: Request, res: Response) => {
       chatCommand: updatedChatCommand,
     });
   } catch (error) {
-    res.status(400).send({ message: "Couldn't update command" });
+    console.error(error);
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 
