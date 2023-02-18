@@ -69,60 +69,59 @@ class BotStatisticDatabase {
     // });
     // await addFollowersTemp(follows.data);
     /* DEBUG: Add all followers from given id  */
-
-    await this.checkChattersInterval(broadcasterId);
+    setTimeout(async () => {
+      await this.checkChatters(broadcasterId);
+    }, 150000);
     await this.getAllTrigersWordsFromDB();
     await this.getAllCommandWords();
   }
 
-  async checkChattersInterval(broadcasterId: string) {
+  async checkChatters(broadcasterId: string) {
     let usersBefore = new Set<string>();
-    setInterval(async () => {
-      const usersNow = new Set<string>();
-      const listOfChatters = await this.twitchApi.chat.getChatters(
-        broadcasterId,
-        broadcasterId
+    const usersNow = new Set<string>();
+    const listOfChatters = await this.twitchApi.chat.getChatters(
+      broadcasterId,
+      broadcasterId
+    );
+    const { data } = listOfChatters;
+
+    // loop through all chatters visible by api
+    for await (const user of data) {
+      const { userName, userDisplayName, userId } = user;
+
+      usersNow.add(userName);
+      //if users exist emit event
+      // const userDB = await this.isUserInDB(userName);
+      const userDB = await createUserIfNotExist(
+        { twitchName: userName },
+        { username: userDisplayName, twitchId: userId, twitchName: userName }
       );
-      const { data } = listOfChatters;
-
-      // loop through all chatters visible by api
-      for await (const user of data) {
-        const { userName, userDisplayName, userId } = user;
-
-        usersNow.add(userName);
-        //if users exist emit event
-        // const userDB = await this.isUserInDB(userName);
-        const userDB = await createUserIfNotExist(
-          { twitchName: userName },
-          { username: userDisplayName, twitchId: userId, twitchName: userName }
+      if (!usersBefore.has(userName) && userDB) {
+        this.socketIO.emit(
+          "userJoinTwitchChat",
+          { eventDate: new Date(), eventName: "Join chat" },
+          userDB
         );
-        if (!usersBefore.has(userName) && userDB) {
-          this.socketIO.emit(
-            "userJoinTwitchChat",
-            { eventDate: new Date(), eventName: "Join chat" },
-            userDB
-          );
-        }
-
-        usersBefore.add(userName);
       }
-      removeDifferenceFromSet(usersBefore, usersNow);
 
-      //after remove difference of sets loop on users that have been and emit left chat
-      for await (const userLeft of usersBefore) {
-        const userDB = await isUserInDB({ twitchName: userLeft });
-        // const userDB = await this.isUserInDB(userLeft);
-        if (userDB) {
-          this.socketIO.emit(
-            "userJoinTwitchChat",
-            { eventDate: new Date(), eventName: "Left chat" },
-            userDB
-          );
-        }
+      usersBefore.add(userName);
+    }
+    removeDifferenceFromSet(usersBefore, usersNow);
+
+    //after remove difference of sets loop on users that have been and emit left chat
+    for await (const userLeft of usersBefore) {
+      const userDB = await isUserInDB({ twitchName: userLeft });
+      // const userDB = await this.isUserInDB(userLeft);
+      if (userDB) {
+        this.socketIO.emit(
+          "userJoinTwitchChat",
+          { eventDate: new Date(), eventName: "Left chat" },
+          userDB
+        );
       }
-      usersBefore = usersNow;
-      usersNow.clear();
-    }, 150000);
+    }
+    usersBefore = usersNow;
+    usersNow.clear();
   }
 
   async updateEveryUserTwitchDetails(broadcasterId: string) {
