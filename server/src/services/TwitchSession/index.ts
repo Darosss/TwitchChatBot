@@ -1,2 +1,2 @@
-export * from "./TwitchSession.d.service";
+export * from "./TwitchSession.service";
 export * from ".";
