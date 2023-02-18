@@ -7,6 +7,10 @@ const TwitchSessionSchema: Schema<ITwitchSessionDocument> = new Schema({
   sessionTitles: { type: [String] },
   categories: { type: [String] },
   tags: { type: [String] },
+  viewers: {
+    type: Map,
+    of: Number,
+  },
 });
 
 export const TwitchSession: Model<ITwitchSessionDocument> = model(
