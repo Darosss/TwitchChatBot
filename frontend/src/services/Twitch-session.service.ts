@@ -26,11 +26,13 @@ export interface TopUsedWords {
   _id: number;
   count: number;
 }
+
 export interface ITwitchSessionStatistics {
   messagesCount: number;
   topMsgsUsers: TopMsgsUsers[];
   topRedemptionsUsers: TopRedemptionsUsers[];
   topUsedWords: TopUsedWords[];
+  viewers: Map<string, number>;
 }
 
 const getSessions = () => {
