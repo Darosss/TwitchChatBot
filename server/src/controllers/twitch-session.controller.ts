@@ -3,11 +3,11 @@ import { IRequestQuerySession } from "@types";
 import { filterSessionByUrlParams } from "./filters/session.filter";
 import {
   getCurrentTwitchSession,
-  getCurrentTwitchSessionStatistics,
+  getTwitchSessionStatistics,
   getTwitchSessions,
   getTwitchSessionsCount,
+  getTwitchSessionById,
 } from "@services/TwitchSession";
-import { getMessagesCount } from "@services/Message";
 
 const getTwitchSessionsList = async (
   req: Request<{}, {}, {}, IRequestQuerySession>,
@@ -55,15 +55,48 @@ const getCurrentSession = async (req: Request, res: Response) => {
   }
 };
 
-const getCurrentSessionStatistics = async (req: Request, res: Response) => {
-  try {
-    const sessionStatstics = await getCurrentTwitchSessionStatistics();
+const getSessionById = async (req: Request, res: Response) => {};
 
-    if (!sessionStatstics)
+const getSessionStatisticsById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const twitchSession = await getTwitchSessionById(id, {});
+    if (!twitchSession) {
+      return res.status(400).send({ message: "Couldn't find any session" });
+    }
+
+    const sessionStatstics = await getTwitchSessionStatistics(twitchSession);
+
+    if (!sessionStatstics) {
       return res
         .status(400)
         .send({ message: "Couldn't find any session statistics" });
+    }
+    res.status(200).send({
+      data: sessionStatstics,
+    });
+  } catch (error) {
+    console.error(error);
 
+    return res.status(500).send({ message: "Internal server error" });
+  }
+};
+
+const getCurrentSessionStatistics = async (req: Request, res: Response) => {
+  try {
+    const twitchSession = await getCurrentTwitchSession({});
+    if (!twitchSession) {
+      return res.status(400).send({ message: "Couldn't find any session" });
+    }
+
+    const sessionStatstics = await getTwitchSessionStatistics(twitchSession);
+
+    if (!sessionStatstics) {
+      return res
+        .status(400)
+        .send({ message: "Couldn't find any session statistics" });
+    }
     res.status(200).send({
       data: sessionStatstics,
     });
@@ -77,5 +110,7 @@ const getCurrentSessionStatistics = async (req: Request, res: Response) => {
 export {
   getTwitchSessionsList,
   getCurrentSession,
+  getSessionById,
   getCurrentSessionStatistics,
+  getSessionStatisticsById,
 };
