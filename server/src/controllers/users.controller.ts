@@ -13,7 +13,6 @@ const getUsersList = async (
   res: Response
 ) => {
   const { page = 1, limit = 50 } = req.query;
-  console.log(req.query, "test");
   const searchFilter = filterUsersByUrlParams(req.query);
 
   try {
