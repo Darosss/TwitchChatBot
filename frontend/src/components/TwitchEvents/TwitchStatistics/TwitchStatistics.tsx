@@ -5,6 +5,7 @@ import TwitchSessionService, {
   TopRedemptionsUsers,
   TopUsedWords,
 } from "src/services/Twitch-session.service";
+import LineChart from "@components/LineChart";
 
 type SessionMessagesProps = {
   count: number;
@@ -42,7 +43,6 @@ export default function TwitchStatistics(props: { className?: string }) {
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!statisticsData || loading) return <>Loading...</>;
-
   const { data } = statisticsData;
 
   return (
@@ -62,6 +62,10 @@ export default function TwitchStatistics(props: { className?: string }) {
       </div>
       <div className="statistics-wrapper">
         <MostUsedWords words={data.topUsedWords} />
+      </div>
+
+      <div>
+        <LineChart data={data.viewers} />
       </div>
     </div>
   );
@@ -148,8 +152,8 @@ function MostUsedWords({ words }: TopUsedWordsProps) {
       <table className="session-statistics-words table-statistic">
         <thead>
           <tr>
-            <th>Username</th>
-            <th>Redemptions count</th>
+            <th>Word</th>
+            <th>Count</th>
           </tr>
         </thead>
         {words.map((word, index) => {
