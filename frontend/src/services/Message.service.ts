@@ -1,4 +1,4 @@
-import useAxiosCustom, { IPagination } from "./Api.service";
+import useAxiosCustom, { IPagination, ResponseData } from "./Api.service";
 import { IUser } from "./User.service";
 
 export interface IMessage {
@@ -38,7 +38,7 @@ const getMessages = (
 };
 
 const getLatestAndFirstMsgs = (userId: string) => {
-  return useAxiosCustom<FirstAndLatestMsgs>({
+  return useAxiosCustom<{ data: FirstAndLatestMsgs }>({
     url: `/messages/${userId}/latest-first-msgs`,
   });
 };
