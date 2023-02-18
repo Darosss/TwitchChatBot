@@ -23,4 +23,5 @@ export interface ISessionStatisticOptions {
   limitTopMessageUsers?: number;
   limitTopRedemptionsUsers?: number;
   limitMostUsedWords?: number;
+  limitViewers?: number;
 }
