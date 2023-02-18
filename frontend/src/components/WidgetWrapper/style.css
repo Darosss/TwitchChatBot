@@ -11,6 +11,26 @@
   border-bottom: 0.1rem solid var(--base-bg-color-border);
   resize: both;
 }
+.widget-wrapper::-webkit-resizer {
+  background-color: var(--base-bg-color-info);
+
+  outline: 2px solid var(--base-bg-color-border);
+}
+
+.widget-wrapper:hover::-webkit-resizer {
+  transform: translate(3em, 0);
+  background-color: var(--base-bg-color-border);
+  outline: 1px dotted var(--base-bg-color-info);
+}
+
+@keyframes example {
+  from {
+    background-color: red;
+  }
+  to {
+    background-color: yellow;
+  }
+}
 
 .widget-wrapper-small {
   width: 80vw;
