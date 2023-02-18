@@ -7,6 +7,7 @@ import {
 } from "@services/Message";
 import { getMostActiveUsersByRedemptions } from "@services/Redemption";
 import { getFollowersCount } from "@services/User";
+import { getLastNItemsFromMap } from "@utils/get-last-n-items-from-map.util";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
   ISessionStatisticOptions,
@@ -83,7 +84,10 @@ export const getTwitchSessionStatistics = async (
     limitTopRedemptionsUsers = 3,
     limitMostUsedWords = 3,
     limitTopMessageUsers = 3,
+    limitViewers = 10,
   } = options;
+
+  const viewersPeeks = new Map(getLastNItemsFromMap(viewers, limitViewers));
 
   const messagesCount = await getMessagesCount({
     date: {
@@ -115,7 +119,7 @@ export const getTwitchSessionStatistics = async (
     topRedemptionsUsers: topActiveUsersByRedemptions,
     topUsedWords: topUsedWords,
     followersCount: followersSession,
-    viewers: viewers,
+    viewers: Object.fromEntries(viewersPeeks),
   };
 };
 
