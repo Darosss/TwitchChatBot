@@ -1,5 +1,5 @@
 import { TwitchSession } from "@models/twitch-session.model";
-import { ITwitchSessionDocument } from "@models/types";
+import { ITwitchSession, ITwitchSessionDocument } from "@models/types";
 import {
   getMostActiveUsersByMsgs,
   getMessagesCount,
@@ -9,6 +9,7 @@ import { getMostActiveUsersByRedemptions } from "@services/Redemption";
 import { getFollowersCount } from "@services/User";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
+  ISessionStatisticOptions,
   ManyTwitchSessionFindOptions,
   TwitchSessionCreateData,
   TwitchSessionFindOptions,
@@ -46,6 +47,8 @@ export const getTwitchSessionById = async (
   return twitchSession;
 };
 
+export const getTwitchSessionStatisticsById = async (id: string) => {};
+
 export const getCurrentTwitchSession = async (
   twitchSessionFindOptions: TwitchSessionFindOptions
 ) => {
@@ -71,33 +74,40 @@ export const getCurrentTwitchSession = async (
   return twitchSession[0];
 };
 
-export const getCurrentTwitchSessionStatistics = async () => {
-  const currSession = await getCurrentTwitchSession({});
-  if (!currSession) return null;
+export const getTwitchSessionStatistics = async (
+  session: ITwitchSession,
+  options: ISessionStatisticOptions
+) => {
+  const { sessionStart, sessionEnd, viewers } = session;
+  const {
+    limitTopRedemptionsUsers = 3,
+    limitMostUsedWords = 3,
+    limitTopMessageUsers = 3,
+  } = options;
+
   const messagesCount = await getMessagesCount({
     date: {
-      $gte: currSession.sessionStart,
-      $lte: currSession.sessionEnd,
+      $gte: sessionStart,
+      $lte: sessionEnd,
     },
   });
 
   const topActiveUsersByMsgs = await getMostActiveUsersByMsgs(
-    3,
-    currSession.sessionStart,
-    currSession.sessionEnd
+    limitTopMessageUsers,
+    sessionStart,
+    sessionEnd
   );
-  const topActiveUsersByRedemptions = await getMostActiveUsersByRedemptions(3);
+  const topActiveUsersByRedemptions = await getMostActiveUsersByRedemptions(
+    limitTopRedemptionsUsers
+  );
 
   const topUsedWords = await getMostUsedWord(
-    3,
-    currSession.sessionStart,
-    currSession.sessionEnd
+    limitMostUsedWords,
+    sessionStart,
+    sessionEnd
   );
 
-  const followersSession = await getFollowersCount(
-    currSession.sessionStart,
-    currSession.sessionEnd
-  );
+  const followersSession = await getFollowersCount(sessionStart, sessionEnd);
 
   return {
     messagesCount: messagesCount,
@@ -105,7 +115,7 @@ export const getCurrentTwitchSessionStatistics = async () => {
     topRedemptionsUsers: topActiveUsersByRedemptions,
     topUsedWords: topUsedWords,
     followersCount: followersSession,
-    viewers: currSession.viewers,
+    viewers: viewers,
   };
 };
 

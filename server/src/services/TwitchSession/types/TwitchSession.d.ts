@@ -18,3 +18,9 @@ export interface TwitchSessionOptionalData
 export interface TwitchSessionCreateData extends TwitchSessionOptionalData {
   sessionStart: Date;
 }
+
+export interface ISessionStatisticOptions {
+  limitTopMessageUsers?: number;
+  limitTopRedemptionsUsers?: number;
+  limitMostUsedWords?: number;
+}
