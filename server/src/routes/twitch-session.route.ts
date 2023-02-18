@@ -13,15 +13,15 @@ const twitchSessionRouter = Router();
 
 twitchSessionRouter.get("/", checkSearchParams, getTwitchSessionsList);
 twitchSessionRouter.get("/current-session", getCurrentSession);
+twitchSessionRouter.get(
+  "/current-session/statistics",
+  getCurrentSessionStatistics
+);
 twitchSessionRouter.get("/:id", isParamObjectId, getSessionById);
 twitchSessionRouter.get(
   "/:id/statistics",
   isParamObjectId,
   getSessionStatisticsById
-);
-twitchSessionRouter.get(
-  "/current-session/statistics",
-  getCurrentSessionStatistics
 );
 
 export default twitchSessionRouter;
