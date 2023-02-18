@@ -1,14 +1,24 @@
 import "./style.css";
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useEffect } from "react";
 import TwitchSessionService from "src/services/Twitch-session.service";
 
-export default function TwitchNotifications(props: { className?: string }) {
+export default function TwitchStatistics(props: { className?: string }) {
+  const FETCH_INTERVAL = 60;
   const { className } = props;
   const {
     data: statisticsData,
     loading,
     error,
+    refetchData,
   } = TwitchSessionService.getSessionStatistics();
+
+  useEffect(() => {
+    const statisticInterval = setInterval(() => {
+      refetchData();
+    }, FETCH_INTERVAL * 1000);
+
+    return () => clearInterval(statisticInterval);
+  }, []);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!statisticsData || loading) return <>Loading...</>;
