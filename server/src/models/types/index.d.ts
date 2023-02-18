@@ -51,6 +51,7 @@ export interface ITwitchSession {
   sessionTitles: string[];
   categories: string[];
   tags: string[];
+  viewers: Map<string, number>;
 }
 
 export type ITwitchSessionDocument = ITwitchSession & Document;
