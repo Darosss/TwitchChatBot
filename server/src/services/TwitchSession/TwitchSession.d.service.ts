@@ -73,6 +73,7 @@ export const getCurrentTwitchSession = async (
 
 export const getCurrentTwitchSessionStatistics = async () => {
   const currSession = await getCurrentTwitchSession({});
+  if (!currSession) return {};
   const messagesCount = await getMessagesCount({
     date: {
       $gte: currSession.sessionStart,
