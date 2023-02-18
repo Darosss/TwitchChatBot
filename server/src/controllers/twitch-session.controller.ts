@@ -55,7 +55,24 @@ const getCurrentSession = async (req: Request, res: Response) => {
   }
 };
 
-const getSessionById = async (req: Request, res: Response) => {};
+const getSessionById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const twitchSession = await getTwitchSessionById(id, {});
+
+    if (!twitchSession)
+      return res
+        .status(400)
+        .send({ message: "Couldn't find any session match that id" });
+    return res.status(200).send({
+      data: twitchSession,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Couldn't update command" });
+  }
+};
 
 const getSessionStatisticsById = async (req: Request, res: Response) => {
   const { id } = req.params;
