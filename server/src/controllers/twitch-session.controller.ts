@@ -42,6 +42,9 @@ const getCurrentSession = async (req: Request, res: Response) => {
   try {
     const twitchSession = await getCurrentTwitchSession({});
 
+    if (!twitchSession)
+      return res.status(400).send({ message: "Couldn't find any session" });
+
     res.status(200).send({
       data: twitchSession,
     });
@@ -55,6 +58,11 @@ const getCurrentSession = async (req: Request, res: Response) => {
 const getCurrentSessionStatistics = async (req: Request, res: Response) => {
   try {
     const sessionStatstics = await getCurrentTwitchSessionStatistics();
+
+    if (!sessionStatstics)
+      return res
+        .status(400)
+        .send({ message: "Couldn't find any session statistics" });
 
     res.status(200).send({
       data: sessionStatstics,
