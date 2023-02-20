@@ -6,15 +6,13 @@ export interface IUser {
   username: string;
   createdAt: Date;
   updatedAt: Date;
-  twitchCreated: Date;
   privileges: number;
   points?: number;
-  lastSeen: Date;
+  lastSeen?: Date;
   messageCount?: number;
   notes?: string[];
   twitchName?: string;
   twitchCreated?: Date;
-  userDisplayName?: string;
   follower?: Date;
 }
 
