@@ -44,7 +44,7 @@ export default function UserProfile() {
   };
 
   useEffect(() => {
-    setNotes(userData?.notes?.join("\n") || "");
+    setNotes(userData?.data.notes?.join("\n") || "");
   }, [userData]);
 
   if (error || msgsError)
@@ -78,33 +78,33 @@ export default function UserProfile() {
           </tr>
           <tr>
             <th>Username</th>
-            <td>{userData.username}</td>
+            <td>{userData.data.username}</td>
             <th>Display name</th>
-            <td>{userData.userDisplayName}</td>
+            <td>{userData.data.userDisplayName}</td>
           </tr>
           <tr>
             <th>Messages</th>
-            <td>{userData.messageCount?.toLocaleString() || "0"}</td>
+            <td>{userData.data.messageCount?.toLocaleString() || "0"}</td>
             <th>Points</th>
-            <td>{userData.points?.toLocaleString() || ""}</td>
+            <td>{userData.data.points?.toLocaleString() || ""}</td>
           </tr>
           <tr>
             <th>Created</th>
             <td>
               <div className="tooltip">
-                {formatDate(userData.createdAt, "days+time")}
+                {formatDate(userData.data.createdAt, "days+time")}
                 <span className="tooltiptext">
-                  {formatDate(userData.createdAt)}
+                  {formatDate(userData.data.createdAt)}
                 </span>
               </div>
             </td>
             <th>Follower</th>
             <td colSpan={3}>
-              {userData.follower ? (
+              {userData.data.follower ? (
                 <div className="tooltip">
-                  {formatDate(userData.follower, "days+time")}
+                  {formatDate(userData.data.follower, "days+time")}
                   <span className="tooltiptext">
-                    {formatDate(userData.follower)}
+                    {formatDate(userData.data.follower)}
                   </span>
                 </div>
               ) : (
@@ -125,7 +125,7 @@ export default function UserProfile() {
             <td colSpan={5}>
               {!isEditingNotes ? (
                 <ul className="notes-list">
-                  {userData.notes?.map((note, ind) => {
+                  {userData.data.notes?.map((note, ind) => {
                     return <li key={ind}>{note}</li>;
                   })}
                 </ul>
@@ -133,7 +133,7 @@ export default function UserProfile() {
                 <>
                   <textarea
                     className="textarea-edit"
-                    defaultValue={userData.notes?.join("\n")}
+                    defaultValue={userData.data.notes?.join("\n")}
                     onChange={(e) => setNotes(e.target.value)}
                   />
                   <button
