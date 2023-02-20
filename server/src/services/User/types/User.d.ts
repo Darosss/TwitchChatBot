@@ -10,21 +10,6 @@ export interface ManyUsersFindOptions extends UserFindOptions {
   limit?: number;
 }
 
-export interface UserOptionalData {
-  follower?: Date;
-  notes?: string[];
-  privileges?: number;
-  lastSeen?: Date;
-  points?: number;
-  messageCount?: number;
-}
+export type UserCreateData = Omit<IUser, "_id" | "createdAt" | "updatedAt">;
 
-export interface UserCreateData extends UserOptionalData {
-  twitchId: string;
-  username: string;
-  twitchName: string;
-}
-
-export interface UserUpdateData
-  extends UserOptionalData,
-    Partial<Omit<UserCreateData, "twitchId">> {}
+export type UserUpdateData = Partial<UserCreateData>;
