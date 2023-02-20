@@ -65,6 +65,7 @@ const clientTmi = (
       username: tags["display-name"] || "undefinedUsername",
       twitchName: tags.username || "undefinedTwitchName",
       twitchId: tags["user-id"] || "undefinedTwitchId",
+      privileges: 0,
     };
 
     socket.emit("messageServer", new Date(), userData.username, message); // emit for socket
