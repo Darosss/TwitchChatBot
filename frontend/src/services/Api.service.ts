@@ -3,10 +3,11 @@ import Axios, { AxiosRequestConfig } from "axios";
 import { useSearchParams } from "react-router-dom";
 
 export interface ResponseData<T> {
-  data: T[];
+  data: T;
 }
 
-export interface IPagination<T> extends ResponseData<T> {
+export interface IPagination<T> {
+  data: T[];
   totalPages: number;
   count: number;
   currentPage: number;
