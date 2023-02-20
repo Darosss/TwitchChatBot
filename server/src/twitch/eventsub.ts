@@ -46,6 +46,7 @@ const eventSub = async (
           twitchId: userId,
           username: userDisplayName,
           twitchName: userName,
+          privileges: 0,
         }
       );
 
