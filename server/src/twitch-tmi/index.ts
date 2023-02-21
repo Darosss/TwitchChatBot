@@ -65,6 +65,7 @@ const clientTmi = (
       username: tags["display-name"] || "undefinedUsername",
       twitchName: tags.username || "undefinedTwitchName",
       twitchId: tags["user-id"] || "undefinedTwitchId",
+
       privileges: 0,
     };
 
@@ -77,7 +78,12 @@ const clientTmi = (
 
     if (!user) return;
 
-    await botStatisticDatabase.saveMessageToDatabase(user._id, message);
+    await botStatisticDatabase.saveMessageToDatabase({
+      owner: user._id,
+      message: message,
+      date: new Date(),
+      ownerUsername: userData.username,
+    });
     await botStatisticDatabase.updateUserStatistics(user._id);
 
     if (self) return; //echoed msg from bot
