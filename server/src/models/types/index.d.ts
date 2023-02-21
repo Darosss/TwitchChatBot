@@ -78,6 +78,8 @@ export interface IConfig {
   activeUserTimeDelay: number;
   chatGamesIntervalDelay: number;
   minActiveUsersThreshold: number;
+  intervalCheckChatters: number;
+  intervalCheckViewersPeek: number;
   permissionLevels: {
     broadcaster: number;
     mod: number;
