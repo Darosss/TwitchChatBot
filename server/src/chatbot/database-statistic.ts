@@ -29,6 +29,7 @@ import {
   updateTwitchSessionById,
 } from "@services/TwitchSession";
 import addFollowersTemp from "./add-followers-temp";
+import { MessageCreateData } from "@services/Message/types/Message";
 
 interface BotStatsticOptions {
   config: IConfigDocument;
@@ -236,12 +237,10 @@ class BotStatisticDatabase {
     );
   }
 
-  async saveMessageToDatabase(senderId: string, message: string) {
+  async saveMessageToDatabase(messageData: MessageCreateData) {
     try {
       const newMessage = await createMessage({
-        message: message,
-        date: new Date(),
-        owner: senderId,
+        messageData,
       });
     } catch (err) {
       //TODO: logs to file
