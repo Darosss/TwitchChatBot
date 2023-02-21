@@ -53,6 +53,14 @@ function App() {
               }
             ></Route>
             <Route
+              path="twitch-sessions/:sessionId"
+              element={
+                <div className="main-other">
+                  <>TEWTICH SESION </>
+                </div>
+              }
+            ></Route>
+            <Route
               path="messages/:userId"
               element={
                 <div className="main-other">
