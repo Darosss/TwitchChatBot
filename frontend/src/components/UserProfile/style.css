@@ -33,7 +33,7 @@
 }
 
 .small-details.small > div > div:first-child:hover {
-  background-color: var(--base-bg-color);
+  background-color: var(--base-bg-color-border);
 }
 
 .large-details {
