@@ -9,13 +9,11 @@ td.message-time {
 
 td.message-username {
   color: var(--base-color-username-message);
-  width: 10%;
-  overflow-x: auto;
-  overflow-y: hidden;
+  width: 15%;
 }
 
 td.message {
   color: var(--base-color-message);
   overflow-y: auto;
-  width: 80%;
+  width: 70%;
 }

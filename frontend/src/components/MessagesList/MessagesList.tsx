@@ -34,7 +34,10 @@ const MessagesDetails = ({ messages }: MessagesDetailsProp) => (
 
             <td className="message-username">
               <a href={`${"link"}` + message.owner._id}>
-                {message.owner.username}
+                <div className="tooltip">
+                  {message.owner.username}
+                  <span className="tooltiptext">{message.ownerUsername}</span>
+                </div>
               </a>
             </td>
             <td className="message" colSpan={4}>
