@@ -8,7 +8,7 @@ export interface IUser {
   updatedAt: Date;
   privileges: number;
   points?: number;
-  lastSeen: Date;
+  lastSeen?: Date;
   messageCount?: number;
   notes?: string[];
   twitchName?: string;
