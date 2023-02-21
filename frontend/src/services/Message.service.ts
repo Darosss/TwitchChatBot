@@ -6,6 +6,7 @@ export interface IMessage {
   message: string;
   date: Date;
   owner: IUser;
+  ownerUsername: string;
 }
 interface FirstAndLatestMsgs {
   firstMessages: IMessage[];
