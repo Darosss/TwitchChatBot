@@ -30,6 +30,7 @@ export default function TwitchSessions() {
             <tr>
               <th>Messages</th>
               <th>Redemptions</th>
+              <th>Session</th>
               <th>Titles</th>
               <th>Start date</th>
               <th>End date</th>
@@ -49,6 +50,11 @@ export default function TwitchSessions() {
                   <td>
                     <Link to={`../redemptions/twitch-session/${session._id}`}>
                       Redemptions
+                    </Link>
+                  </td>
+                  <td>
+                    <Link to={`../twitch-sessions/${session._id}`}>
+                      Session profile
                     </Link>
                   </td>
                   <td>{session.sessionTitles.join(", ")}</td>
