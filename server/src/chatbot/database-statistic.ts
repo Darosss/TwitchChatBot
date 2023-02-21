@@ -24,6 +24,11 @@ import {
   getChatCommands,
   getOneChatCommand,
 } from "@services/ChatCommand";
+import {
+  getCurrentTwitchSession,
+  updateTwitchSessionById,
+} from "@services/TwitchSession";
+import addFollowersTemp from "./add-followers-temp";
 
 interface BotStatsticOptions {
   config: IConfigDocument;
@@ -58,13 +63,29 @@ class BotStatisticDatabase {
     this.triggersOnDelay = new Map();
     this.socketIO = socketIO;
   }
-
+  // private async debugFollows() {
+  //   const follows = await this.twitchApi.users.getFollows({
+  //     followedUser: 147192097,
+  //     limit: 100,
+  //   });
+  //   await addFollowersTemp(follows.data);
+  // }
   public async init() {
     const broadcasterId = (await this.twitchApi.users.getMe()).id;
 
-    setInterval(async () => {
+    /* TODO: when get followers will be updated */
+    // await this.updateEveryUserTwitchDetails(broadcasterId);
+
+    /* DEBUG: Add all followers from given id  */
+    // this.debugFollows();
+    /* DEBUG: Add all followers from given id  */
+    setTimeout(async () => {
       await this.checkChatters(broadcasterId);
     }, this.config.intervalCheckChatters);
+
+    setTimeout(async () => {
+      await this.checkCountOfViewers(broadcasterId);
+    }, this.config.intervalCheckViewersPeek);
 
     await this.getAllTrigersWordsFromDB();
     await this.getAllCommandWords();
@@ -121,6 +142,22 @@ class BotStatisticDatabase {
     }
     usersBefore = usersNow;
     usersNow.clear();
+  }
+
+  async checkCountOfViewers(broadcasterId: string) {
+    const currentSession = await getCurrentTwitchSession({});
+    const streamInfo = await this.twitchApi.streams.getStreamByUserId(
+      broadcasterId
+    );
+    if (!currentSession || !streamInfo) return;
+
+    const viewersPeek = new Map<string, number>();
+    viewersPeek.set(String(new Date().getTime()), streamInfo.viewers);
+    const timestamp = Date.now();
+
+    updateTwitchSessionById(currentSession.id, {
+      $set: { [`viewers.${timestamp}`]: streamInfo.viewers },
+    });
   }
 
   async updateEveryUserTwitchDetails(broadcasterId: string) {
