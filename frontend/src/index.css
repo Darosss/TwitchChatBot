@@ -89,6 +89,11 @@ button {
   color: var(--base-color-message);
 }
 
+textarea:focus,
+input:focus {
+  background-color: rgba(75, 72, 72, 0.446);
+}
+
 /* DEFAULTS TABLES */
 table {
   width: 99vw;
