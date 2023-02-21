@@ -40,6 +40,7 @@ export default function UserProfile() {
   const saveNote = () => {
     fetchEditUser().then(() => {
       refetchData();
+      setIsEditingNotes(false);
     });
   };
 
@@ -55,145 +56,126 @@ export default function UserProfile() {
       </>
     );
   if (!userData || !msgsData || msgLoading || loading) return <>Loading</>;
-
+  const { data } = userData;
+  console.log(data);
   return (
     <>
       <PreviousPage />
-
-      <table className="profile-details">
-        <tbody>
-          <tr>
-            <td>
-              <Link className="user-details-btn" to={`../messages/${userId}`}>
-                Messages
-              </Link>
-
-              <Link
-                className="user-details-btn"
-                to={`../redemptions/${userId}`}
-              >
-                Redemptions
-              </Link>
-            </td>
-          </tr>
-          <tr>
-            <th>Username</th>
-            <td>{userData.data.username}</td>
-            <th>Display name</th>
-            <td>{userData.data.userDisplayName}</td>
-          </tr>
-          <tr>
-            <th>Messages</th>
-            <td>{userData.data.messageCount?.toLocaleString() || "0"}</td>
-            <th>Points</th>
-            <td>{userData.data.points?.toLocaleString() || ""}</td>
-          </tr>
-          <tr>
-            <th>Created</th>
-            <td>
-              <div className="tooltip">
-                {formatDate(userData.data.createdAt, "days+time")}
-                <span className="tooltiptext">
-                  {formatDate(userData.data.createdAt)}
-                </span>
-              </div>
-            </td>
-            <th>Follower</th>
-            <td colSpan={3}>
-              {userData.data.follower ? (
-                <div className="tooltip">
-                  {formatDate(userData.data.follower, "days+time")}
-                  <span className="tooltiptext">
-                    {formatDate(userData.data.follower)}
-                  </span>
-                </div>
-              ) : (
-                "False"
-              )}
-            </td>
-          </tr>
-          <tr>
-            <th className="profile-details-notes">
-              Notes
-              <button
-                onClick={showEdit}
-                className="user-details-btn float-right"
-              >
-                Edit
-              </button>
-            </th>
-            <td colSpan={5}>
-              {!isEditingNotes ? (
-                <ul className="notes-list">
-                  {userData.data.notes?.map((note, ind) => {
-                    return <li key={ind}>{note}</li>;
-                  })}
-                </ul>
-              ) : (
-                <>
-                  <textarea
-                    className="textarea-edit"
-                    defaultValue={userData.data.notes?.join("\n")}
-                    onChange={(e) => setNotes(e.target.value)}
-                  />
-                  <button
-                    className="user-details-btn"
-                    style={{ width: "20vw" }}
-                    onClick={saveNote}
-                  >
-                    Save
+      <div className="profile-details-wrapper">
+        <div className="user-details small-details small">
+          <div className="nested-detail">
+            <div>Username:</div> <div>{data.username}</div>
+          </div>
+          <div className="nested-detail">
+            <div>First seen:</div>
+            <div>{formatDate(data.createdAt, "days+time")}</div>
+          </div>
+          <div className="nested-detail">
+            <div>Last seen:</div>
+            <div>
+              {data.lastSeen ? formatDate(data.lastSeen, "days+time") : null}
+            </div>
+          </div>
+        </div>
+        <div className="twitch-details small-details small">
+          <div className="nested-detail">
+            <div>Twitch name:</div> <div>{data.twitchName}</div>
+          </div>
+          <div className="nested-detail">
+            <div>Twitch created:</div>
+            <div>
+              {data.twitchCreated
+                ? formatDate(data.twitchCreated, "days+time")
+                : null}
+            </div>
+          </div>
+          <div className="nested-detail">
+            <div>Follow:</div>
+            <div>
+              {data.follower ? formatDate(data.follower, "days+time") : null}
+            </div>
+          </div>
+        </div>
+        <div className="messages-points-details small-details small">
+          <div className="nested-detail">
+            <div>Messages:</div>
+            <div>{data.messageCount}</div>
+          </div>
+          <div className="nested-detail">
+            <div>Points:</div>
+            <div>{data.points}</div>
+          </div>
+        </div>
+        <div className="notes-details small-details large">
+          <div className="nested-detail">
+            <div>
+              <ul>
+                <li className="edit-notes-btn-list">
+                  <button onClick={showEdit} className="user-details-btn">
+                    Edit
                   </button>
-                </>
-              )}
-            </td>
-          </tr>
-          <tr>
-            <th>
-              First / Last <br /> Messages
-            </th>
-            <td colSpan={5}>
-              <div className="profile-user-messages">
-                <div className="profile-first-messages profile-user-messages-inner">
-                  {msgsData.data.firstMessages.map((msg) => {
-                    return (
-                      <Message
-                        key={msg._id}
-                        date={msg.date}
-                        username={msg.owner.username}
-                        message={msg.message}
-                      />
-                    );
-                  })}
-                </div>
-                <div className="profile-last-messages profile-user-messages-inner">
-                  {msgsData.data.latestMessages.map((msg) => {
-                    return (
-                      <Message
-                        key={msg._id}
-                        date={msg.date}
-                        username={msg.owner.username}
-                        message={msg.message}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th>Zjeb</th>
-            <td colSpan={3}>soon</td>
-          </tr>
-          <tr>
-            <th>Times seen</th>
-            <td colSpan={3}>soon</td>
-          </tr>
-          <tr>
-            <th>Categories</th>
-            <td colSpan={3}>soon</td>
-          </tr>
-        </tbody>
-      </table>
+                </li>
+                {data.notes?.map((note, index) => {
+                  return <li key={index}>{note}</li>;
+                })}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div className="latest-messages-details large-details">
+          <div className="profile-user-messages">
+            <div className="profile-first-messages profile-user-messages-inner">
+              <div className="profile-messages-header"> First messages</div>
+              {msgsData.data.firstMessages.map((msg) => {
+                return (
+                  <Message
+                    key={msg._id}
+                    date={msg.date}
+                    username={msg.owner.username}
+                    message={msg.message}
+                  />
+                );
+              })}
+            </div>
+
+            <div className="profile-last-messages profile-user-messages-inner">
+              <div className="profile-messages-header"> Latest messages</div>
+              {msgsData.data.latestMessages.map((msg) => {
+                return (
+                  <Message
+                    key={msg._id}
+                    date={msg.date}
+                    username={msg.owner.username}
+                    message={msg.message}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        {isEditingNotes ? (
+          <div className="notes-graphs-details large-details">
+            <div className="nested-detail">
+              <textarea
+                className="textarea-edit"
+                defaultValue={userData.data.notes?.join("\n")}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+              <button className="user-details-btn small" onClick={saveNote}>
+                Save
+              </button>
+            </div>
+            <div className="nested-detail"></div>
+          </div>
+        ) : null}
+        <div
+          className={`${
+            isEditingNotes ? "graphs-details" : "notes-graphs-details"
+          } large-details`}
+        >
+          GRAPHS
+        </div>
+      </div>
     </>
   );
 }

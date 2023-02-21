@@ -1,13 +1,104 @@
+.profile-details-wrapper {
+  font-size: 2vmin;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(9, 11vh);
+}
+
+.wrapper div {
+  border-radius: 0.2rem;
+}
+
+.small-details.small > div {
+  border: 0.1rem solid var(--base-bg-color-border);
+  display: flex;
+}
+
+.small-details.small > div > div {
+  width: 50%;
+  height: 5vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.small-details.small > div > div:first-child {
+  font-weight: 700;
+  border-right: 0.1rem solid var(--base-bg-color);
+  user-select: none; /* supported by Chrome and Opera */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+}
+
+.small-details.small > div > div:first-child:hover {
+  background-color: var(--base-bg-color);
+}
+
+.large-details {
+  overflow: auto;
+  border: 1px solid black;
+  display: flex;
+}
+
+.small-details {
+  grid-row-start: 1;
+  grid-row-end: 3;
+  overflow-y: auto;
+}
+
+.user-details {
+  grid-column-start: 1;
+  grid-column-end: 2;
+}
+
+.twitch-details {
+  grid-column-start: 2;
+  grid-column-end: 3;
+}
+
+.messages-points-details {
+  grid-column-start: 3;
+  grid-column-end: 3;
+}
+
+.notes-details {
+  grid-column-start: 4;
+  grid-column-end: 4;
+  grid-row-end: 5;
+}
+
+.latest-messages-details {
+  grid-column-start: 1;
+  grid-column-end: 4;
+  grid-row-start: 3;
+  grid-row-end: 5;
+}
+
+.notes-graphs-details {
+  grid-column-start: 1;
+  grid-column-end: 5;
+  grid-row-start: 5;
+  grid-row-end: 7;
+}
+
+.graphs-details {
+  grid-column-start: 1;
+  grid-column-end: 5;
+  grid-row-start: 7;
+  grid-row-end: 9;
+}
+
 .user-details-btn {
   display: inline-block;
-  width: 40%;
+  width: 90%;
   font-size: 1rem;
   padding: 0.3rem;
   background-color: var(--base-bg-color-border);
   color: var(--base-color-link);
   font-weight: 700;
   border: 0.1rem solid;
-  border-top: 0.1rem solid black;
   overflow: hidden;
 }
 
@@ -16,46 +107,20 @@
   color: var(--base-bg-color-border);
 }
 
-.profile-details {
-  width: 100vw;
-}
-
-.profile-details tr td:first-child {
-  width: 20vw;
-}
-
-.profile-details td {
-  border-top: 0.1rem solid var(--base-bg-color-border);
-}
-
-.profile-details th {
-  color: var(--base-color-info);
-  border: 0.3rem solid var(--base-bg-color-border);
-  border-radius: 0.2rem;
-}
-
-.profile-details td:not(:first-child) {
-  border-left: 0.1rem solid var(--base-bg-color-border);
+.edit-notes-btn-list {
+  list-style: none;
+  margin-left: -10%;
 }
 
 .textarea-edit {
-  font-size: 1.1rem;
-  height: 20vh;
-  width: 70%;
-
-  float: left;
-}
-
-.notes-list {
-  overflow-y: auto;
-  width: 90%;
-  text-align: left;
-  max-height: 25vh;
-  font-size: 1.2rem;
+  font-size: 1rem;
+  width: 70vw;
+  height: 15vh;
 }
 
 .profile-user-messages {
   width: 100%;
+  display: flex;
 }
 
 .profile-user-messages .profile-user-messages-inner {
@@ -67,14 +132,13 @@
   text-align: left;
 }
 
-.profile-user-messages div:last-child {
-  border-left: 0.1rem solid var(--base-bg-color-border);
-}
-
-.profile-first-messages {
-  float: left;
-}
-
-.profile-last-messages {
-  float: right;
+.profile-messages-header {
+  background-color: var(--base-bg-color);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.3rem;
+  color: var(--base-color-info);
 }
