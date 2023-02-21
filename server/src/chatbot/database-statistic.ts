@@ -25,29 +25,32 @@ import {
   getOneChatCommand,
 } from "@services/ChatCommand";
 
-class BotStatisticDatabase {
+interface BotStatsticOptions {
   config: IConfigDocument;
-  commandsWords: string[];
   twitchApi: ApiClient;
-  triggerWords: string[];
-  triggersOnDelay: Map<string, NodeJS.Timeout>;
   socketIO: Server<
     ClientToServerEvents,
     ServerToClientEvents,
     InterServerEvents,
     SocketData
   >;
+}
 
-  constructor(
-    twitchApi: ApiClient,
-    config: IConfigDocument,
-    socketIO: Server<
-      ClientToServerEvents,
-      ServerToClientEvents,
-      InterServerEvents,
-      SocketData
-    >
-  ) {
+class BotStatisticDatabase {
+  private config: IConfigDocument;
+  private commandsWords: string[];
+  private twitchApi: ApiClient;
+  private triggerWords: string[];
+  private triggersOnDelay: Map<string, NodeJS.Timeout>;
+  private socketIO: Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >;
+
+  constructor(options: BotStatsticOptions) {
+    const { twitchApi, config, socketIO } = options;
     this.twitchApi = twitchApi;
     this.config = config;
     this.commandsWords = [];
@@ -59,19 +62,10 @@ class BotStatisticDatabase {
   public async init() {
     const broadcasterId = (await this.twitchApi.users.getMe()).id;
 
-    /* TODO: when get followers will be updated */
-    // await this.updateEveryUserTwitchDetails(broadcasterId);
-
-    /* DEBUG: Add all followers from given id  */
-    // const follows = await this.twitchApi.users.getFollows({
-    //   followedUser: 147192097,
-    //   limit: 100,
-    // });
-    // await addFollowersTemp(follows.data);
-    /* DEBUG: Add all followers from given id  */
-    setTimeout(async () => {
+    setInterval(async () => {
       await this.checkChatters(broadcasterId);
-    }, 150000);
+    }, this.config.intervalCheckChatters);
+
     await this.getAllTrigersWordsFromDB();
     await this.getAllCommandWords();
   }
@@ -94,7 +88,12 @@ class BotStatisticDatabase {
       // const userDB = await this.isUserInDB(userName);
       const userDB = await createUserIfNotExist(
         { twitchName: userName },
-        { username: userDisplayName, twitchId: userId, twitchName: userName }
+        {
+          username: userDisplayName,
+          twitchId: userId,
+          twitchName: userName,
+          privileges: 0,
+        }
       );
       if (!usersBefore.has(userName) && userDB) {
         this.socketIO.emit(
