@@ -23,6 +23,7 @@ export interface IMessage {
   message: string;
   date: Date;
   owner: string | IUser;
+  ownerUsername: string;
 }
 
 export type IMessageDocument = IMessage & Document;
