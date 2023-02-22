@@ -33,9 +33,9 @@
 }
 
 .widget-wrapper-small {
-  width: 80vw;
+  width: 95vw;
   max-width: 95vw;
-  height: 20vh;
+  height: 33vh;
   min-height: 20vh;
   overflow-x: auto;
 }
