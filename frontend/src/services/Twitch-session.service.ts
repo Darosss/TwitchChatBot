@@ -7,6 +7,7 @@ export interface ITwitchSession {
   sessionTitles: string[];
   categories: string[];
   tags: string[];
+  viewers: Map<string, number>;
 }
 
 export interface TopMsgsUsers {
@@ -41,10 +42,16 @@ const getSessions = () => {
   });
 };
 
+const getSessionById = (sessionId: string) => {
+  return useAxiosCustom<ResponseData<ITwitchSession>>({
+    url: `/twitch-sessions/${sessionId}`,
+  });
+};
+
 const getSessionStatistics = () => {
   return useAxiosCustom<{ data: ITwitchSessionStatistics }>({
     url: `/twitch-sessions/current-session/statistics`,
   });
 };
 
-export default { getSessions, getSessionStatistics };
+export default { getSessions, getSessionStatistics, getSessionById };
