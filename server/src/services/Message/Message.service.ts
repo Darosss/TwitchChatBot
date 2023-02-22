@@ -2,7 +2,6 @@ import { Message } from "@models/message.model";
 import { IMessageDocument } from "@models/types";
 import { FilterQuery } from "mongoose";
 import { ManyMessageFindOptions, MessageCreateData } from "./types/Message";
-
 export const getMessages = async (
   filter: FilterQuery<IMessageDocument> = {},
   messageFindOptions: ManyMessageFindOptions
@@ -43,15 +42,14 @@ export const getMessagesCount = async (
 
 export const getMostActiveUsersByMsgs = async (
   limit: number = 3,
-  startDate?: Date,
+  startDate: Date,
   endDate?: Date
 ) => {
+  const messageFilter = dateRangeMessageFilter(startDate, endDate, 5);
+
   const activeUsers = await Message.aggregate([
     {
-      $match: {
-        ...(startDate &&
-          endDate && { date: { $gte: startDate, $lt: endDate } }),
-      },
+      $match: messageFilter,
     },
     { $group: { _id: "$owner", messageCount: { $sum: 1 } } },
     {
@@ -81,17 +79,13 @@ export const getMostActiveUsersByMsgs = async (
 
 export const getMostUsedWord = async (
   limit: number = 3,
-  startDate?: Date,
+  startDate: Date,
   endDate?: Date
 ) => {
+  const messageFilter = dateRangeMessageFilter(startDate, endDate, 5);
   const mostUsedWords = await Message.aggregate([
     {
-      $match: {
-        ...(startDate &&
-          endDate && {
-            date: { $gte: startDate, $lt: endDate },
-          }),
-      },
+      $match: messageFilter,
     },
     { $project: { words: { $split: ["$message", " "] } } },
     { $unwind: "$words" },
@@ -106,4 +100,25 @@ export const getMostUsedWord = async (
   ]);
 
   return mostUsedWords;
+};
+
+const dateRangeMessageFilter = (
+  startDate: Date,
+  endDate?: Date,
+  additionalHours = 3
+) => {
+  if (endDate)
+    return {
+      date: { $gte: startDate, $lt: endDate },
+    };
+
+  const customEndDate = new Date(startDate).setHours(
+    startDate.getHours() + additionalHours
+  );
+  return {
+    date: {
+      $gte: startDate,
+      $lt: new Date(customEndDate),
+    },
+  };
 };
