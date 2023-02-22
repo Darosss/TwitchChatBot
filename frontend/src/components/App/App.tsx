@@ -15,6 +15,7 @@ import RedemptionsList from "@components/RedemptionsList";
 import CommandsList from "@components/CommandsList";
 import ConfigsList from "@components/ConfigsList";
 import TriggersList from "@components/TriggersList";
+import TwitchSessionDetail from "@components/TwitchSessionDetail";
 
 function App() {
   return (
@@ -56,7 +57,7 @@ function App() {
               path="twitch-sessions/:sessionId"
               element={
                 <div className="main-other">
-                  <>TEWTICH SESION </>
+                  <TwitchSessionDetail />
                 </div>
               }
             ></Route>
