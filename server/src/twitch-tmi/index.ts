@@ -14,7 +14,7 @@ import { createUserIfNotExist } from "@services/User";
 require("dotenv").config();
 
 const clientTmi = (
-  socket: Server<
+  io: Server<
     ClientToServerEvents,
     ServerToClientEvents,
     InterServerEvents,
@@ -48,13 +48,8 @@ const clientTmi = (
       },
     },
   });
-  // const botLogObj = new BotLog(userNameToListen);
-  // const botTimerObj = new BotTimer(client, bot_commands);
 
-  client.on("connected", () => {
-    console.log("CONNECTED - I set the intervals now");
-    // botTimerObj.initOnJoinToChannel(userNameToListen);
-  });
+  client.on("connected", () => {});
 
   client.on("disconnected", () => {
     console.log("DISCONNECTED - clearing interval");
@@ -69,10 +64,7 @@ const clientTmi = (
       privileges: 0,
     };
 
-    socket.emit("messageServer", new Date(), userData.username, message); // emit for socket
-
-    // botLogObj.countMessages(channelName, senderName);
-    // botLogObj.logMessages(channelName, senderName, message);
+    io.emit("messageServer", new Date(), userData.username, message); // emit for socket
 
     const user = await createUserIfNotExist(userData, userData);
 
