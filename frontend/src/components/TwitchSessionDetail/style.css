@@ -83,3 +83,7 @@
 .session-graphs-details > div > div {
   height: 40vh;
 }
+
+.session-detail-ul {
+  list-style: none;
+}

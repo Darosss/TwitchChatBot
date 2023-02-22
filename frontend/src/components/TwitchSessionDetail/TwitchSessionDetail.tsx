@@ -20,7 +20,6 @@ export default function TwitchSessionDetail() {
   if (!sessionData || loading) return <>Loading!</>;
 
   const { data } = sessionData;
-  console.log(sessionData.data);
   return (
     <>
       <PreviousPage />
@@ -38,9 +37,14 @@ export default function TwitchSessionDetail() {
           <div className="nested-detail">
             <div className="session-detail-header">Titles:</div>
             <div className="nested-detail">
-              <ul>
-                {data.sessionTitles.map((title, index) => {
-                  return <li key={index}>{title}</li>;
+              <ul className="session-detail-ul">
+                {Object.keys(data.sessionTitles).map((timestamp, index) => {
+                  return (
+                    <li key={index}>
+                      {formatDate(timestamp, "time")}:
+                      {data.sessionTitles[timestamp]}
+                    </li>
+                  );
                 })}
               </ul>
             </div>
@@ -51,9 +55,14 @@ export default function TwitchSessionDetail() {
           <div className="nested-detail">
             <div className="session-detail-header">Categories:</div>
             <div className="nested-detail">
-              <ul>
-                {data.categories.map((category, index) => {
-                  return <li key={index}>{category}</li>;
+              <ul className="session-detail-ul">
+                {Object.keys(data.categories).map((timestamp, index) => {
+                  return (
+                    <li key={index}>
+                      {formatDate(timestamp, "time")}:
+                      {data.categories[timestamp]}
+                    </li>
+                  );
                 })}
               </ul>
             </div>
@@ -64,22 +73,12 @@ export default function TwitchSessionDetail() {
           <div className="nested-detail">
             <div className="nested-detail">
               <SlideShow styleWrapper={{ width: "37vmax" }}>
-                <LineChart
-                  data={data.viewers}
-                  chartOptions={{ title: "Viewers peek", label: "viewers" }}
-                />
-                <LineChart
-                  data={data.viewers}
-                  chartOptions={{ title: "Viewers peek", label: "viewers" }}
-                />
-                <LineChart
-                  data={data.viewers}
-                  chartOptions={{ title: "Viewers peek", label: "viewers" }}
-                />
-                <LineChart
-                  data={data.viewers}
-                  chartOptions={{ title: "Viewers peek", label: "viewers" }}
-                />
+                {data.viewers ? (
+                  <LineChart
+                    data={data.viewers}
+                    chartOptions={{ title: "Viewers peek", label: "viewers" }}
+                  />
+                ) : null}
               </SlideShow>
             </div>
           </div>
