@@ -80,10 +80,12 @@ const eventSub = async (
       console.log(`${e.broadcasterDisplayName} just went live!`);
       e.getStream()
         .then(async (stream) => {
+          const timestampUpdateStream = e.startDate.getTime().toString();
+
           const newTwitchSession = await createTwitchSession({
             sessionStart: e.startDate,
-            sessionTitles: [stream.title],
-            categories: [stream.gameName],
+            sessionTitles: new Map([[timestampUpdateStream, stream.title]]),
+            categories: new Map([[timestampUpdateStream, stream.gameName]]),
           });
 
           onUpdateStreamDetails(newTwitchSession.id);
@@ -103,8 +105,13 @@ const eventSub = async (
   const onUpdateStreamDetails = async (sessionId: string) => {
     return await listener.subscribeToChannelUpdateEvents(userId, async (e) => {
       console.log("Stream details has been updated");
+      const timestamp = Date.now();
+
       await updateTwitchSessionById(sessionId, {
-        $push: { categories: e.categoryName, sessionTitles: e.streamTitle },
+        $set: {
+          [`categories.${timestamp}`]: e.categoryName,
+          [`sessionTitles.${timestamp}`]: e.streamTitle,
+        },
       });
     });
   };
