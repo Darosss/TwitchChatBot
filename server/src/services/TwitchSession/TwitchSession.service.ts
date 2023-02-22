@@ -102,7 +102,9 @@ export const getTwitchSessionStatistics = async (
     sessionEnd
   );
   const topActiveUsersByRedemptions = await getMostActiveUsersByRedemptions(
-    limitTopRedemptionsUsers
+    limitTopRedemptionsUsers,
+    sessionStart,
+    sessionEnd
   );
 
   const topUsedWords = await getMostUsedWord(
