@@ -63,7 +63,15 @@ export default function TwitchSessionDetail() {
         <div className="session-graphs-details session-large-details">
           <div className="nested-detail">
             <div className="nested-detail">
-              <SlideShow>
+              <SlideShow styleWrapper={{ width: "37vmax" }}>
+                <LineChart
+                  data={data.viewers}
+                  chartOptions={{ title: "Viewers peek", label: "viewers" }}
+                />
+                <LineChart
+                  data={data.viewers}
+                  chartOptions={{ title: "Viewers peek", label: "viewers" }}
+                />
                 <LineChart
                   data={data.viewers}
                   chartOptions={{ title: "Viewers peek", label: "viewers" }}
