@@ -1,27 +1,36 @@
-const formatDate = (date: Date, format?: "date" | "time" | "days+time") => {
+const formatDate = (
+  date: Date | string,
+  format?: "date" | "time" | "days+time"
+) => {
   let formatedDate = "";
+  let dateInternal =
+    typeof date === "string" && isNaN(Number(date))
+      ? new Date(date).toISOString()
+      : !isNaN(Number(date))
+      ? new Date(Number(date)).toISOString()
+      : date;
 
   switch (format) {
     case "date":
-      formatedDate = date?.toString().split("T")[0];
+      formatedDate = dateInternal?.toString().split("T")[0];
       break;
 
     case "time":
-      formatedDate = date?.toString().split("T")[1].split(".")[0];
+      formatedDate = dateInternal?.toString().split("T")[1].split(".")[0];
       break;
 
     case "days+time":
-      formatedDate = daysAndHoursAgoFormat(date);
+      formatedDate = daysAndHoursAgoFormat(dateInternal);
       break;
 
     default:
-      formatedDate = date?.toString().replace("T", " ").split(".")[0];
+      formatedDate = dateInternal?.toString().replace("T", " ").split(".")[0];
   }
 
   return String(formatedDate);
 };
 
-const daysAndHoursAgoFormat = (date: Date) => {
+const daysAndHoursAgoFormat = (date: Date | string) => {
   let formated = "";
   const seconds = Math.floor(
     (new Date().getTime() - new Date(date).getTime()) / 1000
@@ -38,7 +47,6 @@ const daysAndHoursAgoFormat = (date: Date) => {
   } else {
     formated += `today`;
   }
-
   formated += ` ${date?.toString().split("T")[1].split(".")[0]}`;
   return formated;
 };
