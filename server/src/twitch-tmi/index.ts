@@ -49,7 +49,14 @@ const clientTmi = (
     },
   });
 
-  client.on("connected", () => {});
+  client.on("connected", () => {
+    io.on("connect", (socket) => {
+      socket.on("messageClient", (message) => {
+        client.say(userNameToListen, message);
+        //after connect to client add listen to messageClient event when user connects to socket
+      });
+    });
+  });
 
   client.on("disconnected", () => {
     console.log("DISCONNECTED - clearing interval");
