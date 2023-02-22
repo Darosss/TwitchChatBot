@@ -4,9 +4,18 @@ import { ITwitchSessionDocument } from "./types";
 const TwitchSessionSchema: Schema<ITwitchSessionDocument> = new Schema({
   sessionStart: { type: Date, required: true, default: new Date() },
   sessionEnd: { type: Date },
-  sessionTitles: { type: [String] },
-  categories: { type: [String] },
-  tags: { type: [String] },
+  sessionTitles: {
+    type: Map,
+    of: String,
+  },
+  categories: {
+    type: Map,
+    of: String,
+  },
+  tags: {
+    type: Map,
+    of: String,
+  },
   viewers: {
     type: Map,
     of: Number,
