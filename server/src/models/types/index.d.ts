@@ -48,9 +48,9 @@ export interface ITwitchSession {
   _id: string;
   sessionStart: Date;
   sessionEnd: Date;
-  sessionTitles: string[];
-  categories: string[];
-  tags: string[];
+  sessionTitles: Map<string, string>;
+  categories: Map<string, string>;
+  tags: Map<string, string>;
   viewers: Map<string, number>;
 }
 
