@@ -57,7 +57,7 @@ export default function TwitchSessions() {
                       Session profile
                     </Link>
                   </td>
-                  <td>{session.sessionTitles.join(", ")}</td>
+                  <td>{Object.values(session.sessionTitles)[0]}</td>
                   <td>
                     <div className="tooltip">
                       {formatDate(session.sessionStart, "days+time")}
@@ -74,8 +74,8 @@ export default function TwitchSessions() {
                       </span>
                     </div>
                   </td>
-                  <td>{session.tags.join(", ")}</td>
-                  <td>{session.categories.join(", ")}</td>
+                  <td>{session.tags ? Object.values(session.tags) : null}</td>
+                  <td>{Object.values(session.categories)[0]}</td>
                 </tr>
               );
             })}
