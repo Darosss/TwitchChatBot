@@ -239,9 +239,7 @@ class BotStatisticDatabase {
 
   async saveMessageToDatabase(messageData: MessageCreateData) {
     try {
-      const newMessage = await createMessage({
-        messageData,
-      });
+      const newMessage = await createMessage(messageData);
     } catch (err) {
       //TODO: logs to file
       // message to file
