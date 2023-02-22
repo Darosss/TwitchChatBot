@@ -6,6 +6,7 @@ import TwitchSessionService, {
   TopUsedWords,
 } from "src/services/Twitch-session.service";
 import LineChart from "@components/LineChart";
+import SlideShow from "@components/SlideShow";
 
 type SessionMessagesProps = {
   count: number;
@@ -64,8 +65,21 @@ export default function TwitchStatistics(props: { className?: string }) {
         <MostUsedWords words={data.topUsedWords} />
       </div>
 
-      <div>
-        <LineChart data={data.viewers} />
+      <div className="statistics-wrapper statistics-graph">
+        <SlideShow styleWrapper={{ width: "33vw" }}>
+          <LineChart
+            data={data.viewers}
+            chartOptions={{ title: "Viewers peek", label: "viewers" }}
+          />
+          <LineChart
+            data={data.viewers}
+            chartOptions={{ title: "Viewers peek", label: "viewers" }}
+          />
+          <LineChart
+            data={data.viewers}
+            chartOptions={{ title: "Viewers peek", label: "viewers" }}
+          />
+        </SlideShow>
       </div>
     </div>
   );
@@ -80,7 +94,6 @@ function SessionMessages({ count }: SessionMessagesProps) {
             <th>Session msgs</th>
           </tr>
         </thead>
-
         <tbody>
           <tr>
             <td> {count}</td>
