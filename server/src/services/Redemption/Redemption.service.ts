@@ -46,17 +46,13 @@ export const createRedemption = async (
 
 export const getMostActiveUsersByRedemptions = async (
   limit: number = 3,
-  startDate?: Date,
+  startDate: Date,
   endDate?: Date
 ) => {
+  const redemptionsFilter = dateRangeRedemptionFilter(startDate, endDate, 5);
   const activeUsers = await Redemption.aggregate([
     {
-      $match: {
-        ...(startDate &&
-          endDate && {
-            redemptionDate: { $gte: startDate, $lt: endDate },
-          }),
-      },
+      $match: redemptionsFilter,
     },
     {
       $group: {
@@ -87,4 +83,25 @@ export const getMostActiveUsersByRedemptions = async (
   ]);
 
   return activeUsers;
+};
+
+const dateRangeRedemptionFilter = (
+  startDate: Date,
+  endDate?: Date,
+  additionalHours = 3
+) => {
+  if (endDate)
+    return {
+      redemptionDate: { $gte: startDate, $lt: endDate },
+    };
+
+  const customEndDate = new Date(startDate).setHours(
+    startDate.getHours() + additionalHours
+  );
+  return {
+    redemptionDate: {
+      $gte: startDate,
+      $lt: new Date(customEndDate),
+    },
+  };
 };
