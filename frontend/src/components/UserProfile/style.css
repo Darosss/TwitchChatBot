@@ -5,7 +5,7 @@
   grid-template-rows: repeat(9, 11vh);
 }
 
-.wrapper div {
+.profile-details-wrapper div {
   border-radius: 0.2rem;
 }
 
