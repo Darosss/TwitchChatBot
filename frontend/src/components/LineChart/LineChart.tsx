@@ -10,7 +10,6 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import formatDate from "@utils/formatDate";
 
 ChartJS.register(
   CategoryScale,
@@ -22,7 +21,20 @@ ChartJS.register(
   Legend
 );
 
-export default function LineChart({ data }: { data: Map<string, number> }) {
+interface ChartOptions {
+  title: string;
+  label: string;
+}
+
+export default function LineChart({
+  data,
+  chartOptions,
+}: {
+  data: Map<string, number>;
+  chartOptions: ChartOptions;
+}) {
+  const { title, label: labelName } = chartOptions;
+
   const mapData = new Map(Object.entries(data));
   let labels = [];
   let dataLabel = [];
@@ -31,11 +43,24 @@ export default function LineChart({ data }: { data: Map<string, number> }) {
     dataLabel.push(value);
   }
 
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      title: {
+        display: true,
+        text: title,
+      },
+    },
+  };
+
   const dataChart = {
     labels,
     datasets: [
       {
-        label: "viewers",
+        label: labelName,
         data: dataLabel,
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
@@ -44,16 +69,3 @@ export default function LineChart({ data }: { data: Map<string, number> }) {
   };
   return <Line options={options} data={dataChart} />;
 }
-
-const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "top" as const,
-    },
-    title: {
-      display: true,
-      text: "Session viewers",
-    },
-  },
-};
