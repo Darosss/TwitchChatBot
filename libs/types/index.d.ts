@@ -15,7 +15,7 @@ interface ServerToClientEvents {
 }
 
 interface ClientToServerEvents {
-  messageClient: (date: Date, username: string, message: string) => void;
+  messageClient: (message: string) => void;
 }
 
 interface InterServerEvents {
@@ -33,10 +33,7 @@ interface ISoundData {
   rewardImage: string;
 }
 
-interface SocketData {
-  name: string;
-  age: number;
-}
+interface SocketData {}
 
 export {
   ClientToServerEvents,
