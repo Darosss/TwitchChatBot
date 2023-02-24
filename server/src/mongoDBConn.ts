@@ -1,49 +1,57 @@
-import { Config } from "./models/config.model";
+import { configExist, createNewConfig } from "@services/Configs";
 import mongoose, { ConnectOptions } from "mongoose";
-import { ChatCommand } from "./models/chat-command.model";
+import {
+  createChatCommand,
+  getChatCommandsCount,
+} from "./services/ChatCommand";
 
 const initMongoDataBase = async () => {
   mongoose.set("strictQuery", false);
 
-  await mongoose.connect(
-    process.env.DB_CONN_STRING as string,
-    { useNewUrlParser: true } as ConnectOptions
-  );
+  try {
+    await mongoose.connect(
+      process.env.DB_CONN_STRING as string,
+      { useNewUrlParser: true } as ConnectOptions
+    );
+  } catch (error) {
+    console.error("Failed to connect to database:", error);
+    process.exit(1);
+  }
+
+  await createDefaultConfigs();
+  await createDefaultCommands();
 };
 
-export const initDefaultsDB = async () => {
-  //If Config does not exist create new with default values
-  if ((await Config.count()) === 0) await new Config().save();
-
-  //If not commands are in DB, create defaults
-  defaultCommands();
+const createDefaultConfigs = async () => {
+  if (!(await configExist())) await createNewConfig();
 };
 
-const defaultCommands = async () => {
-  if ((await ChatCommand.countDocuments()) === 0) {
-    await new ChatCommand({
-      name: "messages",
-      messages: ["@{username}, your messages: {messageCount}"],
-      aliases: ["messages", "msgs", "msg"],
-      description: "Send information about user's message count",
-    }).save();
-
-    await new ChatCommand({
-      name: "points",
-      messages: ["@{username}, your points: {points}"],
-      aliases: ["pts", "points"],
-      description: "Send information about user's points",
-    }).save();
-
-    await new ChatCommand({
-      name: "example",
-      messages: [
-        "This is example command message 1",
-        "This is example command message 2",
-      ],
-      aliases: ["example", "exampleCommand"],
-      description: "Example command description",
-    }).save();
+const createDefaultCommands = async () => {
+  if ((await getChatCommandsCount()) === 0) {
+    const defaultCommands = [
+      {
+        name: "messages",
+        messages: ["@{username}, your messages: {messageCount}"],
+        aliases: ["messages", "msgs", "msg"],
+        description: "Send information about user's message count",
+      },
+      {
+        name: "points",
+        messages: ["@{username}, your points: {points}"],
+        aliases: ["pts", "points"],
+        description: "Send information about user's points",
+      },
+      {
+        name: "example",
+        messages: [
+          "This is example command message 1",
+          "This is example command message 2",
+        ],
+        aliases: ["example", "exampleCommand"],
+        description: "Example command description",
+      },
+    ];
+    await createChatCommand(defaultCommands);
   }
 };
 
