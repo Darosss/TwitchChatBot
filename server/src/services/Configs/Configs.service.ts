@@ -7,6 +7,14 @@ export const getConfigs = async () => {
   return configs;
 };
 
+export const configExist = async () => {
+  return await Config.exists({});
+};
+
+export const createNewConfig = async () => {
+  return await new Config().save();
+};
+
 export const updateConfigs = async (
   updateData: UpdateQuery<ConfigUpdateData>
 ) => {
