@@ -1,9 +1,6 @@
 import { configExist, createNewConfig } from "@services/Configs";
 import mongoose, { ConnectOptions } from "mongoose";
-import {
-  createChatCommand,
-  getChatCommandsCount,
-} from "./services/ChatCommand";
+import { createChatCommand, getChatCommandsCount } from "@services/ChatCommand";
 
 const initMongoDataBase = async () => {
   mongoose.set("strictQuery", false);
