@@ -52,7 +52,9 @@ export const getChatCommandsCount = async (
   return await ChatCommand.countDocuments(filter);
 };
 
-export const createChatCommand = async (createData: ChatCommandCreateData) => {
+export const createChatCommand = async (
+  createData: ChatCommandCreateData | ChatCommandCreateData[]
+) => {
   try {
     const chatCommand = await ChatCommand.create(createData);
     return chatCommand;
