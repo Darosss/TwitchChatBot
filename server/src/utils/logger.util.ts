@@ -39,7 +39,7 @@ const messageLoggerFormat = printf(({ message, timestamp }) => {
 });
 
 export const messageLogger = (channelName: string) => {
-  const dailyRotateFileTransport = new DailyRotateFile({
+  const messageTransport = new DailyRotateFile({
     filename: path.join(
       __dirname,
       `../data/${channelName}/%DATE%/messages.log`
@@ -55,6 +55,6 @@ export const messageLogger = (channelName: string) => {
       winston.format.prettyPrint(),
       messageLoggerFormat
     ),
-    transports: [dailyRotateFileTransport],
+    transports: [messageTransport],
   });
 };
