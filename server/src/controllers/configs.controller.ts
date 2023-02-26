@@ -1,22 +1,21 @@
+import Express, { NextFunction, Request, Response } from "express";
 import { getConfigs, updateConfigs } from "@services/Configs";
-import Express, { Request, Response } from "express";
 
-const getConfigsList = async (req: Request, res: Response) => {
+const getConfigsList = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const configs = await getConfigs();
 
-    if (!configs) {
-      return res.status(400).send({ message: "Couldn't get configs" });
-    }
     return res.status(200).send(configs);
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 
-const editConfigs = async (req: Request, res: Response) => {
+const editConfigs = async (req: Request, res: Response, next: NextFunction) => {
   const {
     commandsPrefix,
     timersIntervalDelay,
@@ -37,10 +36,8 @@ const editConfigs = async (req: Request, res: Response) => {
     });
 
     return res.status(200).send({ message: "Updated successfully" });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 

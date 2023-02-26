@@ -1,4 +1,4 @@
-import Express, { Request, Response } from "express";
+import Express, { NextFunction, Request, Response } from "express";
 import { IRequestTriggerQuery } from "@types";
 import { filterTriggersByUrlParams } from "./filters/triggers.filter";
 import {
@@ -11,7 +11,8 @@ import {
 
 const getTriggersList = async (
   req: Request<{}, {}, {}, IRequestTriggerQuery>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const { page = 1, limit = 50 } = req.query;
 
@@ -31,14 +32,16 @@ const getTriggersList = async (
       count: count,
       currentPage: Number(page),
     });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 
-const addNewTrigger = async (req: Request, res: Response) => {
+const addNewTrigger = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { name, chance, delay, words, messages, enabled = true } = req.body;
 
   try {
@@ -54,14 +57,16 @@ const addNewTrigger = async (req: Request, res: Response) => {
     return res
       .status(200)
       .send({ message: "Trigger added successfully", trigger: newTrigger });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 
-const editTriggerById = async (req: Request, res: Response) => {
+const editTriggerById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
   const { name, chance, delay, words, messages, enabled = true } = req.body;
 
@@ -79,27 +84,24 @@ const editTriggerById = async (req: Request, res: Response) => {
       message: "Trigger updated successfully",
       data: updatedTrigger,
     });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 
-const deleteTrigger = async (req: Request, res: Response) => {
+const deleteTrigger = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
 
   try {
     const deletedTrigger = await deleteTriggerById(id);
 
-    if (!deletedTrigger) {
-      return res.status(404).send({ message: "Trigger not found" });
-    }
     return res.status(200).send({ message: "Trigger deleted successfully" });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 

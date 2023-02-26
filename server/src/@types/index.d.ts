@@ -6,6 +6,7 @@ import {
   InterServerEvents,
   SocketData,
 } from "@libs/types";
+import { ParamsDictionary, Query } from "express-serve-static-core";
 
 declare global {
   namespace Express {
@@ -20,11 +21,11 @@ declare global {
   }
 }
 
-interface IRequestParams {
-  id?: string;
+interface IRequestParams extends ParamsDictionary {
+  id: string;
 }
 
-interface IRequestQuery {
+interface IRequestQuery extends Query {
   limit?: number;
   page?: number;
 }

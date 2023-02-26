@@ -1,10 +1,29 @@
 import { Config } from "@models/config.model";
+import { checkExistResource } from "@utils/checkExistResource.util";
+import { AppError, handleAppError } from "@utils/ErrorHandler.util";
+import { logger } from "@utils/logger.util";
 import { UpdateQuery } from "mongoose";
 
 export const getConfigs = async () => {
-  const configs = await Config.findOne({}).select({ __v: 0 });
+  try {
+    const configs = await Config.findOne({}).select({ __v: 0 });
+    if (!configs) {
+      await createNewConfig();
+      logger.error(
+        `Could not get configs: No configs found. Create default one`
+      );
 
-  return configs;
+      throw new AppError(
+        400,
+        "Couldn't get configs. Default configs should be accessible after refresh."
+      );
+    }
+
+    return configs;
+  } catch (err) {
+    logger.error(`Error occured while getting configs. ${err}`);
+    handleAppError(err);
+  }
 };
 
 export const configExist = async () => {
@@ -12,17 +31,27 @@ export const configExist = async () => {
 };
 
 export const createNewConfig = async () => {
-  return await new Config().save();
+  try {
+    return await Config.create();
+  } catch (err) {
+    logger.error(`Error occured while creating new configs. ${err}`);
+    handleAppError(err);
+  }
 };
 
 export const updateConfigs = async (
   updateData: UpdateQuery<ConfigUpdateData>
 ) => {
   try {
-    const config = await Config.findOneAndUpdate({}, updateData, { new: true });
-    return config;
+    const foundConfig = await Config.findOneAndUpdate({}, updateData, {
+      new: true,
+    });
+
+    const updatedConfigs = checkExistResource(foundConfig, "Configs");
+
+    return updatedConfigs;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to update configs");
+    logger.error(`Error occured while updating configs. ${err}`);
+    handleAppError(err);
   }
 };

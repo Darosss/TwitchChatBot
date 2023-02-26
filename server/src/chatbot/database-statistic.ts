@@ -167,6 +167,7 @@ class BotStatisticDatabase {
 
     const checkUsersTimer = setInterval(async () => {
       const usernames = await getTwitchNames(limit, limit * index);
+      if (!usernames) return;
 
       const usersTwitch = await retryWithCatch(() =>
         this.twitchApi.users.getUsersByNames(usernames.twitchNames)

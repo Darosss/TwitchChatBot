@@ -1,4 +1,4 @@
-import Express, { Request, Response } from "express";
+import Express, { NextFunction, Request, Response } from "express";
 import { IRequestCommandsQuery } from "@types";
 import { filterCommandsByUrlParams } from "./filters/commands.filter";
 import {
@@ -11,7 +11,8 @@ import {
 
 const getChatCommandsList = async (
   req: Request<{}, {}, {}, IRequestCommandsQuery>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const { page = 1, limit = 25 } = req.query;
 
@@ -24,21 +25,22 @@ const getChatCommandsList = async (
     });
 
     const count = await getChatCommandsCount(searchFilter);
-
     return res.status(200).send({
       data: chatCommands,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
     });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 
-const addNewCommand = async (req: Request, res: Response) => {
+const addNewCommand = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { name, description, enabled, aliases, messages, privilege } = req.body;
 
   try {
@@ -54,14 +56,16 @@ const addNewCommand = async (req: Request, res: Response) => {
     return res
       .status(201)
       .send({ message: "Added successfully", chatCommand: newChatCommand });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 
-const editChatCommandById = async (req: Request, res: Response) => {
+const editChatCommandById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
   const { name, description, enabled, aliases, messages, privilege } = req.body;
 
@@ -79,29 +83,26 @@ const editChatCommandById = async (req: Request, res: Response) => {
       message: "Updated successfully",
       chatCommand: updatedChatCommand,
     });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 
-const deleteCommandById = async (req: Request, res: Response) => {
+const deleteCommandById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
 
   try {
     const deletedChatCommand = await deleteChatCommandById(id);
 
-    if (!deletedChatCommand) {
-      return res.status(404).send({ message: "Chat command not found" });
-    }
-
     return res
       .status(200)
       .send({ message: "Chat command deleted successfully" });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 

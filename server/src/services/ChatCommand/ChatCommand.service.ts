@@ -1,5 +1,8 @@
 import { ChatCommand } from "@models/chat-command.model";
 import { IChatCommandDocument } from "@models/types";
+import { checkExistResource } from "@utils/checkExistResource.util";
+import { AppError, handleAppError } from "@utils/ErrorHandler.util";
+import { logger } from "@utils/logger.util";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
   ChatCommandCreateData,
@@ -19,30 +22,43 @@ export const getChatCommands = async (
     select = { __v: 0 },
   } = chatCommandsFindOptions;
 
-  const chatCommands = await ChatCommand.find(filter)
-    .limit(limit * 1)
-    .skip((skip - 1) * limit)
-    .select(select)
-    .sort(sort);
+  try {
+    const chatCommands = await ChatCommand.find(filter)
+      .limit(limit * 1)
+      .skip((skip - 1) * limit)
+      .select(select)
+      .sort(sort);
 
-  return chatCommands;
+    return chatCommands;
+  } catch (err) {
+    logger.error(`Error occured while getting chat commands: ${err}`);
+    throw new AppError(500);
+  }
 };
 
 export const getAllChatCommands = async () => {
-  const chatCommands = await ChatCommand.find({});
+  try {
+    const chatCommands = await ChatCommand.find({});
 
-  return chatCommands;
+    return chatCommands;
+  } catch (err) {
+    logger.error(`Error occured while getting all chat commands: ${err}`);
+    throw new AppError(500);
+  }
 };
 
 export const getOneChatCommand = async (
   filter: FilterQuery<IChatCommandDocument> = {}
 ) => {
   try {
-    const chatCommand = await ChatCommand.findOne(filter);
+    const foundChatCommand = await ChatCommand.findOne(filter);
+
+    const chatCommand = checkExistResource(foundChatCommand, "Chat command");
+
     return chatCommand;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to get chat command");
+    logger.error(`Error occured while getting all chat commands: ${err}`);
+    handleAppError(err);
   }
 };
 
@@ -56,11 +72,16 @@ export const createChatCommand = async (
   createData: ChatCommandCreateData | ChatCommandCreateData[]
 ) => {
   try {
-    const chatCommand = await ChatCommand.create(createData);
-    return chatCommand;
+    const createdCommand = await ChatCommand.create(createData);
+
+    if (!createdCommand) {
+      throw new AppError(400, "Couldn't create chat commands");
+    }
+
+    return createdCommand;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to create chat command");
+    logger.error(`Error occured while creating chat command(s): ${err}`);
+    handleAppError(err);
   }
 };
 
@@ -70,9 +91,21 @@ export const getChatCommandById = async (
 ) => {
   const { select = { __v: 0 } } = chatCommandFindOptions;
 
-  const chatCommand = await ChatCommand.findById(id).select(select);
+  try {
+    const foundChatCommand = await ChatCommand.findById(id).select(select);
 
-  return chatCommand;
+    const chatCommand = checkExistResource(
+      foundChatCommand,
+      `Chat command with id(${id})`
+    );
+
+    return chatCommand;
+  } catch (err) {
+    logger.error(
+      `Error occured while getting chat command with id(${id}): ${err}`
+    );
+    handleAppError(err);
+  }
 };
 
 export const updateChatCommandById = async (
@@ -80,13 +113,25 @@ export const updateChatCommandById = async (
   updateData: UpdateQuery<ChatCommandUpdateData>
 ) => {
   try {
-    const chatCommand = await ChatCommand.findByIdAndUpdate(id, updateData, {
-      new: true,
-    });
+    const updatedChatCommand = await ChatCommand.findByIdAndUpdate(
+      id,
+      updateData,
+      {
+        new: true,
+      }
+    );
+
+    const chatCommand = checkExistResource(
+      updatedChatCommand,
+      `Chat command with id(${id})`
+    );
+
     return chatCommand;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to update chat command");
+    logger.error(
+      `Error occured while editing chat command with id(${id}): ${err}`
+    );
+    handleAppError(err);
   }
 };
 
@@ -95,21 +140,37 @@ export const updateChatCommands = async (
   updateData: UpdateQuery<ChatCommandUpdateData>
 ) => {
   try {
-    const chatCommand = await ChatCommand.findOneAndUpdate(filter, updateData, {
-      new: true,
-    });
+    const updatedChatCommand = await ChatCommand.findOneAndUpdate(
+      filter,
+      updateData,
+      {
+        new: true,
+      }
+    );
+
+    const chatCommand = checkExistResource(updatedChatCommand, `Chat command`);
+
     return chatCommand;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to update chat command");
+    logger.error(`Error occured while editing chat command : ${err}`);
+    handleAppError(err);
   }
 };
 
 export const deleteChatCommandById = async (id: string) => {
   try {
-    return await ChatCommand.findByIdAndDelete(id);
+    const deletedChatCommand = await ChatCommand.findByIdAndDelete(id);
+
+    const chatCommand = checkExistResource(
+      deletedChatCommand,
+      `Chat command with id(${id})`
+    );
+
+    return chatCommand;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to update chat command");
+    logger.error(
+      `Error occured while deleting chat command with id(${id}) : ${err}`
+    );
+    handleAppError(err);
   }
 };
