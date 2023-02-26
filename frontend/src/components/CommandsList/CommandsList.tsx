@@ -53,20 +53,26 @@ export default function CommandsList() {
     }
   );
 
-  const { refetchData: fetchCreateCommand } = ChatCommandService.createCommand({
-    name: `New command${commandsData?.count}`,
-    description: `New command description${commandsData?.count}`,
-    enabled: true,
-    aliases: [`New command${commandsData?.count} default alias`],
-    messages: [`New command${commandsData?.count} default message`],
-    privilege: 0,
-  });
+  const { error: createCommandError, refetchData: fetchCreateCommand } =
+    ChatCommandService.createCommand({
+      name: `New command${commandsData?.count}`,
+      description: `New command description${commandsData?.count}`,
+      enabled: true,
+      aliases: [`New command${commandsData?.count} default alias`],
+      messages: [`New command${commandsData?.count} default message`],
+      privilege: 0,
+    });
 
   const { refetchData: fetchDeleteCommand } = ChatCommandService.deleteCommand(
     commandIdDelete ? commandIdDelete : ""
   );
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (createCommandError)
+    alert(
+      ` There is an error with create command.
+        ${createCommandError.response?.data.message}`
+    );
   if (loading || !commandsData) return <> Loading...</>;
 
   const { data, count, currentPage } = commandsData;
