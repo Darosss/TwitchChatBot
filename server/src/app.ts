@@ -1,10 +1,12 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import initRoutes from "./routes";
 import localSocket from "./local-socket";
-import { NextFunction, Request, Response } from "express";
-
 import http from "http";
+import {
+  errorResponder,
+  invalidPathHandler,
+} from "@middlewares/errorHandlers.middleware";
 
 const expressApp = () => {
   const app = express();
@@ -25,6 +27,10 @@ const expressApp = () => {
   });
 
   initRoutes(app);
+
+  app.use(errorResponder);
+
+  app.use(invalidPathHandler);
 
   return server;
 };
