@@ -1,5 +1,8 @@
 import { Trigger } from "@models/trigger.model";
 import { ITriggerDocument } from "@models/types";
+import { checkExistResource } from "@utils/checkExistResource.util";
+import { AppError, handleAppError } from "@utils/ErrorHandler.util";
+import { logger } from "@utils/logger.util";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
   ManyTriggersFindOptions,
@@ -18,13 +21,18 @@ export const getTriggers = async (
     select = { __v: 0 },
   } = triggerFindOptions;
 
-  const trigger = await Trigger.find(filter)
-    .limit(limit * 1)
-    .skip((skip - 1) * limit)
-    .select(select)
-    .sort(sort);
+  try {
+    const trigger = await Trigger.find(filter)
+      .limit(limit * 1)
+      .skip((skip - 1) * limit)
+      .select(select)
+      .sort(sort);
 
-  return trigger;
+    return trigger;
+  } catch (err) {
+    logger.error(`Error occured while getting triggers. ${err}`);
+    handleAppError(err);
+  }
 };
 
 export const getTriggersCount = async (
@@ -33,13 +41,19 @@ export const getTriggersCount = async (
   return await Trigger.countDocuments(filter);
 };
 
-export const createTrigger = async (createData: TriggerCreateData) => {
+export const createTrigger = async (
+  createData: TriggerCreateData | TriggerCreateData[]
+) => {
   try {
-    const trigger = await Trigger.create(createData);
-    return trigger;
+    const createdTrigger = await Trigger.create(createData);
+
+    if (!createdTrigger) {
+      throw new AppError(400, "Couldn't create new trigger(s");
+    }
+    return createdTrigger;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to create trigger");
+    logger.error(`Error occured while creating trigger(s). ${err}`);
+    handleAppError(err);
   }
 };
 
@@ -48,21 +62,34 @@ export const updateTriggerById = async (
   updateData: UpdateQuery<TriggerUpdateData>
 ) => {
   try {
-    const trigger = await Trigger.findByIdAndUpdate(id, updateData, {
+    const updatedTrigger = await Trigger.findByIdAndUpdate(id, updateData, {
       new: true,
     });
+
+    const trigger = checkExistResource(
+      updatedTrigger,
+      `Trigger with id(${id})`
+    );
+
     return trigger;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to update trigger");
+    logger.error(`Error occured while editing trigger by id(${id}). ${err}`);
+    handleAppError(err);
   }
 };
 
 export const deleteTriggerById = async (id: string) => {
   try {
-    return await Trigger.findByIdAndDelete(id);
+    const deletedTrigger = await Trigger.findByIdAndDelete(id);
+
+    const trigger = checkExistResource(
+      deletedTrigger,
+      `Trigger with id(${id})`
+    );
+
+    return trigger;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to delete trigger");
+    logger.error(`Error occured while deleting trigger by id(${id}). ${err}`);
+    handleAppError(err);
   }
 };

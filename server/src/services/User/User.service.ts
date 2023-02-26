@@ -1,5 +1,8 @@
 import { IUser, IUserDocument } from "@models/types";
 import { User } from "@models/user.model";
+import { checkExistResource } from "@utils/checkExistResource.util";
+import { AppError, handleAppError } from "@utils/ErrorHandler.util";
+import { logger } from "@utils/logger.util";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
   ManyUsersFindOptions,
@@ -19,13 +22,18 @@ export const getUsers = async (
     select = { __v: 0 },
   } = userFindOptions;
 
-  const users = await User.find(filter)
-    .limit(limit * 1)
-    .skip((skip - 1) * limit)
-    .select(select)
-    .sort(sort);
+  try {
+    const users = await User.find(filter)
+      .limit(limit * 1)
+      .skip((skip - 1) * limit)
+      .select(select)
+      .sort(sort);
 
-  return users;
+    return users;
+  } catch (err) {
+    logger.error(`Error occured while getting users. ${err}`);
+    handleAppError(err);
+  }
 };
 
 export const getOneUser = async (
@@ -33,10 +41,16 @@ export const getOneUser = async (
   userFindOptions: UserFindOptions
 ) => {
   const { select = { __v: 0 } } = userFindOptions;
+  try {
+    const userFiltered = await User.findOne(filter).select(select);
 
-  const user = await User.findOne(filter).select(select);
+    const user = checkExistResource(userFiltered, "User");
 
-  return user;
+    return user;
+  } catch (err) {
+    logger.error(`Error occured while getting user. ${err}`);
+    handleAppError(err);
+  }
 };
 
 export const getUserById = async (
@@ -44,10 +58,16 @@ export const getUserById = async (
   userFindOptions: UserFindOptions
 ) => {
   const { select = { __v: 0 } } = userFindOptions;
+  try {
+    const userById = await User.findById(id).select(select);
 
-  const user = await User.findById(id).select(select);
+    const user = checkExistResource(userById, "User");
 
-  return user;
+    return user;
+  } catch (err) {
+    logger.error(`Error occured while getting user with id(${id}). ${err}`);
+    handleAppError(err);
+  }
 };
 
 export const updateUserById = async (
@@ -55,13 +75,16 @@ export const updateUserById = async (
   userUpdateData: UpdateQuery<UserUpdateData>
 ) => {
   try {
-    const user = await User.findByIdAndUpdate(id, userUpdateData, {
+    const updatedUser = await User.findByIdAndUpdate(id, userUpdateData, {
       new: true,
     });
+
+    const user = checkExistResource(updatedUser, "User");
+
     return user;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to update user");
+    logger.error(`Error occured while updating user with id(${id}). ${err}`);
+    handleAppError(err);
   }
 };
 
@@ -78,7 +101,7 @@ export const getUserCount = async (filter: FilterQuery<IUserDocument>) => {
 export const getUsernames = async (
   limit: number = 20,
   skip: number = 0
-): Promise<{ usernames: string[]; total: number }> => {
+): Promise<{ usernames: string[]; total: number } | undefined> => {
   try {
     const users = await User.find({})
       .select("username")
@@ -91,7 +114,8 @@ export const getUsernames = async (
       total: await User.countDocuments(),
     };
   } catch (err) {
-    throw err;
+    logger.error(`Error occured while getting users usernames. ${err}`);
+    handleAppError(err);
   }
 };
 
@@ -104,7 +128,7 @@ export const getUsernames = async (
 export const getTwitchNames = async (
   limit: number = 20,
   skip: number = 0
-): Promise<{ twitchNames: string[]; total: number }> => {
+): Promise<{ twitchNames: string[]; total: number } | undefined> => {
   try {
     const users = await User.find({})
       .select("twitchName")
@@ -117,14 +141,14 @@ export const getTwitchNames = async (
       total: await User.countDocuments(),
     };
   } catch (err) {
-    throw err;
+    logger.error(`Error occured while getting users twitch names. ${err}`);
+    handleAppError(err);
   }
 };
 
 export const isUserInDB = async (userFilter: FilterQuery<IUserDocument>) => {
   const user = await User.findOne(userFilter);
   if (user) return user;
-  else return false;
 };
 
 export const createUser = async (userData: UserCreateData) => {
@@ -132,21 +156,26 @@ export const createUser = async (userData: UserCreateData) => {
     const user = await User.create(userData);
     return user;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to create user");
+    logger.error(`Error occured while getting users twitch names. ${err}`);
+    handleAppError(err);
   }
 };
 
 export const createUserIfNotExist = async (
   userFilter: FilterQuery<IUserDocument>,
   userData: UserCreateData
-): Promise<IUser> => {
-  let user = await isUserInDB(userFilter);
-  if (user) return user;
+) => {
+  const userExist = await isUserInDB(userFilter);
+  if (userExist) return userExist;
 
-  user = await createUser(userData);
+  try {
+    const userCreated = await createUser(userData);
 
-  return user;
+    return userCreated;
+  } catch (err) {
+    logger.error(`Error occured while creating user if not exist. ${err}`);
+    handleAppError(err);
+  }
 };
 
 export const updateUser = async (
@@ -154,13 +183,16 @@ export const updateUser = async (
   updateData: UpdateQuery<UserUpdateData>
 ) => {
   try {
-    const user = await User.findOneAndUpdate(filter, updateData, {
+    const updatedUser = await User.findOneAndUpdate(filter, updateData, {
       new: true,
     });
+
+    const user = checkExistResource(updatedUser, "User");
+
     return user;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to update user");
+    logger.error(`Error occured while creating user if not exist. ${err}`);
+    handleAppError(err);
   }
 };
 
@@ -174,7 +206,7 @@ export const getFollowersCount = async (startDate?: Date, endDate?: Date) => {
     });
     return followersCount;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to  get followers count");
+    logger.error(`Error occured while getting followers count. ${err}`);
+    handleAppError(err);
   }
 };

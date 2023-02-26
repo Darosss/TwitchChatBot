@@ -7,7 +7,10 @@ import {
 } from "@services/Message";
 import { getMostActiveUsersByRedemptions } from "@services/Redemption";
 import { getFollowersCount } from "@services/User";
+import { checkExistResource } from "@utils/checkExistResource.util";
+import { AppError, handleAppError } from "@utils/ErrorHandler.util";
 import { getLastNItemsFromMap } from "@utils/get-last-n-items-from-map.util";
+import { logger } from "@utils/logger.util";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
   ISessionStatisticOptions,
@@ -27,14 +30,18 @@ export const getTwitchSessions = async (
     sort = { createdAt: -1 },
     select = { __v: 0 },
   } = twitchSessionFindOptions;
+  try {
+    const twitchSessions = await TwitchSession.find(filter)
+      .limit(limit * 1)
+      .skip((skip - 1) * limit)
+      .select(select)
+      .sort(sort);
 
-  const twitchSessions = await TwitchSession.find(filter)
-    .limit(limit * 1)
-    .skip((skip - 1) * limit)
-    .select(select)
-    .sort(sort);
-
-  return twitchSessions;
+    return twitchSessions;
+  } catch (err) {
+    logger.error(`Error occured while getting twitch sessions. ${err}`);
+    handleAppError(err);
+  }
 };
 
 export const getTwitchSessionById = async (
@@ -43,9 +50,21 @@ export const getTwitchSessionById = async (
 ) => {
   const { select = { __v: 0 } } = twitchSessionFindOptions;
 
-  const twitchSession = await TwitchSession.findById(id).select(select);
+  try {
+    const foundTwitchSession = await TwitchSession.findById(id).select(select);
 
-  return twitchSession;
+    const twitchSession = checkExistResource(
+      foundTwitchSession,
+      `Twitch session with id(${id})`
+    );
+
+    return twitchSession;
+  } catch (err) {
+    logger.error(
+      `Error occured while getting twitch session by id(${id}). ${err}`
+    );
+    handleAppError(err);
+  }
 };
 
 export const getTwitchSessionStatisticsById = async (id: string) => {};
@@ -67,12 +86,39 @@ export const getCurrentTwitchSession = async (
       },
     ],
   };
-  const twitchSession = await TwitchSession.find(filter)
-    .sort({ sessionStart: -1 })
-    .limit(1)
-    .select(select);
+  try {
+    const twitchSession = await TwitchSession.findOne(filter)
+      .sort({ sessionStart: -1 })
+      .limit(1)
+      .select(select);
 
-  return twitchSession[0];
+    return twitchSession;
+  } catch (err) {
+    logger.error(`Error occured while getting current twitch session. ${err}`);
+    handleAppError(err);
+  }
+};
+export const getLatestTwitchSession = async (
+  twitchSessionFindOptions: TwitchSessionFindOptions
+) => {
+  const { select = { __v: 0 } } = twitchSessionFindOptions;
+
+  try {
+    const foundTwitchSession = await TwitchSession.findOne({})
+      .sort({ sessionStart: -1 })
+      .limit(1)
+      .select(select);
+
+    const twitchSession = checkExistResource(
+      foundTwitchSession,
+      "Twitch session"
+    );
+
+    return twitchSession;
+  } catch (err) {
+    logger.error(`Error occured while getting current twitch session. ${err}`);
+    handleAppError(err);
+  }
 };
 
 export const getTwitchSessionStatistics = async (

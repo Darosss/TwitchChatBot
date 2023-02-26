@@ -1,5 +1,7 @@
 import { Redemption } from "@models/redemption.model";
 import { IRedemptionDocument } from "@models/types";
+import { AppError, handleAppError } from "@utils/ErrorHandler.util";
+import { logger } from "@utils/logger.util";
 import { FilterQuery } from "mongoose";
 import {
   ManyRedemptionsFindOptions,
@@ -16,14 +18,18 @@ export const getRedemptions = async (
     sort = {},
     select = { __v: 0 },
   } = redemptionsFindOptions;
+  try {
+    const redemptions = await Redemption.find(filter)
+      .limit(limit * 1)
+      .skip((skip - 1) * limit)
+      .select(select)
+      .sort(sort);
 
-  const redemptions = await Redemption.find(filter)
-    .limit(limit * 1)
-    .skip((skip - 1) * limit)
-    .select(select)
-    .sort(sort);
-
-  return redemptions;
+    return redemptions;
+  } catch (err) {
+    logger.error(`Error occured while getting redemptions: ${err}`);
+    handleAppError(err);
+  }
 };
 
 export const getRedemptionsCount = async (
@@ -37,10 +43,15 @@ export const createRedemption = async (
 ) => {
   try {
     const redemption = await Redemption.create(redemptionData);
+
+    if (!redemption) {
+      throw new AppError(400, "Couldn't create new redemption");
+    }
+
     return redemption;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to create redemption");
+    logger.error(`Error occured while creating redemption: ${err}`);
+    handleAppError(err);
   }
 };
 
@@ -50,39 +61,46 @@ export const getMostActiveUsersByRedemptions = async (
   endDate?: Date
 ) => {
   const redemptionsFilter = dateRangeRedemptionFilter(startDate, endDate, 5);
-  const activeUsers = await Redemption.aggregate([
-    {
-      $match: redemptionsFilter,
-    },
-    {
-      $group: {
-        _id: "$userId",
-        redemptionsCount: { $sum: 1 },
-        redemptionsCost: { $sum: "$rewardCost" },
+  try {
+    const activeUsers = await Redemption.aggregate([
+      {
+        $match: redemptionsFilter,
       },
-    },
-    { $sort: { redemptionsCost: -1 } },
-    { $limit: limit },
-    {
-      $lookup: {
-        from: "users",
-        localField: "_id",
-        foreignField: "_id",
-        as: "user",
+      {
+        $group: {
+          _id: "$userId",
+          redemptionsCount: { $sum: 1 },
+          redemptionsCost: { $sum: "$rewardCost" },
+        },
       },
-    },
-    { $unwind: "$user" },
-    {
-      $project: {
-        _id: 1,
-        username: "$user.username",
-        redemptionsCount: 1,
-        redemptionsCost: 1,
+      { $sort: { redemptionsCost: -1 } },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "user",
+        },
       },
-    },
-  ]);
+      { $unwind: "$user" },
+      {
+        $project: {
+          _id: 1,
+          username: "$user.username",
+          redemptionsCount: 1,
+          redemptionsCost: 1,
+        },
+      },
+    ]);
 
-  return activeUsers;
+    return activeUsers;
+  } catch (err) {
+    logger.error(
+      `Error occured while aggregating redemptions for active users : ${err}`
+    );
+    handleAppError(err);
+  }
 };
 
 const dateRangeRedemptionFilter = (

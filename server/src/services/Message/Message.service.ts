@@ -1,5 +1,7 @@
 import { Message } from "@models/message.model";
 import { IMessageDocument } from "@models/types";
+import { handleAppError } from "@utils/ErrorHandler.util";
+import { logger } from "@utils/logger.util";
 import { FilterQuery } from "mongoose";
 import { ManyMessageFindOptions, MessageCreateData } from "./types/Message";
 export const getMessages = async (
@@ -14,14 +16,18 @@ export const getMessages = async (
     populateSelect = "id username",
   } = messageFindOptions;
 
-  const messages = await Message.find(filter)
-    .limit(limit * 1)
-    .skip((skip - 1) * limit)
-    .populate({ path: "owner", select: populateSelect })
-    .select(select)
-    .sort(sort);
-
-  return messages;
+  try {
+    const messages = await Message.find(filter)
+      .limit(limit * 1)
+      .skip((skip - 1) * limit)
+      .populate({ path: "owner", select: populateSelect })
+      .select(select)
+      .sort(sort);
+    return messages;
+  } catch (err) {
+    logger.error(`Error occured while getting messages: ${err}`);
+    handleAppError(err);
+  }
 };
 
 export const createMessage = async (messageData: MessageCreateData) => {
@@ -29,8 +35,8 @@ export const createMessage = async (messageData: MessageCreateData) => {
     const message = await Message.create(messageData);
     return message;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to create message");
+    logger.error(`Error occured while creating message: ${err}`);
+    handleAppError(err);
   }
 };
 
@@ -47,34 +53,41 @@ export const getMostActiveUsersByMsgs = async (
 ) => {
   const messageFilter = dateRangeMessageFilter(startDate, endDate, 5);
 
-  const activeUsers = await Message.aggregate([
-    {
-      $match: messageFilter,
-    },
-    { $group: { _id: "$owner", messageCount: { $sum: 1 } } },
-    {
-      $sort: { messageCount: -1 },
-    },
-    { $limit: limit },
-    {
-      $lookup: {
-        from: "users",
-        localField: "_id",
-        foreignField: "_id",
-        as: "user",
+  try {
+    const activeUsers = await Message.aggregate([
+      {
+        $match: messageFilter,
       },
-    },
-    { $unwind: "$user" },
-    {
-      $project: {
-        _id: 1,
-        username: "$user.username",
-        messageCount: 1,
+      { $group: { _id: "$owner", messageCount: { $sum: 1 } } },
+      {
+        $sort: { messageCount: -1 },
       },
-    },
-  ]);
+      { $limit: limit },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+      {
+        $project: {
+          _id: 1,
+          username: "$user.username",
+          messageCount: 1,
+        },
+      },
+    ]);
 
-  return activeUsers;
+    return activeUsers;
+  } catch (err) {
+    logger.error(
+      `Error occured while aggregating messages for most active users: ${err}`
+    );
+    handleAppError(err);
+  }
 };
 
 export const getMostUsedWord = async (
@@ -83,23 +96,31 @@ export const getMostUsedWord = async (
   endDate?: Date
 ) => {
   const messageFilter = dateRangeMessageFilter(startDate, endDate, 5);
-  const mostUsedWords = await Message.aggregate([
-    {
-      $match: messageFilter,
-    },
-    { $project: { words: { $split: ["$message", " "] } } },
-    { $unwind: "$words" },
-    {
-      $group: {
-        _id: "$words",
-        count: { $sum: 1 },
-      },
-    },
-    { $sort: { count: -1 } },
-    { $limit: limit },
-  ]);
 
-  return mostUsedWords;
+  try {
+    const mostUsedWords = await Message.aggregate([
+      {
+        $match: messageFilter,
+      },
+      { $project: { words: { $split: ["$message", " "] } } },
+      { $unwind: "$words" },
+      {
+        $group: {
+          _id: "$words",
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { count: -1 } },
+      { $limit: limit },
+    ]);
+
+    return mostUsedWords;
+  } catch (err) {
+    logger.error(
+      `Error occured while aggregating messages for most used words: ${err}`
+    );
+    handleAppError(err);
+  }
 };
 
 const dateRangeMessageFilter = (
