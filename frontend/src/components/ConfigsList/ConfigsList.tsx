@@ -3,7 +3,7 @@ import "./style.css";
 import PreviousPage from "@components/PreviousPage";
 import ConfigService from "src/services/Config.service";
 
-export default function UserProfile() {
+export default function ConfigsList() {
   const [showEdit, setShowEdit] = useState(false);
 
   const [prefix, setPrefix] = useState("");
