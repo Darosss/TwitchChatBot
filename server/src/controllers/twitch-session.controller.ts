@@ -1,4 +1,4 @@
-import Express, { Request, Response } from "express";
+import Express, { Request, Response, NextFunction } from "express";
 import { IRequestQuerySession } from "@types";
 import { filterSessionByUrlParams } from "./filters/session.filter";
 import {
@@ -7,11 +7,13 @@ import {
   getTwitchSessions,
   getTwitchSessionsCount,
   getTwitchSessionById,
+  getLatestTwitchSession,
 } from "@services/TwitchSession";
 
 const getTwitchSessionsList = async (
   req: Request<{}, {}, {}, IRequestQuerySession>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const { page = 1, limit = 50 } = req.query;
 
@@ -31,104 +33,93 @@ const getTwitchSessionsList = async (
       count: count,
       currentPage: Number(page),
     });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 
-const getCurrentSession = async (req: Request, res: Response) => {
+const getCurrentSession = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const twitchSession = await getCurrentTwitchSession({});
+    let twitchSession = await getCurrentTwitchSession({});
 
-    if (!twitchSession)
-      return res.status(400).send({ message: "Couldn't find any session" });
+    if (!twitchSession) twitchSession = await getLatestTwitchSession({});
 
     res.status(200).send({
       data: twitchSession,
     });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 
-const getSessionById = async (req: Request, res: Response) => {
+const getSessionById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
 
   try {
     const twitchSession = await getTwitchSessionById(id, {});
 
-    if (!twitchSession)
-      return res
-        .status(400)
-        .send({ message: "Couldn't find any session match that id" });
     return res.status(200).send({
       data: twitchSession,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Couldn't update command" });
+  } catch (err) {
+    next(err);
   }
 };
 
-const getSessionStatisticsById = async (req: Request, res: Response) => {
+const getSessionStatisticsById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
 
   try {
     const twitchSession = await getTwitchSessionById(id, {});
-    if (!twitchSession) {
-      return res.status(400).send({ message: "Couldn't find any session" });
-    }
 
-    const sessionStatstics = await getTwitchSessionStatistics(twitchSession, {
+    const sessionStatstics = await getTwitchSessionStatistics(twitchSession!, {
       limitMostUsedWords: 10,
       limitTopMessageUsers: 10,
       limitTopRedemptionsUsers: 10,
       limitViewers: 0,
     });
 
-    if (!sessionStatstics) {
-      return res
-        .status(400)
-        .send({ message: "Couldn't find any session statistics" });
-    }
     res.status(200).send({
       data: sessionStatstics,
     });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 
-const getCurrentSessionStatistics = async (req: Request, res: Response) => {
+const getCurrentSessionStatistics = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const twitchSession = await getCurrentTwitchSession({});
+    let twitchSession = await getCurrentTwitchSession({});
+
     if (!twitchSession) {
-      return res.status(400).send({ message: "Couldn't find any session" });
+      twitchSession = await getLatestTwitchSession({});
     }
 
     const sessionStatstics = await getTwitchSessionStatistics(
-      twitchSession,
+      twitchSession!,
       {}
     );
-
-    if (!sessionStatstics) {
-      return res
-        .status(400)
-        .send({ message: "Couldn't find any session statistics" });
-    }
     res.status(200).send({
       data: sessionStatstics,
     });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 

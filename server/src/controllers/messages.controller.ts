@@ -1,4 +1,4 @@
-import Express, { Request, Response } from "express";
+import Express, { NextFunction, Request, Response } from "express";
 import { IRequestParams, IRequestQuery, IRequestQueryMessage } from "@types";
 import { filterMessagesByUrlParams } from "./filters/messages.filter";
 import { getMessages, getMessagesCount } from "@services/Message";
@@ -6,7 +6,8 @@ import { getTwitchSessionById } from "@services/TwitchSession";
 
 const getMessagesList = async (
   req: Request<{}, {}, {}, IRequestQueryMessage>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const { page = 1, limit = 50 } = req.query;
 
@@ -26,16 +27,15 @@ const getMessagesList = async (
       count: count,
       currentPage: Number(page),
     });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 
 const getUserMessages = async (
   req: Request<IRequestParams, {}, {}, IRequestQueryMessage>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const { id } = req.params;
   const { page = 1, limit = 50 } = req.query;
@@ -60,16 +60,15 @@ const getUserMessages = async (
       count: count,
       currentPage: Number(page),
     });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 
 const getLatestAndFirstMsgs = async (
   req: Request<IRequestParams, {}, {}, IRequestQuery>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const { id } = req.params;
   const { limit = 6 } = req.query;
@@ -95,24 +94,18 @@ const getLatestAndFirstMsgs = async (
     return res.status(200).send({
       data: { firstMessages: firstMessages, latestMessages: latestMessages },
     });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 
 const getSessionMessages = async (
   req: Request<IRequestParams, {}, {}, IRequestQueryMessage>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const { id } = req.params;
   const { page = 1, limit = 50 } = req.query;
-
-  if (!id)
-    return res
-      .status(400)
-      .send({ message: "There is problem with session id" });
 
   try {
     const session = await getTwitchSessionById(id, { select: { __v: 0 } });
@@ -135,17 +128,14 @@ const getSessionMessages = async (
     });
 
     const count = await getMessagesCount(searchFilter);
-
     return res.status(200).send({
       data: messages,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
     });
-  } catch (error) {
-    console.error(error);
-
-    return res.status(500).send({ message: "Internal server error" });
+  } catch (err) {
+    next(err);
   }
 };
 export {
