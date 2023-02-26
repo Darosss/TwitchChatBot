@@ -1,8 +1,12 @@
 import "./style.css";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, LinkProps } from "react-router-dom";
 import resetWindowScroll from "@utils/resetScroll";
 import AuthService from "src/services/Auth.service";
+
+interface INavLinkProps extends LinkProps {
+  label: string;
+}
 
 export default function SideBar() {
   const { data: authData, loading, error } = AuthService.getAuthorizeUrl();
@@ -12,51 +16,12 @@ export default function SideBar() {
   return (
     <div className="navbar">
       <ul>
-        <li>
-          <Link onClick={resetWindowScroll} to="/">
-            Overlay
-          </Link>
-        </li>
-        <li>
-          <Link onClick={resetWindowScroll} to="/messages">
-            Messages
-          </Link>
-        </li>
-        <li>
-          <Link onClick={resetWindowScroll} to="/users">
-            Users
-          </Link>
-        </li>
-        <li>
-          <Link onClick={resetWindowScroll} to="/events">
-            Events
-          </Link>
-        </li>
-        <li>
-          <Link onClick={resetWindowScroll} to="/twitch-sessions">
-            Sessions
-          </Link>
-        </li>
-        <li>
-          <Link onClick={resetWindowScroll} to="/redemptions">
-            Redemptions
-          </Link>
-        </li>
-        <li>
-          <Link onClick={resetWindowScroll} to="/commands">
-            Commands
-          </Link>
-        </li>
-        <li>
-          <Link onClick={resetWindowScroll} to="/triggers">
-            Triggers
-          </Link>
-        </li>
-        <li>
-          <Link onClick={resetWindowScroll} to="/configs">
-            Configs
-          </Link>
-        </li>
+        {routes.map((route) => {
+          return (
+            <NavLink key={route.path} to={route.path} label={route.label} />
+          );
+        })}
+
         <li>
           <a
             className="connect-twitch"
@@ -69,3 +34,30 @@ export default function SideBar() {
     </div>
   );
 }
+
+const routes = [
+  { path: "/", label: "Home" },
+  { path: "/overlay", label: "Overlay" },
+  { path: "/messages", label: "Messages" },
+  { path: "/users", label: "Users" },
+  { path: "/events", label: "Events" },
+  { path: "/stream-sessions", label: "Sessions" },
+  { path: "/redemptions", label: "Redemptions" },
+  { path: "/commands", label: "Commands" },
+  { path: "/triggers", label: "Triggers" },
+  { path: "/configs", label: "Configs" },
+];
+
+const NavLink = ({ label, ...restProps }: INavLinkProps) => {
+  function handleClick() {
+    resetWindowScroll();
+  }
+
+  return (
+    <li>
+      <Link {...restProps} onClick={handleClick}>
+        {label}
+      </Link>
+    </li>
+  );
+};
