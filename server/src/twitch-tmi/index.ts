@@ -11,6 +11,7 @@ import {
 } from "@libs/types";
 import BotStatisticDatabase from "../chatbot/database-statistic";
 import { createUserIfNotExist } from "@services/User";
+import { messageLogger } from "@utils/logger.util";
 require("dotenv").config();
 
 const clientTmi = (
@@ -23,6 +24,8 @@ const clientTmi = (
   botStatisticDatabase: BotStatisticDatabase,
   userNameToListen: string
 ) => {
+  const msgsLogger = messageLogger(userNameToListen);
+
   const client = new tmi.Client({
     options: { debug: false },
     connection: {
@@ -70,6 +73,8 @@ const clientTmi = (
 
       privileges: 0,
     };
+
+    msgsLogger.info(`${userData.username}: ${message}`);
 
     io.emit("messageServer", new Date(), userData.username, message); // emit for socket
 
