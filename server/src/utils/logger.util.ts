@@ -1,13 +1,16 @@
 import winston, { format } from "winston";
+import path from "path";
+import DailyRotateFile from "winston-daily-rotate-file";
+
 const { combine, timestamp, printf } = format;
 
-const myFormat = printf(({ level, message, timestamp }) => {
+const loggerFormat = printf(({ level, message, timestamp }) => {
   return `${timestamp} ${level}: ${message}`;
 });
 
 export const logger = winston.createLogger({
   level: "error",
-  format: combine(timestamp(), myFormat),
+  format: combine(timestamp(), loggerFormat),
   defaultMeta: { service: "user-service" },
   transports: [
     //
@@ -26,7 +29,32 @@ export const logger = winston.createLogger({
 if (process.env.NODE_ENV !== "production") {
   logger.add(
     new winston.transports.Console({
-      format: myFormat,
+      format: loggerFormat,
     })
   );
 }
+
+const messageLoggerFormat = printf(({ message, timestamp }) => {
+  return `${timestamp}: ${message}`;
+});
+
+export const messageLogger = (channelName: string) => {
+  const dailyRotateFileTransport = new DailyRotateFile({
+    filename: path.join(
+      __dirname,
+      `../data/${channelName}/%DATE%/messages.log`
+    ),
+    datePattern: "YYYY-MM-DD",
+    zippedArchive: true,
+    level: "info",
+  });
+
+  return winston.createLogger({
+    format: combine(
+      winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+      winston.format.prettyPrint(),
+      messageLoggerFormat
+    ),
+    transports: [dailyRotateFileTransport],
+  });
+};
