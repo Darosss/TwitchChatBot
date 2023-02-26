@@ -38,10 +38,10 @@ export default function Pagination(props: {
 
   useEffect(() => {
     setSearchParams((prevState) => {
-      prevState.set("limit", String(pageSizeT));
+      prevState.set("page", String(currentPage));
       return prevState;
     });
-  }, [pageSizeT]);
+  }, [currentPage]);
 
   const paginationRange = usePagination(
     totalCount,
