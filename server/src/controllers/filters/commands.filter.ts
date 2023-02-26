@@ -35,7 +35,6 @@ const filterCommandsByUrlParams = (params: IRequestCommandsQuery) => {
   const filterPrivilege = {
     ...(privilege && { privilege: { $eq: privilege } }),
   };
-  console.log(filterPrivilege);
   const filterAliases = {
     ...(aliases && { aliases: { $regex: aliases, $options: "i" } }),
   };
