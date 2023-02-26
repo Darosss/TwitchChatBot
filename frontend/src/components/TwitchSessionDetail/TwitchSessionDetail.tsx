@@ -9,12 +9,11 @@ import SlideShow from "@components/SlideShow";
 
 export default function TwitchSessionDetail() {
   const { sessionId } = useParams();
-
   const {
     data: sessionData,
     loading,
     error,
-  } = TwitchSessionService.getSessionById(sessionId || "null");
+  } = TwitchSessionService.getSessionById(sessionId || "");
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!sessionData || loading) return <>Loading!</>;
