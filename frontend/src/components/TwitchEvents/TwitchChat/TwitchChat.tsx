@@ -17,7 +17,7 @@ export default function TwitchChat(props: { className?: string }) {
   const [messageToSend, setMessageToSend] = useState("");
 
   const sendMessage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    console.log("SEND MESSAGE", messageToSend);
+    socket?.emit("messageClient", messageToSend);
   };
 
   useEffect(() => {
