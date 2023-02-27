@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import ConfigsList from "@components/ConfigsList";
+import ConfigsList from "@components/configsList";
 
 export function ConfigRoutes() {
   return (

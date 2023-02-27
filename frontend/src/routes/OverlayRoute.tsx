@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Overlay from "@components/Overlay";
+import Overlay from "@components/overlay";
 
 export function OverlayRoutes() {
   return (

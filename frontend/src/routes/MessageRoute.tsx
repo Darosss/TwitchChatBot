@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import MessagesList from "@components/MessagesList";
+import MessagesList from "@components/messagesList";
 
 export function MessageRoutes() {
   return (

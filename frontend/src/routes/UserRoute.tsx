@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-import Users from "@components/Users";
-import UserProfile from "@components/UserProfile";
+import Users from "@components/users";
+import UserProfile from "@components/userProfile";
 
 export function UserRoutes() {
   return (

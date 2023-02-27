@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import TriggersList from "@components/TriggersList";
+import TriggersList from "@components/triggersList";
 
 export function TriggerRoutes() {
   return (

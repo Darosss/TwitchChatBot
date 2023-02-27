@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import RedemptionsList from "@components/RedemptionsList";
+import RedemptionsList from "@components/redemptionsList";
 export function RedemptionRoutes() {
   return (
     <Routes>

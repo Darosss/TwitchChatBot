@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import CommandsList from "@components/CommandsList";
+import CommandsList from "@components/commandsList";
 
 export function CommandRoutes() {
   return (
