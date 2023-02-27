@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useReducer, useState } from "react";
 import { SocketContext } from "@context/SocketContext";
 import formatDate from "@utils/formatDate";
 
-export default function TwitchChatters(props: { className?: string }) {
+export default function StreamChatters(props: { className?: string }) {
   const LIMIT_LAST_CHATTERS = 14;
   const { className } = props;
 
@@ -46,8 +46,8 @@ export default function TwitchChatters(props: { className?: string }) {
 
   return (
     <div
-      id="twitch-last-chatters"
-      className={`twitch-last-chatters ${className ? className : ""}`}
+      id="stream-last-chatters"
+      className={`stream-last-chatters ${className ? className : ""}`}
     >
       {[...lastChatters.keys()].map((chatter, index) => {
         return (

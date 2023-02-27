@@ -1,3 +1,3 @@
-import TwitchNotifications from "./TwitchNotifications";
+import StreamNotifications from "./StreamNotifications";
 
-export default TwitchNotifications;
+export default StreamNotifications;

@@ -1,12 +1,12 @@
-.twitch-last-chatters {
+.stream-last-chatters {
   resize: both;
 }
 
-.twitch-last-chatters > div {
+.stream-last-chatters > div {
   border: 0.1rem solid var(--color-user-usual);
 }
 
-.twitch-last-chatters .limit {
+.stream-last-chatters .limit {
   border: 0.1rem solid var(--color-user-warn) !important;
 }
 

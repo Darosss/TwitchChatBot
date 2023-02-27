@@ -24,7 +24,7 @@ type TopUsedWordsProps = {
   words: TopUsedWords[];
 };
 
-export default function TwitchStatistics(props: { className?: string }) {
+export default function StreamStatistics(props: { className?: string }) {
   const FETCH_INTERVAL = 60;
   const { className } = props;
   const {

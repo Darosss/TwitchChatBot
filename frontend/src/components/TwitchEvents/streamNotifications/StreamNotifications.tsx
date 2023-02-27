@@ -6,7 +6,7 @@ import formatDate from "@utils/formatDate";
 import { Link } from "react-router-dom";
 import { IEventAndIUser } from "@libs/types";
 
-export default function TwitchNotifications(props: { className?: string }) {
+export default function StreamNotifications(props: { className?: string }) {
   const LIMIT_NOTIFICATIONS = 5;
   const { className } = props;
 
@@ -44,8 +44,8 @@ export default function TwitchNotifications(props: { className?: string }) {
   }, [socket]);
   return (
     <div
-      id="twitch-notifications"
-      className={`twitch-notifications ${className ? className : ""}`}
+      id="stream-notifications"
+      className={`stream-notifications ${className ? className : ""}`}
     >
       {userNotif.map((notif, index) => {
         return (
@@ -110,7 +110,12 @@ export default function TwitchNotifications(props: { className?: string }) {
                 alt="seen"
                 className="user-info-icon"
               />
-              : <span>{formatDate(notif.lastSeen, "days+time")}</span>
+              :
+              <span>
+                {notif.lastSeen
+                  ? formatDate(notif.lastSeen, "days+time")
+                  : null}
+              </span>
             </div>
             <div className="user-info-follower">
               <img

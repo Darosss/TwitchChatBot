@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useReducer, useState } from "react";
 import Message from "@components/Message";
 import { SocketContext } from "@context/SocketContext";
 
-export default function TwitchChat(props: { className?: string }) {
+export default function StreamChat(props: { className?: string }) {
   const { className } = props;
   const socket = useContext(SocketContext);
 
@@ -42,11 +42,11 @@ export default function TwitchChat(props: { className?: string }) {
 
   return (
     <div
-      id="twitch-chat"
-      className={`twitch-chat ${className ? className : ""}`}
+      id="stream-chat"
+      className={`stream-chat ${className ? className : ""}`}
     >
-      <div className="twitch-chat-title">STREAM CHAT</div>
-      <div className="twitch-chat-messages">
+      <div className="stream-chat-title">STREAM CHAT</div>
+      <div className="stream-chat-messages">
         {messages
           ? [...Object.values(messages)]
               .sort((a, b) => {
@@ -67,15 +67,15 @@ export default function TwitchChat(props: { className?: string }) {
               })
           : null}
       </div>
-      <div className="twitch-chat-send-message">
+      <div className="stream-chat-send-message">
         <textarea
-          className="twitch-chat-textarea"
+          className="stream-chat-textarea"
           onChange={(e) => setMessageToSend(e.target.value)}
           value={messageToSend}
         />
         <button
           onClick={(e) => sendMessage(e)}
-          className="twitch-chat-btn-send-message"
+          className="stream-chat-btn-send-message"
         >
           SEND
         </button>

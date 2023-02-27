@@ -1,3 +1,3 @@
-import TwitchStatistics from "./TwitchStatistics";
+import StreamStatistics from "./StreamStatistics";
 
-export default TwitchStatistics;
+export default StreamStatistics;

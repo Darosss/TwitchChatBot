@@ -11,23 +11,23 @@
   --bg-color-not-active: rgba(100, 97, 17, 0.153);
 }
 
-.twitch-btn {
+.stream-btn {
   border-radius: 1rem;
 }
 
-.twitch-btn.active {
+.stream-btn.active {
   background-color: var(--bg-color-active);
 }
 
-.twitch-btn.not-active {
+.stream-btn.not-active {
   background-color: var(--bg-color-not-active);
 }
 
-.twitch-wrapper {
+.stream-wrapper {
   display: flex;
 }
 
-.twitch-wrapper > div {
+.stream-wrapper > div {
   margin: 0.5rem 0 0 0.5rem;
 }
 

@@ -1,3 +1,3 @@
-import TwitchChatters from "./TwitchChatters";
+import StreamChatters from "./StreamChatters";
 
-export default TwitchChatters;
+export default StreamChatters;

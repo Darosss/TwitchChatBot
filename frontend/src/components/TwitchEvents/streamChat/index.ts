@@ -1,3 +1,3 @@
-import TwitchChat from "./TwitchChat";
+import StreamChat from "./StreamChat";
 
-export default TwitchChat;
+export default StreamChat;

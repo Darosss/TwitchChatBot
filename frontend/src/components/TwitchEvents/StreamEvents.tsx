@@ -1,46 +1,46 @@
 import "./style.css";
 import React, { useReducer } from "react";
 
-import TwitchChat from "./TwitchChat";
-import TwitchNotifications from "./TwitchNotifications";
-import TwitchChatters from "./TwitchChatters";
 import HiddenMenu from "@components/HiddenMenu";
 import WidgetWrapper from "@components/WidgetWrapper";
 import useLocalStorage from "@hooks/useLocalStorage.hook";
-import TwitchStatistics from "./TwitchStatistics";
+import StreamChat from "./streamChat";
+import StreamChatters from "./streamChatters";
+import StreamNotifications from "./streamNotifications";
+import StreamStatistics from "./streamStatistics";
 
 interface IWidget {
   enabled: boolean;
   size?: { width: string; height: string }; // TODO: add size later
 }
 
-export default function TwitchEvents() {
+export default function StreamEvents() {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const [chatWidget, setChatWidget] = useLocalStorage<IWidget>(
-    "twitch-chat-widget-data",
+    "stream-chat-widget-data",
     { enabled: true }
   );
   const [chattersWidget, setChattersWidget] = useLocalStorage<IWidget>(
-    "twitch-chatters-widget-data",
+    "stream-chatters-widget-data",
     { enabled: true }
   );
   const [notificationsWidget, setNotificationsWidget] =
-    useLocalStorage<IWidget>("twitch-notifications-widget-data", {
+    useLocalStorage<IWidget>("stream-notifications-widget-data", {
       enabled: true,
     });
   const [statisticSession, setStatisticSession] = useLocalStorage<IWidget>(
-    "twitch-statistic-widget-data",
+    "stream-statistic-widget-data",
     {
       enabled: true,
     }
   );
   return (
-    <div className="twitch-wrapper">
+    <div className="stream-wrapper">
       <div className="menu-widgets">
         <HiddenMenu>
           <li>
             <button
-              className={`twitch-btn ${
+              className={`stream-btn ${
                 chatWidget.enabled ? "active" : "not-active"
               }`}
               onClick={() => {
@@ -56,7 +56,7 @@ export default function TwitchEvents() {
           </li>
           <li>
             <button
-              className={`twitch-btn ${
+              className={`stream-btn ${
                 chattersWidget.enabled ? "active" : "not-active"
               }`}
               onClick={() => {
@@ -72,7 +72,7 @@ export default function TwitchEvents() {
           </li>
           <li>
             <button
-              className={`twitch-btn ${
+              className={`stream-btn ${
                 notificationsWidget.enabled ? "active" : "not-active"
               }`}
               onClick={() => {
@@ -88,7 +88,7 @@ export default function TwitchEvents() {
           </li>
           <li>
             <button
-              className={`twitch-btn ${
+              className={`stream-btn ${
                 statisticSession.enabled ? "active" : "not-active"
               }`}
               onClick={() => {
@@ -106,24 +106,24 @@ export default function TwitchEvents() {
       </div>
 
       {chatWidget?.enabled ? (
-        <WidgetWrapper id="twitch-window">
-          <TwitchChat className="twitch-window" />
+        <WidgetWrapper id="stream-window">
+          <StreamChat className="stream-window" />
         </WidgetWrapper>
       ) : null}
       {chattersWidget?.enabled ? (
-        <WidgetWrapper id="twitch-last-chatters">
-          <TwitchChatters className="twitch-window" />
+        <WidgetWrapper id="stream-last-chatters">
+          <StreamChatters className="stream-window" />
         </WidgetWrapper>
       ) : null}
       {notificationsWidget?.enabled ? (
-        <WidgetWrapper id="twitch-notifications">
-          <TwitchNotifications className="twitch-window" />
+        <WidgetWrapper id="stream-notifications">
+          <StreamNotifications className="stream-window" />
         </WidgetWrapper>
       ) : null}
 
       {statisticSession?.enabled ? (
-        <WidgetWrapper id="twitch-statistics" horizontal={true}>
-          <TwitchStatistics className="twitch-window" />
+        <WidgetWrapper id="stream-statistics" horizontal={true}>
+          <StreamStatistics className="stream-window" />
         </WidgetWrapper>
       ) : null}
     </div>

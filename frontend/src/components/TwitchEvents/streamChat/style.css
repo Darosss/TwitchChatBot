@@ -1,4 +1,4 @@
-.twitch-chat {
+.stream-chat {
   background-color: var(--base-bg-color-chat);
   height: 99%;
   border: 0.1rem solid yellow;
@@ -6,27 +6,27 @@
   overflow: auto;
 }
 
-.twitch-chat-messages {
+.stream-chat-messages {
   overflow-y: scroll;
   border-top: 1px solid yellow;
   border-bottom: 1px solid yellow;
   height: 70%;
 }
 
-.twitch-chat-title {
+.stream-chat-title {
   height: 5%;
   font-size: smaller;
   overflow: hidden;
 }
 
-.twitch-chat-send-message {
+.stream-chat-send-message {
   margin-top: 0.5rem;
   bottom: 10%;
   height: 10%;
   width: 100%;
 }
 
-.twitch-chat-textarea {
+.stream-chat-textarea {
   color: white;
   background-color: var(--base-bg-textarea-chat);
   border-radius: 0.3rem;
@@ -38,15 +38,15 @@
   font-size: calc(0.9rem + 1vmin);
 }
 
-.twitch-chat-messages::-webkit-scrollbar {
+.stream-chat-messages::-webkit-scrollbar {
   display: none;
 }
 
-.twitch-chat-messages div:first-child {
+.stream-chat-messages div:first-child {
   border-left: 0;
 }
 
-.twitch-chat-btn-send-message {
+.stream-chat-btn-send-message {
   background-color: var(--base-color-button-action);
   border: 0;
   border-radius: 0.3rem;
@@ -59,6 +59,6 @@
   font-size: smaller;
 }
 
-.twitch-chat-btn-send-message:active {
+.stream-chat-btn-send-message:active {
   background-color: var(--base-color-button-action-active);
 }

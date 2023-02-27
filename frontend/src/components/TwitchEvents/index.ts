@@ -1,3 +1,3 @@
-import TwitchEvents from "./TwitchEvents";
+import StreamEvents from "./StreamEvents";
 
-export default TwitchEvents;
+export default StreamEvents;
