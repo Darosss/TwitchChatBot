@@ -10,7 +10,7 @@ import { MessageRoutes } from "@routes/message.routes";
 import { UserRoutes } from "@routes/user.routes";
 import { ConfigRoutes } from "@routes/configs.routes";
 import { TriggerRoutes } from "@routes/trigger.routes";
-import { StreamSessionRoutes } from "@routes/streamSession.routes";
+import { StreamSessionRoutes } from "@routes/StreamSessionRoutes";
 import { RedemptionRoutes } from "@routes/redemption.routes";
 import { CommandRoutes } from "@routes/command.routes";
 import { EventRoutes } from "@routes/events.routes";
