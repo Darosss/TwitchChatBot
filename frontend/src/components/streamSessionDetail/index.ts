@@ -1,3 +1,3 @@
-import TwitchSessionDetail from "./TwitchSessionDetail";
+import StreamSessionDetail from "./StreamSessionDetail";
 
-export default TwitchSessionDetail;
+export default StreamSessionDetail;
