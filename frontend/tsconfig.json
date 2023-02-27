@@ -10,7 +10,7 @@
       "@routes/*": ["src/routes/*"],
       "@services/*": ["src/services/*"],
       "@components/*": ["src/components/*"],
-      "@context/*": ["src/Context/*"],
+      "@context/*": ["src/context/*"],
       "@hooks/*": ["src/hooks/*"]
     },
     "baseUrl": "./",
