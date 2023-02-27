@@ -5,6 +5,7 @@ import formatDate from "@utils/formatDate";
 import PreviousPage from "@components/PreviousPage";
 import FilterBarUsers from "./FilterBarUsers";
 import UserService, { IUser } from "src/services/User.service";
+import { Link } from "react-router-dom";
 
 type UserDetailsProps = {
   users: IUser[];
@@ -25,32 +26,32 @@ const UsersDetails = ({ users }: UserDetailsProps) => (
 
     <tbody>
       {users.map((user) => {
+        const { _id, username, lastSeen, createdAt, messageCount, points } =
+          user;
         return (
-          <tr key={user._id}>
+          <tr key={_id}>
             <td className="users-list-username">
-              <a href={"users/" + user._id}>{user.username} </a>
+              <Link to={`./${_id}`}> {username}</Link>
             </td>
             <td className="users-list-achievements"></td>
             <td className="users-list-last-seen">
-              <div className="tooltip">
-                {formatDate(user.lastSeen, "days+time")}
-                <span className="tooltiptext">{formatDate(user.lastSeen)}</span>
-              </div>
+              {lastSeen ? (
+                <div className="tooltip">
+                  {formatDate(lastSeen, "days+time")}
+                  <span className="tooltiptext">{formatDate(lastSeen)}</span>
+                </div>
+              ) : null}
             </td>
             <td className="users-list-created-at">
               <div className="tooltip">
-                {formatDate(user.createdAt, "days+time")}
-                <span className="tooltiptext">
-                  {formatDate(user.createdAt)}
-                </span>
+                {formatDate(createdAt, "days+time")}
+                <span className="tooltiptext">{formatDate(createdAt)}</span>
               </div>
             </td>
             <td className="users-list-message-count">
-              {user.messageCount?.toLocaleString()}
+              {messageCount?.toLocaleString()}
             </td>
-            <td className="users-list-points">
-              {user.points?.toLocaleString()}
-            </td>
+            <td className="users-list-points">{points?.toLocaleString()}</td>
           </tr>
         );
       })}
