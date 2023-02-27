@@ -1,10 +1,10 @@
 import "./style.css";
 import React, { useEffect } from "react";
-import TwitchSessionService, {
+import streamSessionService, {
   TopMsgsUsers,
   TopRedemptionsUsers,
   TopUsedWords,
-} from "src/services/Twitch-session.service";
+} from "@services/StreamSessionService";
 import LineChart from "@components/LineChart";
 import SlideShow from "@components/SlideShow";
 
@@ -32,7 +32,7 @@ export default function TwitchStatistics(props: { className?: string }) {
     loading,
     error,
     refetchData,
-  } = TwitchSessionService.getSessionStatistics();
+  } = streamSessionService.getSessionStatistics();
 
   useEffect(() => {
     const statisticInterval = setInterval(() => {
@@ -48,8 +48,8 @@ export default function TwitchStatistics(props: { className?: string }) {
 
   return (
     <div
-      id="twitch-statistics"
-      className={`twitch-statistics ${className ? className : ""}`}
+      id="stream-statistics"
+      className={`stream-statistics ${className ? className : ""}`}
     >
       <div className="statistics-wrapper">
         <SessionMessages count={data.messagesCount} />
