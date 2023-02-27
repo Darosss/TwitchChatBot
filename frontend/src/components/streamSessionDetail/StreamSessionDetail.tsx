@@ -1,19 +1,19 @@
 import "./style.css";
 import React from "react";
 import { useParams } from "react-router-dom";
-import TwitchSessionService from "src/services/Twitch-session.service";
+import StreamSessionService from "@services/StreamSessionService";
 import formatDate from "@utils/formatDate";
 import LineChart from "@components/LineChart";
 import PreviousPage from "@components/PreviousPage";
 import SlideShow from "@components/SlideShow";
 
-export default function TwitchSessionDetail() {
+export default function StreamSessionDetail() {
   const { sessionId } = useParams();
   const {
     data: sessionData,
     loading,
     error,
-  } = TwitchSessionService.getSessionById(sessionId || "");
+  } = StreamSessionService.getSessionById(sessionId || "");
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!sessionData || loading) return <>Loading!</>;
@@ -22,7 +22,7 @@ export default function TwitchSessionDetail() {
   return (
     <>
       <PreviousPage />
-      <div className="twitch-session-details-wrapper">
+      <div className="stream-session-details-wrapper">
         <div className="session-details session-small-details small">
           <div className="nested-detail">
             <div className="session-detail-header">Session start:</div>
