@@ -4,16 +4,16 @@ import Pagination from "@components/Pagination";
 import formatDate from "@utils/formatDate";
 import { Link } from "react-router-dom";
 import PreviousPage from "@components/PreviousPage";
-import FilterBarSessions from "./FilterBarSessions";
-import twitchSessionService from "src/services/Twitch-session.service";
+import streamSessionService from "src/services/StreamSessionService";
+import FilterBarSessions from "./filterBarSessions";
 
-export default function TwitchSessions() {
+export default function StreamSessions() {
   const {
     data: sessionsData,
     loading,
     error,
     refetchData,
-  } = twitchSessionService.getSessions();
+  } = streamSessionService.getSessions();
 
   if (error) return <>Error! {error.response?.data.message}</>;
   if (!sessionsData || loading) return <>Loading...</>;
@@ -24,8 +24,8 @@ export default function TwitchSessions() {
     <>
       <PreviousPage />
       <FilterBarSessions />
-      <div id="twitch-session-list" className="table-list-wrapper">
-        <table id="table-twitch-session-list">
+      <div id="stream-session-list" className="table-list-wrapper">
+        <table id="table-stream-session-list">
           <thead>
             <tr>
               <th>Messages</th>
@@ -87,7 +87,7 @@ export default function TwitchSessions() {
           className="pagination-bar"
           currentPage={currentPage}
           totalCount={count}
-          localStorageName="twitchSessionPageSize"
+          localStorageName="streamSessionPageSize"
           siblingCount={1}
         />
       </div>
