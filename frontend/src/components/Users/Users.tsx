@@ -28,7 +28,7 @@ const UsersDetails = ({ users }: UserDetailsProps) => (
         return (
           <tr key={user._id}>
             <td className="users-list-username">
-              <a href={"user/" + user._id}>{user.username} </a>
+              <a href={"users/" + user._id}>{user.username} </a>
             </td>
             <td className="users-list-achievements"></td>
             <td className="users-list-last-seen">
