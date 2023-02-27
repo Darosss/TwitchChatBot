@@ -8,6 +8,7 @@
       "@backend/*": ["../server/src/*"],
       "@utils/*": ["src/utils/*"],
       "@routes/*": ["src/routes/*"],
+      "@services/*": ["src/services/*"],
       "@components/*": ["src/components/*"],
       "@context/*": ["src/Context/*"],
       "@hooks/*": ["src/hooks/*"]

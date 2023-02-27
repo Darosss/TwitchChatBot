@@ -2,7 +2,7 @@ import Express, { NextFunction, Request, Response } from "express";
 import { IRequestParams, IRequestQuery, IRequestQueryMessage } from "@types";
 import { filterMessagesByUrlParams } from "./filters/messages.filter";
 import { getMessages, getMessagesCount } from "@services/Message";
-import { getTwitchSessionById } from "@services/TwitchSession";
+import { getStreamSessionById } from "@services/streamSessions";
 
 const getMessagesList = async (
   req: Request<{}, {}, {}, IRequestQueryMessage>,
@@ -108,7 +108,7 @@ const getSessionMessages = async (
   const { page = 1, limit = 50 } = req.query;
 
   try {
-    const session = await getTwitchSessionById(id, { select: { __v: 0 } });
+    const session = await getStreamSessionById(id, { select: { __v: 0 } });
 
     const searchFilter = Object.assign(
       {

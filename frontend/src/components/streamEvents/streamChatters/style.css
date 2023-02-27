@@ -1,0 +1,32 @@
+.stream-last-chatters {
+  resize: both;
+}
+
+.stream-last-chatters > div {
+  border: 0.1rem solid var(--color-user-usual);
+}
+
+.stream-last-chatters .limit {
+  border: 0.1rem solid var(--color-user-warn) !important;
+}
+
+.user-chatter {
+  display: flex;
+  background-color: var(--bg-color-popup);
+  min-height: 6vh;
+  align-items: center;
+  margin: 0.5rem;
+  padding-left: 1rem;
+}
+
+.user-chatter-username {
+  width: 60%;
+  overflow-x: auto;
+}
+
+.user-chatter-last-seen {
+  overflow-x: auto;
+  text-align: center;
+  width: 35%;
+  color: var(--base-color-info);
+}

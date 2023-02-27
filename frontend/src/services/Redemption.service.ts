@@ -23,7 +23,7 @@ const getRedemptions = (
   switch (redemptions) {
     case "session":
       return useAxiosCustom<IPagination<IRedemption>>({
-        url: `${baseUrl}/twitch-session/${sessionId}`,
+        url: `${baseUrl}/stream-session/${sessionId}`,
       });
       break;
 

@@ -21,7 +21,7 @@ const getMessages = (
   switch (messages) {
     case "session":
       return useAxiosCustom<IPagination<IMessage>>({
-        url: `${baseUrl}/twitch-session/${sessionId}`,
+        url: `${baseUrl}/stream-session/${sessionId}`,
       });
       break;
 

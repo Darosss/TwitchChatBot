@@ -2,7 +2,7 @@ import Express, { NextFunction, Request, Response } from "express";
 import { IRequestParams, IRequestRedemptionQuery } from "@types";
 import { filterRedemptionsByUrlParams } from "./filters/redemptions.filter";
 import { getRedemptions, getRedemptionsCount } from "@services/Redemption";
-import { getTwitchSessionById } from "@services/TwitchSession";
+import { getStreamSessionById } from "@services/streamSessions";
 
 const getRedemptionsList = async (
   req: Request<{}, {}, {}, IRequestRedemptionQuery>,
@@ -76,7 +76,7 @@ const getSessionRedemptions = async (
   const { page = 1, limit = 50 } = req.query;
 
   try {
-    const session = await getTwitchSessionById(id, { select: { __v: 0 } });
+    const session = await getStreamSessionById(id, { select: { __v: 0 } });
 
     const searchFilter = Object.assign(
       {

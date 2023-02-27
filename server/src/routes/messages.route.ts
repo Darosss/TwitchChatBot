@@ -12,7 +12,7 @@ const messagesRouter = Router();
 
 messagesRouter.get("/", checkSearchParams, checkSearchParams, getMessagesList);
 messagesRouter.get(
-  "/twitch-session/:id",
+  "/stream-session/:id",
   isParamObjectId,
   checkSearchParams,
   getSessionMessages

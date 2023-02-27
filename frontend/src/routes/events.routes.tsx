@@ -1,11 +1,11 @@
 import { Routes, Route } from "react-router-dom";
-import TwitchEvents from "@components/TwitchEvents";
+import StreamEvents from "@components/streamEvents";
 
 export function EventRoutes() {
   return (
     <Routes>
       <Route>
-        <Route index element={<TwitchEvents />} />
+        <Route index element={<StreamEvents />} />
         <Route path="*" element={<>Not found</>} />
       </Route>
     </Routes>
