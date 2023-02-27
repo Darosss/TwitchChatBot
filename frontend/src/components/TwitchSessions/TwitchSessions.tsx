@@ -43,17 +43,17 @@ export default function TwitchSessions() {
               return (
                 <tr key={session._id}>
                   <td>
-                    <Link to={`../messages/twitch-session/${session._id}`}>
+                    <Link to={`/messages/stream-session/${session._id}`}>
                       Messages
                     </Link>
                   </td>
                   <td>
-                    <Link to={`../redemptions/twitch-session/${session._id}`}>
+                    <Link to={`/redemptions/stream-session/${session._id}`}>
                       Redemptions
                     </Link>
                   </td>
                   <td>
-                    <Link to={`../twitch-sessions/${session._id}`}>
+                    <Link to={`/stream-sessions/${session._id}`}>
                       Session profile
                     </Link>
                   </td>
