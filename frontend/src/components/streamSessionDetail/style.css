@@ -1,4 +1,4 @@
-.twitch-session-details-wrapper {
+.stream-session-details-wrapper {
   font-size: 2vmin;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
