@@ -1,6 +1,6 @@
 import useAxiosCustom, { IPagination, ResponseData } from "./Api.service";
 
-export interface ITwitchSession {
+export interface IStreamSession {
   _id: string;
   sessionStart: Date;
   sessionEnd: Date;
@@ -28,7 +28,7 @@ export interface TopUsedWords {
   count: number;
 }
 
-export interface ITwitchSessionStatistics {
+export interface IStreamSessionStatistics {
   messagesCount: number;
   topMsgsUsers: TopMsgsUsers[];
   topRedemptionsUsers: TopRedemptionsUsers[];
@@ -37,20 +37,20 @@ export interface ITwitchSessionStatistics {
 }
 
 const getSessions = () => {
-  return useAxiosCustom<IPagination<ITwitchSession>>({
-    url: `/twitch-sessions`,
+  return useAxiosCustom<IPagination<IStreamSession>>({
+    url: `/stream-sessions`,
   });
 };
 
 const getSessionById = (sessionId: string) => {
-  return useAxiosCustom<ResponseData<ITwitchSession>>({
-    url: `/twitch-sessions/${sessionId}`,
+  return useAxiosCustom<ResponseData<IStreamSession>>({
+    url: `/stream-sessions/${sessionId}`,
   });
 };
 
 const getSessionStatistics = () => {
-  return useAxiosCustom<{ data: ITwitchSessionStatistics }>({
-    url: `/twitch-sessions/current-session/statistics`,
+  return useAxiosCustom<{ data: IStreamSessionStatistics }>({
+    url: `/stream-sessions/current-session/statistics`,
   });
 };
 
