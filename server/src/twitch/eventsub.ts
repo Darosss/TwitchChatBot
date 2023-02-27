@@ -11,9 +11,9 @@ import {
 import { createUserIfNotExist } from "@services/User";
 import { createRedemption } from "@services/Redemption";
 import {
-  createTwitchSession,
-  updateTwitchSessionById,
-} from "@services/TwitchSession";
+  createStreamSession,
+  updateStreamSessionById,
+} from "@services/streamSessions";
 
 const eventSub = async (
   apiClient: ApiClient,
@@ -82,14 +82,14 @@ const eventSub = async (
         .then(async (stream) => {
           const timestampUpdateStream = e.startDate.getTime().toString();
 
-          const newTwitchSession = await createTwitchSession({
+          const newStreamSession = await createStreamSession({
             sessionStart: e.startDate,
             sessionTitles: new Map([[timestampUpdateStream, stream.title]]),
             categories: new Map([[timestampUpdateStream, stream.gameName]]),
           });
 
-          onUpdateStreamDetails(newTwitchSession.id);
-          offlineSubscription(newTwitchSession.id);
+          onUpdateStreamDetails(newStreamSession.id);
+          offlineSubscription(newStreamSession.id);
         })
         .catch((err) => console.log("Online subs err", err));
     }
@@ -98,7 +98,7 @@ const eventSub = async (
   const offlineSubscription = async (sessionId: string) => {
     return await listener.subscribeToStreamOfflineEvents(userId, async (e) => {
       console.log(`${e.broadcasterDisplayName} just went offline`);
-      await updateTwitchSessionById(sessionId, { sessionEnd: new Date() });
+      await updateStreamSessionById(sessionId, { sessionEnd: new Date() });
     });
   };
 
@@ -107,7 +107,7 @@ const eventSub = async (
       console.log("Stream details has been updated");
       const timestamp = Date.now();
 
-      await updateTwitchSessionById(sessionId, {
+      await updateStreamSessionById(sessionId, {
         $set: {
           [`categories.${timestamp}`]: e.categoryName,
           [`sessionTitles.${timestamp}`]: e.streamTitle,

@@ -1,7 +1,7 @@
 import { Model, model, Schema } from "mongoose";
-import { ITwitchSessionDocument } from "./types";
+import { IStreamSessionDocument } from "./types";
 
-const TwitchSessionSchema: Schema<ITwitchSessionDocument> = new Schema({
+const StreamSessionSchema: Schema<IStreamSessionDocument> = new Schema({
   sessionStart: { type: Date, required: true, default: new Date() },
   sessionEnd: { type: Date },
   sessionTitles: {
@@ -22,7 +22,7 @@ const TwitchSessionSchema: Schema<ITwitchSessionDocument> = new Schema({
   },
 });
 
-export const TwitchSession: Model<ITwitchSessionDocument> = model(
+export const StreamSession: Model<IStreamSessionDocument> = model(
   "Sessions",
-  TwitchSessionSchema
+  StreamSessionSchema
 );

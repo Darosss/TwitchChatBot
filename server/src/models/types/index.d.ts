@@ -44,7 +44,7 @@ export interface IRedemption {
 
 export type IRedemptionDocument = IRedeption & Document;
 
-export interface ITwitchSession {
+export interface IStreamSession {
   _id: string;
   sessionStart: Date;
   sessionEnd: Date;
@@ -54,7 +54,7 @@ export interface ITwitchSession {
   viewers: Map<string, number>;
 }
 
-export type ITwitchSessionDocument = ITwitchSession & Document;
+export type IStreamSessionDocument = IStreamSession & Document;
 
 export interface ITrigger {
   _id: string;

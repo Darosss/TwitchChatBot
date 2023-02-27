@@ -11,7 +11,7 @@ const redemptionsRouter = Router();
 redemptionsRouter.get("/", checkSearchParams, getRedemptionsList);
 redemptionsRouter.get("/:id", getUserRedemptions);
 redemptionsRouter.get(
-  "/twitch-session/:id",
+  "/stream-session/:id",
   checkSearchParams,
   getSessionRedemptions
 );

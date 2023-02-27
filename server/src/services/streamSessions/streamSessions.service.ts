@@ -1,5 +1,5 @@
-import { TwitchSession } from "@models/twitch-session.model";
-import { ITwitchSession, ITwitchSessionDocument } from "@models/types";
+import { StreamSession } from "@models/streamSession.model";
+import { IStreamSession, IStreamSessionDocument } from "@models/types";
 import {
   getMostActiveUsersByMsgs,
   getMessagesCount,
@@ -8,71 +8,71 @@ import {
 import { getMostActiveUsersByRedemptions } from "@services/Redemption";
 import { getFollowersCount } from "@services/User";
 import { checkExistResource } from "@utils/checkExistResource.util";
-import { AppError, handleAppError } from "@utils/ErrorHandler.util";
+import { handleAppError } from "@utils/ErrorHandler.util";
 import { getLastNItemsFromMap } from "@utils/get-last-n-items-from-map.util";
 import { logger } from "@utils/logger.util";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
-  ISessionStatisticOptions,
-  ManyTwitchSessionFindOptions,
-  TwitchSessionCreateData,
-  TwitchSessionFindOptions,
-  TwitchSessionOptionalData,
-} from "./types/TwitchSession";
+  IStreamSessionStatisticOptions,
+  IManyStreamSessionsFindOptions,
+  IStreamSessionCreateData,
+  IStreamSessionFindOptions,
+  IStreamSessionOptionalData,
+} from "./types/";
 
-export const getTwitchSessions = async (
-  filter: FilterQuery<ITwitchSessionDocument> = {},
-  twitchSessionFindOptions: ManyTwitchSessionFindOptions
+export const getStreamSessions = async (
+  filter: FilterQuery<IStreamSessionDocument> = {},
+  streamSessionFindOptions: IManyStreamSessionsFindOptions
 ) => {
   const {
     limit = 50,
     skip = 1,
     sort = { createdAt: -1 },
     select = { __v: 0 },
-  } = twitchSessionFindOptions;
+  } = streamSessionFindOptions;
   try {
-    const twitchSessions = await TwitchSession.find(filter)
+    const streamSessions = await StreamSession.find(filter)
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
       .sort(sort);
 
-    return twitchSessions;
+    return streamSessions;
   } catch (err) {
-    logger.error(`Error occured while getting twitch sessions. ${err}`);
+    logger.error(`Error occured while getting stream sessions. ${err}`);
     handleAppError(err);
   }
 };
 
-export const getTwitchSessionById = async (
+export const getStreamSessionById = async (
   id: string,
-  twitchSessionFindOptions: TwitchSessionFindOptions
+  streamSessionFindOptions: IStreamSessionFindOptions
 ) => {
-  const { select = { __v: 0 } } = twitchSessionFindOptions;
+  const { select = { __v: 0 } } = streamSessionFindOptions;
 
   try {
-    const foundTwitchSession = await TwitchSession.findById(id).select(select);
+    const foundStreamSession = await StreamSession.findById(id).select(select);
 
-    const twitchSession = checkExistResource(
-      foundTwitchSession,
-      `Twitch session with id(${id})`
+    const streamSession = checkExistResource(
+      foundStreamSession,
+      `Stream session with id(${id})`
     );
 
-    return twitchSession;
+    return streamSession;
   } catch (err) {
     logger.error(
-      `Error occured while getting twitch session by id(${id}). ${err}`
+      `Error occured while getting stream session by id(${id}). ${err}`
     );
     handleAppError(err);
   }
 };
 
-export const getTwitchSessionStatisticsById = async (id: string) => {};
+export const getStreamSessionStatisticsById = async (id: string) => {};
 
-export const getCurrentTwitchSession = async (
-  twitchSessionFindOptions: TwitchSessionFindOptions
+export const getCurrentStreamSession = async (
+  streamSessionFindOptions: IStreamSessionFindOptions
 ) => {
-  const { select = { __v: 0 } } = twitchSessionFindOptions;
+  const { select = { __v: 0 } } = streamSessionFindOptions;
 
   const currentDate = new Date();
   const filter = {
@@ -87,43 +87,43 @@ export const getCurrentTwitchSession = async (
     ],
   };
   try {
-    const twitchSession = await TwitchSession.findOne(filter)
+    const streamSession = await StreamSession.findOne(filter)
       .sort({ sessionStart: -1 })
       .limit(1)
       .select(select);
 
-    return twitchSession;
+    return streamSession;
   } catch (err) {
-    logger.error(`Error occured while getting current twitch session. ${err}`);
+    logger.error(`Error occured while getting current stream session. ${err}`);
     handleAppError(err);
   }
 };
-export const getLatestTwitchSession = async (
-  twitchSessionFindOptions: TwitchSessionFindOptions
+export const getLatestStreamSession = async (
+  streamSessionFindOptions: IStreamSessionFindOptions
 ) => {
-  const { select = { __v: 0 } } = twitchSessionFindOptions;
+  const { select = { __v: 0 } } = streamSessionFindOptions;
 
   try {
-    const foundTwitchSession = await TwitchSession.findOne({})
+    const foundStreamSession = await StreamSession.findOne({})
       .sort({ sessionStart: -1 })
       .limit(1)
       .select(select);
 
-    const twitchSession = checkExistResource(
-      foundTwitchSession,
-      "Twitch session"
+    const streamSession = checkExistResource(
+      foundStreamSession,
+      "Stream session"
     );
 
-    return twitchSession;
+    return streamSession;
   } catch (err) {
-    logger.error(`Error occured while getting current twitch session. ${err}`);
+    logger.error(`Error occured while getting current stream session. ${err}`);
     handleAppError(err);
   }
 };
 
-export const getTwitchSessionStatistics = async (
-  session: ITwitchSession,
-  options: ISessionStatisticOptions
+export const getStreamSessionStatistics = async (
+  session: IStreamSession,
+  options: IStreamSessionStatisticOptions
 ) => {
   const { sessionStart, sessionEnd, viewers } = session;
   const {
@@ -171,39 +171,39 @@ export const getTwitchSessionStatistics = async (
   };
 };
 
-export const getTwitchSessionsCount = async (
-  filter: FilterQuery<ITwitchSessionDocument> = {}
+export const getStreamSessionsCount = async (
+  filter: FilterQuery<IStreamSessionDocument> = {}
 ) => {
-  return await TwitchSession.countDocuments(filter);
+  return await StreamSession.countDocuments(filter);
 };
 
-export const createTwitchSession = async (
-  twitchSessionData: TwitchSessionCreateData
+export const createStreamSession = async (
+  streamSessionData: IStreamSessionCreateData
 ) => {
   try {
-    const twitchSession = await TwitchSession.create(twitchSessionData);
-    return twitchSession;
+    const streamSession = await StreamSession.create(streamSessionData);
+    return streamSession;
   } catch (err) {
     console.error(err);
-    throw new Error("Failed to create twitch session");
+    throw new Error("Failed to create stream session");
   }
 };
 
-export const updateTwitchSessionById = async (
+export const updateStreamSessionById = async (
   id: string,
-  updateData: UpdateQuery<TwitchSessionOptionalData>
+  updateData: UpdateQuery<IStreamSessionOptionalData>
 ) => {
   try {
-    const twitchSession = await TwitchSession.findByIdAndUpdate(
+    const streamSession = await StreamSession.findByIdAndUpdate(
       id,
       updateData,
       {
         new: true,
       }
     );
-    return twitchSession;
+    return streamSession;
   } catch (err) {
     console.error(err);
-    throw new Error("Failed to update twitch session");
+    throw new Error("Failed to update stream session");
   }
 };

@@ -2,15 +2,15 @@ import Express, { Request, Response, NextFunction } from "express";
 import { IRequestQuerySession } from "@types";
 import { filterSessionByUrlParams } from "./filters/session.filter";
 import {
-  getCurrentTwitchSession,
-  getTwitchSessionStatistics,
-  getTwitchSessions,
-  getTwitchSessionsCount,
-  getTwitchSessionById,
-  getLatestTwitchSession,
-} from "@services/TwitchSession";
+  getCurrentStreamSession,
+  getStreamSessionStatistics,
+  getStreamSessions,
+  getStreamSessionsCount,
+  getStreamSessionById,
+  getLatestStreamSession,
+} from "@services/streamSessions";
 
-const getTwitchSessionsList = async (
+const getStreamSessionsList = async (
   req: Request<{}, {}, {}, IRequestQuerySession>,
   res: Response,
   next: NextFunction
@@ -19,16 +19,16 @@ const getTwitchSessionsList = async (
 
   const searchFilter = filterSessionByUrlParams(req.query);
   try {
-    const twitchSessions = await getTwitchSessions(searchFilter, {
+    const streamSessions = await getStreamSessions(searchFilter, {
       limit: limit,
       skip: page,
       sort: { sessionStart: -1 },
     });
 
-    const count = await getTwitchSessionsCount(searchFilter);
+    const count = await getStreamSessionsCount(searchFilter);
 
     res.status(200).send({
-      data: twitchSessions,
+      data: streamSessions,
       totalPages: Math.ceil(count / limit),
       count: count,
       currentPage: Number(page),
@@ -44,12 +44,12 @@ const getCurrentSession = async (
   next: NextFunction
 ) => {
   try {
-    let twitchSession = await getCurrentTwitchSession({});
+    let streamSession = await getCurrentStreamSession({});
 
-    if (!twitchSession) twitchSession = await getLatestTwitchSession({});
+    if (!streamSession) streamSession = await getLatestStreamSession({});
 
     res.status(200).send({
-      data: twitchSession,
+      data: streamSession,
     });
   } catch (err) {
     next(err);
@@ -64,10 +64,10 @@ const getSessionById = async (
   const { id } = req.params;
 
   try {
-    const twitchSession = await getTwitchSessionById(id, {});
+    const streamSession = await getStreamSessionById(id, {});
 
     return res.status(200).send({
-      data: twitchSession,
+      data: streamSession,
     });
   } catch (err) {
     next(err);
@@ -82,9 +82,9 @@ const getSessionStatisticsById = async (
   const { id } = req.params;
 
   try {
-    const twitchSession = await getTwitchSessionById(id, {});
+    const streamSession = await getStreamSessionById(id, {});
 
-    const sessionStatstics = await getTwitchSessionStatistics(twitchSession!, {
+    const sessionStatstics = await getStreamSessionStatistics(streamSession!, {
       limitMostUsedWords: 10,
       limitTopMessageUsers: 10,
       limitTopRedemptionsUsers: 10,
@@ -105,14 +105,14 @@ const getCurrentSessionStatistics = async (
   next: NextFunction
 ) => {
   try {
-    let twitchSession = await getCurrentTwitchSession({});
+    let streamSession = await getCurrentStreamSession({});
 
-    if (!twitchSession) {
-      twitchSession = await getLatestTwitchSession({});
+    if (!streamSession) {
+      streamSession = await getLatestStreamSession({});
     }
 
-    const sessionStatstics = await getTwitchSessionStatistics(
-      twitchSession!,
+    const sessionStatstics = await getStreamSessionStatistics(
+      streamSession!,
       {}
     );
     res.status(200).send({
@@ -124,7 +124,7 @@ const getCurrentSessionStatistics = async (
 };
 
 export {
-  getTwitchSessionsList,
+  getStreamSessionsList,
   getCurrentSession,
   getSessionById,
   getCurrentSessionStatistics,
