@@ -1,14 +1,14 @@
 import { Routes, Route } from "react-router-dom";
 
-import TwitchSessionDetail from "@components/TwitchSessionDetail";
-import TwitchSessions from "@components/TwitchSessions";
+import StreamSessionDetail from "@components/streamSessionDetail";
+import StreamSessions from "@components/streamSessions";
 
 export function StreamSessionRoutes() {
   return (
     <Routes>
       <Route>
-        <Route index element={<TwitchSessions />} />
-        <Route path=":sessionId" element={<TwitchSessionDetail />} />
+        <Route index element={<StreamSessions />} />
+        <Route path=":sessionId" element={<StreamSessionDetail />} />
         <Route path="*" element={<>Not found</>} />
       </Route>
     </Routes>
