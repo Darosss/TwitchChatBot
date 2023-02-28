@@ -1,5 +1,5 @@
 import { IRequestQuery } from "@types";
-import { AppError } from "@utils/ErrorHandler.util";
+import { AppError } from "@utils/ErrorHandlerUtil";
 import { NextFunction, Request, Response } from "express";
 
 const checkSearchParams = (
