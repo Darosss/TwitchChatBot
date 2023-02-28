@@ -1,4 +1,4 @@
-import useAxiosCustom, { IPagination, ResponseData } from "./Api.service";
+import useAxiosCustom, { IPagination, IResponseData } from "./ApiService";
 
 export interface IUser {
   _id: string;
@@ -24,7 +24,7 @@ const getUsersList = () => {
 };
 
 const getUser = (userId: string) => {
-  return useAxiosCustom<ResponseData<IUser>>({
+  return useAxiosCustom<IResponseData<IUser>>({
     url: `/users/${userId}`,
   });
 };

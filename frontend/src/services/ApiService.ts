@@ -2,7 +2,7 @@ import useAxios, { configure } from "axios-hooks";
 import Axios, { AxiosRequestConfig } from "axios";
 import { useSearchParams } from "react-router-dom";
 
-export interface ResponseData<T> {
+export interface IResponseData<T> {
   data: T;
 }
 
@@ -13,7 +13,7 @@ export interface IPagination<T> {
   currentPage: number;
 }
 
-interface AxiosCustomOptions<T> {
+interface IAxiosCustomOptions<T> {
   url: string | URL;
   method?: string;
   bodyData?: Partial<T>;
@@ -30,7 +30,7 @@ const axios = Axios.create({
 
 configure({ axios });
 
-const useAxiosCustom = <T>(options: AxiosCustomOptions<T>) => {
+const useAxiosCustom = <T>(options: IAxiosCustomOptions<T>) => {
   const {
     method = "GET",
     url,

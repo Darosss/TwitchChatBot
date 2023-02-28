@@ -1,4 +1,4 @@
-import useAxiosCustom, { IPagination, ResponseData } from "./Api.service";
+import useAxiosCustom, { IPagination, IResponseData } from "./ApiService";
 
 export interface IStreamSession {
   _id: string;
@@ -10,29 +10,29 @@ export interface IStreamSession {
   viewers: Map<string, number>;
 }
 
-export interface TopMsgsUsers {
+export interface ITopMsgsUsers {
   _id: string;
   messageCount: number;
   username: string;
 }
 
-export interface TopRedemptionsUsers {
+export interface ITopRedemptionsUsers {
   _id: string;
   redemptionsCount: number;
   redemptionsCost: number;
   username: string;
 }
 
-export interface TopUsedWords {
+export interface ITopUsedWords {
   _id: number;
   count: number;
 }
 
 export interface IStreamSessionStatistics {
   messagesCount: number;
-  topMsgsUsers: TopMsgsUsers[];
-  topRedemptionsUsers: TopRedemptionsUsers[];
-  topUsedWords: TopUsedWords[];
+  topMsgsUsers: ITopMsgsUsers[];
+  topRedemptionsUsers: ITopRedemptionsUsers[];
+  topUsedWords: ITopUsedWords[];
   viewers: Map<string, number>;
 }
 
@@ -43,7 +43,7 @@ const getSessions = () => {
 };
 
 const getSessionById = (sessionId: string) => {
-  return useAxiosCustom<ResponseData<IStreamSession>>({
+  return useAxiosCustom<IResponseData<IStreamSession>>({
     url: `/stream-sessions/${sessionId}`,
   });
 };

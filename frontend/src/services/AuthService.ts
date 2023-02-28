@@ -1,4 +1,4 @@
-import useAxiosCustom from "./Api.service";
+import useAxiosCustom from "./ApiService";
 
 export interface IAuth {
   _id: string;

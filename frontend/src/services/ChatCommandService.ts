@@ -1,4 +1,4 @@
-import useAxiosCustom, { IPagination } from "./Api.service";
+import useAxiosCustom, { IPagination } from "./ApiService";
 
 export interface IChatCommand {
   _id: string;

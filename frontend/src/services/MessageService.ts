@@ -1,5 +1,5 @@
-import useAxiosCustom, { IPagination, ResponseData } from "./Api.service";
-import { IUser } from "./User.service";
+import useAxiosCustom, { IPagination } from "./ApiService";
+import { IUser } from "./UserService";
 
 export interface IMessage {
   _id: string;
