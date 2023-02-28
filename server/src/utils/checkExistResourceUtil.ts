@@ -1,4 +1,4 @@
-import { AppError } from "./ErrorHandler.util";
+import { AppError } from "./ErrorHandlerUtil";
 
 export const checkExistResource = <T>(
   resource: T | null | undefined,
