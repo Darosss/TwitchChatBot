@@ -1,7 +1,7 @@
 import { IAuthorizationTwitch } from "@types";
 import Express, { Request, Response } from "express";
 
-import initTwitchOnAuth from "../twitch/initTwitchOnAuth";
+import initTwitchOnAuth from "../stream/twitch/initTwitchOnAuth";
 
 export const overlay = async (req: Request, res: Response) => {
   const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;

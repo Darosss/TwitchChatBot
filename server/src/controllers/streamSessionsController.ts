@@ -1,6 +1,6 @@
 import Express, { Request, Response, NextFunction } from "express";
 import { IRequestQuerySession } from "@types";
-import { filterSessionByUrlParams } from "./filters/session.filter";
+import { filterSessionByUrlParams } from "./filters/sessionFilter";
 import {
   getCurrentStreamSession,
   getStreamSessionStatistics,

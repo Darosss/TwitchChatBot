@@ -1,12 +1,12 @@
 import Express, { NextFunction, Request, Response } from "express";
 import { IRequestQueryUser } from "@types";
-import { filterUsersByUrlParams } from "./filters/users.filter";
+import { filterUsersByUrlParams } from "./filters/usersFilter";
 import {
   getUserById,
   getUserCount,
   getUsers,
   updateUserById,
-} from "@services/User";
+} from "@services/users";
 
 const getUsersList = async (
   req: Request<{}, {}, {}, IRequestQueryUser>,

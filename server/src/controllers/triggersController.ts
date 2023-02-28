@@ -1,13 +1,13 @@
 import Express, { NextFunction, Request, Response } from "express";
 import { IRequestTriggerQuery } from "@types";
-import { filterTriggersByUrlParams } from "./filters/triggers.filter";
+import { filterTriggersByUrlParams } from "./filters/triggersFilter";
 import {
   createTrigger,
   deleteTriggerById,
   getTriggers,
   getTriggersCount,
   updateTriggerById,
-} from "@services/Triggers";
+} from "@services/triggers";
 
 const getTriggersList = async (
   req: Request<{}, {}, {}, IRequestTriggerQuery>,

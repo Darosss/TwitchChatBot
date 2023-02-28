@@ -1,7 +1,7 @@
 import Express, { NextFunction, Request, Response } from "express";
 import { IRequestParams, IRequestRedemptionQuery } from "@types";
-import { filterRedemptionsByUrlParams } from "./filters/redemptions.filter";
-import { getRedemptions, getRedemptionsCount } from "@services/Redemption";
+import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
+import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
 import { getStreamSessionById } from "@services/streamSessions";
 
 const getRedemptionsList = async (

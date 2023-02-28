@@ -1,7 +1,7 @@
 import Express, { NextFunction, Request, Response } from "express";
 import { IRequestParams, IRequestQuery, IRequestQueryMessage } from "@types";
-import { filterMessagesByUrlParams } from "./filters/messages.filter";
-import { getMessages, getMessagesCount } from "@services/Message";
+import { filterMessagesByUrlParams } from "./filters/messagesFilter";
+import { getMessages, getMessagesCount } from "@services/messages";
 import { getStreamSessionById } from "@services/streamSessions";
 
 const getMessagesList = async (

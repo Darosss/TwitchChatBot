@@ -1,13 +1,13 @@
 import Express, { NextFunction, Request, Response } from "express";
 import { IRequestCommandsQuery } from "@types";
-import { filterCommandsByUrlParams } from "./filters/commands.filter";
+import { filterCommandsByUrlParams } from "./filters/commandsFilter";
 import {
   createChatCommand,
   deleteChatCommandById,
   getChatCommands,
   getChatCommandsCount,
   updateChatCommandById,
-} from "@services/ChatCommand";
+} from "@services/chatCommands";
 
 const getChatCommandsList = async (
   req: Request<{}, {}, {}, IRequestCommandsQuery>,
