@@ -1,4 +1,4 @@
-import { User } from "@models/user.model";
+import { User } from "@models/userModel";
 import { IRequestQueryMessage } from "@types";
 
 const filterMessagesByUrlParams = async (params: IRequestQueryMessage) => {
