@@ -1,14 +1,14 @@
-import { Trigger } from "@models/trigger.model";
+import { Trigger } from "@models/triggerModel";
 import { ITriggerDocument } from "@models/types";
-import { checkExistResource } from "@utils/checkExistResource.util";
-import { AppError, handleAppError } from "@utils/ErrorHandler.util";
-import { logger } from "@utils/logger.util";
+import { checkExistResource } from "@utils/checkExistResourceUtil";
+import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
+import { logger } from "@utils/loggerUtil";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
   ManyTriggersFindOptions,
   TriggerCreateData,
   TriggerUpdateData,
-} from "./types/Trigger";
+} from "./types";
 
 export const getTriggers = async (
   filter: FilterQuery<ITriggerDocument> = {},

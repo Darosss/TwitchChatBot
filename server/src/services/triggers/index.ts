@@ -1,2 +1,2 @@
-export * from "./Trigger.service";
-export * from ".";
+export * from "./triggersService";
+export * from "./";

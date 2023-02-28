@@ -1,2 +1,2 @@
-export * from "./User.service";
-export * from ".";
+export * from "./usersService";
+export * from "./";

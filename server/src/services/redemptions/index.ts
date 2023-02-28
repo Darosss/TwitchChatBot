@@ -1,2 +1,2 @@
-export * from "./Redemption.service";
-export * from ".";
+export * from "./redemptionsService";
+export * from "./";

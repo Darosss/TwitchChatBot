@@ -1,2 +1,2 @@
-export * from "./ChatCommand.service";
-export * from ".";
+export * from "./chatCommandsService";
+export * from "./";

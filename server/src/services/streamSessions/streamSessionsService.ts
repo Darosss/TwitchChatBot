@@ -1,16 +1,16 @@
-import { StreamSession } from "@models/streamSession.model";
+import { StreamSession } from "@models/streamSessionModel";
 import { IStreamSession, IStreamSessionDocument } from "@models/types";
 import {
   getMostActiveUsersByMsgs,
   getMessagesCount,
   getMostUsedWord,
-} from "@services/Message";
-import { getMostActiveUsersByRedemptions } from "@services/Redemption";
-import { getFollowersCount } from "@services/User";
-import { checkExistResource } from "@utils/checkExistResource.util";
-import { handleAppError } from "@utils/ErrorHandler.util";
-import { getLastNItemsFromMap } from "@utils/get-last-n-items-from-map.util";
-import { logger } from "@utils/logger.util";
+} from "@services/messages";
+import { getMostActiveUsersByRedemptions } from "@services/redemptions";
+import { getFollowersCount } from "@services/users";
+import { checkExistResource } from "@utils/checkExistResourceUtil";
+import { handleAppError } from "@utils/ErrorHandlerUtil";
+import { getLastNItemsFromMap } from "@utils/getLastNItemsMapUtil";
+import { logger } from "@utils/loggerUtil";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
   IStreamSessionStatisticOptions,

@@ -1,15 +1,15 @@
 import { IUser, IUserDocument } from "@models/types";
-import { User } from "@models/user.model";
-import { checkExistResource } from "@utils/checkExistResource.util";
-import { AppError, handleAppError } from "@utils/ErrorHandler.util";
-import { logger } from "@utils/logger.util";
+import { User } from "@models/userModel";
+import { checkExistResource } from "@utils/checkExistResourceUtil";
+import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
+import { logger } from "@utils/loggerUtil";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
   ManyUsersFindOptions,
   UserCreateData,
   UserFindOptions,
   UserUpdateData,
-} from "./types/User";
+} from "./types";
 
 export const getUsers = async (
   filter: FilterQuery<IUserDocument> = {},

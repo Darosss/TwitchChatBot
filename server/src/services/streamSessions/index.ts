@@ -1,2 +1,2 @@
-export * from "./streamSessions.service";
-export * from ".";
+export * from "./streamSessionsService";
+export * from "./";

@@ -1,4 +1,4 @@
-interface ConfigUpdateData {
+export interface ConfigUpdateData {
   commandsPrefix?: string;
   timersIntervalDelay?: number;
   activeUserTimeDelay?: number;

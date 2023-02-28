@@ -1,2 +1,2 @@
-export * from "./Configs.service";
-export * from ".";
+export * from "./configsService";
+export * from "./";

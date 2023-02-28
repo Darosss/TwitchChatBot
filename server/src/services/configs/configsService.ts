@@ -1,8 +1,9 @@
-import { Config } from "@models/config.model";
-import { checkExistResource } from "@utils/checkExistResource.util";
-import { AppError, handleAppError } from "@utils/ErrorHandler.util";
-import { logger } from "@utils/logger.util";
+import { Config } from "@models/configModel";
+import { checkExistResource } from "@utils/checkExistResourceUtil";
+import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
+import { logger } from "@utils/loggerUtil";
 import { UpdateQuery } from "mongoose";
+import { ConfigUpdateData } from "./types";
 
 export const getConfigs = async () => {
   try {

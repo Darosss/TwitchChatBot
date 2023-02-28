@@ -1,12 +1,9 @@
-import { Redemption } from "@models/redemption.model";
+import { Redemption } from "@models/redemptionModel";
 import { IRedemptionDocument } from "@models/types";
-import { AppError, handleAppError } from "@utils/ErrorHandler.util";
-import { logger } from "@utils/logger.util";
+import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
+import { logger } from "@utils/loggerUtil";
 import { FilterQuery } from "mongoose";
-import {
-  ManyRedemptionsFindOptions,
-  RedemptionCreateData,
-} from "./types/Redemption";
+import { ManyRedemptionsFindOptions, RedemptionCreateData } from "./types";
 
 export const getRedemptions = async (
   filter: FilterQuery<IRedemptionDocument> = {},

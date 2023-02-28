@@ -1,15 +1,15 @@
-import { ChatCommand } from "@models/chat-command.model";
+import { ChatCommand } from "@models/chatCommandModel";
 import { IChatCommandDocument } from "@models/types";
-import { checkExistResource } from "@utils/checkExistResource.util";
-import { AppError, handleAppError } from "@utils/ErrorHandler.util";
-import { logger } from "@utils/logger.util";
+import { checkExistResource } from "@utils/checkExistResourceUtil";
+import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
+import { logger } from "@utils/loggerUtil";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
   ChatCommandCreateData,
   ChatCommandsFindOptions,
   ChatCommandUpdateData,
   ManyChatCommandsFindOptions,
-} from "./types/ChatCommand";
+} from "./types/";
 
 export const getChatCommands = async (
   filter: FilterQuery<IChatCommandDocument> = {},

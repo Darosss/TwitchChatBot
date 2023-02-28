@@ -1,5 +1,5 @@
-import { AuthToken } from "@models/auth.model";
-import { AuthCreateData } from "./types/Auth";
+import { AuthToken } from "@models/authModel";
+import { AuthCreateData } from "./types";
 
 export const getAuthToken = async () => {
   try {
