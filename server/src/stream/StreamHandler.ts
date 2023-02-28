@@ -1,7 +1,6 @@
 import { ApiClient } from "@twurple/api";
 import { IConfigDocument, ITriggerDocument, IUser } from "@models/types";
-import { Trigger } from "@models/trigger.model";
-import { percentChance, randomWithMax } from "@utils/random-numbers.util";
+import { Trigger } from "@models/triggerModel";
 import { Server } from "socket.io";
 import {
   ClientToServerEvents,
@@ -9,27 +8,27 @@ import {
   ServerToClientEvents,
   SocketData,
 } from "@libs/types";
-import removeDifferenceFromSet from "@utils/remove-difference-set.util";
-import retryWithCatch from "@utils/retry-with-catch.util";
 
 import {
-  createUserIfNotExist,
-  getTwitchNames,
-  isUserInDB,
-  updateUser,
-} from "@services/User/";
-import { createMessage } from "@services/Message";
+  getCurrentStreamSession,
+  updateStreamSessionById,
+} from "@services/streamSessions";
 import {
+  getOneChatCommand,
   getAllChatCommands,
   getChatCommands,
-  getOneChatCommand,
-} from "@services/ChatCommand";
+} from "@services/chatCommands/chatCommandsService";
+import { createMessage } from "@services/messages/messagesService";
+import { MessageCreateData } from "@services/messages/types";
 import {
-  getCurrentTwitchSession,
-  updateTwitchSessionById,
-} from "@services/TwitchSession";
-import addFollowersTemp from "./add-followers-temp";
-import { MessageCreateData } from "@services/Message/types/Message";
+  createUserIfNotExist,
+  isUserInDB,
+  getTwitchNames,
+  updateUser,
+} from "@services/users/usersService";
+import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
+import removeDifferenceFromSet from "@utils/removeDifferenceSetUtil";
+import retryWithCatch from "@utils/retryWithCatchUtil";
 
 interface BotStatsticOptions {
   config: IConfigDocument;
@@ -146,7 +145,7 @@ class BotStatisticDatabase {
   }
 
   async checkCountOfViewers(broadcasterId: string) {
-    const currentSession = await getCurrentTwitchSession({});
+    const currentSession = await getCurrentStreamSession({});
     const streamInfo = await this.twitchApi.streams.getStreamByUserId(
       broadcasterId
     );
@@ -156,7 +155,7 @@ class BotStatisticDatabase {
     viewersPeek.set(String(new Date().getTime()), streamInfo.viewers);
     const timestamp = Date.now();
 
-    updateTwitchSessionById(currentSession.id, {
+    updateStreamSessionById(currentSession.id, {
       $set: { [`viewers.${timestamp}`]: streamInfo.viewers },
     });
   }

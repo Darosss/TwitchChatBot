@@ -9,9 +9,9 @@ import {
   ServerToClientEvents,
   SocketData,
 } from "@libs/types";
-import BotStatisticDatabase from "../chatbot/database-statistic";
-import { createUserIfNotExist } from "@services/User";
-import { messageLogger } from "@utils/logger.util";
+import BotStatisticDatabase from "../StreamHandler";
+import { createUserIfNotExist } from "@services/users";
+import { messageLogger } from "@utils/loggerUtil";
 require("dotenv").config();
 
 const clientTmi = (

@@ -1,8 +1,8 @@
 import { RefreshingAuthProvider } from "@twurple/auth";
 import eventSub from "./eventsub";
 import { ApiClient } from "@twurple/api";
-import * as ClientTmi from "../twitch-tmi";
-import BotStatisticDatabase from "../chatbot/database-statistic";
+import * as ClientTmi from "./twitchClientTmi";
+import BotStatisticDatabase from "../StreamHandler";
 import { Server } from "socket.io";
 import {
   ClientToServerEvents,
@@ -11,8 +11,8 @@ import {
   SocketData,
 } from "@libs/types";
 import { IAuthorizationTwitch } from "@types";
-import { createNewAuth, createOrGetIfAuthValid } from "@services/Auth";
-import { getConfigs } from "@services/Configs";
+import { createNewAuth, createOrGetIfAuthValid } from "@services/auth";
+import { getConfigs } from "@services/configs";
 
 const initTwitchOnAuth = async (
   authAccesToken: IAuthorizationTwitch,

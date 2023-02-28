@@ -8,8 +8,8 @@ import {
   InterServerEvents,
   SocketData,
 } from "@libs/types";
-import { createUserIfNotExist } from "@services/User";
-import { createRedemption } from "@services/Redemption";
+import { createUserIfNotExist } from "@services/users";
+import { createRedemption } from "@services/redemptions";
 import {
   createStreamSession,
   updateStreamSessionById,
