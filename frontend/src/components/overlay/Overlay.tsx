@@ -27,7 +27,7 @@ export default function Overlay() {
 
       if (rewardTitle.includes(import.meta.env.VITE_PREFIX_ALERT_SOUND!)) {
         const redemptionAudio = new Audio(
-          `/alert-sounds/${rewardTitle.split(":")[1].trim()}.mp3`
+          `/alertSounds/${rewardTitle.split(":")[1].trim()}.mp3`
         );
         redemptionAudio.volume = 0.03;
         redemptionAudio.play();
