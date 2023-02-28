@@ -1,27 +1,27 @@
 import "./style.css";
 import React, { useEffect } from "react";
 import streamSessionService, {
-  TopMsgsUsers,
-  TopRedemptionsUsers,
-  TopUsedWords,
+  ITopMsgsUsers,
+  ITopRedemptionsUsers,
+  ITopUsedWords,
 } from "@services/StreamSessionService";
-import LineChart from "@components/LineChart";
-import SlideShow from "@components/SlideShow";
+import LineChart from "@components/lineChart";
+import SlideShow from "@components/slideShow";
 
 type SessionMessagesProps = {
   count: number;
 };
 
 type TopUsersMessagesProps = {
-  users: TopMsgsUsers[];
+  users: ITopMsgsUsers[];
 };
 
 type TopRedemptionProps = {
-  users: TopRedemptionsUsers[];
+  users: ITopRedemptionsUsers[];
 };
 
 type TopUsedWordsProps = {
-  words: TopUsedWords[];
+  words: ITopUsedWords[];
 };
 
 export default function StreamStatistics(props: { className?: string }) {

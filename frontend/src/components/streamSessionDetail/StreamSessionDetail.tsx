@@ -3,9 +3,9 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import StreamSessionService from "@services/StreamSessionService";
 import formatDate from "@utils/formatDate";
-import LineChart from "@components/LineChart";
-import PreviousPage from "@components/PreviousPage";
-import SlideShow from "@components/SlideShow";
+import LineChart from "@components/lineChart";
+import PreviousPage from "@components/previousPage";
+import SlideShow from "@components/slideShow";
 
 export default function StreamSessionDetail() {
   const { sessionId } = useParams();

@@ -1,12 +1,12 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import initRoutes from "./routes";
-import localSocket from "./local-socket";
+import localSocket from "./socketIO";
 import http from "http";
 import {
   errorResponder,
   invalidPathHandler,
-} from "@middlewares/errorHandlers.middleware";
+} from "@middlewares/errorHandlersMiddleware";
 
 const expressApp = () => {
   const app = express();
