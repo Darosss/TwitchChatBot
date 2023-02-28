@@ -18,10 +18,6 @@ const localSocket = (httpServer: any) => {
 
   io.on("connection", (socket) => {
     console.log("a user connected", socket.id);
-
-    socket.on("messageClient", (date, username, message) => {
-      console.log("Got message from client");
-    });
   });
 
   return io;
