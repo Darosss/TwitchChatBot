@@ -1,28 +1,27 @@
 import Express, { Router } from "express";
-
-import checkSearchParams from "@middlewares/checkSearchParams.middleware";
-import isParamObjectId from "@middlewares/isParamObjectId.middleware";
 import {
   getStreamSessionsList,
   getCurrentSession,
   getCurrentSessionStatistics,
   getSessionById,
   getSessionStatisticsById,
-} from "@controllers/streamSessions.controller";
+} from "@controllers/streamSessionsController";
+import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
+import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
 
-const streamSessionRouter = Router();
+const streamSessionsRouter = Router();
 
-streamSessionRouter.get("/", checkSearchParams, getStreamSessionsList);
-streamSessionRouter.get("/current-session", getCurrentSession);
-streamSessionRouter.get(
+streamSessionsRouter.get("/", checkSearchParams, getStreamSessionsList);
+streamSessionsRouter.get("/current-session", getCurrentSession);
+streamSessionsRouter.get(
   "/current-session/statistics",
   getCurrentSessionStatistics
 );
-streamSessionRouter.get("/:id", isParamObjectId, getSessionById);
-streamSessionRouter.get(
+streamSessionsRouter.get("/:id", isParamObjectId, getSessionById);
+streamSessionsRouter.get(
   "/:id/statistics",
   isParamObjectId,
   getSessionStatisticsById
 );
 
-export default streamSessionRouter;
+export default streamSessionsRouter;

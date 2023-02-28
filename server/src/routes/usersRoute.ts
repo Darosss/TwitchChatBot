@@ -3,9 +3,9 @@ import {
   getUsersList,
   getUsersProfile,
   editUserProfile,
-} from "@controllers/users.controller";
-import isParamObjectId from "@middlewares/isParamObjectId.middleware";
-import checkSearchParams from "@middlewares/checkSearchParams.middleware";
+} from "@controllers/usersController";
+import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
+import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
 
 const usersRouter = Router();
 

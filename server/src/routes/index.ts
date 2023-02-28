@@ -1,11 +1,11 @@
-import auth from "./auth.route";
-import messagesRouter from "./messages.route";
-import usersRouter from "./users.route";
-import streamSessionsRouter from "./streamSessions.route";
-import redemptionsRouter from "./redemptions.route";
-import chatCommandsRouter from "./chat-commands.route";
-import configsRouter from "./configs.route";
-import triggersRouter from "./triggers.route";
+import auth from "./authRoute";
+import chatCommandsRouter from "./chatCommandsRoute";
+import configsRouter from "./configsRoute";
+import messagesRouter from "./messagesRoute";
+import redemptionsRouter from "./redemptionsRoute";
+import triggersRouter from "./triggersRoute";
+import usersRouter from "./usersRoute";
+import streamSessionsRouter from "./streamSessionsRoute";
 
 const initRoutes = (app: any) => {
   app.use("/auth", auth);

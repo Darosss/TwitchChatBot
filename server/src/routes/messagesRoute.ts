@@ -1,12 +1,12 @@
 import Express, { Router } from "express";
 import {
   getMessagesList,
-  getUserMessages,
-  getLatestAndFirstMsgs,
   getSessionMessages,
-} from "@controllers/messages.controller";
-import isParamObjectId from "@middlewares/isParamObjectId.middleware";
-import checkSearchParams from "@middlewares/checkSearchParams.middleware";
+  getLatestAndFirstMsgs,
+  getUserMessages,
+} from "@controllers/messagesController";
+import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
+import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
 
 const messagesRouter = Router();
 

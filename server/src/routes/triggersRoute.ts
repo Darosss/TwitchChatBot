@@ -1,4 +1,4 @@
-import isParamObjectId from "@middlewares/isParamObjectId.middleware";
+import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
 import Express, { Router } from "express";
 
 import {
@@ -7,8 +7,8 @@ import {
   //   getTriggerById,
   editTriggerById,
   deleteTrigger,
-} from "@controllers/triggers.controller";
-import checkSearchParams from "@middlewares/checkSearchParams.middleware";
+} from "@controllers/triggersController";
+import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
 
 const triggersRouter = Router();
 

@@ -1,5 +1,5 @@
 import Express, { Router } from "express";
-import { getConfigsList, editConfigs } from "@controllers/configs.controller";
+import { getConfigsList, editConfigs } from "@controllers/configsController";
 
 const configsRouter = Router();
 

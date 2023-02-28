@@ -1,12 +1,12 @@
 import Express, { Router } from "express";
-import isParamObjectId from "@middlewares/isParamObjectId.middleware";
 import {
   getChatCommandsList,
   addNewCommand,
   editChatCommandById,
   deleteCommandById,
-} from "@controllers/chat-commands.controller";
-import checkSearchParams from "@middlewares/checkSearchParams.middleware";
+} from "@controllers/chatCommandsController";
+import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
+import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
 
 const chatCommandsRouter = Router();
 

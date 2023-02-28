@@ -3,8 +3,8 @@ import {
   getRedemptionsList,
   getUserRedemptions,
   getSessionRedemptions,
-} from "@controllers/redemptions.controller";
-import checkSearchParams from "@middlewares/checkSearchParams.middleware";
+} from "@controllers/redemptionsController";
+import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
 
 const redemptionsRouter = Router();
 
