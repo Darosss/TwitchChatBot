@@ -5,6 +5,8 @@ import {
   getCurrentSessionStatistics,
   getSessionById,
   getSessionStatisticsById,
+  getSessionMessages,
+  getSessionRedemptions,
 } from "@controllers/streamSessionsController";
 import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
 import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
@@ -18,6 +20,12 @@ streamSessionsRouter.get(
   getCurrentSessionStatistics
 );
 streamSessionsRouter.get("/:id", isParamObjectId, getSessionById);
+streamSessionsRouter.get("/:id/messages", isParamObjectId, getSessionMessages);
+streamSessionsRouter.get(
+  "/:id/redemptions",
+  isParamObjectId,
+  getSessionRedemptions
+);
 streamSessionsRouter.get(
   "/:id/statistics",
   isParamObjectId,
