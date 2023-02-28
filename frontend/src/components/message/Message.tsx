@@ -1,5 +1,6 @@
 import "./style.css";
 import React from "react";
+
 import formatDate from "@utils/formatDate";
 
 export default function Message(props: {

@@ -1,7 +1,7 @@
 import "./style.css";
 import React, { useContext, useEffect, useReducer, useState } from "react";
 
-import Message from "@components/Message";
+import Message from "@components/message";
 import { SocketContext } from "@context/SocketContext";
 
 export default function StreamChat(props: { className?: string }) {

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
 import "./style.css";
-import PreviousPage from "@components/PreviousPage";
-import ConfigService from "src/services/Config.service";
+import React, { useState } from "react";
+
+import PreviousPage from "@components/previousPage";
+import ConfigService from "@services/ConfigService";
 
 export default function ConfigsList() {
   const [showEdit, setShowEdit] = useState(false);

@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
 import "./style.css";
-import Pagination from "@components/Pagination";
-import Modal from "@components/Modal";
+
+import React, { useEffect, useState } from "react";
 import formatDate from "@utils/formatDate";
-import PreviousPage from "@components/PreviousPage";
-import FilterBarCommands from "./FilterBarCommands";
-import ChatCommandService from "src/services/Chat-command.service";
+import FilterBarCommands from "./filterBarCommands";
+import ChatCommandService from "@services/ChatCommandService";
+import Modal from "@components/modal";
+import Pagination from "@components/pagination";
+import PreviousPage from "@components/previousPage";
 
 export default function CommandsList() {
   const [showModal, setShowModal] = useState(false);

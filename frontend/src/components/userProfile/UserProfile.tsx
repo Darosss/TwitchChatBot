@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
 import "./style.css";
 
-import PreviousPage from "@components/PreviousPage";
-import Message from "@components/Message";
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+
 import formatDate from "@utils/formatDate";
-import UserService from "src/services/User.service";
-import MessageService from "src/services/Message.service";
+import Message from "@components/message";
+import PreviousPage from "@components/previousPage";
+import MessageService from "@services/MessageService";
+import UserService from "@services/UserService";
 
 export default function UserProfile() {
   const { userId } = useParams();

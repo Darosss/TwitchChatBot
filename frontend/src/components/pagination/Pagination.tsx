@@ -1,9 +1,10 @@
 import "./style.css";
 import React, { useEffect } from "react";
-import usePagination, { DOTS } from "@hooks/usePagination.hook";
+
+import usePagination, { DOTS } from "@hooks/usePaginationHook";
 import classnames from "classnames";
 import { useSearchParams } from "react-router-dom";
-import useLocalStorage from "@hooks/useLocalStorage.hook";
+import useLocalStorage from "@hooks/useLocalStorageHook";
 
 export default function Pagination(props: {
   totalCount: number;

@@ -2,19 +2,18 @@ import "./style.css";
 import React from "react";
 
 import { SocketContext, socketConn } from "@context/SocketContext";
-import SideBar from "@components/SideBar";
+import SideBar from "@components/sideBar";
 
 import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
-
-import { MessageRoutes } from "@routes/message.routes";
-import { UserRoutes } from "@routes/user.routes";
-import { ConfigRoutes } from "@routes/configs.routes";
-import { TriggerRoutes } from "@routes/trigger.routes";
-import { StreamSessionRoutes } from "@routes/StreamSessionRoutes";
-import { RedemptionRoutes } from "@routes/redemption.routes";
-import { CommandRoutes } from "@routes/command.routes";
-import { EventRoutes } from "@routes/events.routes";
-import { OverlayRoutes } from "@routes/overlay.routes";
+import { CommandRoutes } from "@routes/CommandRoute";
+import { ConfigRoutes } from "@routes/ConfigsRoute";
+import { EventRoutes } from "@routes/EventsRoute";
+import { MessageRoutes } from "@routes/MessageRoute";
+import { OverlayRoutes } from "@routes/OverlayRoute";
+import { RedemptionRoutes } from "@routes/RedemptionRoute";
+import { StreamSessionRoutes } from "@routes/StreamSessionRoute";
+import { TriggerRoutes } from "@routes/TriggerRoute";
+import { UserRoutes } from "@routes/UserRoute";
 
 function App() {
   return (
@@ -28,24 +27,24 @@ function App() {
 
         <div className="main">
           <Routes>
-            <Route path="/overlay" element={<OverlayLayout />}>
-              <Route index element={<OverlayRoutes />} />
+            <Route element={<OverlayLayout />}>
+              <Route path="/overlay/*" element={<OverlayRoutes />} />
             </Route>
 
-            <Route path="/" element={<DefaultRouteLayout />}>
-              <Route index element={<>HOME </>} />
-              <Route path="users/*" element={<UserRoutes />} />
-              <Route path="messages/*" element={<MessageRoutes />} />
-              <Route path="commands/*" element={<CommandRoutes />} />
-              <Route path="events/*" element={<EventRoutes />} />
-              <Route path="redemptions/*" element={<RedemptionRoutes />} />
+            <Route element={<DefaultRouteLayout />}>
+              <Route path="/" element={<>HOME </>} />
+              <Route path="/users/*" element={<UserRoutes />} />
+              <Route path="/messages/*" element={<MessageRoutes />} />
+              <Route path="/commands/*" element={<CommandRoutes />} />
+              <Route path="/events/*" element={<EventRoutes />} />
+              <Route path="/redemptions/*" element={<RedemptionRoutes />} />
               <Route
-                path="stream-sessions/*"
+                path="/stream-sessions/*"
                 element={<StreamSessionRoutes />}
               />
-              <Route path="triggers/*" element={<TriggerRoutes />} />
-              <Route path="configs/*" element={<ConfigRoutes />} />
-              <Route path="*" element={<>Not found</>} />
+              <Route path="/triggers/*" element={<TriggerRoutes />} />
+              <Route path="/configs/*" element={<ConfigRoutes />} />
+              <Route path="/*" element={<>Not found</>} />
             </Route>
           </Routes>
         </div>

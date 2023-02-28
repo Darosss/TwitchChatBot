@@ -1,9 +1,10 @@
-import React from "react";
 import "./style.css";
-import Pagination from "@components/Pagination";
+
+import React from "react";
+import Pagination from "@components/pagination";
 import formatDate from "@utils/formatDate";
 import { Link } from "react-router-dom";
-import PreviousPage from "@components/PreviousPage";
+import PreviousPage from "@components/previousPage";
 import streamSessionService from "src/services/StreamSessionService";
 import FilterBarSessions from "./filterBarSessions";
 

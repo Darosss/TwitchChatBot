@@ -1,9 +1,9 @@
 import "./style.css";
 import React, { useReducer } from "react";
 
-import HiddenMenu from "@components/HiddenMenu";
-import WidgetWrapper from "@components/WidgetWrapper";
-import useLocalStorage from "@hooks/useLocalStorage.hook";
+import HiddenMenu from "@components/hiddenMenu";
+import WidgetWrapper from "@components/widgetWrapper";
+import useLocalStorage from "@hooks/useLocalStorageHook";
 import StreamChat from "./streamChat";
 import StreamChatters from "./streamChatters";
 import StreamNotifications from "./streamNotifications";

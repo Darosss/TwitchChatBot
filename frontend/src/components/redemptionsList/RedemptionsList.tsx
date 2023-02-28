@@ -1,13 +1,12 @@
 import "./style.css";
 import React from "react";
-import Pagination from "@components/Pagination";
+
+import Pagination from "@components/pagination";
 import { useParams } from "react-router-dom";
-import PreviousPage from "@components/PreviousPage";
+import PreviousPage from "@components/previousPage";
 import formatDate from "@utils/formatDate";
-import FilterBarRedemptions from "./FilterBarRedemptions";
-import RedemptionService, {
-  IRedemption,
-} from "src/services/Redemption.service";
+import FilterBarRedemptions from "./filterBarRedemptions";
+import RedemptionService, { IRedemption } from "src/services/RedemptionService";
 
 type MessagesDetailsProp = {
   redemptions: IRedemption[];

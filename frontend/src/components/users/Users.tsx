@@ -1,11 +1,12 @@
-import React from "react";
 import "./style.css";
-import Pagination from "@components/Pagination";
-import formatDate from "@utils/formatDate";
-import PreviousPage from "@components/PreviousPage";
-import FilterBarUsers from "./FilterBarUsers";
-import UserService, { IUser } from "src/services/User.service";
+import React from "react";
+
 import { Link } from "react-router-dom";
+import formatDate from "@utils/formatDate";
+import Pagination from "@components/pagination";
+import PreviousPage from "@components/previousPage";
+import UserService, { IUser } from "@services/UserService";
+import FilterBarUsers from "./filterBarUsers";
 
 type UserDetailsProps = {
   users: IUser[];

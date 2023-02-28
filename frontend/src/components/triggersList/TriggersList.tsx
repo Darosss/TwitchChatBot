@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
 import "./style.css";
-import Pagination from "@components/Pagination";
-import Modal from "@components/Modal";
+
+import React, { useEffect, useState } from "react";
+import Pagination from "@components/pagination";
+import Modal from "@components/modal";
 import formatDate from "@utils/formatDate";
-import PreviousPage from "@components/PreviousPage";
-import FilterBarTriggers from "./FilterBarTriggers";
-import TriggerService from "src/services/Trigger.service";
+import PreviousPage from "@components/previousPage";
+import FilterBarTriggers from "./filterBarTriggers";
+import TriggerService from "@services/TriggerService";
 
 export default function TriggersList() {
   const [showModal, setShowModal] = useState(false);

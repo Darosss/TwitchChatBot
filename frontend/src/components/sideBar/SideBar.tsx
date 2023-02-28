@@ -1,8 +1,9 @@
 import "./style.css";
 import React from "react";
+
 import { Link, LinkProps } from "react-router-dom";
 import resetWindowScroll from "@utils/resetScroll";
-import AuthService from "src/services/Auth.service";
+import AuthService from "src/services/AuthService";
 
 interface INavLinkProps extends LinkProps {
   label: string;

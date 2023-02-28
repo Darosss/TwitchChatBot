@@ -1,7 +1,8 @@
 import "./style.css";
 import React, { useState } from "react";
-import DragableParent from "@components/DragableParent";
-import Modal from "@components/Modal";
+
+import DragableParent from "@components/dragableParent";
+import Modal from "@components/modal";
 
 export default function WidgetWrapper(props: {
   id: string;

@@ -1,11 +1,12 @@
 import "./style.css";
 import React from "react";
-import Pagination from "@components/Pagination";
+
+import Pagination from "@components/pagination";
 import { useParams } from "react-router-dom";
-import PreviousPage from "@components/PreviousPage";
+import PreviousPage from "@components/previousPage";
 import formatDate from "@utils/formatDate";
-import FilterBarMessages from "./FilterBarMessages";
-import MessageService, { IMessage } from "src/services/Message.service";
+import FilterBarMessages from "./filterBarMessages";
+import MessageService, { IMessage } from "@services/MessageService";
 
 type MessagesDetailsProp = {
   messages: IMessage[];

@@ -1,6 +1,7 @@
 import "./style.css";
 import React from "react";
-import { createPortal, findDOMNode } from "react-dom";
+
+import { createPortal } from "react-dom";
 
 export default function Modal(props: {
   title?: string;
