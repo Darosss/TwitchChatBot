@@ -1,7 +1,7 @@
 import Express, { NextFunction, Request, Response } from "express";
 import { getConfigs, updateConfigs } from "@services/configs";
 
-const getConfigsList = async (
+export const getConfigsList = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -15,7 +15,11 @@ const getConfigsList = async (
   }
 };
 
-const editConfigs = async (req: Request, res: Response, next: NextFunction) => {
+export const editConfigs = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const {
     commandsPrefix,
     timersIntervalDelay,
@@ -40,5 +44,3 @@ const editConfigs = async (req: Request, res: Response, next: NextFunction) => {
     next(err);
   }
 };
-
-export { getConfigsList, editConfigs };

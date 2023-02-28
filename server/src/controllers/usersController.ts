@@ -20,7 +20,7 @@ import { getMessages, getMessagesCount } from "@services/messages";
 import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
 import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
 
-const getUsersList = async (
+export const getUsersList = async (
   req: Request<{}, {}, {}, IRequestQueryUser>,
   res: Response,
   next: NextFunction
@@ -48,7 +48,7 @@ const getUsersList = async (
   }
 };
 
-const getUsersProfile = async (
+export const getUsersProfile = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -64,7 +64,7 @@ const getUsersProfile = async (
   }
 };
 
-const editUserProfile = async (
+export const editUserProfile = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -179,4 +179,3 @@ export const getLatestEldestUserMessages = async (
     next(err);
   }
 };
-export { getUsersList, getUsersProfile, editUserProfile };

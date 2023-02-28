@@ -9,7 +9,7 @@ import {
   updateTriggerById,
 } from "@services/triggers";
 
-const getTriggersList = async (
+export const getTriggersList = async (
   req: Request<{}, {}, {}, IRequestTriggerQuery>,
   res: Response,
   next: NextFunction
@@ -37,7 +37,7 @@ const getTriggersList = async (
   }
 };
 
-const addNewTrigger = async (
+export const addNewTrigger = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -62,7 +62,7 @@ const addNewTrigger = async (
   }
 };
 
-const editTriggerById = async (
+export const editTriggerById = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -89,7 +89,7 @@ const editTriggerById = async (
   }
 };
 
-const deleteTrigger = async (
+export const deleteTrigger = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -104,5 +104,3 @@ const deleteTrigger = async (
     next(err);
   }
 };
-
-export { getTriggersList, addNewTrigger, editTriggerById, deleteTrigger };
