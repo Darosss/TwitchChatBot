@@ -1,6 +1,6 @@
 import { IRequestQueryUser } from "@types";
 
-const filterUsersByUrlParams = (params: IRequestQueryUser) => {
+export const filterUsersByUrlParams = (params: IRequestQueryUser) => {
   const {
     search_name,
     seen_start,
@@ -54,5 +54,3 @@ const filterUsersByUrlParams = (params: IRequestQueryUser) => {
   };
   return searchFilter;
 };
-
-export { filterUsersByUrlParams };
