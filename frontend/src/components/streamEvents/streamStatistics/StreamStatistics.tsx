@@ -1,6 +1,7 @@
 import "./style.css";
 import React, { useEffect } from "react";
-import streamSessionService, {
+import {
+  getCurrentSessionStatistics,
   ITopMsgsUsers,
   ITopRedemptionsUsers,
   ITopUsedWords,
@@ -32,7 +33,7 @@ export default function StreamStatistics(props: { className?: string }) {
     loading,
     error,
     refetchData,
-  } = streamSessionService.getSessionStatistics();
+  } = getCurrentSessionStatistics();
 
   useEffect(() => {
     const statisticInterval = setInterval(() => {
