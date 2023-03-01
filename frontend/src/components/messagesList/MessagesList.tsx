@@ -2,14 +2,60 @@ import "./style.css";
 import React from "react";
 
 import Pagination from "@components/pagination";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import formatDate from "@utils/formatDate";
 import FilterBarMessages from "./filterBarMessages";
-import MessageService, { IMessage } from "@services/MessageService";
+import { IPagination } from "@services/ApiService";
+import { getMessages, IMessage } from "@services/MessageService";
+import { getUserMessages } from "@services/UserService";
+import { getSessionMessages } from "@services/StreamSessionService";
 
 type MessagesDetailsProp = {
   messages: IMessage[];
+};
+
+export default function MessagesList(props: {
+  messages: "all" | "session" | "user";
+}) {
+  const { messages } = props;
+
+  switch (messages) {
+    case "user":
+      return <MessagesUser />;
+      break;
+    case "session":
+      return <MessagesSession />;
+      break;
+    default:
+      return <MessagesAll />;
+  }
+}
+
+const MessagesUser = () => {
+  const { userId } = useParams();
+  const { data, loading, error } = getUserMessages(userId!);
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading!</>;
+
+  return <Messages messagesData={data} />;
+};
+
+const MessagesSession = () => {
+  const { sessionId } = useParams();
+  const { data, loading, error } = getSessionMessages(sessionId!);
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading!</>;
+
+  return <Messages messagesData={data} />;
+};
+
+const MessagesAll = () => {
+  const { data, loading, error } = getMessages();
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading!</>;
+
+  return <Messages messagesData={data} />;
 };
 
 const MessagesDetails = ({ messages }: MessagesDetailsProp) => (
@@ -34,12 +80,12 @@ const MessagesDetails = ({ messages }: MessagesDetailsProp) => (
             </td>
 
             <td className="message-username">
-              <a href={`${"link"}` + message.owner._id}>
+              <Link to={`/users/${message.owner._id}`}>
                 <div className="tooltip">
                   {message.owner.username}
                   <span className="tooltiptext">{message.ownerUsername}</span>
                 </div>
-              </a>
+              </Link>
             </td>
             <td className="message" colSpan={4}>
               {message.message}
@@ -50,24 +96,8 @@ const MessagesDetails = ({ messages }: MessagesDetailsProp) => (
     </tbody>
   </table>
 );
-
-export default function MessagesList(props: {
-  messages: "all" | "session" | "user";
-}) {
-  const { messages } = props;
-  const { userId, sessionId } = useParams();
-
-  const {
-    data: messagesData,
-    loading,
-    error,
-  } = MessageService.getMessages(messages, sessionId, userId);
-
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!messagesData || loading) return <>Loading!</>;
-
-  const { data, count, currentPage } = messagesData;
-
+const Messages = (props: { messagesData: IPagination<IMessage> }) => {
+  const { data, currentPage, count } = props.messagesData;
   return (
     <>
       <PreviousPage />
@@ -86,4 +116,4 @@ export default function MessagesList(props: {
       </div>
     </>
   );
-}
+};

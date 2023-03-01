@@ -1,4 +1,6 @@
 import useAxiosCustom, { IPagination, IResponseData } from "./ApiService";
+import { IMessage } from "./MessageService";
+import { IRedemption } from "./RedemptionService";
 
 export interface IUser {
   _id: string;
@@ -17,19 +19,24 @@ export interface IUser {
   follower?: Date;
 }
 
-const getUsersList = () => {
+interface FirstAndLatestMsgs {
+  firstMessages: IMessage[];
+  latestMessages: IMessage[];
+}
+
+export const getUsersList = () => {
   return useAxiosCustom<IPagination<IUser>>({
     url: `/users`,
   });
 };
 
-const getUser = (userId: string) => {
+export const getUser = (userId: string) => {
   return useAxiosCustom<IResponseData<IUser>>({
     url: `/users/${userId}`,
   });
 };
 
-const editUser = (userId: string, data: Partial<IUser>) => {
+export const editUser = (userId: string, data: Partial<IUser>) => {
   return useAxiosCustom<IUser>({
     url: `/users/${userId}`,
     method: "POST",
@@ -38,4 +45,20 @@ const editUser = (userId: string, data: Partial<IUser>) => {
   });
 };
 
-export default { getUsersList, editUser, getUser };
+export const getUserMessages = (userId: string) => {
+  return useAxiosCustom<IPagination<IMessage>>({
+    url: `/users/${userId}/messages`,
+  });
+};
+
+export const getLatestEldestMsgs = (userId: string) => {
+  return useAxiosCustom<{ data: FirstAndLatestMsgs }>({
+    url: `/users/${userId}/messages/latest-eldest`,
+  });
+};
+
+export const getUserRedemptions = (userId: string) => {
+  return useAxiosCustom<IPagination<IRedemption>>({
+    url: `/users/${userId}/redemptions`,
+  });
+};

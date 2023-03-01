@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import formatDate from "@utils/formatDate";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-import UserService, { IUser } from "@services/UserService";
+import { getUsersList, IUser } from "@services/UserService";
 import FilterBarUsers from "./filterBarUsers";
 
 type UserDetailsProps = {
@@ -61,7 +61,7 @@ const UsersDetails = ({ users }: UserDetailsProps) => (
 );
 
 export default function Users() {
-  const { data: usersData, loading, error } = UserService.getUsersList();
+  const { data: usersData, loading, error } = getUsersList();
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!usersData || loading) return <>Loading...</>;

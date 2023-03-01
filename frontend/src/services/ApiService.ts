@@ -1,5 +1,5 @@
 import useAxios, { configure } from "axios-hooks";
-import Axios, { AxiosRequestConfig } from "axios";
+import Axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { useSearchParams } from "react-router-dom";
 
 export interface IResponseData<T> {
@@ -21,6 +21,13 @@ interface IAxiosCustomOptions<T> {
   urlParams?: boolean;
 }
 
+export interface IAxiosCustomReturn<T> {
+  data: T | undefined;
+  loading: boolean;
+  error: AxiosError<any, any> | null;
+  refetchData: () => Promise<T>;
+}
+
 const axios = Axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
   headers: {
@@ -30,7 +37,9 @@ const axios = Axios.create({
 
 configure({ axios });
 
-const useAxiosCustom = <T>(options: IAxiosCustomOptions<T>) => {
+const useAxiosCustom = <T>(
+  options: IAxiosCustomOptions<T>
+): IAxiosCustomReturn<T> => {
   const {
     method = "GET",
     url,

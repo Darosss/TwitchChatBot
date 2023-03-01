@@ -14,30 +14,8 @@ export interface IRedemption {
   message?: string;
 }
 
-const getRedemptions = (
-  redemptions: "all" | "session" | "user",
-  sessionId: string | undefined,
-  userId: string | undefined
-) => {
-  const baseUrl = "/redemptions";
-  switch (redemptions) {
-    case "session":
-      return useAxiosCustom<IPagination<IRedemption>>({
-        url: `${baseUrl}/stream-session/${sessionId}`,
-      });
-      break;
-
-    case "user":
-      return useAxiosCustom<IPagination<IRedemption>>({
-        url: `${baseUrl}/${userId}`,
-      });
-      break;
-
-    default:
-      return useAxiosCustom<IPagination<IRedemption>>({
-        url: baseUrl,
-      });
-  }
+export const getRedemptions = () => {
+  return useAxiosCustom<IPagination<IRedemption>>({
+    url: `/redemptions`,
+  });
 };
-
-export default { getRedemptions };

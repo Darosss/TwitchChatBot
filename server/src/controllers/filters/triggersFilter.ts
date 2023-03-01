@@ -1,6 +1,6 @@
 import { IRequestTriggerQuery } from "@types";
 
-const filterTriggersByUrlParams = (params: IRequestTriggerQuery) => {
+export const filterTriggersByUrlParams = (params: IRequestTriggerQuery) => {
   const { search_name, start_date, end_date, words, messages } = params;
 
   const filterCreated = {
@@ -38,5 +38,3 @@ const filterTriggersByUrlParams = (params: IRequestTriggerQuery) => {
   };
   return searchFilter;
 };
-
-export { filterTriggersByUrlParams };

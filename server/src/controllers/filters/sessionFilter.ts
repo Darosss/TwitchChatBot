@@ -1,6 +1,6 @@
 import { IRequestQuerySession } from "@types";
 
-const filterSessionByUrlParams = (params: IRequestQuerySession) => {
+export const filterSessionByUrlParams = (params: IRequestQuerySession) => {
   const { search_name, start_date, end_date, tags, categories } = params;
 
   const filterTitles = {
@@ -40,5 +40,3 @@ const filterSessionByUrlParams = (params: IRequestQuerySession) => {
 
   return searchFilter;
 };
-
-export { filterSessionByUrlParams };

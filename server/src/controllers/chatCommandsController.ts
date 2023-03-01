@@ -9,7 +9,7 @@ import {
   updateChatCommandById,
 } from "@services/chatCommands";
 
-const getChatCommandsList = async (
+export const getChatCommandsList = async (
   req: Request<{}, {}, {}, IRequestCommandsQuery>,
   res: Response,
   next: NextFunction
@@ -36,7 +36,7 @@ const getChatCommandsList = async (
   }
 };
 
-const addNewCommand = async (
+export const addNewCommand = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -61,7 +61,7 @@ const addNewCommand = async (
   }
 };
 
-const editChatCommandById = async (
+export const editChatCommandById = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -88,7 +88,7 @@ const editChatCommandById = async (
   }
 };
 
-const deleteCommandById = async (
+export const deleteCommandById = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -104,11 +104,4 @@ const deleteCommandById = async (
   } catch (err) {
     next(err);
   }
-};
-
-export {
-  getChatCommandsList,
-  addNewCommand,
-  editChatCommandById,
-  deleteCommandById,
 };

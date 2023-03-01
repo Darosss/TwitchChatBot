@@ -1,6 +1,8 @@
 import { IRequestRedemptionQuery } from "@types";
 
-const filterRedemptionsByUrlParams = (params: IRequestRedemptionQuery) => {
+export const filterRedemptionsByUrlParams = (
+  params: IRequestRedemptionQuery
+) => {
   const { search_name, start_date, end_date, receiver, cost, message } = params;
 
   const filterDate = {
@@ -39,5 +41,3 @@ const filterRedemptionsByUrlParams = (params: IRequestRedemptionQuery) => {
   };
   return searchFilter;
 };
-
-export { filterRedemptionsByUrlParams };

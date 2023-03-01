@@ -5,16 +5,11 @@ import Pagination from "@components/pagination";
 import formatDate from "@utils/formatDate";
 import { Link } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
-import streamSessionService from "src/services/StreamSessionService";
 import FilterBarSessions from "./filterBarSessions";
+import { getSessions } from "@services/StreamSessionService";
 
 export default function StreamSessions() {
-  const {
-    data: sessionsData,
-    loading,
-    error,
-    refetchData,
-  } = streamSessionService.getSessions();
+  const { data: sessionsData, loading, error, refetchData } = getSessions();
 
   if (error) return <>Error! {error.response?.data.message}</>;
   if (!sessionsData || loading) return <>Loading...</>;
@@ -44,14 +39,10 @@ export default function StreamSessions() {
               return (
                 <tr key={session._id}>
                   <td>
-                    <Link to={`/messages/stream-session/${session._id}`}>
-                      Messages
-                    </Link>
+                    <Link to={`./${session._id}/messages`}>Messages</Link>
                   </td>
                   <td>
-                    <Link to={`/redemptions/stream-session/${session._id}`}>
-                      Redemptions
-                    </Link>
+                    <Link to={`./${session._id}/redemptions`}>Redemptions</Link>
                   </td>
                   <td>
                     <Link to={`/stream-sessions/${session._id}`}>

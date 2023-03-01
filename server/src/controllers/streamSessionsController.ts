@@ -1,5 +1,10 @@
 import Express, { Request, Response, NextFunction } from "express";
-import { IRequestQuerySession } from "@types";
+import {
+  IRequestParams,
+  IRequestQueryMessage,
+  IRequestQuerySession,
+  IRequestRedemptionQuery,
+} from "@types";
 import { filterSessionByUrlParams } from "./filters/sessionFilter";
 import {
   getCurrentStreamSession,
@@ -9,8 +14,12 @@ import {
   getStreamSessionById,
   getLatestStreamSession,
 } from "@services/streamSessions";
+import { getMessages, getMessagesCount } from "@services/messages";
+import { filterMessagesByUrlParams } from "./filters/messagesFilter";
+import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
+import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
 
-const getStreamSessionsList = async (
+export const getStreamSessionsList = async (
   req: Request<{}, {}, {}, IRequestQuerySession>,
   res: Response,
   next: NextFunction
@@ -38,7 +47,7 @@ const getStreamSessionsList = async (
   }
 };
 
-const getCurrentSession = async (
+export const getCurrentSession = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -56,7 +65,7 @@ const getCurrentSession = async (
   }
 };
 
-const getSessionById = async (
+export const getSessionById = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -74,7 +83,7 @@ const getSessionById = async (
   }
 };
 
-const getSessionStatisticsById = async (
+export const getSessionStatisticsById = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -99,7 +108,90 @@ const getSessionStatisticsById = async (
   }
 };
 
-const getCurrentSessionStatistics = async (
+export const getCurrentSessionMessages = async (
+  req: Request<{}, {}, {}, IRequestQueryMessage>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { page = 1, limit = 50 } = req.query;
+
+  try {
+    let streamSession = await getCurrentStreamSession({});
+
+    if (!streamSession) {
+      streamSession = await getLatestStreamSession({});
+    }
+    const searchFilter = Object.assign(
+      {
+        date: {
+          $gte: streamSession?.sessionStart,
+          $lte: streamSession?.sessionEnd,
+        },
+      },
+      await filterMessagesByUrlParams(req.query)
+    );
+
+    const messages = await getMessages(searchFilter, {
+      limit: limit,
+      skip: page,
+      sort: { date: -1 },
+      select: { __v: 0 },
+    });
+
+    const count = await getMessagesCount(searchFilter);
+    return res.status(200).send({
+      data: messages,
+      totalPages: Math.ceil(count / limit),
+      count: count,
+      currentPage: Number(page),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getCurrentSessionRedemptions = async (
+  req: Request<{}, {}, {}, IRequestRedemptionQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { page = 1, limit = 50 } = req.query;
+
+  try {
+    let streamSession = await getCurrentStreamSession({});
+
+    if (!streamSession) {
+      streamSession = await getLatestStreamSession({});
+    }
+    const searchFilter = Object.assign(
+      {
+        redemptionDate: {
+          $gte: streamSession?.sessionStart,
+          $lte: streamSession?.sessionEnd,
+        },
+      },
+      filterRedemptionsByUrlParams(req.query)
+    );
+    const redemptions = await getRedemptions(searchFilter, {
+      limit: limit,
+      skip: page,
+      sort: { redemptionDate: -1 },
+    });
+
+    const count = await getRedemptionsCount(searchFilter);
+
+    return res.status(200).send({
+      data: redemptions,
+      totalPages: Math.ceil(count / limit),
+      count: count,
+      currentPage: Number(page),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getCurrentSessionStatistics = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -123,10 +215,81 @@ const getCurrentSessionStatistics = async (
   }
 };
 
-export {
-  getStreamSessionsList,
-  getCurrentSession,
-  getSessionById,
-  getCurrentSessionStatistics,
-  getSessionStatisticsById,
+export const getSessionMessages = async (
+  req: Request<IRequestParams, {}, {}, IRequestQueryMessage>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+  const { page = 1, limit = 50 } = req.query;
+
+  try {
+    const session = await getStreamSessionById(id, { select: { __v: 0 } });
+
+    const searchFilter = Object.assign(
+      {
+        date: {
+          $gte: session?.sessionStart,
+          $lte: session?.sessionEnd,
+        },
+      },
+      await filterMessagesByUrlParams(req.query)
+    );
+
+    const messages = await getMessages(searchFilter, {
+      limit: limit,
+      skip: page,
+      sort: { date: -1 },
+      select: { __v: 0 },
+    });
+
+    const count = await getMessagesCount(searchFilter);
+    return res.status(200).send({
+      data: messages,
+      totalPages: Math.ceil(count / limit),
+      count: count,
+      currentPage: Number(page),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getSessionRedemptions = async (
+  req: Request<IRequestParams, {}, {}, IRequestRedemptionQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+  const { page = 1, limit = 50 } = req.query;
+
+  try {
+    const session = await getStreamSessionById(id, { select: { __v: 0 } });
+
+    const searchFilter = Object.assign(
+      {
+        redemptionDate: {
+          $gte: session?.sessionStart,
+          $lte: session?.sessionEnd,
+        },
+      },
+      filterRedemptionsByUrlParams(req.query)
+    );
+    const redemptions = await getRedemptions(searchFilter, {
+      limit: limit,
+      skip: page,
+      sort: { redemptionDate: -1 },
+    });
+
+    const count = await getRedemptionsCount(searchFilter);
+
+    return res.status(200).send({
+      data: redemptions,
+      totalPages: Math.ceil(count / limit),
+      count: count,
+      currentPage: Number(page),
+    });
+  } catch (err) {
+    next(err);
+  }
 };

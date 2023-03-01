@@ -1,6 +1,6 @@
 import { IRequestCommandsQuery } from "@types";
 
-const filterCommandsByUrlParams = (params: IRequestCommandsQuery) => {
+export const filterCommandsByUrlParams = (params: IRequestCommandsQuery) => {
   const {
     search_name,
     start_date,
@@ -56,5 +56,3 @@ const filterCommandsByUrlParams = (params: IRequestCommandsQuery) => {
   };
   return searchFilter;
 };
-
-export { filterCommandsByUrlParams };
