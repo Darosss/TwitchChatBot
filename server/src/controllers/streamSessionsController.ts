@@ -108,6 +108,89 @@ export const getSessionStatisticsById = async (
   }
 };
 
+export const getCurrentSessionMessages = async (
+  req: Request<{}, {}, {}, IRequestQueryMessage>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { page = 1, limit = 50 } = req.query;
+
+  try {
+    let streamSession = await getCurrentStreamSession({});
+
+    if (!streamSession) {
+      streamSession = await getLatestStreamSession({});
+    }
+    const searchFilter = Object.assign(
+      {
+        date: {
+          $gte: streamSession?.sessionStart,
+          $lte: streamSession?.sessionEnd,
+        },
+      },
+      await filterMessagesByUrlParams(req.query)
+    );
+
+    const messages = await getMessages(searchFilter, {
+      limit: limit,
+      skip: page,
+      sort: { date: -1 },
+      select: { __v: 0 },
+    });
+
+    const count = await getMessagesCount(searchFilter);
+    return res.status(200).send({
+      data: messages,
+      totalPages: Math.ceil(count / limit),
+      count: count,
+      currentPage: Number(page),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getCurrentSessionRedemptions = async (
+  req: Request<{}, {}, {}, IRequestRedemptionQuery>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { page = 1, limit = 50 } = req.query;
+
+  try {
+    let streamSession = await getCurrentStreamSession({});
+
+    if (!streamSession) {
+      streamSession = await getLatestStreamSession({});
+    }
+    const searchFilter = Object.assign(
+      {
+        redemptionDate: {
+          $gte: streamSession?.sessionStart,
+          $lte: streamSession?.sessionEnd,
+        },
+      },
+      filterRedemptionsByUrlParams(req.query)
+    );
+    const redemptions = await getRedemptions(searchFilter, {
+      limit: limit,
+      skip: page,
+      sort: { redemptionDate: -1 },
+    });
+
+    const count = await getRedemptionsCount(searchFilter);
+
+    return res.status(200).send({
+      data: redemptions,
+      totalPages: Math.ceil(count / limit),
+      count: count,
+      currentPage: Number(page),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getCurrentSessionStatistics = async (
   req: Request,
   res: Response,
