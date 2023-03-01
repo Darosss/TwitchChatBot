@@ -24,12 +24,12 @@ export default function SideBar() {
         })}
 
         <li>
-          <Link
+          <a
             className="connect-twitch"
-            to={authData ? "//" + authData.data : "_blank"}
+            href={authData ? authData.data : "_blank"}
           >
             {error ? "URL Error" : "Connect with twitch"}
-          </Link>
+          </a>
         </li>
       </ul>
     </div>
