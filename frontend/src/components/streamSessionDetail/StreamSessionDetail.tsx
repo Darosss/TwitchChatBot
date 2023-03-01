@@ -1,19 +1,15 @@
 import "./style.css";
 import React from "react";
 import { useParams } from "react-router-dom";
-import StreamSessionService from "@services/StreamSessionService";
 import formatDate from "@utils/formatDate";
 import LineChart from "@components/lineChart";
 import PreviousPage from "@components/previousPage";
 import SlideShow from "@components/slideShow";
+import { getSessionById } from "@services/StreamSessionService";
 
 export default function StreamSessionDetail() {
   const { sessionId } = useParams();
-  const {
-    data: sessionData,
-    loading,
-    error,
-  } = StreamSessionService.getSessionById(sessionId || "");
+  const { data: sessionData, loading, error } = getSessionById(sessionId || "");
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!sessionData || loading) return <>Loading!</>;
