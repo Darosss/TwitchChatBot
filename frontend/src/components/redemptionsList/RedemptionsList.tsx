@@ -2,17 +2,63 @@ import "./style.css";
 import React from "react";
 
 import Pagination from "@components/pagination";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import formatDate from "@utils/formatDate";
 import FilterBarRedemptions from "./filterBarRedemptions";
-import RedemptionService, { IRedemption } from "src/services/RedemptionService";
+import { getRedemptions, IRedemption } from "src/services/RedemptionService";
+import { IPagination } from "@services/ApiService";
+import { getSessionRedemptions } from "@services/StreamSessionService";
+import { getUserRedemptions } from "@services/UserService";
 
-type MessagesDetailsProp = {
+type RedemptionsDetailProps = {
   redemptions: IRedemption[];
 };
 
-const MessagesDetails = ({ redemptions }: MessagesDetailsProp) => (
+export default function RedemptionsList(props: {
+  redemptions: "all" | "session" | "user";
+}) {
+  const { redemptions } = props;
+
+  switch (redemptions) {
+    case "user":
+      return <RedemptionsUser />;
+      break;
+    case "session":
+      return <RedemptionsSession />;
+      break;
+    default:
+      return <RedemptionsAll />;
+  }
+}
+
+const RedemptionsUser = () => {
+  const { userId } = useParams();
+  const { data, loading, error } = getUserRedemptions(userId!);
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading!</>;
+
+  return <Redemptions redemptionsData={data} />;
+};
+
+const RedemptionsSession = () => {
+  const { sessionId } = useParams();
+  const { data, loading, error } = getSessionRedemptions(sessionId!);
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading!</>;
+
+  return <Redemptions redemptionsData={data} />;
+};
+
+const RedemptionsAll = () => {
+  const { data, loading, error } = getRedemptions();
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading!</>;
+
+  return <Redemptions redemptionsData={data} />;
+};
+
+const RedemptionsDetails = ({ redemptions }: RedemptionsDetailProps) => (
   <table id="table-redemptions-list">
     <thead>
       <tr>
@@ -30,9 +76,9 @@ const MessagesDetails = ({ redemptions }: MessagesDetailsProp) => (
           <tr key={redemption._id}>
             <td>{redemption.rewardTitle}</td>
             <td>
-              {/* <Link to={`../user/${redemption.userId}`}> */}
-              {redemption.userName}
-              {/* </Link> */}
+              <Link to={`/users/${redemption.userId}`}>
+                {redemption.userName}
+              </Link>
             </td>
             <td>
               <div className="tooltip">
@@ -50,29 +96,16 @@ const MessagesDetails = ({ redemptions }: MessagesDetailsProp) => (
     </tbody>
   </table>
 );
-export default function RedemptionsList(props: {
-  redemptions: "all" | "session" | "user";
-}) {
-  const { redemptions } = props;
-  const { userId, sessionId } = useParams();
 
-  const {
-    data: redemptionsData,
-    loading,
-    error,
-  } = RedemptionService.getRedemptions(redemptions, sessionId, userId);
-
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!redemptionsData || loading) return <>Loading</>;
-
-  const { data, count, currentPage } = redemptionsData;
+const Redemptions = (props: { redemptionsData: IPagination<IRedemption> }) => {
+  const { data, currentPage, count } = props.redemptionsData;
   return (
     <>
       <PreviousPage />
       <FilterBarRedemptions />
 
       <div id="redemptions-list" className="table-list-wrapper">
-        <MessagesDetails redemptions={data} />
+        <RedemptionsDetails redemptions={data} />
       </div>
       <div className="table-list-pagination">
         <Pagination
@@ -85,4 +118,4 @@ export default function RedemptionsList(props: {
       </div>
     </>
   );
-}
+};
