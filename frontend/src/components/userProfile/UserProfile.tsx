@@ -6,22 +6,16 @@ import { useParams, Link } from "react-router-dom";
 import formatDate from "@utils/formatDate";
 import Message from "@components/message";
 import PreviousPage from "@components/previousPage";
-import MessageService from "@services/MessageService";
-import UserService from "@services/UserService";
+import { editUser, getLatestEldestMsgs, getUser } from "@services/UserService";
 
 export default function UserProfile() {
   const { userId } = useParams();
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notes, setNotes] = useState("");
 
-  const {
-    data: userData,
-    loading,
-    error,
-    refetchData,
-  } = UserService.getUser(userId || "");
+  const { data: userData, loading, error, refetchData } = getUser(userId || "");
 
-  const { refetchData: fetchEditUser } = UserService.editUser(userId || "", {
+  const { refetchData: fetchEditUser } = editUser(userId || "", {
     notes: notes.split("\n"),
   });
 
@@ -30,7 +24,7 @@ export default function UserProfile() {
     loading: msgLoading,
     error: msgsError,
     refetchData: refetchLatestAndFirstMsgs,
-  } = MessageService.getLatestAndFirstMsgs(userId || "");
+  } = getLatestEldestMsgs(userId || "");
 
   const showEdit = () => {
     setIsEditingNotes((prevState) => {
@@ -58,7 +52,6 @@ export default function UserProfile() {
     );
   if (!userData || !msgsData || msgLoading || loading) return <>Loading</>;
   const { data } = userData;
-  console.log(data);
   return (
     <>
       <PreviousPage />
