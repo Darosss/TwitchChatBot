@@ -9,6 +9,11 @@ const ConfigSchema: Schema<IConfigDocument> = new Schema(
     chatGamesIntervalDelay: { type: Number, required: true, default: 20 },
     minActiveUsersThreshold: { type: Number, required: true, default: 3 },
     intervalCheckChatters: { type: Number, required: true, default: 150 },
+    pointsIncrement: {
+      message: { type: Number, default: 1 },
+      watch: { type: Number, default: 10 },
+      watchMultipler: { type: Number, default: 2.0 },
+    },
     intervalCheckViewersPeek: { type: Number, required: true, default: 600 },
     permissionLevels: {
       broadcaster: { type: Number, default: 10 },
