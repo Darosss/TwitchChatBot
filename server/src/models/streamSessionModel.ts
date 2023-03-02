@@ -20,6 +20,10 @@ const StreamSessionSchema: Schema<IStreamSessionDocument> = new Schema({
     type: Map,
     of: Number,
   },
+  watchers: {
+    type: Map,
+    of: Number,
+  },
 });
 
 export const StreamSession: Model<IStreamSessionDocument> = model(
