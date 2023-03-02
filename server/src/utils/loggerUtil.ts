@@ -58,3 +58,24 @@ export const messageLogger = (channelName: string) => {
     transports: [messageTransport],
   });
 };
+
+export const channelLogger = (channelName: string) => {
+  const watchersTransport = new DailyRotateFile({
+    filename: path.join(
+      __dirname,
+      `../data/${channelName}/%DATE%/watchers.log`
+    ),
+    datePattern: "YYYY-MM-DD",
+    zippedArchive: true,
+    level: "info",
+  });
+
+  return winston.createLogger({
+    format: combine(
+      winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+      winston.format.prettyPrint(),
+      messageLoggerFormat
+    ),
+    transports: [watchersTransport],
+  });
+};

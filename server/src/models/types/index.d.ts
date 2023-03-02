@@ -52,6 +52,7 @@ export interface IStreamSession {
   categories: Map<string, string>;
   tags: Map<string, string>;
   viewers: Map<string, number>;
+  watchers: Map<string, number>;
 }
 
 export type IStreamSessionDocument = IStreamSession & Document;
@@ -79,6 +80,11 @@ export interface IConfig {
   chatGamesIntervalDelay: number;
   minActiveUsersThreshold: number;
   intervalCheckChatters: number;
+  pointsIncrement: {
+    message: number;
+    watch: number;
+    watchMultipler: number;
+  };
   intervalCheckViewersPeek: number;
   permissionLevels: {
     broadcaster: number;

@@ -33,7 +33,7 @@ export const configExist = async () => {
 
 export const createNewConfig = async () => {
   try {
-    return await Config.create();
+    return await Config.create({});
   } catch (err) {
     logger.error(`Error occured while creating new configs. ${err}`);
     handleAppError(err);
