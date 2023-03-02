@@ -11,6 +11,7 @@ import {
 
 import {
   getCurrentStreamSession,
+  updateCurrentStreamSessionById,
   updateStreamSessionById,
 } from "@services/streamSessions";
 import {
@@ -29,6 +30,9 @@ import {
 import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
 import removeDifferenceFromSet from "@utils/removeDifferenceSetUtil";
 import retryWithCatch from "@utils/retryWithCatchUtil";
+import { getBaseLog } from "@utils/getBaseLogUtil";
+import { channelLogger, logger } from "@utils/loggerUtil";
+import winston from "winston";
 
 interface BotStatsticOptions {
   config: IConfigDocument;
@@ -53,6 +57,8 @@ class BotStatisticDatabase {
     InterServerEvents,
     SocketData
   >;
+  private channelLogger: winston.Logger | undefined;
+  private usersBefore = new Set<string>();
 
   constructor(options: BotStatsticOptions) {
     const { twitchApi, config, socketIO } = options;
@@ -62,6 +68,7 @@ class BotStatisticDatabase {
     this.triggerWords = [];
     this.triggersOnDelay = new Map();
     this.socketIO = socketIO;
+    this.usersBefore = this.usersBefore;
   }
   // private async debugFollows() {
   //   const follows = await this.twitchApi.users.getFollows({
@@ -71,28 +78,34 @@ class BotStatisticDatabase {
   //   await addFollowersTemp(follows.data);
   // }
   public async init() {
-    const broadcasterId = (await this.twitchApi.users.getMe()).id;
+    const authorizedUser = await this.twitchApi.users.getMe();
+    const { id, name } = authorizedUser;
 
+    const broadcasterId = authorizedUser.id;
+    this.channelLogger = channelLogger(name);
     /* TODO: when get followers will be updated */
     // await this.updateEveryUserTwitchDetails(broadcasterId);
 
     /* DEBUG: Add all followers from given id  */
     // this.debugFollows();
     /* DEBUG: Add all followers from given id  */
-    setTimeout(async () => {
+    setInterval(async () => {
       await this.checkChatters(broadcasterId);
-    }, this.config.intervalCheckChatters);
+    }, this.config.intervalCheckChatters * 1000);
+    // }, 10000);
 
-    setTimeout(async () => {
-      await this.checkCountOfViewers(broadcasterId);
-    }, this.config.intervalCheckViewersPeek);
+    // setInterval(async () => {
+    //   await this.checkCountOfViewers(broadcasterId);
+    // }, this.config.intervalCheckViewersPeek * 1000);
 
     await this.getAllTrigersWordsFromDB();
     await this.getAllCommandWords();
   }
 
   async checkChatters(broadcasterId: string) {
-    let usersBefore = new Set<string>();
+    const { watch: watchIncr, watchMultipler: watchMult } =
+      this.config.pointsIncrement;
+
     const usersNow = new Set<string>();
     const listOfChatters = await this.twitchApi.chat.getChatters(
       broadcasterId,
@@ -116,7 +129,42 @@ class BotStatisticDatabase {
           privileges: 0,
         }
       );
-      if (!usersBefore.has(userName) && userDB) {
+
+      if (this.usersBefore.has(userName)) {
+        //count points for beeing on stream
+
+        const currentSession = await getCurrentStreamSession({});
+        if (!currentSession) {
+          logger.error("Couldn't find current session while checking watchers");
+          return;
+        }
+
+        await updateCurrentStreamSessionById({
+          $inc: {
+            [`watchers.${userName}`]: this.config.intervalCheckChatters,
+          },
+        });
+
+        const viewerWatchTime = currentSession?.watchers.get(userName);
+        const multipler =
+          getBaseLog(
+            watchMult,
+            viewerWatchTime
+              ? viewerWatchTime / this.config.intervalCheckChatters
+              : 1
+          ) + 1;
+
+        const pointsWithMultip = watchIncr * multipler;
+        this.channelLogger?.info(
+          `${userName} is watching(${viewerWatchTime}min) adding points ${watchIncr} * ${multipler.toFixed(
+            3
+          )} = ${pointsWithMultip.toFixed(3)}`
+        );
+
+        this.updateUserPoints(userId, pointsWithMultip);
+      }
+
+      if (!this.usersBefore.has(userName) && userDB) {
         this.socketIO.emit(
           "userJoinTwitchChat",
           { eventDate: new Date(), eventName: "Join chat" },
@@ -124,12 +172,13 @@ class BotStatisticDatabase {
         );
       }
 
-      usersBefore.add(userName);
+      this.usersBefore.add(userName);
     }
-    removeDifferenceFromSet(usersBefore, usersNow);
+
+    removeDifferenceFromSet(this.usersBefore, usersNow);
 
     //after remove difference of sets loop on users that have been and emit left chat
-    for await (const userLeft of usersBefore) {
+    for await (const userLeft of this.usersBefore) {
       const userDB = await isUserInDB({ twitchName: userLeft });
       // const userDB = await this.isUserInDB(userLeft);
       if (userDB) {
@@ -140,8 +189,19 @@ class BotStatisticDatabase {
         );
       }
     }
-    usersBefore = usersNow;
+    this.usersBefore = new Set(usersNow);
     usersNow.clear();
+  }
+
+  async updateUserPoints(userId: string, value: number) {
+    const updateData = {
+      $inc: { points: value },
+      // add points by message,       count messages
+      $set: { lastSeen: new Date() },
+      // set last seen to new Date()
+    };
+
+    await updateUser({ twitchId: userId }, updateData);
   }
 
   async checkCountOfViewers(broadcasterId: string) {
