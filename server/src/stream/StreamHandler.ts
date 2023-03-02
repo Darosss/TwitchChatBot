@@ -11,7 +11,7 @@ import {
 
 import {
   getCurrentStreamSession,
-  updateCurrentStreamSessionById,
+  updateCurrentStreamSession,
   updateStreamSessionById,
 } from "@services/streamSessions";
 import {
@@ -139,7 +139,7 @@ class BotStatisticDatabase {
           return;
         }
 
-        await updateCurrentStreamSessionById({
+        await updateCurrentStreamSession({
           $inc: {
             [`watchers.${userName}`]: this.config.intervalCheckChatters,
           },
