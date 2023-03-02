@@ -98,6 +98,35 @@ export const getCurrentStreamSession = async (
     handleAppError(err);
   }
 };
+
+export const updateCurrentStreamSessionById = async (
+  updateData: UpdateQuery<IStreamSessionOptionalData>
+) => {
+  const currentDate = new Date();
+  const filter = {
+    $and: [
+      { sessionStart: { $lte: currentDate } },
+      {
+        $or: [
+          { sessionEnd: { $gte: currentDate } },
+          { sessionEnd: { $exists: false } },
+        ],
+      },
+    ],
+  };
+  try {
+    const updatedStreamSession = await StreamSession.findOneAndUpdate(
+      filter,
+      updateData,
+      { new: true }
+    );
+    return updatedStreamSession;
+  } catch (err) {
+    logger.error("Failed to update current stream session");
+    handleAppError(err);
+  }
+};
+
 export const getLatestStreamSession = async (
   streamSessionFindOptions: IStreamSessionFindOptions
 ) => {
