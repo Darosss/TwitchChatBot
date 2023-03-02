@@ -99,7 +99,7 @@ export const getCurrentStreamSession = async (
   }
 };
 
-export const updateCurrentStreamSessionById = async (
+export const updateCurrentStreamSession = async (
   updateData: UpdateQuery<IStreamSessionOptionalData>
 ) => {
   const currentDate = new Date();
