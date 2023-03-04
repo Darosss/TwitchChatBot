@@ -1,25 +1,61 @@
 import { Model, model, Schema } from "mongoose";
 import { IConfigDocument } from "./types";
+import { configDefaults } from "../defaults/configsDefaults";
+const {
+  commandsPrefix,
+  timersIntervalDelay,
+  activeUserTimeDelay,
+  chatGamesIntervalDelay,
+  minActiveUsersThreshold,
+  pointsIncrement,
+  intervalCheckChatters,
+  intervalCheckViewersPeek,
+  permissionLevels,
+} = configDefaults;
 
 const ConfigSchema: Schema<IConfigDocument> = new Schema(
   {
-    commandsPrefix: { type: String, required: true, default: "--" },
-    timersIntervalDelay: { type: Number, required: true, default: 20 },
-    activeUserTimeDelay: { type: Number, required: true, default: 150 },
-    chatGamesIntervalDelay: { type: Number, required: true, default: 20 },
-    minActiveUsersThreshold: { type: Number, required: true, default: 3 },
-    intervalCheckChatters: { type: Number, required: true, default: 150 },
-    pointsIncrement: {
-      message: { type: Number, default: 1 },
-      watch: { type: Number, default: 10 },
-      watchMultipler: { type: Number, default: 2.0 },
+    commandsPrefix: { type: String, required: true, default: commandsPrefix },
+    timersIntervalDelay: {
+      type: Number,
+      required: true,
+      default: timersIntervalDelay,
     },
-    intervalCheckViewersPeek: { type: Number, required: true, default: 600 },
+    activeUserTimeDelay: {
+      type: Number,
+      required: true,
+      default: activeUserTimeDelay,
+    },
+    chatGamesIntervalDelay: {
+      type: Number,
+      required: true,
+      default: chatGamesIntervalDelay,
+    },
+    minActiveUsersThreshold: {
+      type: Number,
+      required: true,
+      default: minActiveUsersThreshold,
+    },
+    intervalCheckChatters: {
+      type: Number,
+      required: true,
+      default: intervalCheckChatters,
+    },
+    pointsIncrement: {
+      message: { type: Number, default: pointsIncrement.message },
+      watch: { type: Number, default: pointsIncrement.watch },
+      watchMultipler: { type: Number, default: pointsIncrement.watchMultipler },
+    },
+    intervalCheckViewersPeek: {
+      type: Number,
+      required: true,
+      default: intervalCheckViewersPeek,
+    },
     permissionLevels: {
-      broadcaster: { type: Number, default: 10 },
-      mod: { type: Number, default: 8 },
-      vip: { type: Number, default: 4 },
-      all: { type: Number, default: 0 },
+      broadcaster: { type: Number, default: permissionLevels.broadcaster },
+      mod: { type: Number, default: permissionLevels.mod },
+      vip: { type: Number, default: permissionLevels.vip },
+      all: { type: Number, default: permissionLevels.all },
     },
   },
   {
