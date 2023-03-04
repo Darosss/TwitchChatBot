@@ -8,6 +8,7 @@ const TriggerSchema: Schema<ITriggerDocument> = new Schema(
     chance: { type: Number, default: 50 },
     delay: { type: Number, default: 360 },
     onDelay: { type: Boolean, default: false },
+    uses: { type: Number, default: 0 },
     // createdAt: { type: Date, required: true, default: Date.now },
     words: [String],
     messages: [String],
