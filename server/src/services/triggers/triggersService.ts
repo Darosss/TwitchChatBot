@@ -93,3 +93,19 @@ export const deleteTriggerById = async (id: string) => {
     handleAppError(err);
   }
 };
+
+export const getTriggerById = async (
+  id: string,
+  filter: FilterQuery<ITriggerDocument> = {}
+) => {
+  try {
+    const foundTrigger = await Trigger.findById(id, filter);
+
+    const trigger = checkExistResource(foundTrigger, `Trigger with id(${id})`);
+
+    return trigger;
+  } catch (err) {
+    logger.error(`Error occured while getting trigger: ${err}`);
+    handleAppError(err);
+  }
+};
