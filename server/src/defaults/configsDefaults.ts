@@ -1,4 +1,4 @@
-import { IConfigDefaults } from "@models/types";
+import { IConfigDefaults } from "./types";
 
 export const configDefaults: IConfigDefaults = {
   commandsPrefix: "--",
