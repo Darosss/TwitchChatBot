@@ -1,3 +1,4 @@
+import { ITrigger } from "@models/types";
 import {
   getOneTrigger,
   getTriggersWords,
@@ -22,23 +23,63 @@ class TriggersHandler {
     this.triggersWords = (await getTriggersWords()) || [];
   }
 
+  async getTriggerWordAndTrigger(message: string) {
+    let wordInMessage = "";
+    const triggerWord = this.triggersWords.find((word) => {
+      if (message.toLowerCase().includes(word)) {
+        const index = message.toLowerCase().indexOf(word);
+        const start = message.lastIndexOf(" ", index) + 1;
+        const end = message.indexOf(" ", index);
+        wordInMessage =
+          end === -1 ? message.substring(start) : message.substring(start, end);
+        return true;
+      }
+    });
+    wordInMessage = wordInMessage.replace(/[.,]/g, "").toLowerCase();
+    return { triggerWord, wordInMessage };
+  }
   async checkMessageForTrigger(message: string) {
-    const triggerWord = this.triggersWords.find((word) =>
-      message.toLowerCase().includes(word)
+    const { triggerWord, wordInMessage } = await this.getTriggerWordAndTrigger(
+      message
     );
-
     if (!triggerWord) return;
 
-    const triggerMessage = await this.getTriggerIfNotOnDelay(triggerWord);
+    const triggerMessage = await this.getTriggerIfCanSend(
+      wordInMessage,
+      triggerWord
+    );
 
     return triggerMessage;
   }
 
-  async getTriggerIfNotOnDelay(triggerWord: string) {
+  async getTriggerIfCanSend(wholeWord: string, triggerWord: string) {
     const foundedTrigger = await this.getTriggerByTriggerWord(triggerWord);
-    if (!foundedTrigger) return;
+    if (!foundedTrigger) return false;
+    const { name, mode } = foundedTrigger;
+    switch (mode) {
+      case "WHOLE-WORD":
+        if (wholeWord !== triggerWord) {
+          triggerLogger.info(
+            `WHOLE-WORD: Trigger ${name} - trigger word (${triggerWord} != ${wholeWord}). Not sending`
+          );
+          return false;
+        }
+        break;
+      case "STARTS-WITH":
+        if (!wholeWord.startsWith(triggerWord)) {
+          triggerLogger.info(
+            `STARTS-WITH: Trigger ${name} not starting with word. Not sending`
+          );
+          return false;
+        }
+        break;
+    }
 
-    const { _id, name, onDelay, delay, messages } = foundedTrigger;
+    return await this.getTriggerIfNotOnDelay(foundedTrigger);
+  }
+
+  async getTriggerIfNotOnDelay(trigger: ITrigger) {
+    const { _id, name, onDelay, delay, messages } = trigger;
 
     const triggerAvailable = await this.checkTriggerDelay(
       _id,
@@ -59,7 +100,7 @@ class TriggersHandler {
 
   async getTriggerByTriggerWord(triggerWord: string) {
     const foundedTrigger = await getOneTrigger({
-      words: { $regex: triggerWord, $options: "i" },
+      words: { $regex: new RegExp(`\\b${triggerWord}\\b`, "i") },
     });
     return foundedTrigger;
   }
@@ -76,7 +117,9 @@ class TriggersHandler {
       return false;
     } else if (onDelay && !this.triggersOnDelay.has(name)) {
       // if on delay but timeout is not set - set timeout and return false
-      triggerLogger.info(`Trigger just on delay - set timeout`);
+      triggerLogger.info(
+        `Trigger: ${name} just on delay - set timeout(${Math.round(delay)}s)`
+      );
       this.setTimeoutRefreshTriggerDelay(id, name, delay);
       return false;
     } else {
