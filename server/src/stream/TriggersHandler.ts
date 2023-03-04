@@ -5,7 +5,7 @@ import {
   updateTriggerById,
 } from "@services/triggers";
 import { triggerLogger } from "@utils/loggerUtil";
-import { randomWithMax } from "@utils/randomNumbersUtil";
+import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
 
 class TriggersHandler {
   private triggersWords: string[] = [];
@@ -44,15 +44,21 @@ class TriggersHandler {
     );
     if (!triggerWord) return;
 
-    const triggerMessage = await this.getTriggerIfCanSend(
-      wordInMessage,
-      triggerWord
-    );
+    const foundedTrigger = await this.getTriggerByTriggerWord(triggerWord);
 
-    return triggerMessage;
+    if (
+      foundedTrigger &&
+      percentChance(foundedTrigger.chance) &&
+      (await this.getTriggerIfNotOnDelay(foundedTrigger)) &&
+      (await this.checkIfCanSendTrigger(wordInMessage, triggerWord))
+    ) {
+      return await this.getTriggerMessage(foundedTrigger.messages);
+    }
+
+    return false;
   }
 
-  async getTriggerIfCanSend(wholeWord: string, triggerWord: string) {
+  async checkIfCanSendTrigger(wholeWord: string, triggerWord: string) {
     const foundedTrigger = await this.getTriggerByTriggerWord(triggerWord);
     if (!foundedTrigger) return false;
     const { name, mode } = foundedTrigger;
@@ -75,11 +81,11 @@ class TriggersHandler {
         break;
     }
 
-    return await this.getTriggerIfNotOnDelay(foundedTrigger);
+    return true;
   }
 
   async getTriggerIfNotOnDelay(trigger: ITrigger) {
-    const { _id, name, onDelay, delay, messages } = trigger;
+    const { _id, name, onDelay, delay } = trigger;
 
     const triggerAvailable = await this.checkTriggerDelay(
       _id,
@@ -88,10 +94,11 @@ class TriggersHandler {
       onDelay
     );
 
-    if (!triggerAvailable) return;
+    if (!triggerAvailable) return false;
 
     triggerLogger.info(`Use ${name} trigger, delay: ${delay}s`);
-    return await this.getTriggerMessage(messages);
+
+    return true;
   }
 
   async getTriggerMessage(messages: string[]) {
