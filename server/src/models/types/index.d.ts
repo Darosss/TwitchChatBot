@@ -64,6 +64,7 @@ export interface ITrigger {
   chance: number;
   delay: number;
   onDelay: boolean;
+  uses: number;
   words: string[];
   messages: string[];
   createdAt: Date;
@@ -108,7 +109,7 @@ export interface IChatCommand {
   aliases: string[];
   messages: string[];
   privilege: number;
-  useCount: number;
+  uses: number;
 }
 
 export type IChatCommandDocument = IChatCommand & Document;
