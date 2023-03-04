@@ -9,7 +9,6 @@ const TriggerSchema: Schema<ITriggerDocument> = new Schema(
     delay: { type: Number, default: 360 },
     onDelay: { type: Boolean, default: false },
     uses: { type: Number, default: 0 },
-    // createdAt: { type: Date, required: true, default: Date.now },
     words: [String],
     messages: [String],
   },
