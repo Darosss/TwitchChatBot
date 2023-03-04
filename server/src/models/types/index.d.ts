@@ -57,6 +57,8 @@ export interface IStreamSession {
 
 export type IStreamSessionDocument = IStreamSession & Document;
 
+export type TTriggerMode = "WHOLE-WORD" | "STARTS-WITH" | "ALL";
+
 export interface ITrigger {
   _id: string;
   name: string;
@@ -69,6 +71,7 @@ export interface ITrigger {
   messages: string[];
   createdAt: Date;
   updatedAt: Date;
+  mode: TTriggerMode;
 }
 
 export type ITriggerDocument = ITrigger & Document;
