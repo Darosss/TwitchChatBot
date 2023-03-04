@@ -13,19 +13,11 @@ export const logger = winston.createLogger({
   format: combine(timestamp(), loggerFormat),
   defaultMeta: { service: "user-service" },
   transports: [
-    //
-    // - Write all logs with importance level of `error` or less to `error.log`
-    // - Write all logs with importance level of `info` or less to `combined.log`
-    //
     new winston.transports.File({ filename: "logs/error.log", level: "error" }),
     new winston.transports.File({ filename: "logs/combined.log" }),
   ],
 });
 
-//
-// If we're not in production then log to the `console` with the format:
-// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
-//
 if (process.env.NODE_ENV !== "production") {
   logger.add(
     new winston.transports.Console({
@@ -34,48 +26,84 @@ if (process.env.NODE_ENV !== "production") {
   );
 }
 
-const messageLoggerFormat = printf(({ message, timestamp }) => {
+const streamLoggerFormat = printf(({ message, timestamp }) => {
   return `${timestamp}: ${message}`;
 });
 
-export const messageLogger = (channelName: string) => {
-  const messageTransport = new DailyRotateFile({
-    filename: path.join(
-      __dirname,
-      `../data/${channelName}/%DATE%/messages.log`
-    ),
-    datePattern: "YYYY-MM-DD",
-    zippedArchive: true,
-    level: "info",
-  });
-
-  return winston.createLogger({
-    format: combine(
-      winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-      winston.format.prettyPrint(),
-      messageLoggerFormat
-    ),
-    transports: [messageTransport],
-  });
+const streamLoggerDefaults = {
+  timestampFormat: "YYYY-MM-DD HH:mm:ss",
+  datePattern: "YYYY-MM-DD",
+  folder: `../data`,
 };
 
-export const channelLogger = (channelName: string) => {
-  const watchersTransport = new DailyRotateFile({
-    filename: path.join(
-      __dirname,
-      `../data/${channelName}/%DATE%/watchers.log`
-    ),
-    datePattern: "YYYY-MM-DD",
-    zippedArchive: true,
-    level: "info",
-  });
+export const messageLogger = winston.createLogger({
+  format: combine(
+    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
+    winston.format.prettyPrint(),
+    streamLoggerFormat
+  ),
+  level: "info",
+  transports: [
+    new DailyRotateFile({
+      filename: path.join(
+        __dirname,
+        `${streamLoggerDefaults.folder}/%DATE%/messages.log`
+      ),
+      datePattern: streamLoggerDefaults.datePattern,
+    }),
+  ],
+});
 
-  return winston.createLogger({
-    format: combine(
-      winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-      winston.format.prettyPrint(),
-      messageLoggerFormat
-    ),
-    transports: [watchersTransport],
-  });
-};
+export const triggerLogger = winston.createLogger({
+  format: combine(
+    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
+    winston.format.prettyPrint(),
+    streamLoggerFormat
+  ),
+  level: "info",
+  transports: [
+    new DailyRotateFile({
+      filename: path.join(
+        __dirname,
+        `${streamLoggerDefaults.folder}/%DATE%/triggers.log`
+      ),
+      datePattern: streamLoggerDefaults.datePattern,
+    }),
+  ],
+});
+
+export const commandLogger = winston.createLogger({
+  format: combine(
+    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
+    winston.format.prettyPrint(),
+    streamLoggerFormat
+  ),
+  level: "info",
+  transports: [
+    new DailyRotateFile({
+      filename: path.join(
+        __dirname,
+        `${streamLoggerDefaults.folder}/%DATE%/commands.log`
+      ),
+      datePattern: streamLoggerDefaults.datePattern,
+    }),
+  ],
+});
+
+export const watcherLogger = winston.createLogger({
+  format: combine(
+    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
+    winston.format.prettyPrint(),
+    streamLoggerFormat
+  ),
+  level: "info",
+  transports: [
+    new DailyRotateFile({
+      filename: path.join(
+        __dirname,
+        `${streamLoggerDefaults.folder}/%DATE%/watchers.log`
+      ),
+      datePattern: streamLoggerDefaults.datePattern,
+    }),
+  ],
+});
