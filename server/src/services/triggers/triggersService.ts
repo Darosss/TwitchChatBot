@@ -109,3 +109,18 @@ export const getTriggerById = async (
     handleAppError(err);
   }
 };
+
+export const getOneTrigger = async (
+  filter: FilterQuery<ITriggerDocument> = {}
+) => {
+  try {
+    const foundTrigger = await Trigger.findOne(filter);
+
+    const trigger = checkExistResource(foundTrigger, "Trigger");
+
+    return trigger;
+  } catch (err) {
+    logger.error(`Error occured while getting trigger: ${err}`);
+    handleAppError(err);
+  }
+};
