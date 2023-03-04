@@ -3,6 +3,8 @@ server/dist
 server/node_modules
 server/logs
 
+*.temp.*
+
 #FRONTEND
 
 # dependencies
