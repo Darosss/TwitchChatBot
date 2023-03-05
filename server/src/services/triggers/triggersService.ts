@@ -57,6 +57,20 @@ export const createTrigger = async (
   }
 };
 
+export const updateTriggers = async (
+  filter: FilterQuery<ITriggerDocument> = {},
+  updateData: UpdateQuery<TriggerUpdateData>
+) => {
+  try {
+    await Trigger.updateMany(filter, updateData, {
+      new: true,
+    });
+  } catch (err) {
+    logger.error(`Error occured while updating many triggers. ${err}`);
+    handleAppError(err);
+  }
+};
+
 export const updateTriggerById = async (
   id: string,
   updateData: UpdateQuery<TriggerUpdateData>
