@@ -1,8 +1,9 @@
-import { ITrigger } from "@models/types";
+import { ITrigger, TTriggerMode } from "@models/types";
 import {
   getOneTrigger,
   getTriggersWords,
   updateTriggerById,
+  updateTriggers,
 } from "@services/triggers";
 import { triggerLogger } from "@utils/loggerUtil";
 import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
@@ -16,11 +17,15 @@ class TriggersHandler {
   }
 
   private async init() {
-    this.refreshTriggers();
+    Promise.all([this.refreshTriggers(), this.setEveryTriggerDelayOff()]);
   }
 
   async refreshTriggers() {
     this.triggersWords = (await getTriggersWords()) || [];
+  }
+
+  private async setEveryTriggerDelayOff() {
+    await updateTriggers({}, { onDelay: false });
   }
 
   async getTriggerWordAndTrigger(message: string) {
@@ -38,30 +43,60 @@ class TriggersHandler {
     wordInMessage = wordInMessage.replace(/[.,]/g, "").toLowerCase();
     return { triggerWord, wordInMessage };
   }
+
   async checkMessageForTrigger(message: string) {
     const { triggerWord, wordInMessage } = await this.getTriggerWordAndTrigger(
       message
     );
-    if (!triggerWord) return;
+    if (triggerWord) {
+      const foundedTrigger = await this.getTriggerByTriggerWord(triggerWord);
 
-    const foundedTrigger = await this.getTriggerByTriggerWord(triggerWord);
+      if (!foundedTrigger) return false;
 
-    if (
-      foundedTrigger &&
-      percentChance(foundedTrigger.chance) &&
-      (await this.getTriggerIfNotOnDelay(foundedTrigger)) &&
-      (await this.checkIfCanSendTrigger(wordInMessage, triggerWord))
-    ) {
-      return await this.getTriggerMessage(foundedTrigger.messages);
+      const canSendTrigger = await this.checkTriggersConditions(
+        foundedTrigger,
+        triggerWord,
+        wordInMessage
+      );
+
+      if (canSendTrigger) {
+        return await this.getMessageAndUpdateTriggerLogic(foundedTrigger);
+      }
     }
+  }
 
+  async checkTriggersConditions(
+    trigger: ITrigger,
+    triggerWord: string,
+    wordInMessage: string
+  ) {
+    const { name, onDelay, chance, mode } = trigger;
+    if (
+      percentChance(chance) &&
+      !(await this.isTriggerOnDelay(name, onDelay)) &&
+      (await this.checkIfCanSendTrigger(mode, wordInMessage, triggerWord))
+    ) {
+      return true;
+    }
     return false;
   }
 
-  async checkIfCanSendTrigger(wholeWord: string, triggerWord: string) {
-    const foundedTrigger = await this.getTriggerByTriggerWord(triggerWord);
-    if (!foundedTrigger) return false;
-    const { name, mode } = foundedTrigger;
+  async getMessageAndUpdateTriggerLogic(trigger: ITrigger) {
+    const { _id, messages, name, delay } = trigger;
+    const triggerMessage = await this.getTriggerMessage(messages);
+    await this.updateTrigerAfterUsage(_id);
+
+    await this.setTimeoutRefreshTriggerDelay(_id, name, delay);
+    triggerLogger.info(`Use ${name} trigger, delay: ${delay}s`);
+
+    return triggerMessage;
+  }
+
+  async checkIfCanSendTrigger(
+    mode: TTriggerMode,
+    wholeWord: string,
+    triggerWord: string
+  ) {
     switch (mode) {
       case "WHOLE-WORD":
         if (wholeWord !== triggerWord) {
@@ -84,21 +119,13 @@ class TriggersHandler {
     return true;
   }
 
-  async getTriggerIfNotOnDelay(trigger: ITrigger) {
-    const { _id, name, onDelay, delay } = trigger;
+  async isTriggerOnDelay(name: string, onDelay: boolean) {
+    if (onDelay || this.triggersOnDelay.has(name)) {
+      triggerLogger.info(`Trigger ${name} on delay - do nothing`);
+      return true;
+    }
 
-    const triggerAvailable = await this.checkTriggerDelay(
-      _id,
-      name,
-      delay,
-      onDelay
-    );
-
-    if (!triggerAvailable) return false;
-
-    triggerLogger.info(`Use ${name} trigger, delay: ${delay}s`);
-
-    return true;
+    return false;
   }
 
   async getTriggerMessage(messages: string[]) {
@@ -106,35 +133,14 @@ class TriggersHandler {
   }
 
   async getTriggerByTriggerWord(triggerWord: string) {
-    const foundedTrigger = await getOneTrigger({
-      words: { $regex: new RegExp(`\\b${triggerWord}\\b`, "i") },
-    });
-    return foundedTrigger;
+    try {
+      const foundedTrigger = await getOneTrigger({
+        words: { $regex: new RegExp(`\\b${triggerWord}\\b`, "i") },
+      });
+      return foundedTrigger;
+    } catch (err) {}
   }
 
-  async checkTriggerDelay(
-    id: string,
-    name: string,
-    delay: number,
-    onDelay: boolean
-  ) {
-    if (onDelay && this.triggersOnDelay.has(name)) {
-      //if trigger on delay and is timeout set return false
-      triggerLogger.info(`Trigger on delay, timeout set - do nothing`);
-      return false;
-    } else if (onDelay && !this.triggersOnDelay.has(name)) {
-      // if on delay but timeout is not set - set timeout and return false
-      triggerLogger.info(
-        `Trigger: ${name} just on delay - set timeout(${Math.round(delay)}s)`
-      );
-      this.setTimeoutRefreshTriggerDelay(id, name, delay);
-      return false;
-    } else {
-      // update trigger and return true
-      this.updateTrigerAfterUsage(id);
-      return true;
-    }
-  }
   async updateTrigerAfterUsage(id: string) {
     const updatedTrigger = await updateTriggerById(id, {
       onDelay: true,
@@ -151,7 +157,6 @@ class TriggersHandler {
         });
 
         this.triggersOnDelay.delete(name);
-        console.log(`${name} - is now turn on again!`);
         triggerLogger.info(`${name} - is now turn on again!`);
       }, delay * 1000)
     );
