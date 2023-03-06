@@ -36,6 +36,24 @@ const streamLoggerDefaults = {
   folder: `../data`,
 };
 
+export const headLogger = winston.createLogger({
+  format: combine(
+    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
+    winston.format.prettyPrint(),
+    streamLoggerFormat
+  ),
+  level: "info",
+  transports: [
+    new DailyRotateFile({
+      filename: path.join(
+        __dirname,
+        `${streamLoggerDefaults.folder}/%DATE%/headLogs.log`
+      ),
+      datePattern: streamLoggerDefaults.datePattern,
+    }),
+  ],
+});
+
 export const messageLogger = winston.createLogger({
   format: combine(
     winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
