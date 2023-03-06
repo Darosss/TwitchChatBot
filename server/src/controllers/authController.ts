@@ -1,4 +1,5 @@
 import { IAuthorizationTwitch } from "@types";
+import retryWithCatch from "@utils/retryWithCatchUtil";
 import Express, { Request, Response } from "express";
 
 import initTwitchOnAuth from "../stream/twitch/initTwitchOnAuth";
@@ -11,19 +12,22 @@ export const overlay = async (req: Request, res: Response) => {
     scope: string;
     state: string;
   };
-  const authRes = await fetch("https://id.twitch.tv/oauth2/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-    },
-    body: new URLSearchParams({
-      client_id: CLIENT_ID!,
-      client_secret: CLIENT_SECRET!,
-      code: code,
-      grant_type: "authorization_code",
-      redirect_uri: REDIRECT_URI!,
-    }).toString(),
-  });
+  const authRes = await retryWithCatch(() =>
+    fetch("https://id.twitch.tv/oauth2/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+      body: new URLSearchParams({
+        client_id: CLIENT_ID!,
+        client_secret: CLIENT_SECRET!,
+        code: code,
+        grant_type: "authorization_code",
+        redirect_uri: REDIRECT_URI!,
+      }).toString(),
+    })
+  );
+
   //GET auth respons with secret / access token
   if (authRes) {
     const authTwitchJson = (await authRes.json()) as IAuthorizationTwitch;
