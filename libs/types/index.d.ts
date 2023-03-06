@@ -1,7 +1,5 @@
 import { IUser } from "../../server/src/models/types";
 
-import { Server } from "socket.io";
-
 export interface IEvent {
   eventDate: Date;
   eventName: string;
@@ -36,17 +34,3 @@ export interface ISoundData {
 }
 
 export interface SocketData {}
-
-export type SocketServer = Server<
-  ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData
->;
-
-export type SocketClient = Server<
-  ServerToClientEvents,
-  ClientToServerEvents,
-  InterServerEvents,
-  SocketData
->;
