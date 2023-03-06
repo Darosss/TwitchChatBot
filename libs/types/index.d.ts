@@ -16,6 +16,9 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
   messageClient: (message: string) => void;
+  saveConfigs: () => void;
+  refreshTriggers: () => void;
+  refreshCommands: () => void;
 }
 
 export interface InterServerEvents {
