@@ -19,7 +19,6 @@ export default function Users() {
   if (!usersData || loading) return <>Loading...</>;
 
   const { data, count, currentPage } = usersData;
-  console.log(data, "test");
   return (
     <>
       <PreviousPage />
