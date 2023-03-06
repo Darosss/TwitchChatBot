@@ -12,6 +12,34 @@ type UserDetailsProps = {
   users: IUser[];
 };
 
+export default function Users() {
+  const { data: usersData, loading, error } = getUsersList();
+
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!usersData || loading) return <>Loading...</>;
+
+  const { data, count, currentPage } = usersData;
+
+  return (
+    <>
+      <PreviousPage />
+      <FilterBarUsers />
+      <div id="users-list" className="table-list-wrapper">
+        <UsersDetails users={data} />
+      </div>
+      <div className="table-list-pagination">
+        <Pagination
+          className="pagination-bar"
+          currentPage={currentPage}
+          totalCount={count}
+          localStorageName="usersPageSize"
+          siblingCount={1}
+        />
+      </div>
+    </>
+  );
+}
+
 const UsersDetails = ({ users }: UserDetailsProps) => (
   <table id="table-users-list">
     <thead>
@@ -59,31 +87,3 @@ const UsersDetails = ({ users }: UserDetailsProps) => (
     </tbody>
   </table>
 );
-
-export default function Users() {
-  const { data: usersData, loading, error } = getUsersList();
-
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!usersData || loading) return <>Loading...</>;
-
-  const { data, count, currentPage } = usersData;
-
-  return (
-    <>
-      <PreviousPage />
-      <FilterBarUsers />
-      <div id="users-list" className="table-list-wrapper">
-        <UsersDetails users={data} />
-      </div>
-      <div className="table-list-pagination">
-        <Pagination
-          className="pagination-bar"
-          currentPage={currentPage}
-          totalCount={count}
-          localStorageName="usersPageSize"
-          siblingCount={1}
-        />
-      </div>
-    </>
-  );
-}
