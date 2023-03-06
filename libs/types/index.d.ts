@@ -1,12 +1,14 @@
 import { IUser } from "../../server/src/models/types";
 
-interface IEvent {
+import { Server } from "socket.io";
+
+export interface IEvent {
   eventDate: Date;
   eventName: string;
 }
 
-interface IEventAndIUser extends IEvent, IUser {}
-interface ServerToClientEvents {
+export interface IEventAndIUser extends IEvent, IUser {}
+export interface ServerToClientEvents {
   noArg: () => void;
   withAck: (d: string, callback: (e: number) => void) => void;
   messageServer: (date: Date, username: string, message: string) => void;
@@ -14,15 +16,15 @@ interface ServerToClientEvents {
   onRedemption: (data: ISoundData) => void;
 }
 
-interface ClientToServerEvents {
+export interface ClientToServerEvents {
   messageClient: (message: string) => void;
 }
 
-interface InterServerEvents {
+export interface InterServerEvents {
   ping: () => void;
 }
 
-interface ISoundData {
+export interface ISoundData {
   rewardId: string;
   userId: string;
   userName: string;
@@ -33,12 +35,18 @@ interface ISoundData {
   rewardImage: string;
 }
 
-interface SocketData {}
+export interface SocketData {}
 
-export {
+export type SocketServer = Server<
   ClientToServerEvents,
-  SocketData,
-  InterServerEvents,
   ServerToClientEvents,
-  IEventAndIUser,
-};
+  InterServerEvents,
+  SocketData
+>;
+
+export type SocketClient = Server<
+  ServerToClientEvents,
+  ClientToServerEvents,
+  InterServerEvents,
+  SocketData
+>;
