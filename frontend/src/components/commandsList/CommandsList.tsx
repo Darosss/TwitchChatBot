@@ -1,14 +1,17 @@
 import "./style.css";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import formatDate from "@utils/formatDate";
 import FilterBarCommands from "./filterBarCommands";
 import ChatCommandService from "@services/ChatCommandService";
 import Modal from "@components/modal";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
+import { SocketContext } from "@context/SocketContext";
 
 export default function CommandsList() {
+  const socket = useContext(SocketContext);
+
   const [showModal, setShowModal] = useState(false);
 
   const [editingCommand, setEditingCommand] = useState("");
@@ -28,12 +31,16 @@ export default function CommandsList() {
     refetchData,
   } = ChatCommandService.getCommands();
 
+  const socketRefreshTrigger = () => {
+    socket?.emit("refreshCommands");
+  };
   useEffect(() => {
     if (
       commandIdDelete !== null &&
       confirm(`Are you sure you want to delete command: ${commandIdDelete}?`)
     ) {
       fetchDeleteCommand().then(() => {
+        socketRefreshTrigger();
         refetchData();
         setCommandIdDelete(null);
       });
@@ -80,6 +87,7 @@ export default function CommandsList() {
 
   const createNewCommand = () => {
     fetchCreateCommand().then(() => {
+      socketRefreshTrigger();
       refetchData();
     });
   };
@@ -107,6 +115,7 @@ export default function CommandsList() {
 
   const onSubmitEditModal = () => {
     fetchEditComman().then(() => {
+      socketRefreshTrigger();
       refetchData();
     });
     resetOnChangeClasses();

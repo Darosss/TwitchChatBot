@@ -1,14 +1,17 @@
 import "./style.css";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import formatDate from "@utils/formatDate";
 import PreviousPage from "@components/previousPage";
 import FilterBarTriggers from "./filterBarTriggers";
 import TriggerService from "@services/TriggerService";
+import { SocketContext } from "@context/SocketContext";
 
 export default function TriggersList() {
+  const socket = useContext(SocketContext);
+
   const [showModal, setShowModal] = useState(false);
 
   const [editingTrigger, setEditingTrigger] = useState("");
@@ -52,12 +55,18 @@ export default function TriggersList() {
   const { refetchData: fetchDeleteCommand } = TriggerService.deleteTrigger(
     triggerIdDelete ? triggerIdDelete : ""
   );
+
+  const socketRefreshTrigger = () => {
+    socket?.emit("refreshTriggers");
+  };
+
   useEffect(() => {
     if (
       triggerIdDelete !== null &&
       confirm(`Are you sure you want to delete command: ${triggerIdDelete}?`)
     ) {
       fetchDeleteCommand().then(() => {
+        socketRefreshTrigger();
         refetchData();
         setTriggerIdDelete(null);
       });
@@ -73,12 +82,14 @@ export default function TriggersList() {
 
   const createNewTrigger = () => {
     fetchCreateTrigger().then(() => {
+      socketRefreshTrigger();
       refetchData();
     });
   };
 
   const onSubmitEditModal = () => {
     fetchEditTrigger().then(() => {
+      socketRefreshTrigger();
       refetchData();
     });
     resetOnChangeClasses();

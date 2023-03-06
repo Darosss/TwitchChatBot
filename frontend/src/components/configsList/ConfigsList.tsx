@@ -1,10 +1,13 @@
 import "./style.css";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import PreviousPage from "@components/previousPage";
 import ConfigService from "@services/ConfigService";
+import { SocketContext } from "@context/SocketContext";
 
 export default function ConfigsList() {
+  const socket = useContext(SocketContext);
+
   const [showEdit, setShowEdit] = useState(false);
 
   const [prefix, setPrefix] = useState("");
@@ -42,6 +45,7 @@ export default function ConfigsList() {
   const onClickEditConfig = () => {
     setShowEdit(false);
     fetchEditConfig().then(() => {
+      socket?.emit("saveConfigs");
       refetchData();
     });
   };
