@@ -19,7 +19,7 @@ export default function Users() {
   if (!usersData || loading) return <>Loading...</>;
 
   const { data, count, currentPage } = usersData;
-
+  console.log(data, "test");
   return (
     <>
       <PreviousPage />
@@ -46,6 +46,7 @@ const UsersDetails = ({ users }: UserDetailsProps) => (
       <tr>
         <th>Username</th>
         <th>Achievements</th>
+        <th>Watch</th>
         <th>Last seen</th>
         <th>Created</th>
         <th>Message count</th>
@@ -55,14 +56,24 @@ const UsersDetails = ({ users }: UserDetailsProps) => (
 
     <tbody>
       {users.map((user) => {
-        const { _id, username, lastSeen, createdAt, messageCount, points } =
-          user;
+        const {
+          _id,
+          username,
+          lastSeen,
+          createdAt,
+          messageCount,
+          points,
+          watchTime,
+        } = user;
         return (
           <tr key={_id}>
             <td className="users-list-username">
               <Link to={`./${_id}`}> {username}</Link>
             </td>
             <td className="users-list-achievements"></td>
+            <td className="users-list-watch-time">
+              {Number(watchTime) / 60} min
+            </td>
             <td className="users-list-last-seen">
               {lastSeen ? (
                 <div className="tooltip">
