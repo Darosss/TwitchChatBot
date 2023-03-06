@@ -84,6 +84,7 @@ export interface IConfig {
   chatGamesIntervalDelay: number;
   minActiveUsersThreshold: number;
   intervalCheckChatters: number;
+  randomMessageChance: number;
   pointsIncrement: {
     message: number;
     watch: number;
@@ -127,3 +128,13 @@ export interface IAuth {
 }
 
 export type IAuthDocument = IAuth & Document;
+
+export interface IMessageCategory {
+  _id: string;
+  category: string;
+  messages: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type IMessageCategoryDocument = IMessageCategory & Document;
