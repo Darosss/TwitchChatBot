@@ -57,6 +57,8 @@ export interface IStreamSession {
 
 export type IStreamSessionDocument = IStreamSession & Document;
 
+export type TTriggerMode = "WHOLE-WORD" | "STARTS-WITH" | "ALL";
+
 export interface ITrigger {
   _id: string;
   name: string;
@@ -64,10 +66,12 @@ export interface ITrigger {
   chance: number;
   delay: number;
   onDelay: boolean;
+  uses: number;
   words: string[];
   messages: string[];
   createdAt: Date;
   updatedAt: Date;
+  mode: TTriggerMode;
 }
 
 export type ITriggerDocument = ITrigger & Document;
@@ -108,7 +112,7 @@ export interface IChatCommand {
   aliases: string[];
   messages: string[];
   privilege: number;
-  useCount: number;
+  uses: number;
 }
 
 export type IChatCommandDocument = IChatCommand & Document;

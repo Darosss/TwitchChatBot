@@ -49,6 +49,7 @@
     "@middlewares": "dist/middlewares",
     "@utils": "dist/utils",
     "@services": "dist/services",
+    "@defaults": "dist/defaults",
     "@types": "@types"
   }
 }

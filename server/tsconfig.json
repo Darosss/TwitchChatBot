@@ -9,7 +9,8 @@
       "@models/*": ["models/*"],
       "@services/*": ["services/*"],
       "@types/*": ["@types/*"],
-      "@utils/*": ["utils/*"]
+      "@utils/*": ["utils/*"],
+      "@defaults/*": ["defaults/*"]
     },
     "target": "es2017",
     "module": "commonjs",

@@ -1,40 +1,29 @@
-import { ApiClient } from "@twurple/api";
-import { IConfigDocument, ITriggerDocument, IUser } from "@models/types";
-import { Trigger } from "@models/triggerModel";
-import { Server } from "socket.io";
+import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
+import { IConfigDocument, IUser } from "@models/types";
+import { IConfigDefaults } from "@defaults/types";
+import { configDefaults } from "@defaults/configsDefaults";
 import {
   ClientToServerEvents,
-  InterServerEvents,
   ServerToClientEvents,
+  InterServerEvents,
   SocketData,
 } from "@libs/types";
+import { Server } from "socket.io";
 
 import {
   getCurrentStreamSession,
-  updateCurrentStreamSession,
   updateStreamSessionById,
 } from "@services/streamSessions";
-import {
-  getOneChatCommand,
-  getAllChatCommands,
-  getChatCommands,
-} from "@services/chatCommands/chatCommandsService";
-import { createMessage } from "@services/messages/messagesService";
-import { MessageCreateData } from "@services/messages/types";
-import {
-  createUserIfNotExist,
-  isUserInDB,
-  getTwitchNames,
-  updateUser,
-} from "@services/users/usersService";
-import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
-import removeDifferenceFromSet from "@utils/removeDifferenceSetUtil";
 import retryWithCatch from "@utils/retryWithCatchUtil";
-import { getBaseLog } from "@utils/getBaseLogUtil";
-import { channelLogger, logger } from "@utils/loggerUtil";
-import winston from "winston";
 
-interface BotStatsticOptions {
+import CommandsHandler from "./CommandsHandler";
+import TriggersHandler from "./TriggersHandler";
+import LoyaltyHandler from "./LoyaltyHandler";
+import MessagesHandler from "./MessagesHandler";
+import { getConfigs } from "@services/configs";
+import { headLogger } from "@utils/loggerUtil";
+
+interface IStreamHandlerOptions {
   config: IConfigDocument;
   twitchApi: ApiClient;
   socketIO: Server<
@@ -43,32 +32,71 @@ interface BotStatsticOptions {
     InterServerEvents,
     SocketData
   >;
+  authorizedUser: HelixPrivilegedUser;
 }
 
-class BotStatisticDatabase {
-  private config: IConfigDocument;
-  private commandsWords: string[];
+class StreamHandler {
   private twitchApi: ApiClient;
-  private triggerWords: string[];
-  private triggersOnDelay: Map<string, NodeJS.Timeout>;
+  private authorizedUser: HelixPrivilegedUser;
   private socketIO: Server<
     ClientToServerEvents,
     ServerToClientEvents,
     InterServerEvents,
     SocketData
   >;
-  private channelLogger: winston.Logger | undefined;
-  private usersBefore = new Set<string>();
 
-  constructor(options: BotStatsticOptions) {
-    const { twitchApi, config, socketIO } = options;
+  private commandsHandler: CommandsHandler;
+  private triggersHandler: TriggersHandler;
+  private messagesHandler: MessagesHandler;
+  private loayaltyHandler: LoyaltyHandler;
+  private configs: IConfigDefaults;
+
+  constructor(options: IStreamHandlerOptions) {
+    const { twitchApi, socketIO, authorizedUser } = options;
     this.twitchApi = twitchApi;
-    this.config = config;
-    this.commandsWords = [];
-    this.triggerWords = [];
-    this.triggersOnDelay = new Map();
     this.socketIO = socketIO;
-    this.usersBefore = this.usersBefore;
+
+    this.authorizedUser = authorizedUser;
+    this.configs = { ...configDefaults };
+
+    this.commandsHandler = new CommandsHandler(this.configs.commandsPrefix);
+    this.messagesHandler = new MessagesHandler(this.configs.pointsIncrement);
+    this.triggersHandler = new TriggersHandler();
+    this.loayaltyHandler = new LoyaltyHandler(
+      twitchApi,
+      socketIO,
+      this.authorizedUser,
+      this.configs
+    );
+
+    this.init();
+    this.initSocketEvents();
+  }
+
+  public async onMessageEvents(user: IUser, message: string) {
+    let messagesToSend: string[] = [];
+    const dataEvent = new Date();
+
+    await this.messagesHandler.saveMessageAndUpdateUser(
+      user._id,
+      user.username,
+      dataEvent,
+      message
+    );
+
+    const commandAnswer = await this.commandsHandler.checkMessageForCommand(
+      user,
+      message
+    );
+
+    const triggerAnswer = await this.triggersHandler.checkMessageForTrigger(
+      message
+    );
+
+    commandAnswer ? messagesToSend.push(commandAnswer) : null;
+    triggerAnswer ? messagesToSend.push(triggerAnswer) : null;
+
+    return messagesToSend;
   }
   // private async debugFollows() {
   //   const follows = await this.twitchApi.users.getFollows({
@@ -77,138 +105,58 @@ class BotStatisticDatabase {
   //   });
   //   await addFollowersTemp(follows.data);
   // }
-  public async init() {
-    const authorizedUser = await this.twitchApi.users.getMe();
-    const { id, name } = authorizedUser;
+  async init() {
+    const { id } = this.authorizedUser;
+    await this.refreshConfigs();
 
-    const broadcasterId = authorizedUser.id;
-    this.channelLogger = channelLogger(name);
-    /* TODO: when get followers will be updated */
-    // await this.updateEveryUserTwitchDetails(broadcasterId);
-
-    /* DEBUG: Add all followers from given id  */
-    // this.debugFollows();
-    /* DEBUG: Add all followers from given id  */
     setInterval(async () => {
-      await this.checkChatters(broadcasterId);
-    }, this.config.intervalCheckChatters * 1000);
-    // }, 10000);
-
-    // setInterval(async () => {
-    //   await this.checkCountOfViewers(broadcasterId);
-    // }, this.config.intervalCheckViewersPeek * 1000);
-
-    await this.getAllTrigersWordsFromDB();
-    await this.getAllCommandWords();
+      await this.checkCountOfViewers(id);
+    }, this.configs.intervalCheckViewersPeek * 1000);
   }
 
-  async checkChatters(broadcasterId: string) {
-    const { watch: watchIncr, watchMultipler: watchMult } =
-      this.config.pointsIncrement;
+  async refreshConfigs() {
+    const refreshedConfigs = await getConfigs();
+    if (refreshedConfigs) {
+      this.configs = refreshedConfigs;
+      const { pointsIncrement, intervalCheckChatters } = this.configs;
 
-    const usersNow = new Set<string>();
-    const listOfChatters = await this.twitchApi.chat.getChatters(
-      broadcasterId,
-      broadcasterId
-    );
-    const { data } = listOfChatters;
-
-    // loop through all chatters visible by api
-    for await (const user of data) {
-      const { userName, userDisplayName, userId } = user;
-
-      usersNow.add(userName);
-      //if users exist emit event
-      // const userDB = await this.isUserInDB(userName);
-      const userDB = await createUserIfNotExist(
-        { twitchName: userName },
-        {
-          username: userDisplayName,
-          twitchId: userId,
-          twitchName: userName,
-          privileges: 0,
-        }
-      );
-
-      if (this.usersBefore.has(userName)) {
-        //count points for beeing on stream
-
-        const currentSession = await getCurrentStreamSession({});
-        if (!currentSession) {
-          logger.error("Couldn't find current session while checking watchers");
-          return;
-        }
-
-        await updateCurrentStreamSession({
-          $inc: {
-            [`watchers.${userName}`]: this.config.intervalCheckChatters,
-          },
-        });
-
-        const viewerWatchTime = currentSession?.watchers.get(userName);
-        const multipler =
-          getBaseLog(
-            watchMult,
-            viewerWatchTime
-              ? viewerWatchTime / this.config.intervalCheckChatters
-              : 1
-          ) + 1;
-
-        const pointsWithMultip = watchIncr * multipler;
-        this.channelLogger?.info(
-          `${userName} is watching(${viewerWatchTime}min) adding points ${watchIncr} * ${multipler.toFixed(
-            3
-          )} = ${pointsWithMultip.toFixed(3)}`
-        );
-
-        this.updateUserPoints(userId, pointsWithMultip);
-      }
-
-      if (!this.usersBefore.has(userName) && userDB) {
-        this.socketIO.emit(
-          "userJoinTwitchChat",
-          { eventDate: new Date(), eventName: "Join chat" },
-          userDB
-        );
-      }
-
-      this.usersBefore.add(userName);
+      this.messagesHandler.refreshConfigs(pointsIncrement);
+      this.loayaltyHandler.refreshConfigs({
+        pointsIncrement: pointsIncrement,
+        intervalCheckChatters: intervalCheckChatters,
+      });
     }
-
-    removeDifferenceFromSet(this.usersBefore, usersNow);
-
-    //after remove difference of sets loop on users that have been and emit left chat
-    for await (const userLeft of this.usersBefore) {
-      const userDB = await isUserInDB({ twitchName: userLeft });
-      // const userDB = await this.isUserInDB(userLeft);
-      if (userDB) {
-        this.socketIO.emit(
-          "userJoinTwitchChat",
-          { eventDate: new Date(), eventName: "Left chat" },
-          userDB
-        );
-      }
-    }
-    this.usersBefore = new Set(usersNow);
-    usersNow.clear();
   }
 
-  async updateUserPoints(userId: string, value: number) {
-    const updateData = {
-      $inc: { points: value },
-      // add points by message,       count messages
-      $set: { lastSeen: new Date() },
-      // set last seen to new Date()
-    };
+  initSocketEvents() {
+    this.socketIO.on("connect", (socket) => {
+      socket.on("saveConfigs", async () => {
+        headLogger.info("Client saved configs - refreshing");
+        await this.refreshConfigs();
+      });
 
-    await updateUser({ twitchId: userId }, updateData);
+      socket.on("refreshTriggers", async () => {
+        headLogger.info(
+          "Client created/updated/deleted trigger - refreshing triggers"
+        );
+        await this.triggersHandler.refreshTriggers();
+      });
+
+      socket.on("refreshCommands", async () => {
+        headLogger.info(
+          "Client created/updated/deleted command - refreshing commands"
+        );
+        await this.commandsHandler.refreshCommands();
+      });
+    });
   }
 
   async checkCountOfViewers(broadcasterId: string) {
     const currentSession = await getCurrentStreamSession({});
-    const streamInfo = await this.twitchApi.streams.getStreamByUserId(
-      broadcasterId
+    const streamInfo = await retryWithCatch(() =>
+      this.twitchApi.streams.getStreamByUserId(broadcasterId)
     );
+
     if (!currentSession || !streamInfo) return;
 
     const viewersPeek = new Map<string, number>();
@@ -220,174 +168,39 @@ class BotStatisticDatabase {
     });
   }
 
-  async updateEveryUserTwitchDetails(broadcasterId: string) {
-    const limit = 50;
-    let index = 0;
+  // TODO: this is loyalty??
 
-    const checkUsersTimer = setInterval(async () => {
-      const usernames = await getTwitchNames(limit, limit * index);
-      if (!usernames) return;
+  // async updateEveryUserTwitchDetails(broadcasterId: string) {
+  //   const limit = 50;
+  //   let index = 0;
 
-      const usersTwitch = await retryWithCatch(() =>
-        this.twitchApi.users.getUsersByNames(usernames.twitchNames)
-      );
-      if (!usersTwitch) return;
+  //   const checkUsersTimer = setInterval(async () => {
+  //     const usernames = await getTwitchNames(limit, limit * index);
+  //     if (!usernames) return;
 
-      for await (const user of usersTwitch) {
-        // const follower = await retryWithCatch(async () => {
-        //   for await (const user of usersTwitch) {
-        //     await user.getFollowTo(broadcasterId);
-        //   }
-        // });
-        //   user.follower = follower?.followDate;
-        //   await user.save();
-        console.log("user", user.displayName);
-      }
+  //     const usersTwitch = await retryWithCatch(() =>
+  //       this.twitchApi.users.getUsersByNames(usernames.twitchNames)
+  //     );
+  //     if (!usersTwitch) return;
 
-      index++;
-      if (limit * index > usernames.total) {
-        console.log("Finished checking users - clear interval");
-        clearInterval(checkUsersTimer);
-      }
-    }, 10000);
-  }
+  //     for await (const user of usersTwitch) {
+  //       // const follower = await retryWithCatch(async () => {
+  //       //   for await (const user of usersTwitch) {
+  //       //     await user.getFollowTo(broadcasterId);
+  //       //   }
+  //       // });
+  //       //   user.follower = follower?.followDate;
+  //       //   await user.save();
+  //       console.log("user", user.displayName);
+  //     }
 
-  async getAllTrigersWordsFromDB() {
-    const triggers = await Trigger.find();
-    for (const index in triggers) {
-      this.triggerWords = this.triggerWords.concat(triggers[index].words);
-    }
-  }
-
-  async checkMessageToTriggerWord(message: string) {
-    for (const index in this.triggerWords) {
-      const trigger = this.triggerWords[index];
-      if (!message.includes(trigger)) continue;
-
-      return await this.getTriggerByTriggerWord(trigger);
-    }
-  }
-
-  async getTriggerByTriggerWord(trigger: string) {
-    const foundTrigger = await Trigger.findOne({ words: { $all: trigger } });
-
-    if (!foundTrigger || !percentChance(foundTrigger.chance)) return false;
-
-    foundTrigger.onDelay = true;
-    await foundTrigger.save();
-
-    if (foundTrigger.onDelay && !this.triggersOnDelay.has(foundTrigger.name)) {
-      //If trigger is on delay and Timeout is not set do
-      await this.setTimeoutRefreshTrigerDelay(foundTrigger);
-
-      return foundTrigger.messages[randomWithMax(foundTrigger.messages.length)];
-    }
-  }
-
-  async setTimeoutRefreshTrigerDelay(trigger: ITriggerDocument) {
-    this.triggersOnDelay.set(
-      trigger.name,
-      setTimeout(async () => {
-        trigger.onDelay = false;
-        await trigger.save();
-
-        this.triggersOnDelay.delete(trigger.name);
-        console.log(`${trigger.name} - is now turn on again!`);
-      }, trigger.delay * 1000)
-    );
-  }
-
-  async saveMessageToDatabase(messageData: MessageCreateData) {
-    try {
-      const newMessage = await createMessage(messageData);
-    } catch (err) {
-      //TODO: logs to file
-      // message to file
-      console.log("Couldnt save message");
-    }
-  }
-
-  async updateUserStatistics(userId: string) {
-    const pointsIncrement = 1;
-
-    const updateData = {
-      $inc: { points: pointsIncrement, messageCount: 1 },
-      // add points by message,       count messages
-      $set: { lastSeen: new Date() },
-      // set last seen to new Date()
-    };
-
-    await updateUser({ _id: userId }, updateData);
-  }
-
-  async checkMessageForCommand(user: IUser, message: string) {
-    if (!message.startsWith(this.config.commandsPrefix)) return false;
-
-    let foundCommand = null;
-
-    for (const index in this.commandsWords) {
-      const aliasCommand = this.commandsWords[index];
-      if (!message.includes(aliasCommand)) continue;
-
-      foundCommand = await getOneChatCommand({
-        aliases: { $all: aliasCommand },
-      });
-
-      if (!foundCommand) return;
-      if (user.privileges < foundCommand.privilege) return;
-
-      foundCommand.useCount++;
-      await foundCommand.save();
-
-      return this.formatCommandMessage(user, foundCommand.messages[0]);
-    }
-    if (!foundCommand) return await this.notFoundCommand();
-  }
-
-  formatCommandMessage(user: IUser, message?: string) {
-    let formatMsg = message || "";
-
-    let matches = formatMsg.match(/\{(.*?)\}/);
-
-    while (matches !== null) {
-      const userDetail = this.formatUserDetail(user[matches[1] as keyof IUser]);
-      formatMsg = formatMsg.replace(matches[0], userDetail);
-
-      matches = formatMsg.match(/\{(.*?)\}/);
-    }
-
-    return formatMsg;
-  }
-
-  formatUserDetail(detail: any) {
-    if (typeof detail === "number") return detail.toLocaleString();
-    else if (detail instanceof Date) return detail.toLocaleString();
-
-    return detail;
-  }
-
-  async getAllCommandWords() {
-    const commands = await getAllChatCommands();
-    for (const index in commands) {
-      this.commandsWords = this.commandsWords.concat(commands[index].aliases);
-    }
-  }
-
-  async notFoundCommand() {
-    //Hard codded
-    let notFoundCommandMessage = "Not found command. Most used commands are:";
-
-    const mostUsedCommands = await getChatCommands(
-      {},
-      { limit: 5, sort: { useCount: -1 }, select: { aliases: 1 } }
-    );
-
-    mostUsedCommands.forEach((command) => {
-      notFoundCommandMessage += ` [${command.aliases.join(", ")}]`;
-    });
-
-    return notFoundCommandMessage;
-  }
+  //     index++;
+  //     if (limit * index > usernames.total) {
+  //       console.log("Finished checking users - clear interval");
+  //       clearInterval(checkUsersTimer);
+  //     }
+  //   }, 10000);
+  // }
 }
 
-export default BotStatisticDatabase;
+export default StreamHandler;

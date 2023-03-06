@@ -1,6 +1,5 @@
 import { Model, model, Schema } from "mongoose";
 import { ITriggerDocument } from "./types";
-
 const TriggerSchema: Schema<ITriggerDocument> = new Schema(
   {
     name: { type: String, required: true },
@@ -8,9 +7,10 @@ const TriggerSchema: Schema<ITriggerDocument> = new Schema(
     chance: { type: Number, default: 50 },
     delay: { type: Number, default: 360 },
     onDelay: { type: Boolean, default: false },
-    // createdAt: { type: Date, required: true, default: Date.now },
+    uses: { type: Number, default: 0 },
     words: [String],
     messages: [String],
+    mode: { type: String, default: "WHOLE-WORD" },
   },
   { timestamps: true }
 );

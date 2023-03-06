@@ -13,18 +13,12 @@ export interface ManyTriggersFindOptions extends TriggerFindOptions {
   limit?: number;
 }
 
-export interface TriggerOptionalData {
-  enabled?: boolean;
-  delay?: number;
-  onDelay?: boolean;
-  words?: string[];
-  messages?: number;
-  chance?: number;
-}
+export interface TriggerOptionalData
+  extends Partial<Omit<ITrigger, "_id" | "createdAt" | "updatedAt">> {}
 
-export interface TriggerCreateData extends TriggerOptionalData {
-  name: string;
-}
+export interface TriggerCreateData
+  extends Pick<ITrigger, "name" | "words" | "messages">,
+    TriggerOptionalData {}
 
 export interface TriggerUpdateData
   extends TriggerOptionalData,

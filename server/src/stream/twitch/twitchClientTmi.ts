@@ -1,7 +1,4 @@
 import tmi from "tmi.js";
-// import BotTimer from "../chatbot/bot-timer";
-// import BotLog from "../chatbot/bot-logs";
-// import bot_commands from "../configs/bot_commands.json";
 import { Server } from "socket.io";
 import {
   ClientToServerEvents,
@@ -9,10 +6,9 @@ import {
   ServerToClientEvents,
   SocketData,
 } from "@libs/types";
-import BotStatisticDatabase from "../StreamHandler";
+import StreamHandler from "../StreamHandler";
 import { createUserIfNotExist } from "@services/users";
 import { messageLogger } from "@utils/loggerUtil";
-require("dotenv").config();
 
 const clientTmi = (
   io: Server<
@@ -21,11 +17,9 @@ const clientTmi = (
     InterServerEvents,
     SocketData
   >,
-  botStatisticDatabase: BotStatisticDatabase,
+  streamHandler: StreamHandler,
   userNameToListen: string
 ) => {
-  const msgsLogger = messageLogger(userNameToListen);
-
   const client = new tmi.Client({
     options: { debug: false },
     connection: {
@@ -74,36 +68,21 @@ const clientTmi = (
       privileges: 0,
     };
 
-    msgsLogger.info(`${userData.username}: ${message}`);
+    messageLogger.info(`${userData.username}: ${message}`);
 
     io.emit("messageServer", new Date(), userData.username, message); // emit for socket
 
     const user = await createUserIfNotExist(userData, userData);
 
-    if (!user) return;
+    if (!user || self) return;
 
-    await botStatisticDatabase.saveMessageToDatabase({
-      owner: user._id,
-      message: message,
-      date: new Date(),
-      ownerUsername: userData.username,
+    const messagesToSend = await streamHandler.onMessageEvents(user, message);
+
+    messagesToSend.forEach((message, index) => {
+      setTimeout(() => {
+        client.say(channel, message);
+      }, 1000 * (index + 1));
     });
-    await botStatisticDatabase.updateUserStatistics(user._id);
-
-    if (self) return; //echoed msg from bot
-
-    const triggerAnswer = await botStatisticDatabase.checkMessageToTriggerWord(
-      message
-    );
-    const commandAnswer = await botStatisticDatabase.checkMessageForCommand(
-      user,
-      message
-    );
-
-    commandAnswer ? client.say(channel, commandAnswer) : null;
-    triggerAnswer ? client.say(channel, triggerAnswer) : null;
-
-    // botTimerObj.initOnMessage(client, channel, message, senderName);
   });
 
   return client;

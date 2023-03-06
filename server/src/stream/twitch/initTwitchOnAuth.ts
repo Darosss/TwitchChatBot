@@ -2,7 +2,7 @@ import { RefreshingAuthProvider } from "@twurple/auth";
 import eventSub from "./eventsub";
 import { ApiClient } from "@twurple/api";
 import * as ClientTmi from "./twitchClientTmi";
-import BotStatisticDatabase from "../StreamHandler";
+import StreamHandler from "../StreamHandler";
 import { Server } from "socket.io";
 import {
   ClientToServerEvents,
@@ -53,16 +53,16 @@ const initTwitchOnAuth = async (
   const configDB = await getConfigs();
   if (!configDB) return;
 
-  const botStatisticDatabase = new BotStatisticDatabase({
+  const streamHandler = new StreamHandler({
     twitchApi: twitchApi,
     config: configDB,
+    authorizedUser: authorizedUser,
     socketIO: socketIO,
   });
-  await botStatisticDatabase.init();
 
   const TwitchTmi = ClientTmi.default(
     socketIO,
-    botStatisticDatabase,
+    streamHandler,
     authorizedUser.name
   );
   TwitchTmi.connect();

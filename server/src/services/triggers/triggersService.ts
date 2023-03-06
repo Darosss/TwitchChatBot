@@ -57,6 +57,20 @@ export const createTrigger = async (
   }
 };
 
+export const updateTriggers = async (
+  filter: FilterQuery<ITriggerDocument> = {},
+  updateData: UpdateQuery<TriggerUpdateData>
+) => {
+  try {
+    await Trigger.updateMany(filter, updateData, {
+      new: true,
+    });
+  } catch (err) {
+    logger.error(`Error occured while updating many triggers. ${err}`);
+    handleAppError(err);
+  }
+};
+
 export const updateTriggerById = async (
   id: string,
   updateData: UpdateQuery<TriggerUpdateData>
@@ -90,6 +104,97 @@ export const deleteTriggerById = async (id: string) => {
     return trigger;
   } catch (err) {
     logger.error(`Error occured while deleting trigger by id(${id}). ${err}`);
+    handleAppError(err);
+  }
+};
+
+export const getTriggerById = async (
+  id: string,
+  filter: FilterQuery<ITriggerDocument> = {}
+) => {
+  try {
+    const foundTrigger = await Trigger.findById(id, filter);
+
+    const trigger = checkExistResource(foundTrigger, `Trigger with id(${id})`);
+
+    return trigger;
+  } catch (err) {
+    logger.error(`Error occured while getting trigger: ${err}`);
+    handleAppError(err);
+  }
+};
+
+export const getOneTrigger = async (
+  filter: FilterQuery<ITriggerDocument> = {}
+) => {
+  try {
+    const foundTrigger = await Trigger.findOne(filter);
+
+    const trigger = checkExistResource(foundTrigger, "Trigger");
+
+    return trigger;
+  } catch (err) {
+    logger.error(`Error occured while getting trigger: ${err}`);
+    handleAppError(err);
+  }
+};
+
+export const getTriggersWords = async (): Promise<undefined | string[]> => {
+  try {
+    const triggerWords = await Trigger.aggregate([
+      {
+        $group: {
+          _id: null,
+          words: { $push: "$words" },
+        },
+      },
+      {
+        $project: {
+          words: {
+            $reduce: {
+              input: "$words",
+              initialValue: [],
+              in: { $concatArrays: ["$$value", "$$this"] },
+            },
+          },
+          _id: 0,
+        },
+      },
+      {
+        $unwind: "$words",
+      },
+      {
+        $addFields: {
+          wordsLower: { $toLower: "$words" },
+        },
+      },
+      {
+        $sort: {
+          wordsLower: 1,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          words: { $push: "$wordsLower" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          words: 1,
+        },
+      },
+    ]);
+
+    if (triggerWords.length > 0) {
+      return triggerWords[0].words;
+    }
+    return [];
+  } catch (err) {
+    logger.error(
+      `Error occured while aggregating chat commands for all aliases words: ${err}`
+    );
     handleAppError(err);
   }
 };

@@ -174,3 +174,65 @@ export const deleteChatCommandById = async (id: string) => {
     handleAppError(err);
   }
 };
+
+export const getChatCommandsAliases = async (): Promise<
+  string[] | undefined
+> => {
+  try {
+    const commandsAliases = await ChatCommand.aggregate([
+      {
+        $group: {
+          _id: null,
+          aliases: { $push: "$aliases" },
+        },
+      },
+      {
+        $project: {
+          aliases: {
+            $reduce: {
+              input: "$aliases",
+              initialValue: [],
+              in: { $concatArrays: ["$$value", "$$this"] },
+            },
+          },
+          _id: 0,
+        },
+      },
+      {
+        $unwind: "$aliases",
+      },
+      {
+        $addFields: {
+          aliasesLower: { $toLower: "$aliases" },
+        },
+      },
+      {
+        $sort: {
+          aliasesLower: 1,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          aliases: { $push: "$aliasesLower" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          aliases: 1,
+        },
+      },
+    ]);
+
+    if (commandsAliases.length > 0) {
+      return commandsAliases[0].aliases;
+    }
+    return [];
+  } catch (err) {
+    logger.error(
+      `Error occured while aggregating chat commands for all aliases words: ${err}`
+    );
+    handleAppError(err);
+  }
+};
