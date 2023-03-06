@@ -9,6 +9,10 @@ class MessagesHandler {
     this.configs = configs;
   }
 
+  public async refreshConfigs(refreshedConfigs: TConfigPointsIncrement) {
+    this.configs = refreshedConfigs;
+  }
+
   public async saveMessageAndUpdateUser(
     userId: string,
     userName: string,
