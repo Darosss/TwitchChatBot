@@ -8,6 +8,7 @@ export interface IUser {
   updatedAt: Date;
   privileges: number;
   points?: number;
+  watchTime?: number;
   lastSeen?: Date;
   messageCount?: number;
   notes?: string[];
