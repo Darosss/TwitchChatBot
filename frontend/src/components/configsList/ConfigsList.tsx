@@ -15,11 +15,19 @@ export default function ConfigsList() {
   const [activeUserTime, setActiveUserTime] = useState<number>();
   const [chatGamesInterval, setChatGamesInterval] = useState<number>();
   const [minActiveUsers, setMinActiveUsers] = useState<number>();
+  const [intervCheckViewersPeek, setIntervalCheckViewersPeek] =
+    useState<number>();
+  const [randomMsgChance, setRandomMessageChance] = useState<number>();
   const [permissions, setPermissions] = useState({
     broadcaster: 10,
     mod: 8,
     vip: 4,
     all: 0,
+  });
+  const [ptsIncrement, setPointsIncrement] = useState({
+    watch: 10,
+    watchMultipler: 2,
+    message: 1,
   });
 
   const { data, loading, error, refetchData } = ConfigService.getConfigs();
@@ -31,6 +39,9 @@ export default function ConfigsList() {
     chatGamesIntervalDelay: chatGamesInterval,
     minActiveUsersThreshold: minActiveUsers,
     permissionLevels: permissions,
+    pointsIncrement: ptsIncrement,
+    intervalCheckViewersPeek: intervCheckViewersPeek,
+    randomMessageChance: randomMsgChance,
   });
 
   const setConfigStates = () => {
@@ -38,6 +49,9 @@ export default function ConfigsList() {
     setTimersInterval(timersIntervalDelay);
     setActiveUserTime(activeUserTimeDelay);
     setChatGamesInterval(chatGamesIntervalDelay);
+    setPointsIncrement(pointsIncrement);
+    setIntervalCheckViewersPeek(intervalCheckViewersPeek);
+    setRandomMessageChance(randomMessageChance);
     setMinActiveUsers(minActiveUsersThreshold);
     setPermissions(permissionLevels);
   };
@@ -60,6 +74,9 @@ export default function ConfigsList() {
     chatGamesIntervalDelay,
     minActiveUsersThreshold,
     permissionLevels,
+    intervalCheckViewersPeek,
+    pointsIncrement,
+    randomMessageChance,
   } = data;
 
   return (
@@ -126,6 +143,38 @@ export default function ConfigsList() {
                   />
                 ) : (
                   activeUserTimeDelay
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th colSpan={3}>Interval check viewers peek</th>
+              <td>
+                {showEdit ? (
+                  <input
+                    type="number"
+                    defaultValue={intervalCheckViewersPeek}
+                    onChange={(e) =>
+                      setIntervalCheckViewersPeek(Number(e.target.value))
+                    }
+                  />
+                ) : (
+                  intervalCheckViewersPeek
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th colSpan={3}>Random message chance</th>
+              <td>
+                {showEdit ? (
+                  <input
+                    type="number"
+                    defaultValue={randomMessageChance}
+                    onChange={(e) =>
+                      setRandomMessageChance(Number(e.target.value))
+                    }
+                  />
+                ) : (
+                  randomMessageChance
                 )}
               </td>
             </tr>
@@ -232,6 +281,64 @@ export default function ConfigsList() {
                   />
                 ) : (
                   permissionLevels.all
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th className="th-wide-col" colSpan={10}>
+                Points increment
+              </th>
+            </tr>
+            <tr>
+              <th>Message</th>
+              <td>
+                {showEdit ? (
+                  <input
+                    type="number"
+                    defaultValue={pointsIncrement.message}
+                    onChange={(e) =>
+                      setPointsIncrement((prevState) => {
+                        prevState.message = e.target.valueAsNumber;
+                        return prevState;
+                      })
+                    }
+                  />
+                ) : (
+                  pointsIncrement.message
+                )}
+              </td>
+              <th>Watch</th>
+              <td>
+                {showEdit ? (
+                  <input
+                    type="number"
+                    defaultValue={pointsIncrement.watch}
+                    onChange={(e) =>
+                      setPointsIncrement((prevState) => {
+                        prevState.watch = e.target.valueAsNumber;
+                        return prevState;
+                      })
+                    }
+                  />
+                ) : (
+                  pointsIncrement.watch
+                )}
+              </td>
+              <th>Watch multipler</th>
+              <td>
+                {showEdit ? (
+                  <input
+                    type="number"
+                    defaultValue={pointsIncrement.watchMultipler}
+                    onChange={(e) =>
+                      setPointsIncrement((prevState) => {
+                        prevState.watchMultipler = e.target.valueAsNumber;
+                        return prevState;
+                      })
+                    }
+                  />
+                ) : (
+                  pointsIncrement.watchMultipler
                 )}
               </td>
             </tr>
