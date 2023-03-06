@@ -93,7 +93,7 @@ class LoyaltyHandler extends HeadHandler {
       )} = ${pointsWithMultip.toFixed(3)}`
     );
 
-    await this.updateUserPoints(userId, pointsWithMultip);
+    await this.updateWatcherStatistics(userId, pointsWithMultip);
   }
 
   async handleActiveUsers(chatters: HelixChatChatter[]) {
@@ -159,9 +159,9 @@ class LoyaltyHandler extends HeadHandler {
     usersNow.clear();
   }
 
-  async updateUserPoints(userId: string, value: number) {
+  async updateWatcherStatistics(userId: string, value: number) {
     const updateData = {
-      $inc: { points: value },
+      $inc: { points: value, watchTime: this.configs.intervalCheckChatters },
       // add points by message,       count messages
       $set: { lastSeen: new Date() },
       // set last seen to new Date()
