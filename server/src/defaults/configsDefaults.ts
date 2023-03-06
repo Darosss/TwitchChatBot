@@ -12,6 +12,7 @@ export const configDefaults: IConfigDefaults = {
     watch: 10,
     watchMultipler: 2.0,
   },
+  randomMessageChance: 10,
   intervalCheckViewersPeek: 600,
   permissionLevels: {
     broadcaster: 10,
