@@ -61,7 +61,9 @@ class StreamHandler {
 
     this.commandsHandler = new CommandsHandler(this.configs.commandsPrefix);
     this.messagesHandler = new MessagesHandler(this.configs.pointsIncrement);
-    this.triggersHandler = new TriggersHandler();
+    this.triggersHandler = new TriggersHandler({
+      randomMessageChance: this.configs.randomMessageChance,
+    });
     this.loayaltyHandler = new LoyaltyHandler(
       twitchApi,
       socketIO,
@@ -118,12 +120,17 @@ class StreamHandler {
     const refreshedConfigs = await getConfigs();
     if (refreshedConfigs) {
       this.configs = refreshedConfigs;
-      const { pointsIncrement, intervalCheckChatters } = this.configs;
+      const { pointsIncrement, intervalCheckChatters, randomMessageChance } =
+        this.configs;
 
       this.messagesHandler.refreshConfigs(pointsIncrement);
       this.loayaltyHandler.refreshConfigs({
         pointsIncrement: pointsIncrement,
         intervalCheckChatters: intervalCheckChatters,
+      });
+
+      this.triggersHandler.refreshConfigs({
+        randomMessageChance: randomMessageChance,
       });
     }
   }
