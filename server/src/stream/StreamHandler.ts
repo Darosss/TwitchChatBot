@@ -2,13 +2,7 @@ import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
 import { IConfigDocument, IUser } from "@models/types";
 import { IConfigDefaults } from "@defaults/types";
 import { configDefaults } from "@defaults/configsDefaults";
-import { Server } from "socket.io";
-import {
-  ClientToServerEvents,
-  InterServerEvents,
-  ServerToClientEvents,
-  SocketData,
-} from "@libs/types";
+import { SocketServer } from "@libs/types";
 
 import {
   getCurrentStreamSession,
@@ -24,12 +18,7 @@ import MessagesHandler from "./MessagesHandler";
 interface IStreamHandlerOptions {
   config: IConfigDocument;
   twitchApi: ApiClient;
-  socketIO: Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
-  >;
+  socketIO: SocketServer;
   authorizedUser: HelixPrivilegedUser;
 }
 

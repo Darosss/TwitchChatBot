@@ -1,29 +1,13 @@
-import { Server } from "socket.io";
-import {
-  ClientToServerEvents,
-  InterServerEvents,
-  ServerToClientEvents,
-  SocketData,
-} from "@libs/types";
+import { SocketServer } from "@libs/types";
 import { ApiClient, HelixPrivilegedUser } from "@twurple/api/";
 
 class HeadHandler {
-  protected socketIO: Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
-  >;
+  protected socketIO: SocketServer;
   protected twitchApi: ApiClient;
   authorizedUser: HelixPrivilegedUser;
 
   constructor(
-    socket: Server<
-      ClientToServerEvents,
-      ServerToClientEvents,
-      InterServerEvents,
-      SocketData
-    >,
+    socket: SocketServer,
     twitchApi: ApiClient,
     authorizedUser: HelixPrivilegedUser
   ) {
