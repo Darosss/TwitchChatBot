@@ -1,5 +1,9 @@
 import { ITrigger, TTriggerMode } from "@models/types";
 import {
+  getRandomCategoryMessage,
+  getRandomMessageFromCategory,
+} from "@services/messageCategories";
+import {
   getOneTrigger,
   getTriggersWords,
   updateTriggerById,
@@ -7,12 +11,15 @@ import {
 } from "@services/triggers";
 import { triggerLogger } from "@utils/loggerUtil";
 import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
+import { ITriggersHandlerConfigs } from "./types";
 
 class TriggersHandler {
+  private configs: ITriggersHandlerConfigs;
   private triggersWords: string[] = [];
   private triggersOnDelay: Map<string, NodeJS.Timeout> = new Map();
 
-  constructor() {
+  constructor(configs: ITriggersHandlerConfigs) {
+    this.configs = configs;
     this.init();
   }
 
@@ -22,6 +29,10 @@ class TriggersHandler {
 
   async refreshTriggers() {
     this.triggersWords = (await getTriggersWords()) || [];
+  }
+
+  async refreshConfigs(refreshedConfigs: ITriggersHandlerConfigs) {
+    this.configs = refreshedConfigs;
   }
 
   private async setEveryTriggerDelayOff() {
@@ -62,6 +73,28 @@ class TriggersHandler {
       if (canSendTrigger) {
         return await this.getMessageAndUpdateTriggerLogic(foundedTrigger);
       }
+    } else if (this.canSendRandomMessage()) {
+      const randomMessage = await this.getRandomMessage();
+      triggerLogger.info(
+        `Not found trigger, but executing random message: ${randomMessage}`
+      );
+
+      return randomMessage;
+    }
+  }
+
+  canSendRandomMessage() {
+    if (percentChance(this.configs.randomMessageChance)) return true;
+    return false;
+  }
+
+  async getRandomMessage() {
+    try {
+      const randomCategoryMessage = await getRandomCategoryMessage();
+      if (!randomCategoryMessage) return;
+      return await getRandomMessageFromCategory(randomCategoryMessage);
+    } catch (err) {
+      triggerLogger.info(`Error occured while getting random category message`);
     }
   }
 
@@ -101,7 +134,7 @@ class TriggersHandler {
       case "WHOLE-WORD":
         if (wholeWord !== triggerWord) {
           triggerLogger.info(
-            `WHOLE-WORD: Trigger ${name} - trigger word (${triggerWord} != ${wholeWord}). Not sending`
+            `WHOLE-WORD: Trigger - trigger word (${triggerWord} != ${wholeWord}). Not sending`
           );
           return false;
         }
@@ -109,7 +142,7 @@ class TriggersHandler {
       case "STARTS-WITH":
         if (!wholeWord.startsWith(triggerWord)) {
           triggerLogger.info(
-            `STARTS-WITH: Trigger ${name} not starting with word. Not sending`
+            `STARTS-WITH: Trigger not starting with word (${triggerWord}  ${wholeWord}). Not sending`
           );
           return false;
         }

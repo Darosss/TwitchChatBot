@@ -11,6 +11,7 @@ const {
   intervalCheckChatters,
   intervalCheckViewersPeek,
   permissionLevels,
+  randomMessageChance,
 } = configDefaults;
 
 const ConfigSchema: Schema<IConfigDocument> = new Schema(
@@ -41,6 +42,7 @@ const ConfigSchema: Schema<IConfigDocument> = new Schema(
       required: true,
       default: intervalCheckChatters,
     },
+    randomMessageChance: { type: Number, default: randomMessageChance },
     pointsIncrement: {
       message: { type: Number, default: pointsIncrement.message },
       watch: { type: Number, default: pointsIncrement.watch },

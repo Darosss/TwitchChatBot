@@ -27,6 +27,9 @@ export const editConfigs = async (
     chatGamesIntervalDelay,
     minActiveUsersThreshold,
     permissionLevels,
+    pointsIncrement,
+    randomMessageChance,
+    intervalCheckViewersPeek,
   } = req.body;
 
   try {
@@ -37,6 +40,9 @@ export const editConfigs = async (
       chatGamesIntervalDelay: chatGamesIntervalDelay,
       minActiveUsersThreshold: minActiveUsersThreshold,
       permissionLevels: permissionLevels,
+      pointsIncrement: pointsIncrement,
+      randomMessageChance: randomMessageChance,
+      intervalCheckViewersPeek: intervalCheckViewersPeek,
     });
 
     return res.status(200).send({ message: "Updated successfully" });
