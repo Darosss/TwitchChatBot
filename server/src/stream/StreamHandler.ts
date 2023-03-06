@@ -21,6 +21,7 @@ import TriggersHandler from "./TriggersHandler";
 import LoyaltyHandler from "./LoyaltyHandler";
 import MessagesHandler from "./MessagesHandler";
 import { getConfigs } from "@services/configs";
+import { headLogger } from "@utils/loggerUtil";
 
 interface IStreamHandlerOptions {
   config: IConfigDocument;
@@ -69,6 +70,7 @@ class StreamHandler {
     );
 
     this.init();
+    this.initSocketEvents();
   }
 
   public async onMessageEvents(user: IUser, message: string) {
@@ -106,6 +108,7 @@ class StreamHandler {
   async init() {
     const { id } = this.authorizedUser;
     await this.refreshConfigs();
+
     setInterval(async () => {
       await this.checkCountOfViewers(id);
     }, this.configs.intervalCheckViewersPeek * 1000);
@@ -125,13 +128,28 @@ class StreamHandler {
     }
   }
 
-  // initSocketEvents() {
-  //   this.socketIO.on("connect", (socket) => {
-  //     // socket.on("refreshConfigs", () => {
-  //     //   this.
-  //     // });
-  //   });
-  // }
+  initSocketEvents() {
+    this.socketIO.on("connect", (socket) => {
+      socket.on("saveConfigs", async () => {
+        headLogger.info("Client saved configs - refreshing");
+        await this.refreshConfigs();
+      });
+
+      socket.on("refreshTriggers", async () => {
+        headLogger.info(
+          "Client created/updated/deleted trigger - refreshing triggers"
+        );
+        await this.triggersHandler.refreshTriggers();
+      });
+
+      socket.on("refreshCommands", async () => {
+        headLogger.info(
+          "Client created/updated/deleted command - refreshing commands"
+        );
+        await this.commandsHandler.refreshCommands();
+      });
+    });
+  }
 
   async checkCountOfViewers(broadcasterId: string) {
     const currentSession = await getCurrentStreamSession({});
