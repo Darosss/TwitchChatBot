@@ -32,7 +32,7 @@ export const getUsersList = async (
     const users = await getUsers(searchFilter, {
       limit: limit,
       skip: page,
-      sort: { createdAt: 1 },
+      sort: { lastSeen: -1 },
     });
 
     const count = await getUserCount(searchFilter);
