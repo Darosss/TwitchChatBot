@@ -2,7 +2,13 @@ import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
 import { IConfigDocument, IUser } from "@models/types";
 import { IConfigDefaults } from "@defaults/types";
 import { configDefaults } from "@defaults/configsDefaults";
-import { SocketServer } from "@libs/types";
+import {
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData,
+} from "@libs/types";
+import { Server } from "socket.io";
 
 import {
   getCurrentStreamSession,
@@ -18,13 +24,24 @@ import MessagesHandler from "./MessagesHandler";
 interface IStreamHandlerOptions {
   config: IConfigDocument;
   twitchApi: ApiClient;
-  socketIO: SocketServer;
+  socketIO: Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >;
   authorizedUser: HelixPrivilegedUser;
 }
 
 class StreamHandler {
   private twitchApi: ApiClient;
   private authorizedUser: HelixPrivilegedUser;
+  private socketIO: Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >;
 
   private commandsHandler: CommandsHandler;
   private triggersHandler: TriggersHandler;
@@ -35,6 +52,7 @@ class StreamHandler {
   constructor(options: IStreamHandlerOptions) {
     const { twitchApi, socketIO, authorizedUser } = options;
     this.twitchApi = twitchApi;
+    this.socketIO = socketIO;
 
     this.authorizedUser = authorizedUser;
     this.configTemp = { ...configDefaults };
@@ -90,6 +108,8 @@ class StreamHandler {
       await this.checkCountOfViewers(id);
     }, this.configTemp.intervalCheckViewersPeek * 1000);
   }
+
+  initSocketEvents() {}
 
   async checkCountOfViewers(broadcasterId: string) {
     const currentSession = await getCurrentStreamSession({});

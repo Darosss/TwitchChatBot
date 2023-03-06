@@ -8,7 +8,14 @@ import { getBaseLog } from "@utils/getBaseLogUtil";
 import removeDifferenceFromSet from "@utils/removeDifferenceSetUtil";
 import { ILoyaltyHandlerConfig } from "./types";
 
-import { SocketServer } from "@libs/types";
+import {
+  ClientToServerEvents,
+  InterServerEvents,
+  ServerToClientEvents,
+  SocketData,
+} from "@libs/types";
+import { Server } from "socket.io";
+
 import retryWithCatch from "@utils/retryWithCatchUtil";
 import HeadHandler from "./HeadHandler";
 import { IStreamSession } from "@models/types";
@@ -21,7 +28,12 @@ class LoyaltyHandler extends HeadHandler {
 
   constructor(
     twitchApi: ApiClient,
-    socketIO: SocketServer,
+    socketIO: Server<
+      ClientToServerEvents,
+      ServerToClientEvents,
+      InterServerEvents,
+      SocketData
+    >,
     authorizedUser: HelixPrivilegedUser,
     configs: ILoyaltyHandlerConfig
   ) {
