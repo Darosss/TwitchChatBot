@@ -50,6 +50,10 @@ class LoyaltyHandler extends HeadHandler {
     }, this.configs.intervalCheckChatters * 1000);
   }
 
+  public async refreshConfigs(refreshedConfigs: ILoyaltyHandlerConfig) {
+    this.configs = refreshedConfigs;
+  }
+
   async getStreamChatters() {
     const listOfChatters = await retryWithCatch(() =>
       this.twitchApi.chat.getChatters(
