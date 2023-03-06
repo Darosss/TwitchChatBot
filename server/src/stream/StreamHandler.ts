@@ -20,6 +20,7 @@ import CommandsHandler from "./CommandsHandler";
 import TriggersHandler from "./TriggersHandler";
 import LoyaltyHandler from "./LoyaltyHandler";
 import MessagesHandler from "./MessagesHandler";
+import { getConfigs } from "@services/configs";
 
 interface IStreamHandlerOptions {
   config: IConfigDocument;
@@ -47,7 +48,7 @@ class StreamHandler {
   private triggersHandler: TriggersHandler;
   private messagesHandler: MessagesHandler;
   private loayaltyHandler: LoyaltyHandler;
-  private configTemp: IConfigDefaults;
+  private configs: IConfigDefaults;
 
   constructor(options: IStreamHandlerOptions) {
     const { twitchApi, socketIO, authorizedUser } = options;
@@ -55,16 +56,16 @@ class StreamHandler {
     this.socketIO = socketIO;
 
     this.authorizedUser = authorizedUser;
-    this.configTemp = { ...configDefaults };
+    this.configs = { ...configDefaults };
 
-    this.commandsHandler = new CommandsHandler(this.configTemp.commandsPrefix);
-    this.messagesHandler = new MessagesHandler(this.configTemp.pointsIncrement);
+    this.commandsHandler = new CommandsHandler(this.configs.commandsPrefix);
+    this.messagesHandler = new MessagesHandler(this.configs.pointsIncrement);
     this.triggersHandler = new TriggersHandler();
     this.loayaltyHandler = new LoyaltyHandler(
       twitchApi,
       socketIO,
       this.authorizedUser,
-      this.configTemp
+      this.configs
     );
 
     this.init();
@@ -104,12 +105,33 @@ class StreamHandler {
   // }
   async init() {
     const { id } = this.authorizedUser;
+    await this.refreshConfigs();
     setInterval(async () => {
       await this.checkCountOfViewers(id);
-    }, this.configTemp.intervalCheckViewersPeek * 1000);
+    }, this.configs.intervalCheckViewersPeek * 1000);
   }
 
-  initSocketEvents() {}
+  async refreshConfigs() {
+    const refreshedConfigs = await getConfigs();
+    if (refreshedConfigs) {
+      this.configs = refreshedConfigs;
+      const { pointsIncrement, intervalCheckChatters } = this.configs;
+
+      this.messagesHandler.refreshConfigs(pointsIncrement);
+      this.loayaltyHandler.refreshConfigs({
+        pointsIncrement: pointsIncrement,
+        intervalCheckChatters: intervalCheckChatters,
+      });
+    }
+  }
+
+  // initSocketEvents() {
+  //   this.socketIO.on("connect", (socket) => {
+  //     // socket.on("refreshConfigs", () => {
+  //     //   this.
+  //     // });
+  //   });
+  // }
 
   async checkCountOfViewers(broadcasterId: string) {
     const currentSession = await getCurrentStreamSession({});
