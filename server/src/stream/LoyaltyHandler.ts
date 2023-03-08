@@ -44,7 +44,6 @@ class LoyaltyHandler extends HeadHandler {
   }
 
   async init() {
-    this.currentSession = await getCurrentStreamSession({});
     setInterval(async () => {
       await this.checkChatters(/* id */);
     }, this.configs.intervalCheckChatters * 1000);
@@ -69,7 +68,7 @@ class LoyaltyHandler extends HeadHandler {
     const { watch: watchIncr, watchMultipler: watchMult } =
       this.configs.pointsIncrement;
 
-    await updateCurrentStreamSession({
+    this.currentSession = await updateCurrentStreamSession({
       $inc: {
         [`watchers.${userName}`]: this.configs.intervalCheckChatters,
       },
@@ -112,7 +111,7 @@ class LoyaltyHandler extends HeadHandler {
         }
       );
 
-      if (this.usersBefore.has(userName) && this.currentSession) {
+      if (this.usersBefore.has(userName)) {
         //count points for beeing on stream
         await this.checkWatchersLogic(userId, userName);
       }
