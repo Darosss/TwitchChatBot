@@ -102,24 +102,19 @@ export const getCurrentStreamSession = async (
 export const updateCurrentStreamSession = async (
   updateData: UpdateQuery<IStreamSessionOptionalData>
 ) => {
-  const currentDate = new Date();
-  const filter = {
-    $and: [
-      { sessionStart: { $lte: currentDate } },
-      {
-        $or: [
-          { sessionEnd: { $gte: currentDate } },
-          { sessionEnd: { $exists: false } },
-        ],
-      },
-    ],
-  };
+  const currentStreamSession = await getCurrentStreamSession({});
+
+  const streamSession = checkExistResource(
+    currentStreamSession,
+    `Current stream session`
+  );
   try {
-    const updatedStreamSession = await StreamSession.findOneAndUpdate(
-      filter,
+    const updatedStreamSession = await StreamSession.findByIdAndUpdate(
+      streamSession.id,
       updateData,
       { new: true }
     );
+
     return updatedStreamSession;
   } catch (err) {
     logger.error("Failed to update current stream session");
