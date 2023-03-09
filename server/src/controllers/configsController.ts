@@ -30,6 +30,7 @@ export const editConfigs = async (
     pointsIncrement,
     randomMessageChance,
     intervalCheckViewersPeek,
+    intervalCheckChatters,
   } = req.body;
 
   try {
@@ -43,8 +44,8 @@ export const editConfigs = async (
       pointsIncrement: pointsIncrement,
       randomMessageChance: randomMessageChance,
       intervalCheckViewersPeek: intervalCheckViewersPeek,
+      intervalCheckChatters: intervalCheckChatters,
     });
-
     return res.status(200).send({ message: "Updated successfully" });
   } catch (err) {
     next(err);
