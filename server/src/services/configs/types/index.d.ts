@@ -1,8 +1,3 @@
-export interface ConfigUpdateData {
-  commandsPrefix?: string;
-  timersIntervalDelay?: number;
-  activeUserTimeDelay?: number;
-  chatGamesIntervalDelay?: number;
-  minActiveUsersThreshold?: number;
-  permissionLevels?: number;
-}
+import { IConfig } from "@models/types";
+export interface ConfigUpdateData
+  extends Partial<Omit<IConfig, "_id" | "createdAt" | "updatedAt">> {}
