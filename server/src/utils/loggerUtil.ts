@@ -125,3 +125,21 @@ export const watcherLogger = winston.createLogger({
     }),
   ],
 });
+
+export const eventsubLogger = winston.createLogger({
+  format: combine(
+    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
+    winston.format.prettyPrint(),
+    streamLoggerFormat
+  ),
+  level: "info",
+  transports: [
+    new DailyRotateFile({
+      filename: path.join(
+        __dirname,
+        `${streamLoggerDefaults.folder}/%DATE%/eventsub.log`
+      ),
+      datePattern: streamLoggerDefaults.datePattern,
+    }),
+  ],
+});
