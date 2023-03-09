@@ -6,6 +6,7 @@ export interface ITrigger {
   enabled: boolean;
   chance: number;
   delay: number;
+  uses: number;
   onDelay: boolean;
   words: string[];
   messages: string[];
