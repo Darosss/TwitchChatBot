@@ -15,6 +15,7 @@ import {
   getCurrentStreamSession,
   updateStreamSessionById,
 } from "@services/streamSessions";
+import { eventsubLogger } from "@utils/loggerUtil";
 
 const eventSub = async (
   apiClient: ApiClient,
@@ -32,14 +33,14 @@ const eventSub = async (
 
   const offlineSubscription = async (sessionId: string) => {
     return await listener.subscribeToStreamOfflineEvents(userId, async (e) => {
-      console.log(`${e.broadcasterDisplayName} just went offline`);
+      eventsubLogger.info(`${e.broadcasterDisplayName} just went offline`);
       await updateStreamSessionById(sessionId, { sessionEnd: new Date() });
     });
   };
 
   const onUpdateStreamDetails = async (sessionId: string) => {
     return await listener.subscribeToChannelUpdateEvents(userId, async (e) => {
-      console.log("Stream details has been updated");
+      eventsubLogger.info(`Stream details has been updated`);
       const timestamp = Date.now();
 
       await updateStreamSessionById(sessionId, {
@@ -90,18 +91,23 @@ const eventSub = async (
       try {
         await createRedemption(rewardData);
       } catch (err) {
-        console.log(err, "Couldn't save redemption");
+        eventsubLogger.info(
+          `Couldn't save redemption ${rewardTitle} from ${userName}`
+        );
       }
 
       socket.emit("onRedemption", rewardData);
-      console.log(`${e.userDisplayName} just took redemption!`);
+      eventsubLogger.info(
+        `${e.userDisplayName} just took redemption! ${rewardTitle}`
+      );
     });
 
   if (!apiStream) {
+    eventsubLogger.info("No stream found - adding online subscription");
     const onlineSubscription = await listener.subscribeToStreamOnlineEvents(
       userId,
       (e) => {
-        console.log(`${e.broadcasterDisplayName} just went live!`);
+        eventsubLogger.info(`${e.broadcasterDisplayName} just went live!`);
         e.getStream()
           .then(async (stream) => {
             const newStreamSession = await createStreamSessionHelper(
@@ -113,16 +119,20 @@ const eventSub = async (
             onUpdateStreamDetails(newStreamSession.id);
             offlineSubscription(newStreamSession.id);
           })
-          .catch((err) => console.log("Online subs err", err));
+          .catch((err) => {
+            eventsubLogger.info(`Event sub online subscription error`);
+          });
       }
     );
   } else {
+    eventsubLogger.info("Stream found - checking for session");
     let currentSession = await getCurrentStreamSession({});
     if (!currentSession) return;
 
     const { startDate, title, gameName } = apiStream;
 
     if (currentSession.sessionStart.getTime() !== startDate.getTime()) {
+      eventsubLogger.info(`Session not found - create new one - ${startDate}`);
       currentSession = await createStreamSessionHelper(
         startDate,
         title,
