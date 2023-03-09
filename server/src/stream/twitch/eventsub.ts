@@ -104,13 +104,11 @@ const eventSub = async (
         console.log(`${e.broadcasterDisplayName} just went live!`);
         e.getStream()
           .then(async (stream) => {
-            const timestampUpdateStream = e.startDate.getTime().toString();
-
-            const newStreamSession = await createStreamSession({
-              sessionStart: e.startDate,
-              sessionTitles: new Map([[timestampUpdateStream, stream.title]]),
-              categories: new Map([[timestampUpdateStream, stream.gameName]]),
-            });
+            const newStreamSession = await createStreamSessionHelper(
+              e.startDate,
+              stream.title,
+              stream.gameName
+            );
 
             onUpdateStreamDetails(newStreamSession.id);
             offlineSubscription(newStreamSession.id);
@@ -123,19 +121,34 @@ const eventSub = async (
     if (!currentSession) return;
 
     const { startDate, title, gameName } = apiStream;
-    const timestampUpdateStream = startDate.getTime().toString();
 
     if (currentSession.sessionStart.getTime() !== startDate.getTime()) {
-      currentSession = await createStreamSession({
-        sessionStart: startDate,
-        sessionTitles: new Map([[timestampUpdateStream, title]]),
-        categories: new Map([[timestampUpdateStream, gameName]]),
-      });
+      currentSession = await createStreamSessionHelper(
+        startDate,
+        title,
+        gameName
+      );
     }
 
-    onUpdateStreamDetails(currentSession.id);
-    offlineSubscription(currentSession.id);
+    await onUpdateStreamDetails(currentSession.id);
+    await offlineSubscription(currentSession.id);
   }
 };
+
+async function createStreamSessionHelper(
+  startDate: Date,
+  title: string,
+  category: string
+) {
+  const timestampUpdateStream = startDate.getTime().toString();
+
+  const newSession = await createStreamSession({
+    sessionStart: startDate,
+    sessionTitles: new Map([[timestampUpdateStream, title]]),
+    categories: new Map([[timestampUpdateStream, category]]),
+  });
+
+  return newSession;
+}
 
 export default eventSub;
