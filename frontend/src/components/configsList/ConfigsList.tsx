@@ -14,6 +14,7 @@ export default function ConfigsList() {
   const [timersInterval, setTimersInterval] = useState<number>();
   const [activeUserTime, setActiveUserTime] = useState<number>();
   const [chatGamesInterval, setChatGamesInterval] = useState<number>();
+  const [intervCheckChatters, setIntervalCheckChatters] = useState<number>();
   const [minActiveUsers, setMinActiveUsers] = useState<number>();
   const [intervCheckViewersPeek, setIntervalCheckViewersPeek] =
     useState<number>();
@@ -42,6 +43,7 @@ export default function ConfigsList() {
     pointsIncrement: ptsIncrement,
     intervalCheckViewersPeek: intervCheckViewersPeek,
     randomMessageChance: randomMsgChance,
+    intervalCheckChatters: intervCheckChatters,
   });
 
   const setConfigStates = () => {
@@ -51,6 +53,7 @@ export default function ConfigsList() {
     setChatGamesInterval(chatGamesIntervalDelay);
     setPointsIncrement(pointsIncrement);
     setIntervalCheckViewersPeek(intervalCheckViewersPeek);
+    setIntervalCheckChatters(intervalCheckChatters);
     setRandomMessageChance(randomMessageChance);
     setMinActiveUsers(minActiveUsersThreshold);
     setPermissions(permissionLevels);
@@ -77,6 +80,7 @@ export default function ConfigsList() {
     intervalCheckViewersPeek,
     pointsIncrement,
     randomMessageChance,
+    intervalCheckChatters,
   } = data;
 
   return (
@@ -143,6 +147,22 @@ export default function ConfigsList() {
                   />
                 ) : (
                   activeUserTimeDelay
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th colSpan={3}>Check chatters on chat every</th>
+              <td>
+                {showEdit ? (
+                  <input
+                    type="number"
+                    defaultValue={intervalCheckChatters}
+                    onChange={(e) =>
+                      setIntervalCheckChatters(Number(e.target.value))
+                    }
+                  />
+                ) : (
+                  intervalCheckChatters
                 )}
               </td>
             </tr>
