@@ -141,6 +141,7 @@ export default function TriggersList() {
                 </button>
               </th>
               <th>Name</th>
+              <th>Uses</th>
               <th>Enabled</th>
               <th>Chance</th>
               <th>Delay</th>
@@ -176,7 +177,8 @@ export default function TriggersList() {
                       Delete
                     </button>
                   </td>
-                  <td> {trigger.name} </td>
+                  <td>{trigger.name} </td>
+                  <td>{trigger.uses} </td>
                   <td>{trigger.enabled.toString()}</td>
                   <td>{trigger.chance}%</td>
                   <td>{trigger.delay}sec</td>
