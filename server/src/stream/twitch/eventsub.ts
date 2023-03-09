@@ -1,4 +1,4 @@
-import { ApiClient, HelixStream } from "@twurple/api";
+import { ApiClient } from "@twurple/api";
 import { EventSubWsListener } from "@twurple/eventsub-ws";
 
 import { Server } from "socket.io";
@@ -13,7 +13,7 @@ import { createRedemption } from "@services/redemptions";
 import {
   createStreamSession,
   getCurrentStreamSession,
-  updateStreamSessionById,
+  updateCurrentStreamSession,
 } from "@services/streamSessions";
 import { eventsubLogger } from "@utils/loggerUtil";
 
@@ -31,26 +31,31 @@ const eventSub = async (
   await listener.start();
   const apiStream = await apiClient.streams.getStreamByUserId(userId);
 
-  const offlineSubscription = async (sessionId: string) => {
-    return await listener.subscribeToStreamOfflineEvents(userId, async (e) => {
+  const offlineSubscription = await listener.subscribeToStreamOfflineEvents(
+    userId,
+    async (e) => {
       eventsubLogger.info(`${e.broadcasterDisplayName} just went offline`);
-      await updateStreamSessionById(sessionId, { sessionEnd: new Date() });
-    });
-  };
+      await updateCurrentStreamSession({ sessionEnd: new Date() });
+    }
+  );
 
-  const onUpdateStreamDetails = async (sessionId: string) => {
-    return await listener.subscribeToChannelUpdateEvents(userId, async (e) => {
+  const onUpdateStreamDetails = await listener.subscribeToChannelUpdateEvents(
+    userId,
+    async (e) => {
       eventsubLogger.info(`Stream details has been updated`);
       const timestamp = Date.now();
-
-      await updateStreamSessionById(sessionId, {
-        $set: {
-          [`categories.${timestamp}`]: e.categoryName,
-          [`sessionTitles.${timestamp}`]: e.streamTitle,
-        },
-      });
-    });
-  };
+      try {
+        await updateCurrentStreamSession({
+          $set: {
+            [`categories.${timestamp}`]: e.categoryName,
+            [`sessionTitles.${timestamp}`]: e.streamTitle,
+          },
+        });
+      } catch (err) {
+        eventsubLogger.info(err); //todo add error
+      }
+    }
+  );
 
   const redemptionSubscription =
     await listener.subscribeToChannelRedemptionAddEvents(userId, async (e) => {
@@ -102,29 +107,25 @@ const eventSub = async (
       );
     });
 
-  if (!apiStream) {
-    eventsubLogger.info("No stream found - adding online subscription");
-    const onlineSubscription = await listener.subscribeToStreamOnlineEvents(
-      userId,
-      (e) => {
-        eventsubLogger.info(`${e.broadcasterDisplayName} just went live!`);
-        e.getStream()
-          .then(async (stream) => {
-            const newStreamSession = await createStreamSessionHelper(
-              e.startDate,
-              stream.title,
-              stream.gameName
-            );
+  const onlineSubscription = await listener.subscribeToStreamOnlineEvents(
+    userId,
+    (e) => {
+      eventsubLogger.info(`${e.broadcasterDisplayName} just went live!`);
+      e.getStream()
+        .then(async (stream) => {
+          const newStreamSession = await createStreamSessionHelper(
+            e.startDate,
+            stream.title,
+            stream.gameName
+          );
+        })
+        .catch((err) => {
+          eventsubLogger.info(`Event sub online subscription error ${err}`);
+        });
+    }
+  );
 
-            onUpdateStreamDetails(newStreamSession.id);
-            offlineSubscription(newStreamSession.id);
-          })
-          .catch((err) => {
-            eventsubLogger.info(`Event sub online subscription error`);
-          });
-      }
-    );
-  } else {
+  if (apiStream) {
     eventsubLogger.info("Stream found - checking for session");
     let currentSession = await getCurrentStreamSession({});
     if (!currentSession) return;
@@ -133,15 +134,8 @@ const eventSub = async (
 
     if (currentSession.sessionStart.getTime() !== startDate.getTime()) {
       eventsubLogger.info(`Session not found - create new one - ${startDate}`);
-      currentSession = await createStreamSessionHelper(
-        startDate,
-        title,
-        gameName
-      );
+      await createStreamSessionHelper(startDate, title, gameName);
     }
-
-    await onUpdateStreamDetails(currentSession.id);
-    await offlineSubscription(currentSession.id);
   }
 };
 
