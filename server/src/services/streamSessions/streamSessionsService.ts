@@ -2,8 +2,8 @@ import { StreamSession } from "@models/streamSessionModel";
 import { IStreamSession, IStreamSessionDocument } from "@models/types";
 import {
   getMostActiveUsersByMsgs,
-  getMessagesCount,
   getMostUsedWord,
+  getMessagesCountByDate,
 } from "@services/messages";
 import { getMostActiveUsersByRedemptions } from "@services/redemptions";
 import { getFollowersCount } from "@services/users";
@@ -159,13 +159,7 @@ export const getStreamSessionStatistics = async (
 
   const viewersPeeks = new Map(getLastNItemsFromMap(viewers, limitViewers));
 
-  const messagesCount = await getMessagesCount({
-    date: {
-      $gte: sessionStart,
-      $lte: sessionEnd,
-    },
-  });
-
+  const messagesCount = await getMessagesCountByDate(sessionStart, sessionEnd);
   const topActiveUsersByMsgs = await getMostActiveUsersByMsgs(
     limitTopMessageUsers,
     sessionStart,
