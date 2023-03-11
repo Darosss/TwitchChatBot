@@ -11,28 +11,25 @@
   --bg-color-not-active: rgba(100, 97, 17, 0.153);
 }
 
-.stream-btn {
-  border-radius: 1rem;
+.react-grid-item {
+  border: 0.1rem solid var(--base-bg-color-border);
+}
+.react-grid-item:hover {
+  border: 0.2rem solid var(--base-bg-color-danger);
 }
 
-.stream-btn.active {
-  background-color: var(--bg-color-active);
-}
-
-.stream-btn.not-active {
-  background-color: var(--bg-color-not-active);
-}
-
-.stream-wrapper {
+.widget-menu-drawer {
+  height: 100%;
   display: flex;
+  align-items: center;
 }
 
-.stream-wrapper > div {
-  margin: 0.5rem 0 0 0.5rem;
+.widget-menu-drawer div {
+  margin-left: 0.5rem;
+  width: 33%;
+  text-align: center;
 }
 
-.menu-widgets {
-  position: absolute;
-  right: 0;
-  z-index: 2;
+.widget-menu-drawer button {
+  font-size: larger;
 }
