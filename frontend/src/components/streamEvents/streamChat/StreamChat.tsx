@@ -67,12 +67,14 @@ export default function StreamChat(props: { className?: string }) {
               })
           : null}
       </div>
-      <div className="stream-chat-send-message">
+      <div className="stream-chat-send-message-textarea">
         <textarea
           className="stream-chat-textarea"
           onChange={(e) => setMessageToSend(e.target.value)}
           value={messageToSend}
         />
+      </div>
+      <div className="stream-chat-send-message-btn">
         <button
           onClick={(e) => sendMessage(e)}
           className="stream-chat-btn-send-message"
