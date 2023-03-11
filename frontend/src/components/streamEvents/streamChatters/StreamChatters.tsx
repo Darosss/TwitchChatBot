@@ -49,6 +49,7 @@ export default function StreamChatters(props: { className?: string }) {
       id="stream-last-chatters"
       className={`stream-last-chatters ${className ? className : ""}`}
     >
+      <div className="last-chatters-header"> Last chatters </div>
       {[...lastChatters.keys()].map((chatter, index) => {
         return (
           <div
