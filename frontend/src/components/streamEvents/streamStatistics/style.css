@@ -1,25 +1,68 @@
 .stream-statistics {
-  background-color: var(--base-bg-color-chat);
   display: flex;
   border: 1px solid;
-  overflow: hidden;
+  overflow: auto;
+  height: 100%;
 }
 
-.table-statistic {
+.session-statistic {
+  display: flex;
+  flex-direction: column;
+}
+.session-statistic > div:first-child {
   text-align: center;
   width: 100%;
-}
-
-.table-statistic thead th {
-  height: 20px;
-  font-size: 0.6rem;
-}
-
-.statistics-wrapper {
-  margin-right: 0.5rem;
-}
-
-.statistics-wrapper div:first-child {
   font-weight: 700;
+  color: var(--base-color-info);
+  background-color: var(--bg-color-popup);
+}
+
+.stats-wrapper {
+  display: flex;
+  border-top: 0.1rem solid var(--base-bg-color-border);
+  border-bottom: 0.1rem solid var(--base-bg-color-border);
+}
+
+.stats-header {
+  color: var(--base-color-info);
   text-align: center;
+  background-color: var(--bg-color-popup);
+}
+
+.statistic-long {
+  width: 70%;
+  overflow: auto;
+}
+
+.statistic-short {
+  width: 30%;
+  overflow: auto;
+  text-align: center;
+}
+
+.statistic-full {
+  width: 100%;
+  text-align: center;
+}
+
+.btn-toggle-edit-widget-stat {
+  position: absolute;
+  z-index: 1;
+}
+
+.widget-statistics-menu-drawer {
+  height: 100%;
+  display: flex;
+
+  align-items: center;
+}
+
+.widget-statistics-menu-drawer div {
+  margin-left: 0.5rem;
+  width: 33%;
+  text-align: center;
+}
+
+.widget-statistics-menu-drawer button {
+  font-size: larger;
 }
