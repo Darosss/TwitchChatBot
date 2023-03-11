@@ -1,0 +1,10 @@
+.btn-show-drawer {
+  position: absolute;
+  right: 50%;
+  z-index: 2;
+}
+
+.btn-close-drawer {
+  position: absolute;
+  right: 50%;
+}
