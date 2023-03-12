@@ -14,6 +14,7 @@ export default function DrawerBar(props: {
   const toggleDrawer = () => {
     setIsOpen((prevState) => !prevState);
   };
+
   return (
     <>
       <button className="btn-show-drawer" onClick={toggleDrawer}>
@@ -25,7 +26,10 @@ export default function DrawerBar(props: {
         onClose={toggleDrawer}
         size={size ? size : 250}
         enableOverlay={false}
-        style={{ background: "#18181b" }}
+        style={{
+          background: "#18181b",
+          position: isOpen ? "sticky" : "absolute",
+        }}
       >
         <button className="btn-close-drawer" onClick={toggleDrawer}>
           X
