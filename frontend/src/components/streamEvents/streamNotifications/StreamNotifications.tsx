@@ -6,9 +6,8 @@ import formatDate from "@utils/formatDate";
 import { Link } from "react-router-dom";
 import { IEventAndIUser } from "@libs/types";
 
-export default function StreamNotifications(props: { className?: string }) {
+export default function StreamNotifications() {
   const LIMIT_NOTIFICATIONS = 5;
-  const { className } = props;
 
   const socket = useContext(SocketContext);
 
@@ -43,10 +42,7 @@ export default function StreamNotifications(props: { className?: string }) {
     };
   }, [socket]);
   return (
-    <div
-      id="stream-notifications"
-      className={`stream-notifications ${className ? className : ""}`}
-    >
+    <div id="stream-notifications" className={`stream-notifications`}>
       {userNotif.map((notif, index) => {
         return (
           <div

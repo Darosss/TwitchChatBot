@@ -4,9 +4,8 @@ import React, { useContext, useEffect, useReducer, useState } from "react";
 import { SocketContext } from "@context/SocketContext";
 import formatDate from "@utils/formatDate";
 
-export default function StreamChatters(props: { className?: string }) {
+export default function StreamChatters() {
   const LIMIT_LAST_CHATTERS = 14;
-  const { className } = props;
 
   const socket = useContext(SocketContext);
 
@@ -45,10 +44,7 @@ export default function StreamChatters(props: { className?: string }) {
   }, [socket]);
 
   return (
-    <div
-      id="stream-last-chatters"
-      className={`stream-last-chatters ${className ? className : ""}`}
-    >
+    <div id="stream-last-chatters" className={`stream-last-chatters`}>
       <div className="last-chatters-header"> Last chatters </div>
       {[...lastChatters.keys()].map((chatter, index) => {
         return (
