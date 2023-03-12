@@ -1,0 +1,29 @@
+.prepared-messages-window {
+  display: flex;
+
+  flex-direction: column;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+.message-category {
+  width: 49%;
+  border: 1px solid black;
+  flex: 0 1 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-prepared-messages {
+  height: 300px;
+  overflow-x: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.modal-prepared-messages button {
+  /* width: 40%; */
+  flex: 0 0 30%;
+  border: 0.1rem solid var(--base-bg-color);
+}
