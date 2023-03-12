@@ -28,37 +28,3 @@
   font-size: 1.1rem;
   overflow: hidden;
 }
-
-.command-list-button {
-  width: 7vw;
-  max-width: 7vw;
-  font-size: calc(0.5rem + 1vw);
-  overflow: hidden;
-  background-color: var(--base-bg-color-action);
-  display: flex;
-  border-radius: 0.2rem;
-  align-items: center;
-  justify-content: center;
-}
-
-button.create-command {
-  float: left;
-}
-
-button.command-action {
-  width: 7vw;
-  max-width: 100%;
-}
-
-button.command-delete {
-  background-color: var(--base-bg-color-danger);
-}
-
-.command-disabled {
-  background-color: var(--base-bg-color-danger);
-}
-
-.changed-field {
-  color: var(--base-color-info);
-  background-color: var(--base-bg-color-info);
-}

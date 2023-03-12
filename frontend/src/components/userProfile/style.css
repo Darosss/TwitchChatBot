@@ -90,23 +90,6 @@
   grid-row-end: 9;
 }
 
-.user-details-btn {
-  display: inline-block;
-  width: 90%;
-  font-size: 1rem;
-  padding: 0.3rem;
-  background-color: var(--base-bg-color-border);
-  color: var(--base-color-link);
-  font-weight: 700;
-  border: 0.1rem solid;
-  overflow: hidden;
-}
-
-.user-details-btn:hover {
-  background-color: var(--base-color-link);
-  color: var(--base-bg-color-border);
-}
-
 .edit-notes-btn-list {
   list-style: none;
   margin-left: -10%;
@@ -141,4 +124,8 @@
   font-weight: 700;
   letter-spacing: 0.3rem;
   color: var(--base-color-info);
+}
+
+.user-save-profile {
+  margin: 0.5rem;
 }
