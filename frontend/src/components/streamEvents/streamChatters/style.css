@@ -1,8 +1,23 @@
-.stream-last-chatters {
-  resize: both;
+#stream-notifications {
+  overflow: auto;
+  height: 100%;
 }
 
-.stream-last-chatters > div {
+.stream-last-chatters {
+  overflow: auto;
+  height: 100%;
+}
+
+.last-chatters-header {
+  text-align: center;
+  font-size: larger;
+  position: sticky;
+  top: 0;
+  background-color: var(--base-bg-color);
+  border-bottom: 1px solid yellow;
+}
+
+.stream-last-chatters > div:not(:first-child) {
   border: 0.1rem solid var(--color-user-usual);
 }
 
@@ -13,13 +28,15 @@
 .user-chatter {
   display: flex;
   background-color: var(--bg-color-popup);
-  min-height: 6vh;
+  min-height: 8%;
   align-items: center;
   margin: 0.5rem;
   padding-left: 1rem;
 }
 
 .user-chatter-username {
+  font-size: 0.9vw;
+  border-right: 0.2rem solid var(--base-bg-color);
   width: 60%;
   overflow-x: auto;
 }
@@ -27,6 +44,7 @@
 .user-chatter-last-seen {
   overflow-x: auto;
   text-align: center;
+  font-size: 1.5vmin;
   width: 35%;
   color: var(--base-color-info);
 }

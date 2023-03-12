@@ -4,8 +4,7 @@ import React, { useContext, useEffect, useReducer, useState } from "react";
 import Message from "@components/message";
 import { SocketContext } from "@context/SocketContext";
 
-export default function StreamChat(props: { className?: string }) {
-  const { className } = props;
+export default function StreamChat() {
   const socket = useContext(SocketContext);
 
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -41,10 +40,7 @@ export default function StreamChat(props: { className?: string }) {
   }, [socket]);
 
   return (
-    <div
-      id="stream-chat"
-      className={`stream-chat ${className ? className : ""}`}
-    >
+    <div id="stream-chat" className={`stream-chat`}>
       <div className="stream-chat-title">STREAM CHAT</div>
       <div className="stream-chat-messages">
         {messages
@@ -67,12 +63,14 @@ export default function StreamChat(props: { className?: string }) {
               })
           : null}
       </div>
-      <div className="stream-chat-send-message">
+      <div className="stream-chat-send-message-textarea">
         <textarea
           className="stream-chat-textarea"
           onChange={(e) => setMessageToSend(e.target.value)}
           value={messageToSend}
         />
+      </div>
+      <div className="stream-chat-send-message-btn">
         <button
           onClick={(e) => sendMessage(e)}
           className="stream-chat-btn-send-message"

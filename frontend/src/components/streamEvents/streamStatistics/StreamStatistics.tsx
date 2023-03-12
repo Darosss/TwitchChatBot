@@ -1,5 +1,6 @@
 import "./style.css";
 import React, { useEffect } from "react";
+
 import {
   getCurrentSessionStatistics,
   ITopMsgsUsers,
@@ -25,9 +26,12 @@ type TopUsedWordsProps = {
   words: ITopUsedWords[];
 };
 
-export default function StreamStatistics(props: { className?: string }) {
+type ViewersPeek = {
+  viewers: Map<string, number>;
+};
+
+export default function StreamStatistics() {
   const FETCH_INTERVAL = 60;
-  const { className } = props;
   const {
     data: statisticsData,
     loading,
@@ -46,27 +50,22 @@ export default function StreamStatistics(props: { className?: string }) {
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!statisticsData || loading) return <>Loading...</>;
   const { data } = statisticsData;
-
   return (
-    <div
-      id="stream-statistics"
-      className={`stream-statistics ${className ? className : ""}`}
-    >
-      <div className="statistics-wrapper">
+    <div className="session-statistics-wrapper">
+      <div>
         <SessionMessages count={data.messagesCount} />
       </div>
-
-      <div className="statistics-wrapper">
+      <div>
         <TopUsersMessages users={data.topMsgsUsers} />
       </div>
-      <div className="statistics-wrapper">
+
+      <div>
         <MostRedemptions users={data.topRedemptionsUsers} />
       </div>
-      <div className="statistics-wrapper">
+      <div>
         <MostUsedWords words={data.topUsedWords} />
       </div>
-
-      <div className="statistics-wrapper statistics-graph">
+      <div>
         <SlideShow styleWrapper={{ width: "33vw" }}>
           <LineChart
             data={data.viewers}
@@ -85,102 +84,92 @@ export default function StreamStatistics(props: { className?: string }) {
     </div>
   );
 }
-function SessionMessages({ count }: SessionMessagesProps) {
+export function SessionMessages({ count }: SessionMessagesProps) {
   return (
-    <>
+    <div className="session-statistic session-messages">
       <div> Messages</div>
-      <table className="session-statistics-msgs-count table-statistic">
-        <thead>
-          <tr>
-            <th>Session msgs</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td> {count}</td>
-          </tr>
-        </tbody>
-      </table>
-    </>
+      <div className="stats-wrapper stats-header">
+        <div>Session Messages</div>
+      </div>
+      <div className="stats-wrapper">
+        <div className="statistic-full"> {count}</div>
+      </div>
+    </div>
   );
 }
 
-function TopUsersMessages({ users }: TopUsersMessagesProps) {
+export function TopUsersMessages({ users }: TopUsersMessagesProps) {
   return (
-    <>
+    <div className="session-statistic session-top-messages">
       <div> Most messages</div>
-      <table className="session-statistics-msgs table-statistic">
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Messages count</th>
-          </tr>
-        </thead>
-        {users?.map((user, index) => {
-          return (
-            <tbody key={user._id + index}>
-              <tr>
-                <td> {user.username}</td>
-                <td> {user.messageCount}</td>
-              </tr>
-            </tbody>
-          );
-        })}
-      </table>
-    </>
+      <div className="stats-wrapper stats-header">
+        <div className="statistic-long">User</div>
+        <div className="statistic-short">Count</div>
+      </div>
+      {users?.map((user, index) => {
+        return (
+          <div key={index} className="stats-wrapper">
+            <div className="statistic-long"> {user.username}</div>
+            <div className="statistic-short"> {user.messageCount}</div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
-function MostRedemptions({ users }: TopRedemptionProps) {
+export function MostRedemptions({ users }: TopRedemptionProps) {
   return (
-    <>
+    <div className="session-statistic session-top-redemptions">
       <div>Redemptions</div>
-      <table className="session-statistics-redemptions table-statistic">
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Redemptions count</th>
-            <th>Redemptions cost</th>
-          </tr>
-        </thead>
-        {users?.map((user, index) => {
-          return (
-            <tbody key={user._id + index}>
-              <tr>
-                <td> {user.username}</td>
-                <td> {user.redemptionsCount}</td>
-                <td> {user.redemptionsCost}</td>
-              </tr>
-            </tbody>
-          );
-        })}
-      </table>
-    </>
+      <div className="stats-wrapper stats-header">
+        <div className="statistic-long">Username</div>
+        <div className="statistic-short">Count</div>
+        <div className="statistic-short">Cost</div>
+      </div>
+
+      {users?.map((user, index) => {
+        return (
+          <div key={index} className="stats-wrapper">
+            <div className="statistic-long"> {user.username}</div>
+            <div className="statistic-short"> {user.redemptionsCount}</div>
+            <div className="statistic-short"> {user.redemptionsCost}</div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
-function MostUsedWords({ words }: TopUsedWordsProps) {
+export function MostUsedWords({ words }: TopUsedWordsProps) {
   return (
-    <>
+    <div className="session-statistic session-top-words">
       <div> Most words</div>
-      <table className="session-statistics-words table-statistic">
-        <thead>
-          <tr>
-            <th>Word</th>
-            <th>Count</th>
-          </tr>
-        </thead>
-        {words.map((word, index) => {
-          return (
-            <tbody key={word._id + index}>
-              <tr>
-                <td> {word._id}</td>
-                <td> {word.count}</td>
-              </tr>
-            </tbody>
-          );
-        })}
-      </table>
-    </>
+      <div className="stats-wrapper stats-header">
+        <div className="statistic-long">Word</div>
+        <div className="statistic-short"> Count</div>
+      </div>
+      {words.map((word, index) => {
+        return (
+          <div key={index} className="stats-wrapper">
+            <div className="statistic-long">{word._id}</div>
+            <div className="statistic-short">{word.count}</div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export function StreamViewersPeek({ viewers }: ViewersPeek) {
+  return (
+    <div className="statistics-graph">
+      <SlideShow styleWrapper={{ width: "100%" }}>
+        <LineChart
+          data={viewers}
+          chartOptions={{ title: "Viewers peek", label: "viewers" }}
+        />
+      </SlideShow>
+    </div>
   );
 }

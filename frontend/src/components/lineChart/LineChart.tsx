@@ -69,5 +69,5 @@ export default function LineChart({
       },
     ],
   };
-  return <Line options={options} data={dataChart} />;
+  return <Line options={options} data={dataChart} redraw={true} />;
 }

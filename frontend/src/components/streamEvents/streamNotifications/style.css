@@ -1,3 +1,8 @@
+#stream-notifications {
+  overflow: auto;
+  height: 100%;
+}
+
 .user-info {
   position: relative;
   background-color: var(--bg-color-popup);

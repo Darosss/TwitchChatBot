@@ -1,131 +1,196 @@
 import "./style.css";
-import React, { useReducer } from "react";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
+import React, { useMemo, useState } from "react";
+import ReactGridLayout, { Responsive, WidthProvider } from "react-grid-layout";
 
-import HiddenMenu from "@components/hiddenMenu";
-import WidgetWrapper from "@components/widgetWrapper";
-import useLocalStorage from "@hooks/useLocalStorageHook";
 import StreamChat from "./streamChat";
 import StreamChatters from "./streamChatters";
 import StreamNotifications from "./streamNotifications";
 import StreamStatistics from "./streamStatistics";
+import DrawerBar from "@components/drawer/DrawerBar";
 
-interface IWidget {
-  enabled: boolean;
-  size?: { width: string; height: string }; // TODO: add size later
+const components = new Map([
+  ["stream-chat", StreamChat],
+  ["stream-chatters", StreamChatters],
+  ["stream-notifications", StreamNotifications],
+  ["stream-statistics", StreamStatistics],
+]);
+
+export default function StreamEvents(props: {
+  initialLayouts: ReactGridLayout.Layouts;
+}) {
+  const ResponsiveReactGridLayout = useMemo(
+    () => WidthProvider(Responsive),
+    []
+  );
+
+  const [isEdit, setIsEdit] = useState(false);
+  const [currentBreakpoint, setCurrentBreakpoint] = useState("ulg");
+  const [layoutWidgets, setLayoutWidgets] = useState(props.initialLayouts);
+
+  const [toolbox, setToolbox] = useState<ReactGridLayout.Layouts>({
+    ulg: [],
+    lg: [],
+    md: [],
+    sm: [],
+    xs: [],
+    xxs: [],
+  });
+
+  const toggleStaticMode = () => {
+    setIsEdit(!isEdit);
+    setLayoutWidgets((prevLayout) => ({
+      ...prevLayout,
+      lg: prevLayout.lg.map((item) => ({
+        ...item,
+        static: !item.static,
+      })),
+    }));
+  };
+
+  const onLayoutChange = (
+    currLayout: ReactGridLayout.Layout[],
+    allLayouts: ReactGridLayout.Layouts
+  ) => {
+    setLayoutWidgets((prevLayout) => ({
+      ...prevLayout,
+      [currentBreakpoint]: currLayout,
+    }));
+  };
+
+  const onBreakpointChange = (breakpoint: string) => {
+    setCurrentBreakpoint(breakpoint);
+
+    setToolbox((prevToolbox) => ({
+      ...prevToolbox,
+      [breakpoint]:
+        prevToolbox[breakpoint] || [prevToolbox.currentBreakpoint] || [],
+    }));
+  };
+
+  const onTakeItem = (item: ReactGridLayout.Layout) => {
+    setToolbox((prevToolbox) => ({
+      ...prevToolbox,
+      [currentBreakpoint]: prevToolbox[currentBreakpoint].filter(
+        ({ i }) => i !== item.i
+      ),
+    }));
+
+    setLayoutWidgets((prevLayout) => ({
+      ...prevLayout,
+      [currentBreakpoint]: [...prevLayout[currentBreakpoint], item],
+    }));
+  };
+
+  const onPutItem = (item: ReactGridLayout.Layout) => {
+    setToolbox((prevToolbox) => ({
+      ...prevToolbox,
+      [currentBreakpoint]: [...(prevToolbox[currentBreakpoint] || []), item],
+    }));
+
+    setLayoutWidgets((prevLayout) => ({
+      ...prevLayout,
+      [currentBreakpoint]: prevLayout[currentBreakpoint].filter(
+        ({ i }) => i !== item.i
+      ),
+    }));
+  };
+
+  const generateWidgets = () => {
+    return layoutWidgets[currentBreakpoint].map((item) => {
+      const MapComponent = components.get(item.i);
+      if (!MapComponent) return null;
+      return (
+        <div key={item.i}>
+          {isEdit ? (
+            <div className="widget-hide-button" onClick={() => onPutItem(item)}>
+              &times;
+            </div>
+          ) : null}
+          <span>
+            <MapComponent />
+          </span>
+        </div>
+      );
+    });
+  };
+
+  return (
+    <div>
+      <DrawerBar direction={"top"} size={120} showBtnText="&#8595;">
+        <div className="widget-menu-drawer">
+          <div className="widget-menu-drawer-toolbox">
+            <ToolBox
+              items={toolbox[currentBreakpoint] || []}
+              onTakeItem={onTakeItem}
+            />
+          </div>
+          <div>
+            <div>
+              <button onClick={toggleStaticMode}>Toggle Edit</button>
+            </div>
+            <div>
+              Is edit:
+              <span style={{ color: !isEdit ? "red" : "green" }}>
+                {isEdit.toString()}
+              </span>
+            </div>
+            <div>
+              <button>Save</button>
+            </div>
+          </div>
+        </div>
+      </DrawerBar>
+
+      <ResponsiveReactGridLayout
+        onLayoutChange={onLayoutChange}
+        compactType={null}
+        layouts={layoutWidgets}
+        onBreakpointChange={onBreakpointChange}
+        breakpoints={{ ulg: 1700, lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+        preventCollision={false}
+        rowHeight={30}
+        cols={{ ulg: 16, lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+        autoSize={true}
+        margin={{
+          lg: [10, 10],
+          md: [10, 10],
+          sm: [10, 10],
+          xs: [10, 10],
+          xxs: [10, 10],
+        }}
+      >
+        {generateWidgets()}
+      </ResponsiveReactGridLayout>
+    </div>
+  );
 }
 
-export default function StreamEvents() {
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
-  const [chatWidget, setChatWidget] = useLocalStorage<IWidget>(
-    "stream-chat-widget-data",
-    { enabled: true }
-  );
-  const [chattersWidget, setChattersWidget] = useLocalStorage<IWidget>(
-    "stream-chatters-widget-data",
-    { enabled: true }
-  );
-  const [notificationsWidget, setNotificationsWidget] =
-    useLocalStorage<IWidget>("stream-notifications-widget-data", {
-      enabled: true,
-    });
-  const [statisticSession, setStatisticSession] = useLocalStorage<IWidget>(
-    "stream-statistic-widget-data",
-    {
-      enabled: true,
-    }
-  );
+function ToolBox(props: { items: any; onTakeItem: any }) {
+  const { items, onTakeItem } = props;
   return (
-    <div className="stream-wrapper">
-      <div className="menu-widgets">
-        <HiddenMenu>
-          <li>
-            <button
-              className={`stream-btn ${
-                chatWidget.enabled ? "active" : "not-active"
-              }`}
-              onClick={() => {
-                setChatWidget((prevLocalStorage) => {
-                  prevLocalStorage.enabled = !prevLocalStorage.enabled;
-                  return prevLocalStorage;
-                });
-                forceUpdate();
-              }}
-            >
-              Toggle chat
-            </button>
-          </li>
-          <li>
-            <button
-              className={`stream-btn ${
-                chattersWidget.enabled ? "active" : "not-active"
-              }`}
-              onClick={() => {
-                setChattersWidget((prevLocalStorage) => {
-                  prevLocalStorage.enabled = !prevLocalStorage.enabled;
-                  return prevLocalStorage;
-                });
-                forceUpdate();
-              }}
-            >
-              Toggle chatters
-            </button>
-          </li>
-          <li>
-            <button
-              className={`stream-btn ${
-                notificationsWidget.enabled ? "active" : "not-active"
-              }`}
-              onClick={() => {
-                setNotificationsWidget((prevLocalStorage) => {
-                  prevLocalStorage.enabled = !prevLocalStorage.enabled;
-                  return prevLocalStorage;
-                });
-                forceUpdate();
-              }}
-            >
-              Toggle notifications
-            </button>
-          </li>
-          <li>
-            <button
-              className={`stream-btn ${
-                statisticSession.enabled ? "active" : "not-active"
-              }`}
-              onClick={() => {
-                setStatisticSession((prevLocalStorage) => {
-                  prevLocalStorage.enabled = !prevLocalStorage.enabled;
-                  return prevLocalStorage;
-                });
-                forceUpdate();
-              }}
-            >
-              Toggle statistics
-            </button>
-          </li>
-        </HiddenMenu>
+    <>
+      <div className="widgets-toolbox-title">Available widgets</div>
+      <div className="widgets-toolbox">
+        <div className="widgets-toolbox-items">
+          {items.map((item: ReactGridLayout.Layout) => (
+            <ToolBoxItem key={item.i} item={item} onTakeItem={onTakeItem} />
+          ))}
+        </div>
       </div>
+    </>
+  );
+}
 
-      {chatWidget?.enabled ? (
-        <WidgetWrapper id="stream-window">
-          <StreamChat className="stream-window" />
-        </WidgetWrapper>
-      ) : null}
-      {chattersWidget?.enabled ? (
-        <WidgetWrapper id="stream-last-chatters">
-          <StreamChatters className="stream-window" />
-        </WidgetWrapper>
-      ) : null}
-      {notificationsWidget?.enabled ? (
-        <WidgetWrapper id="stream-notifications">
-          <StreamNotifications className="stream-window" />
-        </WidgetWrapper>
-      ) : null}
-
-      {statisticSession?.enabled ? (
-        <WidgetWrapper id="stream-statistics" horizontal={true}>
-          <StreamStatistics className="stream-window" />
-        </WidgetWrapper>
-      ) : null}
+function ToolBoxItem(props: { item: any; onTakeItem: any }) {
+  const { item, onTakeItem } = props;
+  return (
+    <div
+      className="widgets-items-item"
+      onClick={onTakeItem.bind(undefined, item)}
+    >
+      {item.i.replace("-", " ")}
     </div>
   );
 }
