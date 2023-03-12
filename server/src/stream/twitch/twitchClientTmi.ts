@@ -64,19 +64,24 @@ const clientTmi = (
       username: tags["display-name"] || "undefinedUsername",
       twitchName: tags.username || "undefinedTwitchName",
       twitchId: tags["user-id"] || "undefinedTwitchId",
-
+      ...(self && { twitchId: process.env.botid! }), //
       privileges: 0,
     };
-
     messageLogger.info(`${userData.username}: ${message}`);
 
     io.emit("messageServer", new Date(), userData.username, message); // emit for socket
 
-    const user = await createUserIfNotExist(userData, userData);
+    const user = await createUserIfNotExist(
+      { twitchId: userData.twitchId },
+      userData
+    );
+    if (!user) return;
 
-    if (!user || self) return;
-
-    const messagesToSend = await streamHandler.onMessageEvents(user, message);
+    const messagesToSend = await streamHandler.onMessageEvents(
+      user,
+      message,
+      self
+    );
 
     messagesToSend.forEach((message, index) => {
       setTimeout(() => {
