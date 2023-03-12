@@ -75,7 +75,7 @@ class StreamHandler {
     this.initSocketEvents();
   }
 
-  public async onMessageEvents(user: IUser, message: string) {
+  public async onMessageEvents(user: IUser, message: string, self = false) {
     let messagesToSend: string[] = [];
     const dataEvent = new Date();
 
@@ -85,6 +85,8 @@ class StreamHandler {
       dataEvent,
       message
     );
+
+    if (self) return [];
 
     const commandAnswer = await this.commandsHandler.checkMessageForCommand(
       user,
