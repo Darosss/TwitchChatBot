@@ -38,7 +38,8 @@ export const getMessageCategories = async (
 export const getMessageCategoriesCount = async (
   filter: FilterQuery<IMessageCategory>
 ) => {
-  return await MessageCategory.countDocuments(filter);
+  const count = await MessageCategory.countDocuments(filter);
+  return count;
 };
 
 export const getMessagesByCategory = async (category: string) => {
@@ -87,7 +88,7 @@ export const getRandomMessageFromCategory = async (
   return messages[randomWithMax(messages.length)];
 };
 
-export const createNewMessageCategory = async (
+export const createMessageCategories = async (
   messageCategoryData: IMessageCategoryData | IMessageCategoryData[]
 ) => {
   try {
@@ -106,7 +107,45 @@ export const updateMessageCategory = async (
 
 export const updateMessageCategoryById = async (
   id: string,
-  messageCategoryData: IMessageCategoryData
-) => {};
+  updateData: IMessageCategoryData
+) => {
+  try {
+    const updatedMessageCategory = await MessageCategory.findByIdAndUpdate(
+      id,
+      updateData,
+      {
+        new: true,
+      }
+    );
 
-export const deleteMessageCategoryById = async (id: string) => {};
+    const messageCategory = checkExistResource(
+      updatedMessageCategory,
+      `Message category with id(${id})`
+    );
+
+    return messageCategory;
+  } catch (err) {
+    logger.error(
+      `Error occured while editing message category by id(${id}). ${err}`
+    );
+    handleAppError(err);
+  }
+};
+
+export const deleteMessageCategory = async (id: string) => {
+  try {
+    const deletedMessageCategory = await MessageCategory.findByIdAndDelete(id);
+
+    const messageCategory = checkExistResource(
+      deletedMessageCategory,
+      `Message category with id(${id})`
+    );
+
+    return messageCategory;
+  } catch (err) {
+    logger.error(
+      `Error occured while deleting message category by id(${id}). ${err}`
+    );
+    handleAppError(err);
+  }
+};
