@@ -1,14 +1,16 @@
-.stream-statistics {
+.session-statistics-wrapper {
   display: flex;
+  flex-wrap: wrap;
   border: 1px solid;
   overflow: auto;
   height: 100%;
 }
 
-.session-statistic {
-  display: flex;
-  flex-direction: column;
+.session-statistics-wrapper > div {
+  border: 0.1rem solid var(--base-bg-color-border);
+  flex: 1 0 49%;
 }
+
 .session-statistic > div:first-child {
   text-align: center;
   width: 100%;
