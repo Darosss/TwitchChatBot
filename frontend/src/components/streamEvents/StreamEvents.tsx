@@ -119,8 +119,6 @@ export default function StreamEvents() {
   };
 
   const onPutItem = (item: ReactGridLayout.Layout) => {
-    console.log(currentBreakpoint, "test");
-
     setToolbox((prevToolbox) => ({
       ...prevToolbox,
       [currentBreakpoint]: [...(prevToolbox[currentBreakpoint] || []), item],
