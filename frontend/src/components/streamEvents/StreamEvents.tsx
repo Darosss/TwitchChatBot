@@ -9,12 +9,14 @@ import StreamChatters from "./streamChatters";
 import StreamNotifications from "./streamNotifications";
 import StreamStatistics from "./streamStatistics";
 import DrawerBar from "@components/drawer/DrawerBar";
+import MessagesWindow from "./messageWindow";
 
 const components = new Map([
   ["stream-chat", StreamChat],
   ["stream-chatters", StreamChatters],
   ["stream-notifications", StreamNotifications],
   ["stream-statistics", StreamStatistics],
+  ["messages-window", MessagesWindow],
 ]);
 
 export default function StreamEvents(props: {
