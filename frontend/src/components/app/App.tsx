@@ -14,6 +14,7 @@ import { RedemptionRoutes } from "@routes/RedemptionRoute";
 import { StreamSessionRoutes } from "@routes/StreamSessionRoute";
 import { TriggerRoutes } from "@routes/TriggerRoute";
 import { UserRoutes } from "@routes/UserRoute";
+import { MessageCategoriesRoute } from "@routes/MessageCategoriesRoute";
 
 function App() {
   return (
@@ -35,6 +36,10 @@ function App() {
               <Route path="/" element={<>HOME </>} />
               <Route path="/users/*" element={<UserRoutes />} />
               <Route path="/messages/*" element={<MessageRoutes />} />
+              <Route
+                path="/message-categories/*"
+                element={<MessageCategoriesRoute />}
+              />
               <Route path="/commands/*" element={<CommandRoutes />} />
               <Route path="/events/*" element={<EventRoutes />} />
               <Route path="/redemptions/*" element={<RedemptionRoutes />} />
