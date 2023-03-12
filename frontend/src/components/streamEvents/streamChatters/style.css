@@ -8,15 +8,6 @@
   height: 100%;
 }
 
-.last-chatters-header {
-  text-align: center;
-  font-size: larger;
-  position: sticky;
-  top: 0;
-  background-color: var(--base-bg-color);
-  border-bottom: 1px solid yellow;
-}
-
 .stream-last-chatters > div:not(:first-child) {
   border: 0.1rem solid var(--color-user-usual);
 }
