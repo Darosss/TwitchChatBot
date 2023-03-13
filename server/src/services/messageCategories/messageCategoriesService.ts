@@ -4,7 +4,7 @@ import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
 import { randomWithMax } from "@utils/randomNumbersUtil";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, UpdateQuery } from "mongoose";
 import {
   IManyMessageCategoriesFindOptions,
   IMessageCategoryData,
@@ -107,7 +107,7 @@ export const updateMessageCategory = async (
 
 export const updateMessageCategoryById = async (
   id: string,
-  updateData: IMessageCategoryData
+  updateData: UpdateQuery<IMessageCategoryData>
 ) => {
   try {
     const updatedMessageCategory = await MessageCategory.findByIdAndUpdate(
