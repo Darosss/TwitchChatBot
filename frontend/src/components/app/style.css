@@ -1,8 +1,3 @@
-.App {
-  text-align: center;
-  font-size: calc(0.8rem + 2vmin);
-}
-
 .main {
   color: white;
 }
@@ -16,12 +11,4 @@
 }
 .not-overlay {
   background-color: var(--base-bg-color);
-}
-
-.App-header {
-  background-color: #282c34;
-}
-
-.App-link {
-  color: #61dafb;
 }

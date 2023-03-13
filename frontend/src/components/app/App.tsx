@@ -21,14 +21,9 @@ function App() {
   return (
     <SocketContext.Provider value={socketConn}>
       <BrowserRouter>
-        <div className="App">
-          <header className="App-header">
-            <SideBar />
-          </header>
-        </div>
-
         <div className="main">
           <ReactNotifications />
+          <SideBar />
           <Routes>
             <Route element={<OverlayLayout />}>
               <Route path="/overlay/*" element={<OverlayRoutes />} />
