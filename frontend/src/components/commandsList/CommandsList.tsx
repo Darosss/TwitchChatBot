@@ -139,7 +139,7 @@ export default function CommandsList() {
               <th>
                 Actions
                 <button
-                  className="create-command command-list-button"
+                  className="common-button primary-button"
                   onClick={(e) => createNewCommand()}
                 >
                   New
@@ -162,7 +162,7 @@ export default function CommandsList() {
                 <tr key={command._id}>
                   <td>
                     <button
-                      className="command-action command-list-button"
+                      className="common-button primary-button"
                       onClick={() => {
                         setEditingCommand(command._id);
                         setName(command.name);
@@ -177,7 +177,7 @@ export default function CommandsList() {
                       Edit
                     </button>
                     <button
-                      className="command-action command-list-button command-delete"
+                      className="common-button danger-button"
                       onClick={() => setCommandIdDelete(command._id)}
                     >
                       Delete
@@ -245,8 +245,8 @@ export default function CommandsList() {
                 <button
                   onClick={(e) => toggleOnOffCommand(e)}
                   className={
-                    `${!true ? "command-disabled" : ""} ` +
-                    "command-list-button"
+                    `${!true ? "danger-button" : "primary-button"} ` +
+                    "common-button"
                   }
                 >
                   {enabled.toString()}

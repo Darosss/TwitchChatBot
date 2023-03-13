@@ -14,6 +14,8 @@ import { RedemptionRoutes } from "@routes/RedemptionRoute";
 import { StreamSessionRoutes } from "@routes/StreamSessionRoute";
 import { TriggerRoutes } from "@routes/TriggerRoute";
 import { UserRoutes } from "@routes/UserRoute";
+import { MessageCategoriesRoute } from "@routes/MessageCategoriesRoute";
+import { ReactNotifications } from "react-notifications-component";
 
 function App() {
   return (
@@ -26,6 +28,7 @@ function App() {
         </div>
 
         <div className="main">
+          <ReactNotifications />
           <Routes>
             <Route element={<OverlayLayout />}>
               <Route path="/overlay/*" element={<OverlayRoutes />} />
@@ -35,6 +38,10 @@ function App() {
               <Route path="/" element={<>HOME </>} />
               <Route path="/users/*" element={<UserRoutes />} />
               <Route path="/messages/*" element={<MessageRoutes />} />
+              <Route
+                path="/message-categories/*"
+                element={<MessageCategoriesRoute />}
+              />
               <Route path="/commands/*" element={<CommandRoutes />} />
               <Route path="/events/*" element={<EventRoutes />} />
               <Route path="/redemptions/*" element={<RedemptionRoutes />} />

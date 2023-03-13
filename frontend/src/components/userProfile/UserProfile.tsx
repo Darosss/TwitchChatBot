@@ -105,7 +105,10 @@ export default function UserProfile() {
             <div>
               <ul>
                 <li className="edit-notes-btn-list">
-                  <button onClick={showEdit} className="user-details-btn">
+                  <button
+                    onClick={showEdit}
+                    className="common-button primary-button"
+                  >
                     Edit
                   </button>
                 </li>
@@ -155,7 +158,10 @@ export default function UserProfile() {
                 defaultValue={userData.data.notes?.join("\n")}
                 onChange={(e) => setNotes(e.target.value)}
               />
-              <button className="user-details-btn small" onClick={saveNote}>
+              <button
+                className="common-button danger-button user-save-profile"
+                onClick={saveNote}
+              >
                 Save
               </button>
             </div>

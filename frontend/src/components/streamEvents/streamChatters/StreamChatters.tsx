@@ -45,7 +45,7 @@ export default function StreamChatters() {
 
   return (
     <div id="stream-last-chatters" className={`stream-last-chatters`}>
-      <div className="last-chatters-header"> Last chatters </div>
+      <div className="widget-header"> Last chatters </div>
       {[...lastChatters.keys()].map((chatter, index) => {
         return (
           <div

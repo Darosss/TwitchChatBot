@@ -30,35 +30,6 @@
   overflow: hidden;
 }
 
-.triggers-list-button {
-  width: 7vw;
-  max-width: 7vw;
-  font-size: calc(0.5rem + 1vw);
-  overflow: hidden;
-  background-color: var(--base-bg-color-action);
-  display: flex;
-  border-radius: 0.2rem;
-  align-items: center;
-  justify-content: center;
-}
-
-button.create-triggers {
-  float: left;
-}
-
-button.triggers-action {
-  width: 7vw;
-  max-width: 100%;
-}
-
-button.triggers-delete {
-  background-color: var(--base-bg-color-danger);
-}
-
-.triggers-disabled {
-  background-color: var(--base-bg-color-danger);
-}
-
 .changed-field {
   color: var(--base-color-info);
   background-color: var(--base-bg-color-info);

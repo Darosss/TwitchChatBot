@@ -87,7 +87,7 @@ export default function ConfigsList() {
     <>
       <PreviousPage />
       <button
-        className="edit-config-button"
+        className="common-button primary-button"
         onClick={() => {
           setConfigStates();
           setShowEdit((prevState) => {
@@ -99,7 +99,7 @@ export default function ConfigsList() {
       </button>
       {showEdit ? (
         <button
-          className="edit-config-button"
+          className="common-button danger-button"
           onClick={() => onClickEditConfig()}
         >
           Save

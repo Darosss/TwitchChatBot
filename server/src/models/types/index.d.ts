@@ -134,6 +134,7 @@ export interface IMessageCategory {
   _id: string;
   category: string;
   messages: string[];
+  uses: number;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -20,10 +20,8 @@
   height: 70%;
 }
 
-.stream-chat-title {
-  height: 5%;
-  font-size: larger;
-  overflow: hidden;
+.chat-header {
+  background-color: var(--base-bg-color-chat);
 }
 
 .stream-chat-textarea {

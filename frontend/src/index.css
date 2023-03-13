@@ -184,3 +184,26 @@ table tbody td {
   visibility: visible;
   opacity: 1;
 }
+
+.common-button {
+  width: 7vw;
+  max-width: 7vw;
+  font-size: calc(0.5rem + 1vw);
+  overflow: hidden;
+  border-radius: 0.2rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.primary-button {
+  background-color: var(--base-bg-color-action);
+}
+
+.danger-button {
+  background-color: var(--base-bg-color-danger);
+}
+
+.changed-field {
+  color: var(--base-color-info);
+  background-color: var(--base-bg-color-info);
+}

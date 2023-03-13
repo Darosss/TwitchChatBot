@@ -134,7 +134,7 @@ export default function TriggersList() {
               <th>
                 Actions
                 <button
-                  className="create-triggers triggers-list-button"
+                  className="common-button primary-button"
                   onClick={(e) => createNewTrigger()}
                 >
                   New
@@ -157,7 +157,7 @@ export default function TriggersList() {
                 <tr key={trigger._id}>
                   <td>
                     <button
-                      className="triggers-action triggers-list-button"
+                      className="common-button primary-button"
                       onClick={() => {
                         setEditingTrigger(trigger._id);
                         setName(trigger.name);
@@ -171,7 +171,7 @@ export default function TriggersList() {
                       Edit
                     </button>
                     <button
-                      className="triggers-action triggers-list-button triggers-delete"
+                      className="common-button danger-button"
                       onClick={() => setTriggerIdDelete(trigger._id)}
                     >
                       Delete
@@ -239,8 +239,8 @@ export default function TriggersList() {
                 <button
                   onClick={(e) => toggleOnOffTrigger(e)}
                   className={
-                    `${!true ? "triggers-disabled" : ""} ` +
-                    "triggers-list-button"
+                    `${!true ? "danger-button" : "primary-button"} ` +
+                    "common-button "
                   }
                 >
                   {enabled.toString()}
@@ -261,7 +261,7 @@ export default function TriggersList() {
               </td>
             </tr>
             <tr>
-              <th>Delay </th>
+              <th>Delay</th>
               <td>
                 <input
                   defaultValue={delay}
@@ -273,7 +273,7 @@ export default function TriggersList() {
               </td>
             </tr>
             <tr>
-              <th>Words </th>
+              <th>Words</th>
               <td>
                 <textarea
                   className="triggers-textarea"
@@ -286,7 +286,7 @@ export default function TriggersList() {
               </td>
             </tr>
             <tr>
-              <th>Messages </th>
+              <th>Messages</th>
               <td>
                 <textarea
                   className="triggers-textarea"

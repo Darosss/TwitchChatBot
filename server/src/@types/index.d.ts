@@ -43,6 +43,11 @@ interface IRequestQueryMessage extends IRequestSearch, IRequestSearchDate {
   owner?: string;
 }
 
+interface IRequestQueryMessageCategories extends IRequestQuery {
+  category?: string;
+  messages?: string;
+}
+
 interface IRequestQueryUser extends IRequestSearch {
   seen_start?: Date;
   seen_end?: Date;

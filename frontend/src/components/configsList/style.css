@@ -31,15 +31,6 @@
   font-size: 2rem;
 }
 
-.edit-config-button {
-  color: var(--base-color-link);
-  background-color: var(--base-bg-color-border);
-  border: 0;
-  font-size: 1.5rem;
-  margin-left: 0.5rem;
-  width: 14vw;
-}
-
 .config-table input {
   text-align: center;
   background-color: var(--base-bg-color-info);

@@ -40,6 +40,7 @@ const routes = [
   { path: "/", label: "Home" },
   { path: "/overlay", label: "Overlay" },
   { path: "/messages", label: "Messages" },
+  { path: "/message-categories", label: "Message categories" },
   { path: "/users", label: "Users" },
   { path: "/events", label: "Events" },
   { path: "/stream-sessions", label: "Sessions" },

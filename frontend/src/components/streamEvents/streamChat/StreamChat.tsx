@@ -41,7 +41,7 @@ export default function StreamChat() {
 
   return (
     <div id="stream-chat" className={`stream-chat`}>
-      <div className="stream-chat-title">STREAM CHAT</div>
+      <div className="widget-header chat-header">STREAM CHAT</div>
       <div className="stream-chat-messages">
         {messages
           ? [...Object.values(messages)]
