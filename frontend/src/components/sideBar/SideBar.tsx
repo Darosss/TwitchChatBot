@@ -4,6 +4,7 @@ import React from "react";
 import { Link, LinkProps } from "react-router-dom";
 import resetWindowScroll from "@utils/resetScroll";
 import AuthService from "src/services/AuthService";
+import DrawerBar from "@components/drawer";
 
 interface INavLinkProps extends LinkProps {
   label: string;
@@ -15,7 +16,7 @@ export default function SideBar() {
   if (loading) return <>Loading...</>;
 
   return (
-    <div className="navbar">
+    <DrawerBar direction={"right"} size={"15vw"} overlay={true}>
       <ul>
         {routes.map((route) => {
           return (
@@ -32,7 +33,7 @@ export default function SideBar() {
           </a>
         </li>
       </ul>
-    </div>
+    </DrawerBar>
   );
 }
 
