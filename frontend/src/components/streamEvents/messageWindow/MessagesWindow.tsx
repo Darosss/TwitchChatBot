@@ -1,7 +1,11 @@
 import "./style.css";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import "react-notifications-component/dist/theme.css";
 
-import { getMessageCategories } from "@services/MessageCategoriesService";
+import {
+  getMessageCategories,
+  incrementUsesCategoryById,
+} from "@services/MessageCategoriesService";
 import Modal from "@components/modal";
 import { SocketContext } from "@context/SocketContext";
 
@@ -10,7 +14,18 @@ export default function MessagesWindow() {
   const [showModal, setShowModal] = useState(false);
 
   const [currentMessages, setCurrentMessages] = useState<string[]>([]);
+  const [currentIdCategory, setCurrentIdCategory] = useState<string>("");
+  const [messageTosend, setMessageToSend] = useState<string>("");
   const { data, loading, error } = getMessageCategories();
+
+  const { refetchData: fetchUpdateUses } =
+    incrementUsesCategoryById(currentIdCategory);
+
+  useEffect(() => {
+    if (currentIdCategory || messageTosend) {
+      fetchUpdateUses();
+    }
+  }, [currentIdCategory, messageTosend]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!data || loading) return <>Loading!</>;
@@ -27,6 +42,7 @@ export default function MessagesWindow() {
   };
 
   const handleOnClickCategory = (id: string) => {
+    setCurrentIdCategory(id);
     setCurrentMessages(findMessagesCategoryByCurrCat(id) || []);
     setShowModal(true);
   };
@@ -36,11 +52,20 @@ export default function MessagesWindow() {
   };
 
   const handleOnClickRandomMessage = (id: string) => {
+    setCurrentIdCategory(id);
     const randomMessage = getRandomMessage(id);
+
+    setMessageToSend(randomMessage);
     sendMessage(randomMessage);
   };
+
   const sendMessage = (message: string) => {
     socket?.emit("messageClient", message);
+  };
+
+  const handleOnCloseModal = () => {
+    setShowModal(false);
+    setCurrentIdCategory("");
   };
 
   return (
@@ -49,30 +74,34 @@ export default function MessagesWindow() {
         <div className="widget-header"> Prepared Messages </div>
         {msgCateg.map((category, index) => {
           return (
-            <div key={index}>
-              <button
-                onClick={() => {
-                  handleOnClickRandomMessage(category._id);
-                }}
-                className="message-category"
-              >
-                Random {category.category}
-              </button>
-              <button
-                onClick={() => {
-                  handleOnClickCategory(category._id);
-                }}
-                className="message-category"
-              >
-                {category.category}
-              </button>
+            <div key={index} className="message-categories-btn-wrapper">
+              <div>
+                <button
+                  onClick={() => {
+                    handleOnClickRandomMessage(category._id);
+                  }}
+                >
+                  <div>Send random</div>
+                  <span className="button-category-name">
+                    {category.category}
+                  </span>
+                </button>
+              </div>
+              <div>
+                <button
+                  onClick={() => {
+                    handleOnClickCategory(category._id);
+                  }}
+                >
+                  <div>Show</div>
+                  <span className="button-category-name">
+                    {category.category}
+                  </span>
+                </button>
+              </div>
             </div>
           );
         })}
-
-        {/* <button className="message-category">test321 </button>
-      <button className="message-category">test321 </button>
-      <button className="message-category">test321 </button> */}
       </div>
       <Modal
         title="Send a message"
@@ -80,7 +109,7 @@ export default function MessagesWindow() {
           setShowModal(false);
         }}
         onSubmit={() => {
-          // onSubmitEditModal();
+          handleOnCloseModal();
         }}
         show={showModal}
       >

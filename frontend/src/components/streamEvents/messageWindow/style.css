@@ -1,17 +1,39 @@
-.prepared-messages-window {
-  display: flex;
-
-  flex-direction: column;
-  overflow-x: hidden;
-  height: 100%;
+.prepared-messages-window button {
+  transition: font-weight 1s, color 1s, border-radius 1s;
 }
 
-.message-category {
-  width: 49%;
-  border: 1px solid black;
-  flex: 0 1 100%;
-  justify-content: center;
+.prepared-messages-window button:hover {
+  font-weight: 900;
+  color: red;
+  border-radius: 0.5rem;
+}
+
+.message-categories-btn-wrapper {
+  display: flex;
   align-items: center;
+  height: 8vh;
+}
+
+.prepared-messages-window {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+.message-categories-btn-wrapper > div {
+  border: 1px solid black;
+  flex: 1 1 50%;
+  height: 100%;
+  margin-left: 0.5rem;
+}
+
+.message-categories-btn-wrapper button {
+  width: 100%;
+  height: 100%;
+  padding: 6%;
+}
+
+.button-category-name {
+  color: var(--base-color-info);
 }
 
 .modal-prepared-messages {
@@ -23,7 +45,6 @@
 }
 
 .modal-prepared-messages button {
-  /* width: 40%; */
   flex: 0 0 30%;
   border: 0.1rem solid var(--base-bg-color);
 }
