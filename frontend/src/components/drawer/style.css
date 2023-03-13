@@ -1,10 +1,14 @@
-.btn-show-drawer {
+.btn-drawer {
   position: absolute;
-  right: 50%;
-  z-index: 2;
+  z-index: 3;
+  background-color: transparent;
 }
 
-.btn-close-drawer {
-  position: absolute;
-  right: 50%;
+.btn-drawer:hover {
+  visibility: visible;
+}
+
+.btn-drawer-close {
+  position: sticky;
+  top: 0;
 }
