@@ -4,6 +4,7 @@ export interface IMessageCategory {
   _id: string;
   category: string;
   messages: string[];
+  uses: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,6 +23,15 @@ export const editMessageCategoryById = (
     url: `/message-categories/${id}`,
     method: "POST",
     bodyData: data,
+    manual: true,
+    urlParams: false,
+  });
+};
+
+export const incrementUsesCategoryById = (id: string) => {
+  return useAxiosCustom<IMessageCategory>({
+    url: `/message-categories/${id}/uses`,
+    method: "POST",
     manual: true,
     urlParams: false,
   });
