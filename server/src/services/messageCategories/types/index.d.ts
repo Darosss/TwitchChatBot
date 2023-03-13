@@ -14,4 +14,4 @@ export interface IManyMessageCategoriesFindOptions
 }
 
 export interface IMessageCategoryData
-  extends Omit<IMessageCategory, "_id" | "createdAt" | "updatedAt"> {}
+  extends Omit<IMessageCategory, "_id" | "createdAt" | "updatedAt" | "uses"> {}
