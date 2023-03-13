@@ -8,6 +8,10 @@ const MessageCategorySchema: Schema<IMessageCategoryDocument> = new Schema(
       required: true,
     },
     messages: [String],
+    uses: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
