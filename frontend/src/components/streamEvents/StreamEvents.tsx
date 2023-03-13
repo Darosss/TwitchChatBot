@@ -120,7 +120,7 @@ export default function StreamEvents(props: {
 
   return (
     <div>
-      <DrawerBar direction={"top"} size={120} showBtnText="&#8595;">
+      <DrawerBar direction={"top"} size={120} sticky={true} overlay={false}>
         <div className="widget-menu-drawer">
           <div className="widget-menu-drawer-toolbox">
             <ToolBox
