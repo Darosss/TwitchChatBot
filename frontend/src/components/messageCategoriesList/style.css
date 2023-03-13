@@ -5,11 +5,18 @@
 .message-category-name {
   width: 10%;
 }
+
 .message-category-edit {
   width: 10%;
 }
+
+.message-category-uses {
+  text-align: center;
+  font-size: x-large;
+}
+
 .message-category-messages {
-  width: 77%;
+  width: 70%;
 }
 
 .message-category-messages-wrapper {

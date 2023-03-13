@@ -129,7 +129,7 @@ const MessageCategoriesDetails = ({
           <tr>
             <th>Category</th>
             <th>
-              Actions{" "}
+              Actions
               <button
                 className="common-button primary-button"
                 onClick={(e) => createNewCategory()}
@@ -137,6 +137,7 @@ const MessageCategoriesDetails = ({
                 New
               </button>
             </th>
+            <th>Uses</th>
             <th>Messages</th>
           </tr>
         </thead>
@@ -162,6 +163,7 @@ const MessageCategoriesDetails = ({
                     Delete
                   </button>
                 </td>
+                <td className="message-category-uses ">{category.uses}</td>
 
                 <td className="message-category-messages">
                   <div className="message-category-messages-wrapper">
