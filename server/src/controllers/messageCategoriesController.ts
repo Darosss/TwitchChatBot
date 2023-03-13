@@ -22,7 +22,7 @@ export const getMessageCategoriesList = async (
     const categories = await getMessageCategories(searchFilter, {
       limit: limit,
       skip: page,
-      sort: { createdAt: -1 },
+      sort: { uses: -1 },
       select: { __v: 0 },
     });
 
@@ -50,6 +50,27 @@ export const editMessageCategoryById = async (
     const updatedCategoryMessage = await updateMessageCategoryById(id, {
       category: category,
       messages: messages,
+    });
+
+    return res.status(200).send({
+      message: "Message category updated successfully",
+      data: updatedCategoryMessage,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateUsesCategoryById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+
+  try {
+    const updatedCategoryMessage = await updateMessageCategoryById(id, {
+      $inc: { uses: 1 },
     });
 
     return res.status(200).send({
