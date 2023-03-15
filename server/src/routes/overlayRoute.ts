@@ -1,9 +1,15 @@
 import Express, { Router } from "express";
-import { overlay, getTwitchAuthorizeUrl } from "@controllers/authController";
-
+import {
+  getOverlaysList,
+  addNewOverlay,
+  editOverlayById,
+  removeOverlayById,
+} from "@controllers/overlaysController";
 const overlayRouter = Router();
 
-overlayRouter.get("/twitch/callback", overlay);
-overlayRouter.get("/authorize-url", getTwitchAuthorizeUrl);
+overlayRouter.get("/", getOverlaysList);
+overlayRouter.post("/create", addNewOverlay);
+overlayRouter.post("/:id", editOverlayById);
+overlayRouter.delete("/delete/:id", removeOverlayById);
 
 export default overlayRouter;
