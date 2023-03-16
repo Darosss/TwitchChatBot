@@ -140,3 +140,31 @@ export interface IMessageCategory {
 }
 
 export type IMessageCategoryDocument = IMessageCategory & Document;
+
+interface ILayoutBreakpoint {
+  i: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  static: boolean;
+}
+export interface IWidgets {
+  _id: string;
+  name: string;
+  layout: { [P: string]: ILayoutBreakpoint[] };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type IWidgetsDocument = IWidgets & Document;
+
+export interface IOverlay {
+  _id: string;
+  name: string;
+  layout: Array;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type IOverlayDocument = IOverlay & Document;
