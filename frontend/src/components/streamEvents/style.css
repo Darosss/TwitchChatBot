@@ -19,13 +19,14 @@
 }
 
 .widget-menu-drawer {
-  height: 100%;
   display: flex;
+  margin-top: 0.5rem;
 }
 
 .widget-menu-drawer > div {
   margin-left: 0.5rem;
   width: 50%;
+  border: 1px solid black;
   text-align: center;
 }
 
@@ -36,7 +37,7 @@
 .widgets-toolbox {
   display: flex;
   flex-wrap: wrap;
-  height: 80%;
+  height: 50%;
   overflow-x: hidden;
 }
 
@@ -86,4 +87,23 @@
   top: 0;
   background-color: var(--base-bg-color);
   border-bottom: 1px solid yellow;
+}
+
+.widget-edit-save {
+  display: flex;
+  align-items: center;
+  height: 10vh;
+}
+
+.widget-edit-save > div {
+  flex: 1 1 30%;
+}
+
+.widget-header-drawer {
+  font-size: large;
+}
+
+.widget-header-drawer > span {
+  color: var(--base-color-info);
+  font-weight: 700;
 }

@@ -1,7 +1,7 @@
 import "./style.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ReactGridLayout, { Responsive, WidthProvider } from "react-grid-layout";
 
 import StreamChat from "./streamChat";
@@ -11,6 +11,11 @@ import StreamStatistics from "./streamStatistics";
 import DrawerBar from "@components/drawer/DrawerBar";
 import MessagesWindow from "./messageWindow";
 
+import { initialLayoutWidgets } from "src/layout/initialLayoutWidgets";
+import { useParams } from "react-router-dom";
+import { getWidgetById } from "@services/WidgetsService";
+import PreviousPage from "@components/previousPage";
+
 const components = new Map([
   ["stream-chat", StreamChat],
   ["stream-chatters", StreamChatters],
@@ -19,18 +24,20 @@ const components = new Map([
   ["messages-window", MessagesWindow],
 ]);
 
-export default function StreamEvents(props: {
-  initialLayouts: ReactGridLayout.Layouts;
-}) {
+export default function StreamEvents() {
   const ResponsiveReactGridLayout = useMemo(
     () => WidthProvider(Responsive),
     []
   );
 
+  const { eventsId } = useParams();
+
+  const { data, loading, error } = getWidgetById(eventsId || "");
+
   const [isEdit, setIsEdit] = useState(false);
   const [currentBreakpoint, setCurrentBreakpoint] = useState("ulg");
-  const [layoutWidgets, setLayoutWidgets] = useState(props.initialLayouts);
-
+  const [layoutWidgets, setLayoutWidgets] =
+    useState<ReactGridLayout.Layouts>(initialLayoutWidgets);
   const [toolbox, setToolbox] = useState<ReactGridLayout.Layouts>({
     ulg: [],
     lg: [],
@@ -40,16 +47,11 @@ export default function StreamEvents(props: {
     xxs: [],
   });
 
-  const toggleStaticMode = () => {
-    setIsEdit(!isEdit);
-    setLayoutWidgets((prevLayout) => ({
-      ...prevLayout,
-      lg: prevLayout.lg.map((item) => ({
-        ...item,
-        static: !item.static,
-      })),
-    }));
-  };
+  useEffect(() => {
+    if (!data) return;
+    const { data: layoutData } = data;
+    setLayoutWidgets(layoutData.layout);
+  }, [data]);
 
   const onLayoutChange = (
     currLayout: ReactGridLayout.Layout[],
@@ -118,32 +120,19 @@ export default function StreamEvents(props: {
     });
   };
 
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading!</>;
+
   return (
     <div>
-      <DrawerBar direction={"top"} size={120} sticky={true} overlay={false}>
-        <div className="widget-menu-drawer">
-          <div className="widget-menu-drawer-toolbox">
-            <ToolBox
-              items={toolbox[currentBreakpoint] || []}
-              onTakeItem={onTakeItem}
-            />
-          </div>
-          <div>
-            <div>
-              <button onClick={toggleStaticMode}>Toggle Edit</button>
-            </div>
-            <div>
-              Is edit:
-              <span style={{ color: !isEdit ? "red" : "green" }}>
-                {isEdit.toString()}
-              </span>
-            </div>
-            <div>
-              <button>Save</button>
-            </div>
-          </div>
-        </div>
-      </DrawerBar>
+      <EventsDrawerBar
+        widgetsLayoutsName={data.data.name}
+        toolbox={toolbox}
+        currentBreakpoint={currentBreakpoint}
+        onTakeItem={onTakeItem}
+        setLayoutWidgets={setLayoutWidgets}
+        setIsEdit={setIsEdit}
+      />
 
       <ResponsiveReactGridLayout
         onLayoutChange={onLayoutChange}
@@ -194,5 +183,72 @@ function ToolBoxItem(props: { item: any; onTakeItem: any }) {
     >
       {item.i.replace("-", " ")}
     </div>
+  );
+}
+
+function EventsDrawerBar({
+  widgetsLayoutsName,
+  toolbox,
+  currentBreakpoint,
+  onTakeItem,
+  setLayoutWidgets,
+  setIsEdit,
+}: {
+  widgetsLayoutsName: string;
+  toolbox: ReactGridLayout.Layouts;
+  currentBreakpoint: string;
+  onTakeItem: (item: ReactGridLayout.Layout) => void;
+
+  setLayoutWidgets: React.Dispatch<
+    React.SetStateAction<ReactGridLayout.Layouts>
+  >;
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const [edit, setEdit] = useState(false);
+  const toggleStaticMode = () => {
+    setIsEdit((prevState) => {
+      return !prevState;
+    });
+    setEdit(!edit);
+
+    setLayoutWidgets((prevLayout) => ({
+      ...prevLayout,
+      lg: prevLayout.lg.map((item) => ({
+        ...item,
+        static: !item.static,
+      })),
+    }));
+  };
+
+  return (
+    <DrawerBar direction={"top"} size={120} sticky={true} overlay={false}>
+      <div className="widget-menu-drawer">
+        <div className="widget-menu-drawer-toolbox">
+          <ToolBox
+            items={toolbox[currentBreakpoint] || []}
+            onTakeItem={onTakeItem}
+          />
+        </div>
+        <div>
+          <div className="widget-header-drawer">
+            <PreviousPage /> <span>{widgetsLayoutsName}</span> widgets
+          </div>
+          <div className="widget-edit-save">
+            <div>
+              Is edit:
+              <span style={{ color: !edit ? "red" : "green" }}>
+                {" " + edit.toString()}
+              </span>
+            </div>
+            <div>
+              <button onClick={toggleStaticMode}>Toggle Edit</button>
+            </div>
+            <div>
+              <button>Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </DrawerBar>
   );
 }
