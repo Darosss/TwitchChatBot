@@ -79,16 +79,11 @@ export const editWidgetById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, description, enabled, aliases, messages, privilege } = req.body;
-
+  const { name, layout } = req.body;
   try {
     const updatedWidget = await updateWidgetById(id, {
       name: name,
-      description: description,
-      enabled: enabled,
-      aliases: aliases,
-      messages: messages,
-      privilege: privilege,
+      layout: layout,
     });
 
     return res.status(200).send({
