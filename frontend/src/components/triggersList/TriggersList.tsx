@@ -152,27 +152,29 @@ export default function TriggersList() {
               return (
                 <tr key={trigger._id}>
                   <td>
-                    <button
-                      className="common-button primary-button"
-                      onClick={() => {
-                        setEditingTrigger(trigger._id);
-                        setName(trigger.name);
-                        setChance(trigger.chance);
-                        setDelay(trigger.delay);
-                        setMessages(trigger.messages);
-                        setWords(trigger.words);
-                        setShowModal(true);
-                        setMode(trigger.mode);
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="common-button danger-button"
-                      onClick={() => setTriggerIdDelete(trigger._id)}
-                    >
-                      Delete
-                    </button>
+                    <div className="triggers-list-action-buttons-wrapper">
+                      <button
+                        className="common-button primary-button"
+                        onClick={() => {
+                          setEditingTrigger(trigger._id);
+                          setName(trigger.name);
+                          setChance(trigger.chance);
+                          setDelay(trigger.delay);
+                          setMessages(trigger.messages);
+                          setWords(trigger.words);
+                          setShowModal(true);
+                          setMode(trigger.mode);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="common-button danger-button"
+                        onClick={() => setTriggerIdDelete(trigger._id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                   <td colSpan={5}>
                     <div className="trigger-div-data">

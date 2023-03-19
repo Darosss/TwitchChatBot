@@ -101,3 +101,12 @@
 .triggers-list-mode {
   display: flex;
 }
+
+.triggers-list-action-buttons-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.triggers-list-action-buttons-wrapper > button {
+  height: 10vh;
+}
