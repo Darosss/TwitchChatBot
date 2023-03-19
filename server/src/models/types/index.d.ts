@@ -153,6 +153,7 @@ export interface IWidgets {
   _id: string;
   name: string;
   layout: { [P: string]: ILayoutBreakpoint[] };
+  toolbox: { [P: string]: ILayoutBreakpoint[] };
   createdAt: Date;
   updatedAt: Date;
 }
