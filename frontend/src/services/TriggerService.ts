@@ -40,7 +40,7 @@ const createTrigger = (data: Partial<ITrigger>) => {
 };
 
 const deleteTrigger = (triggerId: string) => {
-  return useAxiosCustom<any>({
+  return useAxiosCustom<ITrigger>({
     url: `/triggers/delete/${triggerId}`,
     method: "DELETE",
     manual: true,
