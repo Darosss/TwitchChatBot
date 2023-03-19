@@ -6,8 +6,9 @@ import Modal from "@components/modal";
 import formatDate from "@utils/formatDate";
 import PreviousPage from "@components/previousPage";
 import FilterBarTriggers from "./filterBarTriggers";
-import TriggerService from "@services/TriggerService";
+import TriggerService, { ITrigger } from "@services/TriggerService";
 import { SocketContext } from "@context/SocketContext";
+import { handleDeleteLayout } from "@utils/handleDeleteApi";
 
 export default function TriggersList() {
   const socket = useContext(SocketContext);
@@ -61,18 +62,12 @@ export default function TriggersList() {
   };
 
   useEffect(() => {
-    if (
-      triggerIdDelete !== null &&
-      confirm(`Are you sure you want to delete command: ${triggerIdDelete}?`)
-    ) {
+    handleDeleteLayout<ITrigger>(triggerIdDelete, setTriggerIdDelete, () => {
       fetchDeleteCommand().then(() => {
-        socketRefreshTrigger();
         refetchData();
         setTriggerIdDelete(null);
       });
-    } else {
-      setTriggerIdDelete(null);
-    }
+    });
   }, [triggerIdDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

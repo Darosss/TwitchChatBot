@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   createLayout,
   getWidgets,
+  IWidgets,
   removeWidgetById,
 } from "@services/WidgetsService";
 import { Link } from "react-router-dom";
@@ -10,6 +11,7 @@ import {
   initialLayoutWidgets,
   initialToolboxWidgets,
 } from "src/layout/initialLayoutWidgets";
+import { handleDeleteLayout } from "@utils/handleDeleteApi";
 
 export default function StreamNotifications() {
   const { data, loading, error, refetchData } = getWidgets();
@@ -29,17 +31,12 @@ export default function StreamNotifications() {
   );
 
   useEffect(() => {
-    if (
-      layoutIdToDelete !== null &&
-      confirm(`Are you sure you want to delete layout: ${layoutIdToDelete}?`)
-    ) {
+    handleDeleteLayout<IWidgets>(layoutIdToDelete, setLayoutIdToDelete, () => {
       fetchDeleteLayout().then(() => {
         refetchData();
         setLayoutIdToDelete(null);
       });
-    } else {
-      setLayoutIdToDelete(null);
-    }
+    });
   }, [layoutIdToDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

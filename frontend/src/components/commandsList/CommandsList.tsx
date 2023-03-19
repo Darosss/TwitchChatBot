@@ -3,11 +3,12 @@ import "./style.css";
 import React, { useContext, useEffect, useState } from "react";
 import formatDate from "@utils/formatDate";
 import FilterBarCommands from "./filterBarCommands";
-import ChatCommandService from "@services/ChatCommandService";
+import ChatCommandService, { IChatCommand } from "@services/ChatCommandService";
 import Modal from "@components/modal";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
 import { SocketContext } from "@context/SocketContext";
+import { handleDeleteLayout } from "@utils/handleDeleteApi";
 
 export default function CommandsList() {
   const socket = useContext(SocketContext);
@@ -35,18 +36,16 @@ export default function CommandsList() {
     socket?.emit("refreshCommands");
   };
   useEffect(() => {
-    if (
-      commandIdDelete !== null &&
-      confirm(`Are you sure you want to delete command: ${commandIdDelete}?`)
-    ) {
-      fetchDeleteCommand().then(() => {
-        socketRefreshTrigger();
-        refetchData();
-        setCommandIdDelete(null);
-      });
-    } else {
-      setCommandIdDelete(null);
-    }
+    handleDeleteLayout<IChatCommand>(
+      commandIdDelete,
+      setCommandIdDelete,
+      () => {
+        fetchDeleteCommand().then(() => {
+          refetchData();
+          setCommandIdDelete(null);
+        });
+      }
+    );
   }, [commandIdDelete]);
 
   const { refetchData: fetchEditComman } = ChatCommandService.editCommand(
