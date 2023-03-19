@@ -18,6 +18,11 @@ const WidgetsModel: Schema<IWidgetsDocument> = new Schema(
       of: [layoutBreakpointSchema],
       default: new Map(),
     },
+    toolbox: {
+      type: Map,
+      of: [layoutBreakpointSchema],
+      default: new Map(),
+    },
   },
   { timestamps: true }
 );
