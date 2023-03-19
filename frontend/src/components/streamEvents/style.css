@@ -68,8 +68,10 @@
 .widget-hide-button {
   position: absolute;
   top: 0;
-  right: 0;
-  z-index: 1;
+  right: 3%;
+  width: 10%;
+  text-align: center;
+  z-index: 10;
   border: 0.1rem solid var(--base-bg-color-border);
   background-color: rgba(28, 28, 15, 0.645);
   font-size: large;
