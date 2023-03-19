@@ -1,11 +1,7 @@
 .btn-drawer {
   position: absolute;
   z-index: 3;
-  background-color: transparent;
-}
-
-.btn-drawer:hover {
-  visibility: visible;
+  width: 2vw;
 }
 
 .btn-drawer-close {
