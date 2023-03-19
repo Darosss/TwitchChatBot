@@ -186,10 +186,11 @@ export const getTriggersWords = async (): Promise<undefined | string[]> => {
         },
       },
     ]);
-
     if (triggerWords.length > 0) {
-      return triggerWords[0].words;
+      const words: string[] = triggerWords[0].words;
+      return words.sort((a, b) => b.length - a.length);
     }
+
     return [];
   } catch (err) {
     logger.error(
