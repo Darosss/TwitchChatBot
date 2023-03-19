@@ -48,7 +48,7 @@ export const editWidgetById = (id: string, data: IWidgetsUpdateData) => {
 
 export const removeWidgetById = (id: string) => {
   return useAxiosCustom<IWidgets>({
-    url: `/widgets/remove/${id}`,
+    url: `/widgets/delete/${id}`,
     method: "DELETE",
     manual: true,
     urlParams: false,
