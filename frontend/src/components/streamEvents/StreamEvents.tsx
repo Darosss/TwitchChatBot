@@ -11,7 +11,10 @@ import StreamStatistics from "./streamStatistics";
 import DrawerBar from "@components/drawer/DrawerBar";
 import MessagesWindow from "./messageWindow";
 
-import { initialLayoutWidgets } from "src/layout/initialLayoutWidgets";
+import {
+  initialLayoutWidgets,
+  initialToolboxWidgets,
+} from "src/layout/initialLayoutWidgets";
 import { useParams } from "react-router-dom";
 import {
   editWidgetById,
@@ -37,14 +40,9 @@ export default function StreamEvents() {
   const { eventsId } = useParams();
   const [layoutWidgets, setLayoutWidgets] =
     useState<ReactGridLayout.Layouts>(initialLayoutWidgets);
-  const [toolbox, setToolbox] = useState<ReactGridLayout.Layouts>({
-    ulg: [],
-    lg: [],
-    md: [],
-    sm: [],
-    xs: [],
-    xxs: [],
-  });
+  const [toolbox, setToolbox] = useState<ReactGridLayout.Layouts>(
+    initialToolboxWidgets
+  );
   const [isEdit, setIsEdit] = useState(false);
   const [currentBreakpoint, setCurrentBreakpoint] = useState(() => {
     const width = window.innerWidth;
@@ -59,7 +57,7 @@ export default function StreamEvents() {
   const { data, loading, error } = getWidgetById(eventsId || "");
   const { refetchData: fetchEditWidgets } = editWidgetById(
     data?.data?._id || "",
-    { layout: layoutWidgets }
+    { layout: layoutWidgets, toolbox: toolbox }
   );
 
   useEffect(() => {
@@ -67,6 +65,8 @@ export default function StreamEvents() {
     const { data: layoutData } = data;
 
     setLayoutWidgets(layoutData.layout);
+
+    setToolbox(layoutData.toolbox);
   }, [data]);
 
   const onLayoutChange = (

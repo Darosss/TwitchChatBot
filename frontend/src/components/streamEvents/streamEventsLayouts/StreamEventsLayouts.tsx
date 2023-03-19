@@ -2,7 +2,10 @@ import "./style.css";
 import React, { useState } from "react";
 import { createLayout, getWidgets } from "@services/WidgetsService";
 import { Link } from "react-router-dom";
-import { initialLayoutWidgets } from "src/layout/initialLayoutWidgets";
+import {
+  initialLayoutWidgets,
+  initialToolboxWidgets,
+} from "src/layout/initialLayoutWidgets";
 
 export default function StreamNotifications() {
   const { data, loading, error, refetchData } = getWidgets();
@@ -12,6 +15,7 @@ export default function StreamNotifications() {
   const { refetchData: fetchCreateLayout } = createLayout({
     name: layoutName,
     layout: initialLayoutWidgets,
+    toolbox: initialToolboxWidgets,
   });
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
