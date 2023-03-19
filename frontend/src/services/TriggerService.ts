@@ -1,5 +1,7 @@
 import useAxiosCustom, { IPagination } from "./ApiService";
 
+export type ITriggerMode = "WHOLE-WORD" | "STARTS-WITH" | "ALL";
+
 export interface ITrigger {
   _id: string;
   name: string;
@@ -7,6 +9,7 @@ export interface ITrigger {
   chance: number;
   delay: number;
   uses: number;
+  mode: ITriggerMode;
   onDelay: boolean;
   words: string[];
   messages: string[];
