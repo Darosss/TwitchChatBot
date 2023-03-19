@@ -104,13 +104,10 @@ export const updateCurrentStreamSession = async (
 ) => {
   const currentStreamSession = await getCurrentStreamSession({});
 
-  const streamSession = checkExistResource(
-    currentStreamSession,
-    `Current stream session`
-  );
+  if (!currentStreamSession) return null;
   try {
     const updatedStreamSession = await StreamSession.findByIdAndUpdate(
-      streamSession.id,
+      currentStreamSession.id,
       updateData,
       { new: true }
     );
