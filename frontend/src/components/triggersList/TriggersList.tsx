@@ -122,6 +122,17 @@ export default function TriggersList() {
     });
   };
 
+  const handleOnEdit = (trigger: ITrigger) => {
+    setEditingTrigger(trigger._id);
+    setName(trigger.name);
+    setChance(trigger.chance);
+    setDelay(trigger.delay);
+    setMessages(trigger.messages);
+    setWords(trigger.words);
+    setShowModal(true);
+    setMode(trigger.mode);
+  };
+
   return (
     <>
       <PreviousPage />
@@ -156,14 +167,7 @@ export default function TriggersList() {
                       <button
                         className="common-button primary-button"
                         onClick={() => {
-                          setEditingTrigger(trigger._id);
-                          setName(trigger.name);
-                          setChance(trigger.chance);
-                          setDelay(trigger.delay);
-                          setMessages(trigger.messages);
-                          setWords(trigger.words);
-                          setShowModal(true);
-                          setMode(trigger.mode);
+                          handleOnEdit(trigger);
                         }}
                       >
                         Edit
