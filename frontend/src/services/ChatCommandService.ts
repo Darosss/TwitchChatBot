@@ -13,13 +13,13 @@ export interface IChatCommand {
   useCount: number;
 }
 
-const getCommands = () => {
+export const getCommands = () => {
   return useAxiosCustom<IPagination<IChatCommand>>({
     url: `/chat-commands`,
   });
 };
 
-const editCommand = (commandId: string, data: Partial<IChatCommand>) => {
+export const editCommand = (commandId: string, data: Partial<IChatCommand>) => {
   return useAxiosCustom<IChatCommand>({
     url: `/chat-commands/${commandId}`,
     method: "POST",
@@ -28,7 +28,7 @@ const editCommand = (commandId: string, data: Partial<IChatCommand>) => {
   });
 };
 
-const createCommand = (data: Partial<IChatCommand>) => {
+export const createCommand = (data: Partial<IChatCommand>) => {
   return useAxiosCustom<IChatCommand>({
     url: `/chat-commands/create/`,
     method: "POST",
@@ -38,7 +38,7 @@ const createCommand = (data: Partial<IChatCommand>) => {
   });
 };
 
-const deleteCommand = (commandId: string) => {
+export const deleteCommand = (commandId: string) => {
   return useAxiosCustom<any>({
     url: `/chat-commands/delete/${commandId}`,
     method: "DELETE",
@@ -46,4 +46,3 @@ const deleteCommand = (commandId: string) => {
     urlParams: false,
   });
 };
-export default { getCommands, editCommand, createCommand, deleteCommand };

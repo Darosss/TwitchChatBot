@@ -25,13 +25,13 @@ export interface IConfig {
   updatedAt: Date;
 }
 
-const getConfigs = () => {
+export const getConfigs = () => {
   return useAxiosCustom<IConfig>({
     url: `/configs`,
   });
 };
 
-const editConfig = (data: Partial<IConfig>) => {
+export const editConfig = (data: Partial<IConfig>) => {
   return useAxiosCustom<IConfig>({
     url: `/configs/edit`,
     method: "POST",
@@ -39,5 +39,3 @@ const editConfig = (data: Partial<IConfig>) => {
     manual: true,
   });
 };
-
-export default { getConfigs, editConfig };

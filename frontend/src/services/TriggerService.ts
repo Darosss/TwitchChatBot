@@ -17,13 +17,13 @@ export interface ITrigger {
   updatedAt: Date;
 }
 
-const getTriggers = () => {
+export const getTriggers = () => {
   return useAxiosCustom<IPagination<ITrigger>>({
     url: `/triggers`,
   });
 };
 
-const editTrigger = (commandId: string, data: Partial<ITrigger>) => {
+export const editTrigger = (commandId: string, data: Partial<ITrigger>) => {
   return useAxiosCustom<ITrigger>({
     url: `/triggers/${commandId}`,
     method: "POST",
@@ -32,7 +32,7 @@ const editTrigger = (commandId: string, data: Partial<ITrigger>) => {
   });
 };
 
-const createTrigger = (data: Partial<ITrigger>) => {
+export const createTrigger = (data: Partial<ITrigger>) => {
   return useAxiosCustom<ITrigger>({
     url: `/triggers/create/`,
     method: "POST",
@@ -42,7 +42,7 @@ const createTrigger = (data: Partial<ITrigger>) => {
   });
 };
 
-const deleteTrigger = (triggerId: string) => {
+export const deleteTrigger = (triggerId: string) => {
   return useAxiosCustom<ITrigger>({
     url: `/triggers/delete/${triggerId}`,
     method: "DELETE",
@@ -50,4 +50,3 @@ const deleteTrigger = (triggerId: string) => {
     urlParams: false,
   });
 };
-export default { getTriggers, editTrigger, createTrigger, deleteTrigger };
