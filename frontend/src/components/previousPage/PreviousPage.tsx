@@ -7,8 +7,7 @@ export default function PreviousPage() {
   return (
     <>
       <button className="common-button primary-button">
-        &#8592;
-        <Link to="../">Back</Link>
+        <Link to="../">&#8592;Back</Link>
       </button>
     </>
   );
