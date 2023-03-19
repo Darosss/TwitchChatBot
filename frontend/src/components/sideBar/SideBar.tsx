@@ -3,7 +3,7 @@ import React from "react";
 
 import { Link, LinkProps } from "react-router-dom";
 import resetWindowScroll from "@utils/resetScroll";
-import AuthService from "src/services/AuthService";
+import { getAuthorizeUrl } from "src/services/AuthService";
 import DrawerBar from "@components/drawer";
 
 interface INavLinkProps extends LinkProps {
@@ -11,7 +11,7 @@ interface INavLinkProps extends LinkProps {
 }
 
 export default function SideBar() {
-  const { data: authData, loading, error } = AuthService.getAuthorizeUrl();
+  const { data: authData, loading, error } = getAuthorizeUrl();
   if (error) return <>Error!</>;
   if (loading) return <>Loading...</>;
 

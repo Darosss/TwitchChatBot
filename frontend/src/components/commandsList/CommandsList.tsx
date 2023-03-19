@@ -3,12 +3,18 @@ import "./style.css";
 import React, { useContext, useEffect, useState } from "react";
 import formatDate from "@utils/formatDate";
 import FilterBarCommands from "./filterBarCommands";
-import ChatCommandService, { IChatCommand } from "@services/ChatCommandService";
 import Modal from "@components/modal";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
 import { SocketContext } from "@context/SocketContext";
 import { handleDeleteLayout } from "@utils/handleDeleteApi";
+import {
+  getCommands,
+  editCommand,
+  createCommand,
+  deleteCommand,
+  IChatCommand,
+} from "@services/ChatCommandService";
 
 export default function CommandsList() {
   const socket = useContext(SocketContext);
@@ -25,12 +31,7 @@ export default function CommandsList() {
   const [messages, setMessages] = useState([""]);
   const [privilege, setPrivilege] = useState<number>();
 
-  const {
-    data: commandsData,
-    loading,
-    error,
-    refetchData,
-  } = ChatCommandService.getCommands();
+  const { data: commandsData, loading, error, refetchData } = getCommands();
 
   const socketRefreshTrigger = () => {
     socket?.emit("refreshCommands");
@@ -48,20 +49,17 @@ export default function CommandsList() {
     );
   }, [commandIdDelete]);
 
-  const { refetchData: fetchEditComman } = ChatCommandService.editCommand(
-    editingCommand,
-    {
-      name: name,
-      description: description,
-      enabled: enabled,
-      aliases: aliases,
-      messages: messages,
-      privilege: privilege || 0,
-    }
-  );
+  const { refetchData: fetchEditComman } = editCommand(editingCommand, {
+    name: name,
+    description: description,
+    enabled: enabled,
+    aliases: aliases,
+    messages: messages,
+    privilege: privilege || 0,
+  });
 
   const { error: createCommandError, refetchData: fetchCreateCommand } =
-    ChatCommandService.createCommand({
+    createCommand({
       name: `New command${commandsData?.count}`,
       description: `New command description${commandsData?.count}`,
       enabled: true,
@@ -70,7 +68,7 @@ export default function CommandsList() {
       privilege: 0,
     });
 
-  const { refetchData: fetchDeleteCommand } = ChatCommandService.deleteCommand(
+  const { refetchData: fetchDeleteCommand } = deleteCommand(
     commandIdDelete ? commandIdDelete : ""
   );
 

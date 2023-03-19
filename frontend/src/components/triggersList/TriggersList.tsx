@@ -6,9 +6,13 @@ import Modal from "@components/modal";
 import formatDate from "@utils/formatDate";
 import PreviousPage from "@components/previousPage";
 import FilterBarTriggers from "./filterBarTriggers";
-import TriggerService, {
+import {
   ITrigger,
   ITriggerMode,
+  getTriggers,
+  editTrigger,
+  createTrigger,
+  deleteTrigger,
 } from "@services/TriggerService";
 import { SocketContext } from "@context/SocketContext";
 import { handleDeleteLayout } from "@utils/handleDeleteApi";
@@ -29,27 +33,19 @@ export default function TriggersList() {
   const [words, setWords] = useState([""]);
   const [mode, setMode] = useState<ITriggerMode>("ALL");
 
-  const {
-    data: commandsData,
-    loading,
-    error,
-    refetchData,
-  } = TriggerService.getTriggers();
+  const { data: commandsData, loading, error, refetchData } = getTriggers();
 
-  const { refetchData: fetchEditTrigger } = TriggerService.editTrigger(
-    editingTrigger,
-    {
-      name: name,
-      enabled: enabled,
-      chance: chance || 50,
-      delay: delay,
-      messages: messages,
-      words: words,
-      mode: mode,
-    }
-  );
+  const { refetchData: fetchEditTrigger } = editTrigger(editingTrigger, {
+    name: name,
+    enabled: enabled,
+    chance: chance || 50,
+    delay: delay,
+    messages: messages,
+    words: words,
+    mode: mode,
+  });
 
-  const { refetchData: fetchCreateTrigger } = TriggerService.createTrigger({
+  const { refetchData: fetchCreateTrigger } = createTrigger({
     name: `New trigger${commandsData?.count}`,
     delay: 180,
     enabled: true,
@@ -58,7 +54,7 @@ export default function TriggersList() {
     messages: [`New trigger${commandsData?.count} default message`],
   });
 
-  const { refetchData: fetchDeleteCommand } = TriggerService.deleteTrigger(
+  const { refetchData: fetchDeleteCommand } = deleteTrigger(
     triggerIdDelete ? triggerIdDelete : ""
   );
 

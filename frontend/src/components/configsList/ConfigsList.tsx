@@ -2,7 +2,7 @@ import "./style.css";
 import React, { useContext, useState } from "react";
 
 import PreviousPage from "@components/previousPage";
-import ConfigService from "@services/ConfigService";
+import { getConfigs, editConfig } from "@services/ConfigService";
 import { SocketContext } from "@context/SocketContext";
 
 export default function ConfigsList() {
@@ -31,9 +31,9 @@ export default function ConfigsList() {
     message: 1,
   });
 
-  const { data, loading, error, refetchData } = ConfigService.getConfigs();
+  const { data, loading, error, refetchData } = getConfigs();
 
-  const { refetchData: fetchEditConfig } = ConfigService.editConfig({
+  const { refetchData: fetchEditConfig } = editConfig({
     commandsPrefix: prefix,
     timersIntervalDelay: timersInterval,
     activeUserTimeDelay: activeUserTime,
