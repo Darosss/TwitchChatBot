@@ -13,6 +13,7 @@ export interface ManyWidgetsFindOptions extends WidgetsFindOptions {
   limit?: number;
 }
 
-export interface WidgetCreateData extends Pick<IWidget, "name" | "layout"> {}
+export interface WidgetCreateData
+  extends Pick<IWidget, "name" | "layout" | "toolbox"> {}
 
 export interface WidgetUpdateData extends Partial<ChatCommandOptionalData> {}
