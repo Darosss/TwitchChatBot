@@ -158,6 +158,7 @@ export default function StreamEvents() {
 
       <ResponsiveReactGridLayout
         onLayoutChange={onLayoutChange}
+        style={{ marginRight: "2rem" }}
         compactType={null}
         layouts={layoutWidgets}
         onBreakpointChange={onBreakpointChange}
