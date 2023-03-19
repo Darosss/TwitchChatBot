@@ -58,11 +58,12 @@ export const addNewWidget = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, layout } = req.body;
+  const { name, layout, toolbox } = req.body;
   try {
     const newWidget = await createWidget({
       name: name,
       layout: layout,
+      toolbox: toolbox,
     });
 
     return res
@@ -79,11 +80,12 @@ export const editWidgetById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, layout } = req.body;
+  const { name, layout, toolbox } = req.body;
   try {
     const updatedWidget = await updateWidgetById(id, {
       name: name,
       layout: layout,
+      toolbox: toolbox,
     });
 
     return res.status(200).send({
