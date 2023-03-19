@@ -140,9 +140,9 @@ export default function TriggersList() {
               <th>Enabled</th>
               <th>Chance</th>
               <th>Delay</th>
-              <th>Created</th>
               <th>Words</th>
               <th>Messages</th>
+              <th>Created</th>
             </tr>
           </thead>
 
@@ -177,6 +177,21 @@ export default function TriggersList() {
                   <td>{trigger.enabled.toString()}</td>
                   <td>{trigger.chance}%</td>
                   <td>{trigger.delay}sec</td>
+
+                  <td>
+                    <div className="triggers-big triggers-words">
+                      {trigger.words.map((word) => {
+                        return <div>{word}</div>;
+                      })}
+                    </div>
+                  </td>
+                  <td>
+                    <div className=" triggers-big triggers-messages">
+                      {trigger.messages.map((message) => {
+                        return <div>{message}</div>;
+                      })}
+                    </div>
+                  </td>
                   <td>
                     <div className="tooltip">
                       {formatDate(trigger.createdAt, "days+time")}
@@ -184,10 +199,6 @@ export default function TriggersList() {
                         {formatDate(trigger.createdAt)}
                       </span>
                     </div>
-                  </td>
-                  <td className="triggers-big">{trigger.words.join("\n")}</td>
-                  <td className="triggers-big">
-                    {trigger.messages.join("\n")}
                   </td>
                 </tr>
               );

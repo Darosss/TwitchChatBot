@@ -1,3 +1,7 @@
+#triggers-list {
+  margin-right: 2rem;
+}
+
 #table-triggers-list td:not(:first-child) {
   border-left: 0.1rem solid var(--base-bg-color-border);
   text-align: center;
@@ -8,8 +12,20 @@
 }
 
 .triggers-big {
-  width: 10vw;
-  white-space: pre;
+  width: 25vw;
+  height: 30vh;
+  display: flex;
+  overflow-x: hidden;
+  flex-wrap: wrap;
+}
+
+.triggers-big > div {
+  flex: 1 1 30%;
+  border: 1px solid var(--base-bg-color-border);
+}
+
+.triggers-big > div:hover {
+  background-color: var(--base-bg-color-border);
 }
 
 .triggers-textarea {
