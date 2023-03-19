@@ -44,3 +44,12 @@ export const initialLayoutWidgets: ReactGridLayout.Layouts = {
     { i: "messages-window", x: 3, y: 0, w: 3, h: 4, static: true },
   ],
 };
+
+export const initialToolboxWidgets: ReactGridLayout.Layouts = {
+  ulg: [],
+  lg: [],
+  md: [],
+  sm: [],
+  xs: [],
+  xxs: [],
+};
