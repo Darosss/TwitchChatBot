@@ -54,7 +54,7 @@ export default function DrawerBar(props: {
         style={{
           background: "#18181b",
           position: isOpen && sticky ? "sticky" : "absolute",
-          overflow: "auto",
+          overflow: "hidden",
           display: isOpen ? "block" : "none",
         }}
       >
