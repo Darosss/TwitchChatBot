@@ -43,24 +43,18 @@ body::-webkit-scrollbar {
   display: none;
 }
 
-ul::-webkit-scrollbar-track,
-div::-webkit-scrollbar-track,
-textarea::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 
   background-color: var(--base-bg-color);
 }
 
-ul::-webkit-scrollbar,
-div::-webkit-scrollbar,
-textarea::-webkit-scrollbar {
+*::-webkit-scrollbar {
   width: 12px;
   background-color: #f5f5f5;
 }
 
-ul::-webkit-scrollbar-thumb,
-div::-webkit-scrollbar-thumb,
-textarea::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
   background-color: var(--base-bg-color-chat);
@@ -96,7 +90,7 @@ input:focus {
 
 /* DEFAULTS TABLES */
 table {
-  width: 99vw;
+  width: 96vw;
 }
 
 table thead th {
