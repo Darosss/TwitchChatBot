@@ -1,5 +1,7 @@
 #triggers-list {
   margin-right: 2rem;
+  overflow: auto;
+  width: 98vw;
 }
 
 #table-triggers-list td:not(:first-child) {
@@ -7,25 +9,49 @@
   text-align: center;
 }
 
-.triggers-list-modal-wrapper {
-  width: 45vw;
-}
-
 .triggers-big {
   width: 25vw;
   height: 30vh;
   display: flex;
-  overflow-x: hidden;
+  overflow: auto;
   flex-wrap: wrap;
 }
 
 .triggers-big > div {
   flex: 1 1 30%;
+  min-height: 20%;
+  padding: 0.1rem;
   border: 1px solid var(--base-bg-color-border);
 }
 
 .triggers-big > div:hover {
   background-color: var(--base-bg-color-border);
+}
+
+.trigger-div-data {
+  display: flex;
+  flex-wrap: wrap;
+  height: 30vh;
+  overflow-x: hidden;
+}
+
+.trigger-div-data > div {
+  flex: 1 1 49%;
+  max-width: 50%;
+  border-bottom: 0.1rem solid var(--base-bg-color-border);
+}
+
+.trigger-div-data > div:hover {
+  background-color: var(--base-bg-color-border);
+}
+
+.trigger-div-data > div:nth-child(even) {
+  color: var(--base-color-info);
+  border-left: 0.1rem solid var(--base-bg-color-border);
+}
+
+.trigger-div-data > div:nth-child(odd) {
+  font-weight: 700;
 }
 
 .triggers-textarea {
@@ -39,14 +65,39 @@
   min-height: 5vw;
 }
 
-.triggers-list-name {
-  width: 25vw;
+.triggers-list-input {
   height: 5vh;
   font-size: 1.1rem;
-  overflow: hidden;
 }
 
 .changed-field {
   color: var(--base-color-info);
   background-color: var(--base-bg-color-info);
+}
+
+.triggers-list-modal-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+  min-height: 15vh;
+}
+
+.triggers-list-modal-wrapper > div {
+  flex: 1 1 45%;
+  border-bottom: 0.1rem solid var(--base-bg-color-border);
+  margin-top: 0.1rem;
+}
+
+.triggers-list-modal-wrapper > div:hover {
+  flex: 1 1 45%;
+  background: var(--base-bg-color-border);
+}
+
+.triggers-list-modal-wrapper > div > * {
+  width: 100%;
+}
+
+.triggers-list-mode {
+  display: flex;
 }

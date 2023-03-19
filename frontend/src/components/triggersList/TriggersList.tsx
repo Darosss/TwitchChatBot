@@ -6,7 +6,10 @@ import Modal from "@components/modal";
 import formatDate from "@utils/formatDate";
 import PreviousPage from "@components/previousPage";
 import FilterBarTriggers from "./filterBarTriggers";
-import TriggerService, { ITrigger } from "@services/TriggerService";
+import TriggerService, {
+  ITrigger,
+  ITriggerMode,
+} from "@services/TriggerService";
 import { SocketContext } from "@context/SocketContext";
 import { handleDeleteLayout } from "@utils/handleDeleteApi";
 
@@ -19,11 +22,12 @@ export default function TriggersList() {
   const [triggerIdDelete, setTriggerIdDelete] = useState<string | null>(null);
 
   const [name, setName] = useState("");
-  const [chance, setChance] = useState<number>();
+  const [chance, setChance] = useState<number>(0);
   const [enabled, setEnabled] = useState(true);
-  const [delay, setDelay] = useState<number>();
+  const [delay, setDelay] = useState<number>(0);
   const [messages, setMessages] = useState([""]);
   const [words, setWords] = useState([""]);
+  const [mode, setMode] = useState<ITriggerMode>("ALL");
 
   const {
     data: commandsData,
@@ -41,6 +45,7 @@ export default function TriggersList() {
       delay: delay,
       messages: messages,
       words: words,
+      mode: mode,
     }
   );
 
@@ -135,11 +140,7 @@ export default function TriggersList() {
                   New
                 </button>
               </th>
-              <th>Name</th>
-              <th>Uses</th>
-              <th>Enabled</th>
-              <th>Chance</th>
-              <th>Delay</th>
+              <th colSpan={5}>Data</th>
               <th>Words</th>
               <th>Messages</th>
               <th>Created</th>
@@ -161,6 +162,7 @@ export default function TriggersList() {
                         setMessages(trigger.messages);
                         setWords(trigger.words);
                         setShowModal(true);
+                        setMode(trigger.mode);
                       }}
                     >
                       Edit
@@ -172,23 +174,41 @@ export default function TriggersList() {
                       Delete
                     </button>
                   </td>
-                  <td>{trigger.name} </td>
-                  <td>{trigger.uses} </td>
-                  <td>{trigger.enabled.toString()}</td>
-                  <td>{trigger.chance}%</td>
-                  <td>{trigger.delay}sec</td>
-
+                  <td colSpan={5}>
+                    <div className="trigger-div-data">
+                      <div>Name: </div>
+                      <div>{trigger.name}</div>
+                      <div>Chance: </div>
+                      <div>{trigger.chance}</div>
+                      <div>Enabled: </div>
+                      <div
+                        style={{
+                          background: `${trigger.enabled ? "green" : "red"}`,
+                        }}
+                      >
+                        {trigger.enabled.toString()}
+                      </div>
+                      <div>Delay: </div>
+                      <div>{trigger.delay}</div>
+                      <div>Uses: </div>
+                      <div>{trigger.uses}</div>
+                      <div>Delay: </div>
+                      <div>{trigger.delay}</div>
+                      <div>Mode:</div>
+                      <div>{trigger.mode}</div>
+                    </div>
+                  </td>
                   <td>
                     <div className="triggers-big triggers-words">
-                      {trigger.words.map((word) => {
-                        return <div>{word}</div>;
+                      {trigger.words.map((word, index) => {
+                        return <div key={index}>{word}</div>;
                       })}
                     </div>
                   </td>
                   <td>
                     <div className=" triggers-big triggers-messages">
-                      {trigger.messages.map((message) => {
-                        return <div>{message}</div>;
+                      {trigger.messages.map((message, index) => {
+                        return <div key={index}>{message}</div>;
                       })}
                     </div>
                   </td>
@@ -223,89 +243,89 @@ export default function TriggersList() {
         }}
         show={showModal}
       >
-        <table className="triggers-list-modal-wrapper">
-          <tbody>
-            <tr>
-              <th>Name </th>
-              <td>
-                <input
-                  className="triggers-list-name"
-                  type="text"
-                  defaultValue={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    changeColorOnChange(e);
-                  }}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th> Enabled </th>
-              <td>
-                <button
-                  onClick={(e) => toggleOnOffTrigger(e)}
-                  className={
-                    `${!true ? "danger-button" : "primary-button"} ` +
-                    "common-button "
-                  }
-                >
-                  {enabled.toString()}
-                </button>
-              </td>
-            </tr>
-
-            <tr>
-              <th>Chance </th>
-              <td>
-                <input
-                  defaultValue={chance}
-                  onChange={(e) => {
-                    setChance(Number(e.target.value));
-                    changeColorOnChange(e);
-                  }}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Delay</th>
-              <td>
-                <input
-                  defaultValue={delay}
-                  onChange={(e) => {
-                    setDelay(Number(e.target.value));
-                    changeColorOnChange(e);
-                  }}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Words</th>
-              <td>
-                <textarea
-                  className="triggers-textarea"
-                  defaultValue={words?.join("\n")}
-                  onChange={(e) => {
-                    setWords(e.target.value?.split("\n"));
-                    changeColorOnChange(e);
-                  }}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Messages</th>
-              <td>
-                <textarea
-                  className="triggers-textarea"
-                  defaultValue={messages?.join("\n")}
-                  onChange={(e) => {
-                    setMessages(e.target.value?.split("\n"));
-                    changeColorOnChange(e);
-                  }}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="triggers-list-modal-wrapper">
+          <div>Name</div>
+          <div>
+            <input
+              className="triggers-list-input"
+              type="text"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                changeColorOnChange(e);
+              }}
+            />
+          </div>
+          <div> Enabled </div>
+          <div>
+            <button
+              onClick={(e) => toggleOnOffTrigger(e)}
+              className={
+                `${!true ? "danger-button" : "primary-button"} ` +
+                "common-button "
+              }
+            >
+              {enabled.toString()}
+            </button>
+          </div>
+          <div>Chance </div>
+          <div>
+            <input
+              className="triggers-list-input"
+              value={chance}
+              onChange={(e) => {
+                setChance(Number(e.target.value));
+                changeColorOnChange(e);
+              }}
+            />
+          </div>
+          <div>Mode </div>
+          <select
+            value={mode}
+            onChange={(e) => setMode(e.target.value as ITriggerMode)}
+          >
+            {["ALL", "STARTS-WITH", "WHOLE-WORD"].map((modeTrigger, index) => {
+              return (
+                <option key={index} value={modeTrigger}>
+                  {modeTrigger}
+                </option>
+              );
+            })}
+          </select>
+          <div>Delay</div>
+          <div>
+            <input
+              className="triggers-list-input"
+              value={delay}
+              onChange={(e) => {
+                setDelay(Number(e.target.value));
+                changeColorOnChange(e);
+              }}
+            />
+          </div>
+          <div>Words</div>
+          <div>
+            <textarea
+              className="triggers-textarea"
+              value={words?.join("\n")}
+              onChange={(e) => {
+                setWords(e.target.value?.split("\n"));
+                changeColorOnChange(e);
+              }}
+            />
+          </div>
+          <div>Messages</div>
+          <div>
+            <textarea
+              className="triggers-textarea"
+              value={messages?.join("\n")}
+              onChange={(e) => {
+                setMessages(e.target.value?.split("\n"));
+                changeColorOnChange(e);
+              }}
+            />
+          </div>
+        </div>
       </Modal>
     </>
   );
