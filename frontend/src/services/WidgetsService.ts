@@ -5,11 +5,13 @@ export interface IWidgets {
   _id: string;
   name: string;
   layout: ReactGridLayout.Layouts;
+  toolbox: ReactGridLayout.Layouts;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface IWidgetsCreateData extends Pick<IWidgets, "name" | "layout"> {}
+export interface IWidgetsCreateData
+  extends Pick<IWidgets, "name" | "layout" | "toolbox"> {}
 
 export interface IWidgetsUpdateData extends Partial<IWidgetsCreateData> {}
 
