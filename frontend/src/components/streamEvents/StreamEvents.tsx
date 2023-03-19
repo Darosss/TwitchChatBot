@@ -13,7 +13,11 @@ import MessagesWindow from "./messageWindow";
 
 import { initialLayoutWidgets } from "src/layout/initialLayoutWidgets";
 import { useParams } from "react-router-dom";
-import { getWidgetById } from "@services/WidgetsService";
+import {
+  editWidgetById,
+  getWidgetById,
+  IWidgets,
+} from "@services/WidgetsService";
 import PreviousPage from "@components/previousPage";
 
 const components = new Map([
@@ -31,11 +35,6 @@ export default function StreamEvents() {
   );
 
   const { eventsId } = useParams();
-
-  const { data, loading, error } = getWidgetById(eventsId || "");
-
-  const [isEdit, setIsEdit] = useState(false);
-  const [currentBreakpoint, setCurrentBreakpoint] = useState("ulg");
   const [layoutWidgets, setLayoutWidgets] =
     useState<ReactGridLayout.Layouts>(initialLayoutWidgets);
   const [toolbox, setToolbox] = useState<ReactGridLayout.Layouts>({
@@ -46,10 +45,27 @@ export default function StreamEvents() {
     xs: [],
     xxs: [],
   });
+  const [isEdit, setIsEdit] = useState(false);
+  const [currentBreakpoint, setCurrentBreakpoint] = useState(() => {
+    const width = window.innerWidth;
+    if (width >= 1700) return "ulg";
+    else if (width >= 1200) return "lg";
+    else if (width >= 996) return "md";
+    else if (width >= 768) return "sm";
+    else if (width >= 480) return "xs";
+    else return "xxs";
+  });
+
+  const { data, loading, error } = getWidgetById(eventsId || "");
+  const { refetchData: fetchEditWidgets } = editWidgetById(
+    data?.data?._id || "",
+    { layout: layoutWidgets }
+  );
 
   useEffect(() => {
     if (!data) return;
     const { data: layoutData } = data;
+
     setLayoutWidgets(layoutData.layout);
   }, [data]);
 
@@ -57,15 +73,14 @@ export default function StreamEvents() {
     currLayout: ReactGridLayout.Layout[],
     allLayouts: ReactGridLayout.Layouts
   ) => {
-    setLayoutWidgets((prevLayout) => ({
-      ...prevLayout,
+    setLayoutWidgets((prevLayouts) => ({
+      ...prevLayouts,
       [currentBreakpoint]: currLayout,
     }));
   };
 
   const onBreakpointChange = (breakpoint: string) => {
     setCurrentBreakpoint(breakpoint);
-
     setToolbox((prevToolbox) => ({
       ...prevToolbox,
       [breakpoint]:
@@ -106,9 +121,15 @@ export default function StreamEvents() {
       const MapComponent = components.get(item.i);
       if (!MapComponent) return null;
       return (
-        <div key={item.i}>
+        <div
+          key={item.i}
+          style={{ border: !item.static ? "2px solid pink" : "" }}
+        >
           {isEdit ? (
-            <div className="widget-hide-button" onClick={() => onPutItem(item)}>
+            <div
+              className="widget-hide-button common-button"
+              onClick={() => onPutItem(item)}
+            >
               &times;
             </div>
           ) : null}
@@ -132,6 +153,7 @@ export default function StreamEvents() {
         onTakeItem={onTakeItem}
         setLayoutWidgets={setLayoutWidgets}
         setIsEdit={setIsEdit}
+        editWidgets={fetchEditWidgets}
       />
 
       <ResponsiveReactGridLayout
@@ -139,17 +161,18 @@ export default function StreamEvents() {
         compactType={null}
         layouts={layoutWidgets}
         onBreakpointChange={onBreakpointChange}
-        breakpoints={{ ulg: 1700, lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+        breakpoints={{ ulg: 1500, lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
         preventCollision={false}
         rowHeight={30}
         cols={{ ulg: 16, lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
         autoSize={true}
         margin={{
+          ulg: [12, 12],
           lg: [10, 10],
-          md: [10, 10],
-          sm: [10, 10],
-          xs: [10, 10],
-          xxs: [10, 10],
+          md: [8, 8],
+          sm: [6, 6],
+          xs: [4, 4],
+          xxs: [2, 2],
         }}
       >
         {generateWidgets()}
@@ -193,31 +216,44 @@ function EventsDrawerBar({
   onTakeItem,
   setLayoutWidgets,
   setIsEdit,
+  editWidgets,
 }: {
   widgetsLayoutsName: string;
   toolbox: ReactGridLayout.Layouts;
   currentBreakpoint: string;
   onTakeItem: (item: ReactGridLayout.Layout) => void;
-
   setLayoutWidgets: React.Dispatch<
     React.SetStateAction<ReactGridLayout.Layouts>
   >;
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  editWidgets: () => Promise<IWidgets>;
 }) {
   const [edit, setEdit] = useState(false);
+
+  const setStaticLayout = (isStatic: boolean) => {
+    setLayoutWidgets((prevLayout) => ({
+      ...prevLayout,
+      [currentBreakpoint]: prevLayout[currentBreakpoint].map((item) => ({
+        ...item,
+        static: isStatic,
+      })),
+    }));
+  };
+
   const toggleStaticMode = () => {
+    setStaticLayout(edit);
+
     setIsEdit((prevState) => {
       return !prevState;
     });
-    setEdit(!edit);
 
-    setLayoutWidgets((prevLayout) => ({
-      ...prevLayout,
-      lg: prevLayout.lg.map((item) => ({
-        ...item,
-        static: !item.static,
-      })),
-    }));
+    setEdit((prevState) => {
+      return !prevState;
+    });
+  };
+
+  const handleOnSave = () => {
+    editWidgets();
   };
 
   return (
@@ -244,7 +280,7 @@ function EventsDrawerBar({
               <button onClick={toggleStaticMode}>Toggle Edit</button>
             </div>
             <div>
-              <button>Save</button>
+              {!edit ? <button onClick={handleOnSave}>Save</button> : null}
             </div>
           </div>
         </div>
