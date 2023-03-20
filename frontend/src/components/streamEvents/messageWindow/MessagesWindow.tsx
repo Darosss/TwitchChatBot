@@ -1,8 +1,6 @@
 import "./style.css";
 import React, { useContext, useEffect, useState } from "react";
 import "react-notifications-component/dist/theme.css";
-import { iNotification } from "react-notifications-component";
-import { Store } from "react-notifications-component";
 
 import {
   getMessageCategories,
@@ -10,6 +8,7 @@ import {
 } from "@services/MessageCategoriesService";
 import Modal from "@components/modal";
 import { SocketContext } from "@context/SocketContext";
+import { addNotification } from "@utils/getNotificationValues";
 
 export default function MessagesWindow() {
   const socket = useContext(SocketContext);
@@ -57,27 +56,10 @@ export default function MessagesWindow() {
     setCurrentIdCategory(id);
     const randomMessage = getRandomMessage(id);
 
-    Store.addNotification({
-      ...getNotification("Send random message", randomMessage),
-      dismiss: {
-        duration: 5000,
-        onScreen: true,
-      },
-    });
+    addNotification("Send random message", randomMessage, "success");
+
     setMessageToSend(randomMessage);
     sendMessage(randomMessage);
-  };
-
-  const getNotification = (title: string, message: string): iNotification => {
-    return {
-      title: `${title}`,
-      message: `${message}`,
-      type: "success",
-      insert: "top",
-      container: "top-right",
-      animationIn: ["animate__animated animate__fadeIn"], // `animate.css v4` classes
-      animationOut: ["animate__animated animate__fadeOut"], // `animate.css v4` classes
-    };
   };
 
   const sendMessage = (message: string) => {
