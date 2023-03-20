@@ -52,6 +52,7 @@ export default function TriggersList() {
     chance: chance,
     words: [`New trigger${commandsData?.count} default word`],
     messages: [`New trigger${commandsData?.count} default message`],
+    mode: "ALL",
   });
 
   const { refetchData: fetchDeleteCommand } = deleteTrigger(
