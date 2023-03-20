@@ -9,6 +9,13 @@ export interface IMessageCategory {
   updatedAt: Date;
 }
 
+type IMessageCategoryCreateData = Pick<
+  IMessageCategory,
+  "category" | "messages"
+>;
+
+type IMessageCategoryUpdateData = Partial<IMessageCategoryCreateData>;
+
 export const getMessageCategories = () => {
   return useAxiosCustom<IPagination<IMessageCategory>>({
     url: `/message-categories`,
@@ -17,7 +24,7 @@ export const getMessageCategories = () => {
 
 export const editMessageCategoryById = (
   id: string,
-  data: Partial<IMessageCategory>
+  data: IMessageCategoryUpdateData
 ) => {
   return useAxiosCustom<IMessageCategory>({
     url: `/message-categories/${id}`,
@@ -37,9 +44,7 @@ export const incrementUsesCategoryById = (id: string) => {
   });
 };
 
-export const createMessageCategory = (
-  data: Pick<IMessageCategory, "category" | "messages">
-) => {
+export const createMessageCategory = (data: IMessageCategoryCreateData) => {
   return useAxiosCustom<IMessageCategory>({
     url: `/message-categories/create`,
     method: "POST",

@@ -25,13 +25,15 @@ export interface IConfig {
   updatedAt: Date;
 }
 
+type IConfigUpdateData = Omit<IConfig, "_id" | "createdAt" | "updatedAt">;
+
 export const getConfigs = () => {
   return useAxiosCustom<IConfig>({
     url: `/configs`,
   });
 };
 
-export const editConfig = (data: Partial<IConfig>) => {
+export const editConfig = (data: IConfigUpdateData) => {
   return useAxiosCustom<IConfig>({
     url: `/configs/edit`,
     method: "POST",

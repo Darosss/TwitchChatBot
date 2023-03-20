@@ -10,10 +10,9 @@ export interface IWidgets {
   updatedAt: Date;
 }
 
-export interface IWidgetsCreateData
-  extends Pick<IWidgets, "name" | "layout" | "toolbox"> {}
+export type IWidgetsCreateData = Pick<IWidgets, "name" | "layout" | "toolbox">;
 
-export interface IWidgetsUpdateData extends Partial<IWidgetsCreateData> {}
+export type IWidgetsUpdateData = Partial<IWidgetsCreateData>;
 
 export const getWidgets = () => {
   return useAxiosCustom<IPagination<IWidgets>>({

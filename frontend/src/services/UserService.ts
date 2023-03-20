@@ -20,6 +20,11 @@ export interface IUser {
   follower?: Date;
 }
 
+type IUserUpdateData = Omit<
+  IUser,
+  "_id" | "twitchId" | "twitchName" | "twitchCreated"
+>;
+
 interface FirstAndLatestMsgs {
   firstMessages: IMessage[];
   latestMessages: IMessage[];
@@ -37,7 +42,7 @@ export const getUser = (userId: string) => {
   });
 };
 
-export const editUser = (userId: string, data: Partial<IUser>) => {
+export const editUser = (userId: string, data: IUserUpdateData) => {
   return useAxiosCustom<IUser>({
     url: `/users/${userId}`,
     method: "POST",
