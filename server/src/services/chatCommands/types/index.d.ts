@@ -13,17 +13,14 @@ export interface ManyChatCommandsFindOptions extends ChatCommandsFindOptions {
   limit?: number;
 }
 
-export interface ChatCommandOptionalData {
-  description?: string;
-  enabled?: boolean;
-  aliases?: string[];
-  messages?: string[];
-  privilege?: number;
-}
+export interface ChatCommandOptionalData
+  extends Partial<
+    Omit<IChatCommand, "_id" | "createdAt" | "updatedAt" | "uses">
+  > {}
 
-export interface ChatCommandCreateData extends ChatCommandOptionalData {
-  name: string;
-}
+export interface ChatCommandCreateData
+  extends Pick<IChatCommand, "name">,
+    ChatCommandOptionalData {}
 
 export interface ChatCommandUpdateData
   extends ChatCommandOptionalData,

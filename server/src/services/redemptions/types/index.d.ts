@@ -14,17 +14,9 @@ export interface ManyRedemptionsFindOptions extends RedemptionFindOptions {
   limit?: number;
 }
 
-export interface RedemptionOptionalData {
-  rewardImage?: string;
-  message?: string;
-}
+export interface RedemptionOptionalData
+  extends Partial<Pick<IRedemption, "rewardImage" | "message">> {}
 
-export interface RedemptionCreateData extends RedemptionOptionalData {
-  rewardId: string;
-  userId: string;
-  userName: string;
-  userDisplayName: string;
-  redemptionDate: Date;
-  rewardTitle: string;
-  rewardCost: number;
-}
+export interface RedemptionCreateData
+  extends Omit<IRedemption, "_id" | "rewardImage" | "message">,
+    RedemptionOptionalData {}
