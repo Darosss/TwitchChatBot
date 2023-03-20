@@ -30,7 +30,7 @@ export default function CommandsList() {
   const [enabled, setEnabled] = useState(true);
   const [aliases, setAliases] = useState([""]);
   const [messages, setMessages] = useState([""]);
-  const [privilege, setPrivilege] = useState<number>();
+  const [privilege, setPrivilege] = useState<number>(0);
 
   const { data: commandsData, loading, error, refetchData } = getCommands();
 
@@ -130,6 +130,17 @@ export default function CommandsList() {
     resetOnChangeClasses();
   };
 
+  const handleOnEdit = (command: IChatCommand) => {
+    setEditingCommand(command._id);
+    setName(command.name);
+    setDescription(command.description || "");
+    setAliases(command.aliases);
+    setMessages(command.messages);
+    setPrivilege(command.privilege);
+    setEnabled(command.enabled);
+    setShowModal(true);
+  };
+
   return (
     <>
       <PreviousPage />
@@ -148,12 +159,7 @@ export default function CommandsList() {
                   New
                 </button>
               </th>
-              <th>Name</th>
-              <th>Created</th>
-              <th>Uses</th>
-              <th>Enabled</th>
-              <th>Privilege</th>
-              <th>Description</th>
+              <th colSpan={5}>Data</th>
               <th>Aliases</th>
               <th>Messages</th>
             </tr>
@@ -166,16 +172,7 @@ export default function CommandsList() {
                   <td>
                     <button
                       className="common-button primary-button"
-                      onClick={() => {
-                        setEditingCommand(command._id);
-                        setName(command.name);
-                        setDescription(command.description || "");
-                        setAliases(command.aliases);
-                        setMessages(command.messages);
-                        setPrivilege(command.privilege);
-                        setEnabled(command.enabled);
-                        setShowModal(true);
-                      }}
+                      onClick={() => handleOnEdit(command)}
                     >
                       Edit
                     </button>
@@ -186,24 +183,42 @@ export default function CommandsList() {
                       Delete
                     </button>
                   </td>
-                  <td> {command.name} </td>
-                  <td>
-                    <div className="tooltip">
-                      {formatDate(command.createdAt, "days+time")}
-                      <span className="tooltiptext">
-                        {formatDate(command.createdAt)}
-                      </span>
+                  <td colSpan={5}>
+                    <div className="command-div-data">
+                      <div>Name: </div>
+                      <div>{command.name}</div>
+                      <div>Uses: </div>
+                      <div>{command.useCount}</div>
+                      <div>Enabled: </div>
+                      <div
+                        style={{
+                          background: `${command.enabled ? "green" : "red"}`,
+                        }}
+                      >
+                        {command.enabled.toString()}
+                      </div>
+                      <div>Privilege: </div>
+                      <div>{command.privilege}</div>
+                      <div>Created at: </div>
+                      <div>{formatDate(command.createdAt, "days+time")}</div>
+                      <div>Description: </div>
+                      <div>{command.description}</div>
                     </div>
                   </td>
 
-                  <td>{command.useCount}</td>
-                  <td>{command.enabled.toString()}</td>
-                  <td>{command.privilege.toString()}</td>
-                  <td className="commands-big">{command.description}</td>
-
-                  <td className="commands-big">{command.aliases.join("\n")}</td>
-                  <td className="commands-big">
-                    {command.messages.join("\n")}
+                  <td>
+                    <div className="commands-big">
+                      {command.aliases.map((alias, index) => {
+                        return <div key={index}>{alias}</div>;
+                      })}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="commands-big">
+                      {command.messages.map((message, index) => {
+                        return <div key={index}>{message}</div>;
+                      })}
+                    </div>
                   </td>
                 </tr>
               );
@@ -226,91 +241,82 @@ export default function CommandsList() {
         onSubmit={() => onSubmitEditModal()}
         show={showModal}
       >
-        <table className="commands-list-modal-wrapper">
-          <tbody>
-            <tr>
-              <th>Name </th>
-              <td>
-                <input
-                  className="commands-list-name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    changeColorOnChange(e);
-                  }}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th> Enabled </th>
-              <td>
-                <button
-                  onClick={(e) => toggleOnOffCommand(e)}
-                  className={
-                    `${!true ? "danger-button" : "primary-button"} ` +
-                    "common-button"
-                  }
-                >
-                  {enabled.toString()}
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <th>Privilege</th>
-              <td>
-                <input
-                  className="commands-list-name"
-                  type="number"
-                  value={privilege}
-                  onChange={(e) => {
-                    setPrivilege(Number(e.target.value));
-                    changeColorOnChange(e);
-                  }}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Description </th>
-              <td>
-                <textarea
-                  className="commands-textarea"
-                  value={description}
-                  onChange={(e) => {
-                    setDescription(e.target.value);
-                    changeColorOnChange(e);
-                  }}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Aliases </th>
-              <td>
-                <textarea
-                  className="commands-textarea"
-                  value={aliases?.join("\n")}
-                  onChange={(e) => {
-                    setAliases(e.target.value?.split("\n"));
-                    changeColorOnChange(e);
-                  }}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>Messages </th>
-              <td>
-                <textarea
-                  className="commands-textarea"
-                  value={messages?.join("\n")}
-                  onChange={(e) => {
-                    setMessages(e.target.value?.split("\n"));
-                    changeColorOnChange(e);
-                  }}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="command-list-modal-wrapper">
+          <div>Name </div>
+          <div>
+            <input
+              className="commands-list-name"
+              type="text"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                changeColorOnChange(e);
+              }}
+            />
+          </div>
+
+          <div> Enabled </div>
+          <div>
+            <button
+              onClick={(e) => toggleOnOffCommand(e)}
+              className={
+                `${!true ? "danger-button" : "primary-button"} ` +
+                "common-button"
+              }
+            >
+              {enabled.toString()}
+            </button>
+          </div>
+
+          <div>Privilege</div>
+          <div>
+            <input
+              className="commands-list-name"
+              type="number"
+              value={privilege}
+              onChange={(e) => {
+                setPrivilege(Number(e.target.value));
+                changeColorOnChange(e);
+              }}
+            />
+          </div>
+
+          <div>Description </div>
+          <div>
+            <textarea
+              className="commands-textarea"
+              value={description}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                changeColorOnChange(e);
+              }}
+            />
+          </div>
+
+          <div>Aliases </div>
+          <div>
+            <textarea
+              className="commands-textarea"
+              value={aliases?.join("\n")}
+              onChange={(e) => {
+                setAliases(e.target.value?.split("\n"));
+                changeColorOnChange(e);
+              }}
+            />
+          </div>
+
+          <div>Messages </div>
+          <div>
+            <textarea
+              className="commands-textarea"
+              value={messages?.join("\n")}
+              onChange={(e) => {
+                setMessages(e.target.value?.split("\n"));
+                changeColorOnChange(e);
+              }}
+            />
+          </div>
+        </div>
       </Modal>
     </>
   );
