@@ -114,7 +114,7 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="text"
-                    defaultValue={commandsPrefix}
+                    value={prefix}
                     onChange={(e) => setPrefix(e.target.value)}
                   />
                 ) : (
@@ -128,7 +128,7 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={timersIntervalDelay}
+                    value={timersInterval}
                     onChange={(e) => setTimersInterval(Number(e.target.value))}
                   />
                 ) : (
@@ -142,7 +142,7 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={activeUserTimeDelay}
+                    value={activeUserTime}
                     onChange={(e) => setActiveUserTime(Number(e.target.value))}
                   />
                 ) : (
@@ -156,7 +156,7 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={intervalCheckChatters}
+                    value={intervCheckChatters}
                     onChange={(e) =>
                       setIntervalCheckChatters(Number(e.target.value))
                     }
@@ -172,7 +172,7 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={intervalCheckViewersPeek}
+                    value={intervCheckViewersPeek}
                     onChange={(e) =>
                       setIntervalCheckViewersPeek(Number(e.target.value))
                     }
@@ -188,7 +188,7 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={randomMessageChance}
+                    value={randomMsgChance}
                     onChange={(e) =>
                       setRandomMessageChance(Number(e.target.value))
                     }
@@ -204,7 +204,7 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={chatGamesIntervalDelay}
+                    value={chatGamesInterval}
                     onChange={(e) =>
                       setChatGamesInterval(Number(e.target.value))
                     }
@@ -220,7 +220,7 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={minActiveUsersThreshold}
+                    value={minActiveUsers}
                     onChange={(e) => setMinActiveUsers(Number(e.target.value))}
                   />
                 ) : (
@@ -240,12 +240,12 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={permissionLevels.broadcaster}
+                    value={permissions.broadcaster}
                     onChange={(e) =>
-                      setPermissions((prevState) => {
-                        prevState.broadcaster = e.target.valueAsNumber;
-                        return prevState;
-                      })
+                      setPermissions((prevState) => ({
+                        ...prevState,
+                        broadcaster: e.target.valueAsNumber,
+                      }))
                     }
                   />
                 ) : (
@@ -257,12 +257,12 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={permissionLevels.mod}
+                    value={permissions.mod}
                     onChange={(e) =>
-                      setPermissions((prevState) => {
-                        prevState.mod = e.target.valueAsNumber;
-                        return prevState;
-                      })
+                      setPermissions((prevState) => ({
+                        ...prevState,
+                        mod: e.target.valueAsNumber,
+                      }))
                     }
                   />
                 ) : (
@@ -274,12 +274,12 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={permissionLevels.vip}
+                    value={permissions.vip}
                     onChange={(e) =>
-                      setPermissions((prevState) => {
-                        prevState.vip = e.target.valueAsNumber;
-                        return prevState;
-                      })
+                      setPermissions((prevState) => ({
+                        ...prevState,
+                        vip: e.target.valueAsNumber,
+                      }))
                     }
                   />
                 ) : (
@@ -291,12 +291,12 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={permissionLevels.all}
+                    value={permissions.all}
                     onChange={(e) =>
-                      setPermissions((prevState) => {
-                        prevState.all = e.target.valueAsNumber;
-                        return prevState;
-                      })
+                      setPermissions((prevState) => ({
+                        ...prevState,
+                        all: e.target.valueAsNumber,
+                      }))
                     }
                   />
                 ) : (
@@ -315,12 +315,12 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={pointsIncrement.message}
+                    value={ptsIncrement.message}
                     onChange={(e) =>
-                      setPointsIncrement((prevState) => {
-                        prevState.message = e.target.valueAsNumber;
-                        return prevState;
-                      })
+                      setPointsIncrement((prevState) => ({
+                        ...prevState,
+                        message: e.target.valueAsNumber,
+                      }))
                     }
                   />
                 ) : (
@@ -332,12 +332,12 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={pointsIncrement.watch}
+                    value={ptsIncrement.watch}
                     onChange={(e) =>
-                      setPointsIncrement((prevState) => {
-                        prevState.watch = e.target.valueAsNumber;
-                        return prevState;
-                      })
+                      setPointsIncrement((prevState) => ({
+                        ...prevState,
+                        watch: e.target.valueAsNumber,
+                      }))
                     }
                   />
                 ) : (
@@ -349,12 +349,12 @@ export default function ConfigsList() {
                 {showEdit ? (
                   <input
                     type="number"
-                    defaultValue={pointsIncrement.watchMultipler}
+                    value={ptsIncrement.watchMultipler}
                     onChange={(e) =>
-                      setPointsIncrement((prevState) => {
-                        prevState.watchMultipler = e.target.valueAsNumber;
-                        return prevState;
-                      })
+                      setPointsIncrement((prevState) => ({
+                        ...prevState,
+                        watchMultipler: e.target.valueAsNumber,
+                      }))
                     }
                   />
                 ) : (
