@@ -42,7 +42,15 @@ export const addNewTrigger = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, chance, delay, words, messages, enabled = true } = req.body;
+  const {
+    name,
+    chance,
+    delay,
+    words,
+    messages,
+    enabled = true,
+    mode,
+  } = req.body;
 
   try {
     const newTrigger = await createTrigger({
@@ -52,6 +60,7 @@ export const addNewTrigger = async (
       delay: delay,
       messages: messages,
       words: words,
+      mode: mode,
     });
 
     return res
@@ -68,7 +77,15 @@ export const editTriggerById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, chance, delay, words, messages, enabled = true } = req.body;
+  const {
+    name,
+    chance,
+    delay,
+    words,
+    messages,
+    enabled = true,
+    mode,
+  } = req.body;
 
   try {
     const updatedTrigger = await updateTriggerById(id, {
@@ -78,6 +95,7 @@ export const editTriggerById = async (
       delay: delay,
       messages: messages,
       words: words,
+      mode: mode,
     });
 
     return res.status(200).send({
