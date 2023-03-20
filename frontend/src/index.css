@@ -121,10 +121,6 @@ table tbody {
   overflow-y: scroll;
 }
 
-table tbody td {
-  border-top: 0.2rem solid var(--base-bg-color-border);
-}
-
 .table-list-wrapper {
   font-size: 0.9rem;
   height: 80vh;
