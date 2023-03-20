@@ -15,6 +15,16 @@ export default function StreamSessionDetail() {
   if (!sessionData || loading) return <>Loading!</>;
 
   const { data } = sessionData;
+
+  const calculateTimeStream = (startDate: Date, endDate: Date) => {
+    return (
+      (new Date(startDate).getTime() - new Date(endDate).getTime()) /
+      1000 /
+      60 /
+      60
+    ).toPrecision(2);
+  };
+
   return (
     <>
       <PreviousPage />
@@ -23,6 +33,10 @@ export default function StreamSessionDetail() {
           <div className="nested-detail">
             <div className="session-detail-header">Session start:</div>
             <div>{formatDate(data.sessionStart, "days+time")}</div>
+            <div className="session-detail-header">Session time:</div>
+            <div>
+              {calculateTimeStream(data.sessionEnd, data.sessionStart)}h
+            </div>
             <div className="session-detail-header">Session end:</div>
             <div>{formatDate(data.sessionEnd, "days+time")}</div>
           </div>
@@ -32,16 +46,16 @@ export default function StreamSessionDetail() {
           <div className="nested-detail">
             <div className="session-detail-header">Titles:</div>
             <div className="nested-detail">
-              <ul className="session-detail-ul">
+              <div className="session-detail-list-wrapper">
                 {Object.keys(data.sessionTitles).map((timestamp, index) => {
                   return (
-                    <li key={index}>
-                      {formatDate(timestamp, "time")}:
-                      {data.sessionTitles[timestamp]}
-                    </li>
+                    <div key={index} className="session-detail-list">
+                      <div> {formatDate(timestamp, "time")}:</div>
+                      <div> {data.sessionTitles[timestamp]}</div>
+                    </div>
                   );
                 })}
-              </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -50,16 +64,16 @@ export default function StreamSessionDetail() {
           <div className="nested-detail">
             <div className="session-detail-header">Categories:</div>
             <div className="nested-detail">
-              <ul className="session-detail-ul">
+              <div className="session-detail-list-wrapper">
                 {Object.keys(data.categories).map((timestamp, index) => {
                   return (
-                    <li key={index}>
-                      {formatDate(timestamp, "time")}:
-                      {data.categories[timestamp]}
-                    </li>
+                    <div key={index} className="session-detail-list">
+                      <div>{formatDate(timestamp, "time")}:</div>
+                      <div>{data.categories[timestamp]}</div>
+                    </div>
                   );
                 })}
-              </ul>
+              </div>
             </div>
           </div>
         </div>

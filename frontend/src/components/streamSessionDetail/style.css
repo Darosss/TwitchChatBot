@@ -1,5 +1,6 @@
 .stream-session-details-wrapper {
   font-size: 2vmin;
+  width: 98vw;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   grid-template-rows: repeat(5, 10vh);
@@ -84,6 +85,22 @@
   height: 40vh;
 }
 
-.session-detail-ul {
-  list-style: none;
+.session-detail-list-wrapper {
+  width: 100%;
+  height: 15vh;
+}
+
+.session-detail-list {
+  display: flex;
+}
+
+.session-detail-list > div {
+  flex: 1 1 49%;
+  text-align: center;
+  border-bottom: 0.1rem solid var(--base-bg-color-border);
+  margin-top: 0.5rem;
+}
+
+.session-detail-list > div:hover {
+  background-color: var(--base-bg-color-border);
 }
