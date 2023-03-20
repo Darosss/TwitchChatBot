@@ -71,7 +71,7 @@ const UsersDetails = ({ users }: UserDetailsProps) => (
             </td>
             <td className="users-list-achievements"></td>
             <td className="users-list-watch-time">
-              {Number(watchTime) / 60} min
+              {Math.floor(Number(watchTime) / 60)} min
             </td>
             <td className="users-list-last-seen">
               {lastSeen ? (
