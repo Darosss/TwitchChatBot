@@ -16,23 +16,28 @@ export default function StreamChat() {
   const [messageToSend, setMessageToSend] = useState("");
 
   const sendMessage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    socket?.emit("messageClient", messageToSend);
+    socket.emit("messageClient", messageToSend);
   };
 
   useEffect(() => {
-    socket?.on("messageServer", (date, username, message) => {
-      setMessages((prevMessages) => {
-        const newMessages = { ...prevMessages };
-        newMessages[Math.random() * 100] = {
-          date: date,
-          username: username,
-          message: message,
-        };
-        return newMessages;
-      });
+    //add timeout - dunno why socket doesnt work without that
+    // FIXME: later
+    setTimeout(() => {
+      console.log("timeout");
+      socket.on("messageServer", (date, username, message) => {
+        setMessages((prevMessages) => {
+          const newMessages = { ...prevMessages };
+          newMessages[Math.random() * 100] = {
+            date: date,
+            username: username,
+            message: message,
+          };
+          return newMessages;
+        });
 
-      forceUpdate();
-    });
+        forceUpdate();
+      });
+    }, 500);
 
     return () => {
       socket.off("messageServer");
