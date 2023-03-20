@@ -56,7 +56,7 @@ export default function Pagination(props: {
       <select
         name="page-size"
         id="page-size"
-        defaultValue={pageSizeT}
+        value={pageSizeT}
         onChange={(e) => {
           setSearchParams((prevState) => {
             prevState.set("limit", e.target.value);

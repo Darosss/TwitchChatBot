@@ -4,6 +4,7 @@ import React, { useContext, useState } from "react";
 import PreviousPage from "@components/previousPage";
 import { getConfigs, editConfig } from "@services/ConfigService";
 import { SocketContext } from "@context/SocketContext";
+import { addNotification } from "@utils/getNotificationValues";
 
 export default function ConfigsList() {
   const socket = useContext(SocketContext);
@@ -64,9 +65,9 @@ export default function ConfigsList() {
     fetchEditConfig().then(() => {
       socket?.emit("saveConfigs");
       refetchData();
+      addNotification("Succes", "Configs edited succesfully", "success");
     });
   };
-
   if (error) return <>There is an error.</>;
   if (!data || loading) return <>Someting went wrong</>;
 

@@ -14,6 +14,7 @@ import {
 } from "@services/MessageCategoriesService";
 import Modal from "@components/modal";
 import FilterBarCategories from "./filterBarCategories";
+import { addNotification } from "@utils/getNotificationValues";
 
 type MessageCategoryDetailsProp = {
   categories: IMessageCategory[];
@@ -87,6 +88,11 @@ const MessageCategoriesDetails = ({
       fetchDeleteCategory().then(() => {
         // socketRefreshMessageCategories();
         refetchData();
+        addNotification(
+          "Deleted",
+          "Message category deleted successfully",
+          "danger"
+        );
         setCategoryIdToDelete(null);
       });
     } else {
@@ -110,6 +116,11 @@ const MessageCategoriesDetails = ({
   const onSubmitEditModal = () => {
     fetchEditCategory().then(() => {
       // socketRefreshMessageCategories();
+      addNotification(
+        "Success",
+        "Message category edited successfully",
+        "success"
+      );
       refetchData();
     });
     setShowModal(false);
@@ -118,6 +129,11 @@ const MessageCategoriesDetails = ({
   const createNewCategory = () => {
     fetchCreateCategory().then(() => {
       // socketRefreshMessageCategories();
+      addNotification(
+        "Success",
+        "Message category created successfully",
+        "success"
+      );
       refetchData();
     });
   };
@@ -191,7 +207,7 @@ const MessageCategoriesDetails = ({
             <div>
               <input
                 className="message-categories-input"
-                defaultValue={category}
+                value={category}
                 onChange={(e) => {
                   setCategory(e.target.value);
                 }}
@@ -203,7 +219,7 @@ const MessageCategoriesDetails = ({
             <div>
               <textarea
                 className="message-categories-textarea"
-                defaultValue={messages?.join("\n")}
+                value={messages?.join("\n")}
                 onChange={(e) => {
                   setMessages(e.target.value?.split("\n"));
                 }}

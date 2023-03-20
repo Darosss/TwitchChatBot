@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useReducer, useState } from "react";
 
 import Message from "@components/message";
 import { SocketContext } from "@context/SocketContext";
+import { addNotification } from "@utils/getNotificationValues";
 
 export default function StreamChat() {
   const socket = useContext(SocketContext);
@@ -16,6 +17,7 @@ export default function StreamChat() {
   const [messageToSend, setMessageToSend] = useState("");
 
   const sendMessage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    addNotification("Message sent", messageToSend, "success");
     socket.emit("messageClient", messageToSend);
   };
 

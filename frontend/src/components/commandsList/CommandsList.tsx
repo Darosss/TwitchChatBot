@@ -15,6 +15,7 @@ import {
   deleteCommand,
   IChatCommand,
 } from "@services/ChatCommandService";
+import { addNotification } from "@utils/getNotificationValues";
 
 export default function CommandsList() {
   const socket = useContext(SocketContext);
@@ -43,6 +44,8 @@ export default function CommandsList() {
       () => {
         fetchDeleteCommand().then(() => {
           refetchData();
+          addNotification("Deleted", `Command deleted successfully`, "danger");
+
           setCommandIdDelete(null);
         });
       }
@@ -86,6 +89,8 @@ export default function CommandsList() {
     fetchCreateCommand().then(() => {
       socketRefreshTrigger();
       refetchData();
+
+      addNotification("Success", "Command created successfully", "success");
     });
   };
 
@@ -114,6 +119,7 @@ export default function CommandsList() {
     fetchEditComman().then(() => {
       socketRefreshTrigger();
       refetchData();
+      addNotification("Success", "Command edited successfully", "success");
     });
     resetOnChangeClasses();
     setShowModal(false);
@@ -228,7 +234,7 @@ export default function CommandsList() {
                 <input
                   className="commands-list-name"
                   type="text"
-                  defaultValue={name}
+                  value={name}
                   onChange={(e) => {
                     setName(e.target.value);
                     changeColorOnChange(e);
@@ -256,7 +262,7 @@ export default function CommandsList() {
                 <input
                   className="commands-list-name"
                   type="number"
-                  defaultValue={privilege}
+                  value={privilege}
                   onChange={(e) => {
                     setPrivilege(Number(e.target.value));
                     changeColorOnChange(e);
@@ -269,7 +275,7 @@ export default function CommandsList() {
               <td>
                 <textarea
                   className="commands-textarea"
-                  defaultValue={description}
+                  value={description}
                   onChange={(e) => {
                     setDescription(e.target.value);
                     changeColorOnChange(e);
@@ -282,7 +288,7 @@ export default function CommandsList() {
               <td>
                 <textarea
                   className="commands-textarea"
-                  defaultValue={aliases?.join("\n")}
+                  value={aliases?.join("\n")}
                   onChange={(e) => {
                     setAliases(e.target.value?.split("\n"));
                     changeColorOnChange(e);
@@ -295,7 +301,7 @@ export default function CommandsList() {
               <td>
                 <textarea
                   className="commands-textarea"
-                  defaultValue={messages?.join("\n")}
+                  value={messages?.join("\n")}
                   onChange={(e) => {
                     setMessages(e.target.value?.split("\n"));
                     changeColorOnChange(e);

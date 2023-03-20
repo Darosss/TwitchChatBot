@@ -12,6 +12,7 @@ import {
   initialToolboxWidgets,
 } from "src/layout/initialLayoutWidgets";
 import { handleDeleteLayout } from "@utils/handleDeleteApi";
+import { addNotification } from "@utils/getNotificationValues";
 
 export default function StreamNotifications() {
   const { data, loading, error, refetchData } = getWidgets();
@@ -34,6 +35,12 @@ export default function StreamNotifications() {
     handleDeleteLayout<IWidgets>(layoutIdToDelete, setLayoutIdToDelete, () => {
       fetchDeleteLayout().then(() => {
         refetchData();
+
+        addNotification(
+          "Deleted",
+          "Stream events layout removed successfully",
+          "danger"
+        );
         setLayoutIdToDelete(null);
       });
     });
@@ -45,7 +52,14 @@ export default function StreamNotifications() {
   const { data: layouts } = data;
 
   const createNewLayout = () => {
-    fetchCreateLayout().then(() => refetchData());
+    fetchCreateLayout().then(() => {
+      refetchData();
+      addNotification(
+        "Success",
+        "Stream events layout created successfully",
+        "success"
+      );
+    });
   };
 
   return (
@@ -56,7 +70,7 @@ export default function StreamNotifications() {
           <input
             type="text"
             placeholder="Name"
-            defaultValue={layoutName}
+            value={layoutName}
             onChange={(e) => setLayoutName(e.target.value)}
           ></input>
           <button

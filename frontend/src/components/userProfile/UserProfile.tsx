@@ -1,12 +1,13 @@
 import "./style.css";
 
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import formatDate from "@utils/formatDate";
 import Message from "@components/message";
 import PreviousPage from "@components/previousPage";
 import { editUser, getLatestEldestMsgs, getUser } from "@services/UserService";
+import { addNotification } from "@utils/getNotificationValues";
 
 export default function UserProfile() {
   const { userId } = useParams();
@@ -35,6 +36,7 @@ export default function UserProfile() {
   const saveNote = () => {
     fetchEditUser().then(() => {
       refetchData();
+      addNotification("Success", "User edited successfully", "success");
       setIsEditingNotes(false);
     });
   };
@@ -155,7 +157,7 @@ export default function UserProfile() {
             <div className="nested-detail">
               <textarea
                 className="textarea-edit"
-                defaultValue={userData.data.notes?.join("\n")}
+                value={userData.data.notes?.join("\n")}
                 onChange={(e) => setNotes(e.target.value)}
               />
               <button

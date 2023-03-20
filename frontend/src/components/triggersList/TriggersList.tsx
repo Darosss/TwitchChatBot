@@ -16,6 +16,7 @@ import {
 } from "@services/TriggerService";
 import { SocketContext } from "@context/SocketContext";
 import { handleDeleteLayout } from "@utils/handleDeleteApi";
+import { addNotification } from "@utils/getNotificationValues";
 
 export default function TriggersList() {
   const socket = useContext(SocketContext);
@@ -67,6 +68,7 @@ export default function TriggersList() {
     handleDeleteLayout<ITrigger>(triggerIdDelete, setTriggerIdDelete, () => {
       fetchDeleteCommand().then(() => {
         refetchData();
+        addNotification("Deleted", "Trigger deleted successfully", "danger");
         setTriggerIdDelete(null);
       });
     });
@@ -80,6 +82,7 @@ export default function TriggersList() {
   const createNewTrigger = () => {
     fetchCreateTrigger().then(() => {
       socketRefreshTrigger();
+      addNotification("Success", "Trigger created successfully", "success");
       refetchData();
     });
   };
@@ -87,6 +90,7 @@ export default function TriggersList() {
   const onSubmitEditModal = () => {
     fetchEditTrigger().then(() => {
       socketRefreshTrigger();
+      addNotification("Success", "Trigger edited successfully", "success");
       refetchData();
     });
     resetOnChangeClasses();

@@ -22,6 +22,7 @@ import {
   IWidgets,
 } from "@services/WidgetsService";
 import PreviousPage from "@components/previousPage";
+import { addNotification } from "@utils/getNotificationValues";
 
 const components = new Map([
   ["stream-chat", StreamChat],
@@ -255,6 +256,11 @@ function EventsDrawerBar({
 
   const handleOnSave = () => {
     editWidgets();
+    addNotification(
+      "Success",
+      "Stream events layout edited successfully",
+      "success"
+    );
   };
 
   return (
