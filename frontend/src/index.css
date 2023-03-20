@@ -93,6 +93,10 @@ table {
   width: 96vw;
 }
 
+table td {
+  border-bottom: 4px solid var(--base-bg-color-info);
+}
+
 table thead th {
   background-color: var(--base-bg-color-head);
   position: sticky;
