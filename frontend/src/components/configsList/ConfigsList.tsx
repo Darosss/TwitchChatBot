@@ -107,264 +107,226 @@ export default function ConfigsList() {
         </button>
       ) : null}
       <div className="table-list-wrapper">
-        <table className="config-table">
-          <tbody>
-            <tr>
-              <th colSpan={3}>Chat commands prefix</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="text"
-                    value={prefix}
-                    onChange={(e) => setPrefix(e.target.value)}
-                  />
-                ) : (
-                  commandsPrefix
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th colSpan={3}>Check timers every</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={timersInterval}
-                    onChange={(e) => setTimersInterval(Number(e.target.value))}
-                  />
-                ) : (
-                  timersIntervalDelay
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th colSpan={3}>Active user max time</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={activeUserTime}
-                    onChange={(e) => setActiveUserTime(Number(e.target.value))}
-                  />
-                ) : (
-                  activeUserTimeDelay
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th colSpan={3}>Check chatters on chat every</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={intervCheckChatters}
-                    onChange={(e) =>
-                      setIntervalCheckChatters(Number(e.target.value))
-                    }
-                  />
-                ) : (
-                  intervalCheckChatters
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th colSpan={3}>Interval check viewers peek</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={intervCheckViewersPeek}
-                    onChange={(e) =>
-                      setIntervalCheckViewersPeek(Number(e.target.value))
-                    }
-                  />
-                ) : (
-                  intervalCheckViewersPeek
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th colSpan={3}>Random message chance</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={randomMsgChance}
-                    onChange={(e) =>
-                      setRandomMessageChance(Number(e.target.value))
-                    }
-                  />
-                ) : (
-                  randomMessageChance
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th colSpan={3}>Check chat games every</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={chatGamesInterval}
-                    onChange={(e) =>
-                      setChatGamesInterval(Number(e.target.value))
-                    }
-                  />
-                ) : (
-                  chatGamesIntervalDelay
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th colSpan={3}>Minimum users to play chat game</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={minActiveUsers}
-                    onChange={(e) => setMinActiveUsers(Number(e.target.value))}
-                  />
-                ) : (
-                  minActiveUsersThreshold
-                )}
-              </td>
-            </tr>
+        <div>Chat commands prefix</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="text"
+              value={prefix}
+              onChange={(e) => setPrefix(e.target.value)}
+            />
+          ) : (
+            commandsPrefix
+          )}
+        </div>
+        <div>Check timers every</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={timersInterval}
+              onChange={(e) => setTimersInterval(Number(e.target.value))}
+            />
+          ) : (
+            timersIntervalDelay
+          )}
+        </div>
+        <div>Active user max time</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={activeUserTime}
+              onChange={(e) => setActiveUserTime(Number(e.target.value))}
+            />
+          ) : (
+            activeUserTimeDelay
+          )}
+        </div>
+        <div>Check chatters on chat every</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={intervCheckChatters}
+              onChange={(e) => setIntervalCheckChatters(Number(e.target.value))}
+            />
+          ) : (
+            intervalCheckChatters
+          )}
+        </div>
+        <div>Interval check viewers peek</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={intervCheckViewersPeek}
+              onChange={(e) =>
+                setIntervalCheckViewersPeek(Number(e.target.value))
+              }
+            />
+          ) : (
+            intervalCheckViewersPeek
+          )}
+        </div>
+        <div>Random message chance</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={randomMsgChance}
+              onChange={(e) => setRandomMessageChance(Number(e.target.value))}
+            />
+          ) : (
+            randomMessageChance
+          )}
+        </div>
+        <div>Check chat games every</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={chatGamesInterval}
+              onChange={(e) => setChatGamesInterval(Number(e.target.value))}
+            />
+          ) : (
+            chatGamesIntervalDelay
+          )}
+        </div>
+        <div>Minimum users to play chat game</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={minActiveUsers}
+              onChange={(e) => setMinActiveUsers(Number(e.target.value))}
+            />
+          ) : (
+            minActiveUsersThreshold
+          )}
+        </div>
 
-            <tr>
-              <th className="th-wide-col" colSpan={10}>
-                Permissions
-              </th>
-            </tr>
-            <tr>
-              <th>Broadcaster</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={permissions.broadcaster}
-                    onChange={(e) =>
-                      setPermissions((prevState) => ({
-                        ...prevState,
-                        broadcaster: e.target.valueAsNumber,
-                      }))
-                    }
-                  />
-                ) : (
-                  permissionLevels.broadcaster
-                )}
-              </td>
-              <th>Mod</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={permissions.mod}
-                    onChange={(e) =>
-                      setPermissions((prevState) => ({
-                        ...prevState,
-                        mod: e.target.valueAsNumber,
-                      }))
-                    }
-                  />
-                ) : (
-                  permissionLevels.mod
-                )}
-              </td>
-              <th>Vip</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={permissions.vip}
-                    onChange={(e) =>
-                      setPermissions((prevState) => ({
-                        ...prevState,
-                        vip: e.target.valueAsNumber,
-                      }))
-                    }
-                  />
-                ) : (
-                  permissionLevels.vip
-                )}
-              </td>
-              <th>All</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={permissions.all}
-                    onChange={(e) =>
-                      setPermissions((prevState) => ({
-                        ...prevState,
-                        all: e.target.valueAsNumber,
-                      }))
-                    }
-                  />
-                ) : (
-                  permissionLevels.all
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th className="th-wide-col" colSpan={10}>
-                Points increment
-              </th>
-            </tr>
-            <tr>
-              <th>Message</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={ptsIncrement.message}
-                    onChange={(e) =>
-                      setPointsIncrement((prevState) => ({
-                        ...prevState,
-                        message: e.target.valueAsNumber,
-                      }))
-                    }
-                  />
-                ) : (
-                  pointsIncrement.message
-                )}
-              </td>
-              <th>Watch</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={ptsIncrement.watch}
-                    onChange={(e) =>
-                      setPointsIncrement((prevState) => ({
-                        ...prevState,
-                        watch: e.target.valueAsNumber,
-                      }))
-                    }
-                  />
-                ) : (
-                  pointsIncrement.watch
-                )}
-              </td>
-              <th>Watch multipler</th>
-              <td>
-                {showEdit ? (
-                  <input
-                    type="number"
-                    value={ptsIncrement.watchMultipler}
-                    onChange={(e) =>
-                      setPointsIncrement((prevState) => ({
-                        ...prevState,
-                        watchMultipler: e.target.valueAsNumber,
-                      }))
-                    }
-                  />
-                ) : (
-                  pointsIncrement.watchMultipler
-                )}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="config-header">Permissions</div>
+        <div>Broadcaster</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={permissions.broadcaster}
+              onChange={(e) =>
+                setPermissions((prevState) => ({
+                  ...prevState,
+                  broadcaster: e.target.valueAsNumber,
+                }))
+              }
+            />
+          ) : (
+            permissionLevels.broadcaster
+          )}
+        </div>
+        <div>Mod</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={permissions.mod}
+              onChange={(e) =>
+                setPermissions((prevState) => ({
+                  ...prevState,
+                  mod: e.target.valueAsNumber,
+                }))
+              }
+            />
+          ) : (
+            permissionLevels.mod
+          )}
+        </div>
+        <div>Vip</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={permissions.vip}
+              onChange={(e) =>
+                setPermissions((prevState) => ({
+                  ...prevState,
+                  vip: e.target.valueAsNumber,
+                }))
+              }
+            />
+          ) : (
+            permissionLevels.vip
+          )}
+        </div>
+        <div>All</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={permissions.all}
+              onChange={(e) =>
+                setPermissions((prevState) => ({
+                  ...prevState,
+                  all: e.target.valueAsNumber,
+                }))
+              }
+            />
+          ) : (
+            permissionLevels.all
+          )}
+        </div>
+        <div className="config-header">Points increment</div>
+        <div>Message</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={ptsIncrement.message}
+              onChange={(e) =>
+                setPointsIncrement((prevState) => ({
+                  ...prevState,
+                  message: e.target.valueAsNumber,
+                }))
+              }
+            />
+          ) : (
+            pointsIncrement.message
+          )}
+        </div>
+        <div>Watch</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={ptsIncrement.watch}
+              onChange={(e) =>
+                setPointsIncrement((prevState) => ({
+                  ...prevState,
+                  watch: e.target.valueAsNumber,
+                }))
+              }
+            />
+          ) : (
+            pointsIncrement.watch
+          )}
+        </div>
+        <div>Watch multipler</div>
+        <div>
+          {showEdit ? (
+            <input
+              type="number"
+              value={ptsIncrement.watchMultipler}
+              onChange={(e) =>
+                setPointsIncrement((prevState) => ({
+                  ...prevState,
+                  watchMultipler: e.target.valueAsNumber,
+                }))
+              }
+            />
+          ) : (
+            pointsIncrement.watchMultipler
+          )}
+        </div>
       </div>
     </>
   );
