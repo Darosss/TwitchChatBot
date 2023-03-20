@@ -11,14 +11,14 @@ export default function ConfigsList() {
   const [showEdit, setShowEdit] = useState(false);
 
   const [prefix, setPrefix] = useState("");
-  const [timersInterval, setTimersInterval] = useState<number>();
-  const [activeUserTime, setActiveUserTime] = useState<number>();
-  const [chatGamesInterval, setChatGamesInterval] = useState<number>();
-  const [intervCheckChatters, setIntervalCheckChatters] = useState<number>();
-  const [minActiveUsers, setMinActiveUsers] = useState<number>();
+  const [timersInterval, setTimersInterval] = useState<number>(50);
+  const [activeUserTime, setActiveUserTime] = useState<number>(150);
+  const [chatGamesInterval, setChatGamesInterval] = useState<number>(30);
+  const [intervCheckChatters, setIntervalCheckChatters] = useState<number>(300);
+  const [minActiveUsers, setMinActiveUsers] = useState<number>(4);
   const [intervCheckViewersPeek, setIntervalCheckViewersPeek] =
-    useState<number>();
-  const [randomMsgChance, setRandomMessageChance] = useState<number>();
+    useState<number>(600);
+  const [randomMsgChance, setRandomMessageChance] = useState<number>(15);
   const [permissions, setPermissions] = useState({
     broadcaster: 10,
     mod: 8,
