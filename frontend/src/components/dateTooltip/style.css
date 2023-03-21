@@ -13,13 +13,12 @@
 .tooltip .tooltip-default {
   visibility: visible;
   opacity: 1;
-  width: 50%;
+  width: 100%;
   margin-left: 0.4rem;
 }
 
 .tooltip .tooltip-text {
   opacity: 0;
-  width: 50%;
   transition: opacity 1s, color 2s;
 }
 
