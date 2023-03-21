@@ -133,52 +133,6 @@ table tbody {
   border-top: 0.3rem solid var(--base-bg-color-border);
 }
 
-/* TOOL TIPS */
-
-.tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 0.1rem dotted var(--base-bg-color-border);
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 120px;
-  top: -0.7rem;
-  left: 105%;
-  background-color: black;
-  color: var(--base-color);
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  background-color: rgba(0, 0, 0, 0.863);
-
-  transition: opacity 0.5s, visibility 1s;
-  opacity: 0;
-  /* Position the tooltip */
-  position: absolute;
-  display: flex;
-  z-index: 1;
-}
-
-.tooltip .tooltiptext::after {
-  content: " ";
-  position: absolute;
-  top: 50%;
-  right: 100%; /* To the left of the tooltip */
-  margin-top: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent rgba(0, 0, 0, 0.863) transparent transparent;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}
-
 .common-button {
   width: 7vw;
   max-width: 7vw;
