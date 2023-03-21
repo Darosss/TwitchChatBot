@@ -20,9 +20,8 @@ export interface IUser {
   follower?: Date;
 }
 
-type IUserUpdateData = Omit<
-  IUser,
-  "_id" | "twitchId" | "twitchName" | "twitchCreated"
+type IUserUpdateData = Partial<
+  Omit<IUser, "_id" | "twitchId" | "twitchName" | "twitchCreated">
 >;
 
 interface FirstAndLatestMsgs {
