@@ -155,7 +155,6 @@ export default function TriggersList() {
               <th colSpan={5}>Data</th>
               <th>Words</th>
               <th>Messages</th>
-              <th>Created</th>
             </tr>
           </thead>
 
@@ -203,6 +202,12 @@ export default function TriggersList() {
                       <div>{trigger.delay}</div>
                       <div>Mode:</div>
                       <div>{trigger.mode}</div>
+                      <div>Created at:</div>
+                      <div>
+                        <DateTooltip date={trigger.createdAt} />
+                      </div>
+
+                      <div></div>
                     </div>
                   </td>
                   <td>
@@ -219,9 +224,7 @@ export default function TriggersList() {
                       })}
                     </div>
                   </td>
-                  <td>
-                    <DateTooltip date={trigger.createdAt} />
-                  </td>
+                  <td></td>
                 </tr>
               );
             })}
