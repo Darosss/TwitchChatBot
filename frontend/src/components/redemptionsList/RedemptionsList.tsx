@@ -4,12 +4,12 @@ import React from "react";
 import Pagination from "@components/pagination";
 import { Link, useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
-import formatDate from "@utils/formatDate";
 import FilterBarRedemptions from "./filterBarRedemptions";
 import { getRedemptions, IRedemption } from "src/services/RedemptionService";
 import { IPagination } from "@services/ApiService";
 import { getSessionRedemptions } from "@services/StreamSessionService";
 import { getUserRedemptions } from "@services/UserService";
+import { DateTooltip } from "@components/dateTooltip";
 
 type RedemptionsDetailProps = {
   redemptions: IRedemption[];
@@ -81,12 +81,7 @@ const RedemptionsDetails = ({ redemptions }: RedemptionsDetailProps) => (
               </Link>
             </td>
             <td>
-              <div className="tooltip">
-                {formatDate(redemption.redemptionDate, "days+time")}
-                <span className="tooltiptext">
-                  {formatDate(redemption.redemptionDate)}
-                </span>
-              </div>
+              <DateTooltip date={redemption.redemptionDate} />
             </td>
             <td>{redemption.rewardCost}</td>
             <td>{redemption.message}</td>

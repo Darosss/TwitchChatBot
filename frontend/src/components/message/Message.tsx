@@ -1,7 +1,7 @@
 import "./style.css";
 import React from "react";
 
-import formatDate from "@utils/formatDate";
+import { DateTooltip } from "@components/dateTooltip";
 
 export default function Message(props: {
   date: Date;
@@ -13,10 +13,7 @@ export default function Message(props: {
   return (
     <div className="chat-message">
       <div className="time">
-        <div className="tooltip">
-          {formatDate(date, "days+time")}
-          <span className="tooltiptext">{formatDate(date)}</span>
-        </div>
+        <DateTooltip date={date} />
       </div>
       <div className="username">{username}</div>
       <div className="message">{message}</div>

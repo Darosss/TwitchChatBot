@@ -3,11 +3,11 @@ import "./style.css";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import formatDate from "@utils/formatDate";
 import Message from "@components/message";
 import PreviousPage from "@components/previousPage";
 import { editUser, getLatestEldestMsgs, getUser } from "@services/UserService";
 import { addNotification } from "@utils/getNotificationValues";
+import { DateTooltip } from "@components/dateTooltip";
 
 export default function UserProfile() {
   const { userId } = useParams();
@@ -64,12 +64,14 @@ export default function UserProfile() {
           </div>
           <div className="nested-detail">
             <div>First seen:</div>
-            <div>{formatDate(data.createdAt, "days+time")}</div>
+            <div>
+              <DateTooltip date={data.createdAt} />
+            </div>
           </div>
           <div className="nested-detail">
             <div>Last seen:</div>
             <div>
-              {data.lastSeen ? formatDate(data.lastSeen, "days+time") : null}
+              {data.lastSeen ? <DateTooltip date={data.lastSeen} /> : null}
             </div>
           </div>
         </div>
@@ -80,15 +82,15 @@ export default function UserProfile() {
           <div className="nested-detail">
             <div>Twitch created:</div>
             <div>
-              {data.twitchCreated
-                ? formatDate(data.twitchCreated, "days+time")
-                : null}
+              {data.twitchCreated ? (
+                <DateTooltip date={data.twitchCreated} />
+              ) : null}
             </div>
           </div>
           <div className="nested-detail">
             <div>Follow:</div>
             <div>
-              {data.follower ? formatDate(data.follower, "days+time") : null}
+              {data.follower ? <DateTooltip date={data.follower} /> : null}
             </div>
           </div>
         </div>

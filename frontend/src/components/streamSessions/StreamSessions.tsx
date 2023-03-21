@@ -2,11 +2,11 @@ import "./style.css";
 
 import React from "react";
 import Pagination from "@components/pagination";
-import formatDate from "@utils/formatDate";
 import { Link } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import FilterBarSessions from "./filterBarSessions";
 import { getSessions } from "@services/StreamSessionService";
+import { DateDifference, DateTooltip } from "@components/dateTooltip";
 
 export default function StreamSessions() {
   const { data: sessionsData, loading, error, refetchData } = getSessions();
@@ -24,11 +24,10 @@ export default function StreamSessions() {
         <table id="table-stream-session-list">
           <thead>
             <tr>
-              <th>Messages</th>
-              <th>Redemptions</th>
-              <th>Session</th>
+              <th colSpan={3}>Action</th>
               <th>Titles</th>
               <th>Start date</th>
+              <th>Session time</th>
               <th>End date</th>
               <th>Tags</th>
               <th>Categories</th>
@@ -51,20 +50,21 @@ export default function StreamSessions() {
                   </td>
                   <td>{Object.values(session.sessionTitles)[0]}</td>
                   <td>
-                    <div className="tooltip">
-                      {formatDate(session.sessionStart, "days+time")}
-                      <span className="tooltiptext">
-                        {formatDate(session.sessionStart)}
-                      </span>
-                    </div>
+                    <DateTooltip date={session.sessionStart} />
                   </td>
                   <td>
-                    <div className="tooltip">
-                      {formatDate(session.sessionEnd, "days+time")}
-                      <span className="tooltiptext">
-                        {formatDate(session.sessionEnd)}
-                      </span>
-                    </div>
+                    {session.sessionEnd ? (
+                      <DateDifference
+                        dateStart={session.sessionStart}
+                        dateEnd={session.sessionEnd}
+                        format="h"
+                      />
+                    ) : null}
+                  </td>
+                  <td>
+                    {session.sessionEnd ? (
+                      <DateTooltip date={session.sessionEnd} />
+                    ) : null}
                   </td>
                   <td>{session.tags ? Object.values(session.tags) : null}</td>
                   <td>{Object.values(session.categories)[0]}</td>

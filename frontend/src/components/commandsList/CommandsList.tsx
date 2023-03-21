@@ -1,7 +1,6 @@
 import "./style.css";
 
 import React, { useContext, useEffect, useState } from "react";
-import formatDate from "@utils/formatDate";
 import FilterBarCommands from "./filterBarCommands";
 import Modal from "@components/modal";
 import Pagination from "@components/pagination";
@@ -16,6 +15,7 @@ import {
   IChatCommand,
 } from "@services/ChatCommandService";
 import { addNotification } from "@utils/getNotificationValues";
+import { DateTooltip } from "@components/dateTooltip";
 
 export default function CommandsList() {
   const socket = useContext(SocketContext);
@@ -200,7 +200,9 @@ export default function CommandsList() {
                       <div>Privilege: </div>
                       <div>{command.privilege}</div>
                       <div>Created at: </div>
-                      <div>{formatDate(command.createdAt, "days+time")}</div>
+                      <div>
+                        <DateTooltip date={command.createdAt} />
+                      </div>
                       <div>Description: </div>
                       <div>{command.description}</div>
                     </div>

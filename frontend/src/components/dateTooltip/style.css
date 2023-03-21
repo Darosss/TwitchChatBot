@@ -1,0 +1,40 @@
+.chat-message {
+  display: flex;
+  width: 100%;
+  margin-top: 0.5rem;
+  border-bottom: 0.1rem solid var(--base-bg-color-border);
+}
+
+.chat-message:hover {
+  background-color: var(--base-bg-hover-color-chat);
+}
+
+.chat-message .username {
+  color: var(--base-color-username-message);
+  font-size: 0.8rem;
+  overflow: hidden;
+  font-weight: 900;
+  width: 25%;
+}
+
+.chat-message .message {
+  color: var(--base-color-message);
+  width: 60%;
+  font-size: 0.8rem;
+  text-align: left;
+  overflow: auto;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  font-weight: 700;
+}
+
+.chat-message div {
+  padding-left: 0.5rem;
+}
+
+.chat-message .time {
+  color: var(--base-color-time-message);
+  font-size: 0.7rem;
+  font-weight: 500;
+  width: 15%;
+}

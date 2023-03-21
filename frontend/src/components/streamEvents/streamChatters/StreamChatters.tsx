@@ -2,7 +2,7 @@ import "./style.css";
 import React, { useContext, useEffect, useReducer, useState } from "react";
 
 import { SocketContext } from "@context/SocketContext";
-import formatDate from "@utils/formatDate";
+import { DateTooltip } from "@components/dateTooltip";
 
 export default function StreamChatters() {
   const LIMIT_LAST_CHATTERS = 14;
@@ -56,7 +56,7 @@ export default function StreamChatters() {
           >
             <div className="user-chatter-username">{chatter}</div>
             <div className="user-chatter-last-seen">
-              {formatDate(lastChatters.get(chatter) || new Date(), "time")}
+              <DateTooltip date={lastChatters.get(chatter) || new Date()} />
             </div>
           </div>
         );

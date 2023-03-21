@@ -1,11 +1,11 @@
 import "./style.css";
 import React from "react";
 import { useParams } from "react-router-dom";
-import formatDate from "@utils/formatDate";
 import LineChart from "@components/lineChart";
 import PreviousPage from "@components/previousPage";
 import SlideShow from "@components/slideShow";
 import { getSessionById } from "@services/StreamSessionService";
+import { DateTooltip } from "@components/dateTooltip";
 
 export default function StreamSessionDetail() {
   const { sessionId } = useParams();
@@ -32,13 +32,17 @@ export default function StreamSessionDetail() {
         <div className="session-details session-small-details small">
           <div className="nested-detail">
             <div className="session-detail-header">Session start:</div>
-            <div>{formatDate(data.sessionStart, "days+time")}</div>
+            <div>
+              <DateTooltip date={data.sessionStart} />
+            </div>
             <div className="session-detail-header">Session time:</div>
             <div>
               {calculateTimeStream(data.sessionEnd, data.sessionStart)}h
             </div>
             <div className="session-detail-header">Session end:</div>
-            <div>{formatDate(data.sessionEnd, "days+time")}</div>
+            <div>
+              {data.sessionEnd ? <DateTooltip date={data.sessionEnd} /> : null}
+            </div>
           </div>
         </div>
 
@@ -50,7 +54,9 @@ export default function StreamSessionDetail() {
                 {Object.keys(data.sessionTitles).map((timestamp, index) => {
                   return (
                     <div key={index} className="session-detail-list">
-                      <div> {formatDate(timestamp, "time")}:</div>
+                      <div>
+                        <DateTooltip date={Number(timestamp)} />:
+                      </div>
                       <div> {data.sessionTitles[timestamp]}</div>
                     </div>
                   );
@@ -68,7 +74,9 @@ export default function StreamSessionDetail() {
                 {Object.keys(data.categories).map((timestamp, index) => {
                   return (
                     <div key={index} className="session-detail-list">
-                      <div>{formatDate(timestamp, "time")}:</div>
+                      <div>
+                        <DateTooltip date={Number(timestamp)} />:
+                      </div>
                       <div>{data.categories[timestamp]}</div>
                     </div>
                   );

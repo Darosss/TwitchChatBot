@@ -4,12 +4,12 @@ import React from "react";
 import Pagination from "@components/pagination";
 import { Link, useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
-import formatDate from "@utils/formatDate";
 import FilterBarMessages from "./filterBarMessages";
 import { IPagination } from "@services/ApiService";
 import { getMessages, IMessage } from "@services/MessageService";
 import { getUserMessages } from "@services/UserService";
 import { getSessionMessages } from "@services/StreamSessionService";
+import { DateTooltip } from "@components/dateTooltip";
 
 type MessagesDetailsProp = {
   messages: IMessage[];
@@ -73,10 +73,7 @@ const MessagesDetails = ({ messages }: MessagesDetailsProp) => (
         return (
           <tr key={message._id + new Date()}>
             <td className="message-time">
-              <div className="tooltip">
-                {formatDate(message.date, "days+time")}
-                <span className="tooltiptext">{formatDate(message.date)}</span>
-              </div>
+              <DateTooltip date={message.date} />
             </td>
 
             <td className="message-username">

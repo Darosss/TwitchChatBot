@@ -3,7 +3,6 @@ import "./style.css";
 import React, { useContext, useEffect, useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";
-import formatDate from "@utils/formatDate";
 import PreviousPage from "@components/previousPage";
 import FilterBarTriggers from "./filterBarTriggers";
 import {
@@ -17,6 +16,7 @@ import {
 import { SocketContext } from "@context/SocketContext";
 import { handleDeleteLayout } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
+import { DateTooltip } from "@components/dateTooltip";
 
 export default function TriggersList() {
   const socket = useContext(SocketContext);
@@ -220,12 +220,7 @@ export default function TriggersList() {
                     </div>
                   </td>
                   <td>
-                    <div className="tooltip">
-                      {formatDate(trigger.createdAt, "days+time")}
-                      <span className="tooltiptext">
-                        {formatDate(trigger.createdAt)}
-                      </span>
-                    </div>
+                    <DateTooltip date={trigger.createdAt} />
                   </td>
                 </tr>
               );

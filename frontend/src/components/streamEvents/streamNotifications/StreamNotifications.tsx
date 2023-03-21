@@ -2,9 +2,9 @@ import "./style.css";
 import React, { useContext, useEffect, useReducer, useState } from "react";
 
 import { SocketContext } from "@context/SocketContext";
-import formatDate from "@utils/formatDate";
 import { Link } from "react-router-dom";
 import { IEventAndIUser } from "@libs/types";
+import { DateTooltip } from "@components/dateTooltip";
 
 export default function StreamNotifications() {
   const LIMIT_NOTIFICATIONS = 5;
@@ -68,7 +68,7 @@ export default function StreamNotifications() {
             </button>
             <div className="user-info-event">{notif.eventName}</div>
             <div className="user-info-date">
-              {formatDate(notif.eventDate, "time")}
+              <DateTooltip date={notif.eventDate} />
             </div>
             <div className="user-info-username">
               <Link to={`../user/${notif._id}`} target="_blank">
@@ -98,7 +98,11 @@ export default function StreamNotifications() {
                 alt="created"
                 className="user-info-icon"
               />
-              :<span> {formatDate(notif.createdAt, "days+time")}</span>
+              :
+              <span>
+                {" "}
+                <DateTooltip date={notif.createdAt} />
+              </span>
             </div>
             <div className="user-info-last-seen">
               <img
@@ -108,9 +112,7 @@ export default function StreamNotifications() {
               />
               :
               <span>
-                {notif.lastSeen
-                  ? formatDate(notif.lastSeen, "days+time")
-                  : null}
+                {notif.lastSeen ? <DateTooltip date={notif.lastSeen} /> : null}
               </span>
             </div>
             <div className="user-info-follower">
@@ -121,7 +123,9 @@ export default function StreamNotifications() {
               />
               :
               {notif.follower ? (
-                <span>{formatDate(notif.follower, "days+time")}</span>
+                <span>
+                  <DateTooltip date={notif.follower} />
+                </span>
               ) : (
                 <span>No</span>
               )}

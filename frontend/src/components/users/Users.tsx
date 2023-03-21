@@ -2,11 +2,11 @@ import "./style.css";
 import React from "react";
 
 import { Link } from "react-router-dom";
-import formatDate from "@utils/formatDate";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
 import { getUsersList, IUser } from "@services/UserService";
 import FilterBarUsers from "./filterBarUsers";
+import { DateTooltip } from "@components/dateTooltip";
 
 type UserDetailsProps = {
   users: IUser[];
@@ -74,23 +74,17 @@ const UsersDetails = ({ users }: UserDetailsProps) => (
               {Math.floor(Number(watchTime) / 60)} min
             </td>
             <td className="users-list-last-seen">
-              {lastSeen ? (
-                <div className="tooltip">
-                  {formatDate(lastSeen, "days+time")}
-                  <span className="tooltiptext">{formatDate(lastSeen)}</span>
-                </div>
-              ) : null}
+              {lastSeen ? <DateTooltip date={lastSeen} /> : null}
             </td>
             <td className="users-list-created-at">
-              <div className="tooltip">
-                {formatDate(createdAt, "days+time")}
-                <span className="tooltiptext">{formatDate(createdAt)}</span>
-              </div>
+              {createdAt ? <DateTooltip date={createdAt} /> : null}
             </td>
             <td className="users-list-message-count">
               {messageCount?.toLocaleString()}
             </td>
-            <td className="users-list-points">{points?.toLocaleString()}</td>
+            <td className="users-list-points">
+              {points ? Math.round(points) : null}
+            </td>
           </tr>
         );
       })}
