@@ -8,8 +8,8 @@ export function DateTooltip(props: { date: moment.MomentInput }) {
 
   return (
     <div className="tooltip">
-      {moment(date).fromNow()}
-      <span className="tooltiptext">
+      <span className="tooltip-default">{moment(date).fromNow()}</span>
+      <span className="tooltip-text">
         {moment(date).format("dddd, MMMM Do YYYY, HH:mm:ss")}
       </span>
     </div>
@@ -22,12 +22,13 @@ export function DateDifference(props: {
   format?: moment.unitOfTime.Diff;
   precise?: boolean;
 }) {
-  //years, months, weeks, days, hours, minutes, and seconds
   const { dateStart, dateEnd, format = "m", precise = true } = props;
   return (
     <div className="tooltip">
-      {moment(dateEnd).diff(dateStart, format, precise).toFixed(1)} {format}
-      <span className="tooltiptext">
+      <span className="tooltip-default">
+        {moment(dateEnd).diff(dateStart, format, precise).toFixed(1)} {format}
+      </span>
+      <span className="tooltip-text">
         {moment(dateStart).format("ddd, HH:mm:ss")} <br />
         {moment(dateEnd).format("ddd, HH:mm:ss")}
       </span>
