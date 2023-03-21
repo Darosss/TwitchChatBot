@@ -159,7 +159,7 @@ export default function UserProfile() {
             <div className="nested-detail">
               <textarea
                 className="textarea-edit"
-                value={userData.data.notes?.join("\n")}
+                value={notes}
                 onChange={(e) => setNotes(e.target.value)}
               />
               <button
