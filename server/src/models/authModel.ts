@@ -1,7 +1,7 @@
 import { Model, model, Schema } from "mongoose";
-import { IAuthDocument } from "./types";
+import { AuthDocument } from "./types";
 
-const AuthSchema: Schema<IAuthDocument> = new Schema(
+const AuthSchema: Schema<AuthDocument> = new Schema(
   {
     accessToken: { type: String, required: true },
     refreshToken: { type: String, required: true },
@@ -14,4 +14,4 @@ const AuthSchema: Schema<IAuthDocument> = new Schema(
   }
 );
 
-export const AuthToken: Model<IAuthDocument> = model("AuthTokens", AuthSchema);
+export const AuthToken: Model<AuthDocument> = model("AuthTokens", AuthSchema);

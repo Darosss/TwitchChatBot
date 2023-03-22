@@ -1,5 +1,5 @@
 import { StreamSession } from "@models/streamSessionModel";
-import { IStreamSession, IStreamSessionDocument } from "@models/types";
+import { StreamSessionModel, StreamSessionDocument } from "@models/types";
 import {
   getMostActiveUsersByMsgs,
   getMostUsedWord,
@@ -13,16 +13,16 @@ import { getLastNItemsFromMap } from "@utils/getLastNItemsMapUtil";
 import { logger } from "@utils/loggerUtil";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
-  IStreamSessionStatisticOptions,
-  IManyStreamSessionsFindOptions,
-  IStreamSessionCreateData,
-  IStreamSessionFindOptions,
-  IStreamSessionOptionalData,
+  StreamSessionStatisticOptions,
+  ManyStreamSessionsFindOptions,
+  StreamSessionCreateData,
+  StreamSessionFindOptions,
+  StreamSessionOptionalData,
 } from "./types/";
 
 export const getStreamSessions = async (
-  filter: FilterQuery<IStreamSessionDocument> = {},
-  streamSessionFindOptions: IManyStreamSessionsFindOptions
+  filter: FilterQuery<StreamSessionDocument> = {},
+  streamSessionFindOptions: ManyStreamSessionsFindOptions
 ) => {
   const {
     limit = 50,
@@ -46,7 +46,7 @@ export const getStreamSessions = async (
 
 export const getStreamSessionById = async (
   id: string,
-  streamSessionFindOptions: IStreamSessionFindOptions
+  streamSessionFindOptions: StreamSessionFindOptions
 ) => {
   const { select = { __v: 0 } } = streamSessionFindOptions;
 
@@ -70,7 +70,7 @@ export const getStreamSessionById = async (
 export const getStreamSessionStatisticsById = async (id: string) => {};
 
 export const getCurrentStreamSession = async (
-  streamSessionFindOptions: IStreamSessionFindOptions
+  streamSessionFindOptions: StreamSessionFindOptions
 ) => {
   const { select = { __v: 0 } } = streamSessionFindOptions;
 
@@ -100,7 +100,7 @@ export const getCurrentStreamSession = async (
 };
 
 export const updateCurrentStreamSession = async (
-  updateData: UpdateQuery<IStreamSessionOptionalData>
+  updateData: UpdateQuery<StreamSessionOptionalData>
 ) => {
   const currentStreamSession = await getCurrentStreamSession({});
 
@@ -120,7 +120,7 @@ export const updateCurrentStreamSession = async (
 };
 
 export const getLatestStreamSession = async (
-  streamSessionFindOptions: IStreamSessionFindOptions
+  streamSessionFindOptions: StreamSessionFindOptions
 ) => {
   const { select = { __v: 0 } } = streamSessionFindOptions;
 
@@ -143,8 +143,8 @@ export const getLatestStreamSession = async (
 };
 
 export const getStreamSessionStatistics = async (
-  session: IStreamSession,
-  options: IStreamSessionStatisticOptions
+  session: StreamSessionModel,
+  options: StreamSessionStatisticOptions
 ) => {
   const { sessionStart, sessionEnd, viewers } = session;
   const {
@@ -187,13 +187,13 @@ export const getStreamSessionStatistics = async (
 };
 
 export const getStreamSessionsCount = async (
-  filter: FilterQuery<IStreamSessionDocument> = {}
+  filter: FilterQuery<StreamSessionDocument> = {}
 ) => {
   return await StreamSession.countDocuments(filter);
 };
 
 export const createStreamSession = async (
-  streamSessionData: IStreamSessionCreateData
+  streamSessionData: StreamSessionCreateData
 ) => {
   try {
     const streamSession = await StreamSession.create(streamSessionData);
@@ -206,7 +206,7 @@ export const createStreamSession = async (
 
 export const updateStreamSessionById = async (
   id: string,
-  updateData: UpdateQuery<IStreamSessionOptionalData>
+  updateData: UpdateQuery<StreamSessionOptionalData>
 ) => {
   try {
     const streamSession = await StreamSession.findByIdAndUpdate(

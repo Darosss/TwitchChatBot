@@ -1,6 +1,6 @@
-import { IConfigDefaults } from "./types";
+import { ConfigDefaults } from "./types";
 
-export const configDefaults: IConfigDefaults = {
+export const configDefaults: ConfigDefaults = {
   commandsPrefix: "--",
   timersIntervalDelay: 20,
   activeUserTimeDelay: 150,

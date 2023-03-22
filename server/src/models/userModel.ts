@@ -1,7 +1,7 @@
 import { Model, model, Schema } from "mongoose";
-import { IUserDocument } from "./types";
+import { UserDocument } from "./types";
 
-const UserSchema: Schema<IUserDocument> = new Schema(
+const UserSchema: Schema<UserDocument> = new Schema(
   {
     twitchId: { type: String, index: { unique: true }, required: true },
     username: { type: String },
@@ -18,4 +18,4 @@ const UserSchema: Schema<IUserDocument> = new Schema(
   { timestamps: true }
 );
 
-export const User: Model<IUserDocument> = model("User", UserSchema);
+export const User: Model<UserDocument> = model("User", UserSchema);

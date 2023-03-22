@@ -6,7 +6,7 @@ import { createUserIfNotExist, isUserInDB, updateUser } from "@services/users";
 import { ApiClient, HelixChatChatter, HelixPrivilegedUser } from "@twurple/api";
 import { getBaseLog } from "@utils/getBaseLogUtil";
 import removeDifferenceFromSet from "@utils/removeDifferenceSetUtil";
-import { ILoyaltyHandlerConfig } from "./types";
+import { LoyaltyHandlerConfig } from "./types";
 
 import {
   ClientToServerEvents,
@@ -18,13 +18,13 @@ import { Server } from "socket.io";
 
 import retryWithCatch from "@utils/retryWithCatchUtil";
 import HeadHandler from "./HeadHandler";
-import { IStreamSession } from "@models/types";
+import { StreamSessionModel } from "@models/types";
 import { watcherLogger } from "@utils/loggerUtil";
 
 class LoyaltyHandler extends HeadHandler {
-  private configs: ILoyaltyHandlerConfig;
+  private configs: LoyaltyHandlerConfig;
   private usersBefore = new Set<string>();
-  private currentSession: IStreamSession | null | undefined;
+  private currentSession: StreamSessionModel | null | undefined;
 
   constructor(
     twitchApi: ApiClient,
@@ -35,7 +35,7 @@ class LoyaltyHandler extends HeadHandler {
       SocketData
     >,
     authorizedUser: HelixPrivilegedUser,
-    configs: ILoyaltyHandlerConfig
+    configs: LoyaltyHandlerConfig
   ) {
     super(socketIO, twitchApi, authorizedUser);
     this.configs = configs;
@@ -49,7 +49,7 @@ class LoyaltyHandler extends HeadHandler {
     }, this.configs.intervalCheckChatters * 1000);
   }
 
-  public async refreshConfigs(refreshedConfigs: ILoyaltyHandlerConfig) {
+  public async refreshConfigs(refreshedConfigs: LoyaltyHandlerConfig) {
     this.configs = refreshedConfigs;
   }
 

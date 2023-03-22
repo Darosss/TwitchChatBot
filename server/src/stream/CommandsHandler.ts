@@ -1,4 +1,4 @@
-import { IUser } from "@models/types";
+import { UserModel } from "@models/types";
 import {
   getChatCommands,
   getChatCommandsAliases,
@@ -25,7 +25,7 @@ class CommandsHandler {
     this.commandsAliases = (await getChatCommandsAliases()) || [];
   }
 
-  public async checkMessageForCommand(user: IUser, message: string) {
+  public async checkMessageForCommand(user: UserModel, message: string) {
     if (!message.startsWith(this.prefix)) return false;
 
     const commandAlias = this.commandsAliases.find((alias) =>
@@ -36,7 +36,7 @@ class CommandsHandler {
     return await this.findAndCheckCommandByAlias(user, commandAlias);
   }
 
-  async findAndCheckCommandByAlias(user: IUser, alias: string) {
+  async findAndCheckCommandByAlias(user: UserModel, alias: string) {
     const foundCommand = await this.getCommandByAlias(alias);
     if (!foundCommand) return;
 
@@ -71,13 +71,15 @@ class CommandsHandler {
     });
   }
 
-  formatCommandMessage(user: IUser, message?: string) {
+  formatCommandMessage(user: UserModel, message?: string) {
     let formatMsg = message || "";
 
     let matches = formatMsg.match(/\$\{(.*?)\}/);
 
     while (matches !== null) {
-      const userDetail = this.formatUserDetail(user[matches[1] as keyof IUser]);
+      const userDetail = this.formatUserDetail(
+        user[matches[1] as keyof UserModel]
+      );
       formatMsg = formatMsg.replace(matches[0], userDetail);
 
       matches = formatMsg.match(/\$\{(.*?)\}/);

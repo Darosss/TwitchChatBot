@@ -1,6 +1,6 @@
 import { Model, model, Schema } from "mongoose";
-import { ITriggerDocument } from "./types";
-const TriggerSchema: Schema<ITriggerDocument> = new Schema(
+import { TriggerDocument } from "./types";
+const TriggerSchema: Schema<TriggerDocument> = new Schema(
   {
     name: { type: String, required: true },
     enabled: { type: Boolean, default: true },
@@ -15,7 +15,4 @@ const TriggerSchema: Schema<ITriggerDocument> = new Schema(
   { timestamps: true }
 );
 
-export const Trigger: Model<ITriggerDocument> = model(
-  "Triggers",
-  TriggerSchema
-);
+export const Trigger: Model<TriggerDocument> = model("Triggers", TriggerSchema);

@@ -1,5 +1,5 @@
 import { ChatCommand } from "@models/chatCommandModel";
-import { IChatCommandDocument } from "@models/types";
+import { ChatCommandDocument } from "@models/types";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
@@ -12,7 +12,7 @@ import {
 } from "./types/";
 
 export const getChatCommands = async (
-  filter: FilterQuery<IChatCommandDocument> = {},
+  filter: FilterQuery<ChatCommandDocument> = {},
   chatCommandsFindOptions: ManyChatCommandsFindOptions
 ) => {
   const {
@@ -48,7 +48,7 @@ export const getAllChatCommands = async () => {
 };
 
 export const getOneChatCommand = async (
-  filter: FilterQuery<IChatCommandDocument> = {}
+  filter: FilterQuery<ChatCommandDocument> = {}
 ) => {
   try {
     const foundChatCommand = await ChatCommand.findOne(filter);
@@ -63,7 +63,7 @@ export const getOneChatCommand = async (
 };
 
 export const getChatCommandsCount = async (
-  filter: FilterQuery<IChatCommandDocument> = {}
+  filter: FilterQuery<ChatCommandDocument> = {}
 ) => {
   return await ChatCommand.countDocuments(filter);
 };
@@ -136,7 +136,7 @@ export const updateChatCommandById = async (
 };
 
 export const updateChatCommands = async (
-  filter: FilterQuery<IChatCommandDocument>,
+  filter: FilterQuery<ChatCommandDocument>,
   updateData: UpdateQuery<ChatCommandUpdateData>
 ) => {
   try {

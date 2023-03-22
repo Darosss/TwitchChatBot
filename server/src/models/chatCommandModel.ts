@@ -1,7 +1,7 @@
 import { Model, model, Schema } from "mongoose";
-import { IChatCommandDocument } from "./types";
+import { ChatCommandDocument } from "./types";
 
-const ChatCommandSchema: Schema<IChatCommandDocument> = new Schema(
+const ChatCommandSchema: Schema<ChatCommandDocument> = new Schema(
   {
     name: { type: String, required: true },
     description: { type: String },
@@ -22,7 +22,7 @@ const ChatCommandSchema: Schema<IChatCommandDocument> = new Schema(
   { timestamps: true }
 );
 
-export const ChatCommand: Model<IChatCommandDocument> = model(
+export const ChatCommand: Model<ChatCommandDocument> = model(
   "ChatCommands",
   ChatCommandSchema
 );

@@ -1,6 +1,6 @@
 import { Document, Types } from "mongoose";
 
-export interface IUser {
+export interface UserModel {
   _id: string;
   twitchId: string;
   username: string;
@@ -17,22 +17,22 @@ export interface IUser {
   follower?: Date;
 }
 
-export type IUserDocument = IUser & Document;
+export type UserDocument = UserModel & Document;
 
-export interface IMessage {
+export interface MessageModel {
   _id: string;
   message: string;
   date: Date;
-  owner: string | IUser;
+  owner: string | UserModel;
   ownerUsername: string;
 }
 
-export type IMessageDocument = IMessage & Document;
+export type MessageDocument = MessageModel & Document;
 
-export interface IRedemption {
+export interface RedemptionModel {
   _id: string;
   rewardId: string;
-  userId: string;
+  userId: string | UserModel;
   twitchId: string;
   userName: string;
   userDisplayName: string;
@@ -43,9 +43,9 @@ export interface IRedemption {
   message?: string;
 }
 
-export type IRedemptionDocument = IRedeption & Document;
+export type RedemptionDocument = RedemptionModel & Document;
 
-export interface IStreamSession {
+export interface StreamSessionModel {
   _id: string;
   sessionStart: Date;
   sessionEnd: Date;
@@ -56,11 +56,11 @@ export interface IStreamSession {
   watchers: Map<string, number>;
 }
 
-export type IStreamSessionDocument = IStreamSession & Document;
+export type StreamSessionDocument = StreamSessionModel & Document;
 
-export type TTriggerMode = "WHOLE-WORD" | "STARTS-WITH" | "ALL";
+export type TriggerMode = "WHOLE-WORD" | "STARTS-WITH" | "ALL";
 
-export interface ITrigger {
+export interface TriggerModel {
   _id: string;
   name: string;
   enabled: boolean;
@@ -72,12 +72,12 @@ export interface ITrigger {
   messages: string[];
   createdAt: Date;
   updatedAt: Date;
-  mode: TTriggerMode;
+  mode: TriggerMode;
 }
 
-export type ITriggerDocument = ITrigger & Document;
+export type TriggerDocument = TriggerModel & Document;
 
-export interface IConfig {
+export interface ConfigModel {
   _id: string;
   commandsPrefix: string;
   timersIntervalDelay: number;
@@ -102,9 +102,9 @@ export interface IConfig {
   updatedAt: Date;
 }
 
-export type IConfigDocument = IConfig & Document;
+export type ConfigDocument = ConfigModel & Document;
 
-export interface IChatCommand {
+export interface ChatCommandModel {
   _id: string;
   name: string;
   createdAt: Date;
@@ -117,9 +117,9 @@ export interface IChatCommand {
   uses: number;
 }
 
-export type IChatCommandDocument = IChatCommand & Document;
+export type ChatCommandDocument = ChatCommandModel & Document;
 
-export interface IAuth {
+export interface AuthModel {
   _id: string;
   accessToken: string;
   refreshToken: string;
@@ -128,9 +128,9 @@ export interface IAuth {
   scope: string[];
 }
 
-export type IAuthDocument = IAuth & Document;
+export type AuthDocument = AuthModel & Document;
 
-export interface IMessageCategory {
+export interface MessageCategoryModel {
   _id: string;
   category: string;
   messages: string[];
@@ -139,9 +139,9 @@ export interface IMessageCategory {
   updatedAt: Date;
 }
 
-export type IMessageCategoryDocument = IMessageCategory & Document;
+export type MessageCategoryDocument = MessageCategoryModel & Document;
 
-interface ILayoutBreakpoint {
+interface LayoutBreakpoint {
   i: string;
   x: number;
   y: number;
@@ -149,18 +149,18 @@ interface ILayoutBreakpoint {
   h: number;
   static: boolean;
 }
-export interface IWidgets {
+export interface WidgetsModel {
   _id: string;
   name: string;
-  layout: { [P: string]: ILayoutBreakpoint[] };
-  toolbox: { [P: string]: ILayoutBreakpoint[] };
+  layout: { [P: string]: LayoutBreakpoint[] };
+  toolbox: { [P: string]: LayoutBreakpoint[] };
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type IWidgetsDocument = IWidgets & Document;
+export type WidgetsDocument = WidgetsModel & Document;
 
-export interface IOverlay {
+export interface OverlayModel {
   _id: string;
   name: string;
   layout: Array;
@@ -168,4 +168,4 @@ export interface IOverlay {
   updatedAt: Date;
 }
 
-export type IOverlayDocument = IOverlay & Document;
+export type OverlayDocument = OverlayModel & Document;

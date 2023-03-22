@@ -1,9 +1,9 @@
-import { IRequestQuery } from "@types";
+import { RequestQuery } from "@types";
 import { AppError } from "@utils/ErrorHandlerUtil";
 import { NextFunction, Request, Response } from "express";
 
 const checkSearchParams = (
-  req: Request<{}, {}, {}, IRequestQuery>,
+  req: Request<{}, {}, {}, RequestQuery>,
   res: Response,
   next: NextFunction
 ) => {

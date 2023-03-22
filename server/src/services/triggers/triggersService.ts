@@ -1,5 +1,5 @@
 import { Trigger } from "@models/triggerModel";
-import { ITriggerDocument } from "@models/types";
+import { TriggerDocument } from "@models/types";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
@@ -11,7 +11,7 @@ import {
 } from "./types";
 
 export const getTriggers = async (
-  filter: FilterQuery<ITriggerDocument> = {},
+  filter: FilterQuery<TriggerDocument> = {},
   triggerFindOptions: ManyTriggersFindOptions
 ) => {
   const {
@@ -36,7 +36,7 @@ export const getTriggers = async (
 };
 
 export const getTriggersCount = async (
-  filter: FilterQuery<ITriggerDocument> = {}
+  filter: FilterQuery<TriggerDocument> = {}
 ) => {
   return await Trigger.countDocuments(filter);
 };
@@ -58,7 +58,7 @@ export const createTrigger = async (
 };
 
 export const updateTriggers = async (
-  filter: FilterQuery<ITriggerDocument> = {},
+  filter: FilterQuery<TriggerDocument> = {},
   updateData: UpdateQuery<TriggerUpdateData>
 ) => {
   try {
@@ -110,7 +110,7 @@ export const deleteTriggerById = async (id: string) => {
 
 export const getTriggerById = async (
   id: string,
-  filter: FilterQuery<ITriggerDocument> = {}
+  filter: FilterQuery<TriggerDocument> = {}
 ) => {
   try {
     const foundTrigger = await Trigger.findById(id, filter);
@@ -125,7 +125,7 @@ export const getTriggerById = async (
 };
 
 export const getOneTrigger = async (
-  filter: FilterQuery<ITriggerDocument> = {}
+  filter: FilterQuery<TriggerDocument> = {}
 ) => {
   try {
     const foundTrigger = await Trigger.findOne(filter);

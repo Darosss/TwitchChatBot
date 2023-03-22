@@ -1,4 +1,4 @@
-import { ITrigger, TTriggerMode } from "@models/types";
+import { TriggerModel, TriggerMode } from "@models/types";
 import {
   getRandomCategoryMessage,
   getRandomMessageFromCategory,
@@ -11,14 +11,14 @@ import {
 } from "@services/triggers";
 import { triggerLogger } from "@utils/loggerUtil";
 import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
-import { ITriggersHandlerConfigs } from "./types";
+import { TriggersHandlerConfigs } from "./types";
 
 class TriggersHandler {
-  private configs: ITriggersHandlerConfigs;
+  private configs: TriggersHandlerConfigs;
   private triggersWords: string[] = [];
   private triggersOnDelay: Map<string, NodeJS.Timeout> = new Map();
 
-  constructor(configs: ITriggersHandlerConfigs) {
+  constructor(configs: TriggersHandlerConfigs) {
     this.configs = configs;
     this.init();
   }
@@ -31,7 +31,7 @@ class TriggersHandler {
     this.triggersWords = (await getTriggersWords()) || [];
   }
 
-  async refreshConfigs(refreshedConfigs: ITriggersHandlerConfigs) {
+  async refreshConfigs(refreshedConfigs: TriggersHandlerConfigs) {
     this.configs = refreshedConfigs;
   }
 
@@ -99,7 +99,7 @@ class TriggersHandler {
   }
 
   async checkTriggersConditions(
-    trigger: ITrigger,
+    trigger: TriggerModel,
     triggerWord: string,
     wordInMessage: string
   ) {
@@ -114,7 +114,7 @@ class TriggersHandler {
     return false;
   }
 
-  async getMessageAndUpdateTriggerLogic(trigger: ITrigger) {
+  async getMessageAndUpdateTriggerLogic(trigger: TriggerModel) {
     const { _id, messages, name, delay } = trigger;
     const triggerMessage = await this.getTriggerMessage(messages);
     await this.updateTrigerAfterUsage(_id);
@@ -126,7 +126,7 @@ class TriggersHandler {
   }
 
   async checkIfCanSendTrigger(
-    mode: TTriggerMode,
+    mode: TriggerMode,
     wholeWord: string,
     triggerWord: string
   ) {

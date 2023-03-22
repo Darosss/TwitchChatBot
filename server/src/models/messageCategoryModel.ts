@@ -1,7 +1,7 @@
 import { Model, model, Schema } from "mongoose";
-import { IMessageCategoryDocument } from "./types";
+import { MessageCategoryDocument } from "./types";
 
-const MessageCategorySchema: Schema<IMessageCategoryDocument> = new Schema(
+const MessageCategorySchema: Schema<MessageCategoryDocument> = new Schema(
   {
     category: {
       type: String,
@@ -16,7 +16,7 @@ const MessageCategorySchema: Schema<IMessageCategoryDocument> = new Schema(
   { timestamps: true }
 );
 
-export const MessageCategory: Model<IMessageCategoryDocument> = model(
+export const MessageCategory: Model<MessageCategoryDocument> = model(
   "MessageCategories",
   MessageCategorySchema
 );

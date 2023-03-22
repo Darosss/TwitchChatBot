@@ -1,5 +1,5 @@
 import { Model, model, Schema } from "mongoose";
-import { IConfigDocument } from "./types";
+import { ConfigDocument } from "./types";
 import { configDefaults } from "../defaults/configsDefaults";
 const {
   commandsPrefix,
@@ -14,7 +14,7 @@ const {
   randomMessageChance,
 } = configDefaults;
 
-const ConfigSchema: Schema<IConfigDocument> = new Schema(
+const ConfigSchema: Schema<ConfigDocument> = new Schema(
   {
     commandsPrefix: { type: String, required: true, default: commandsPrefix },
     timersIntervalDelay: {
@@ -66,4 +66,4 @@ const ConfigSchema: Schema<IConfigDocument> = new Schema(
   }
 );
 
-export const Config: Model<IConfigDocument> = model("Configs", ConfigSchema);
+export const Config: Model<ConfigDocument> = model("Configs", ConfigSchema);

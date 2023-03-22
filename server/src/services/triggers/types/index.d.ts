@@ -1,23 +1,23 @@
-import { ITrigger } from "@models/types";
+import { TriggerModel } from "@models/types";
 import { PopulateOption, PopulateOptions } from "mongoose";
 import { SortQuery, SelectQuery } from "@services/types";
 
 export interface TriggerFindOptions {
-  select?: SelectQuery<ITrigger> | {};
+  select?: SelectQuery<TriggerModel> | {};
   populateSelect?: PopulateOption.select;
 }
 
 export interface ManyTriggersFindOptions extends TriggerFindOptions {
-  sort?: SortQuery<ITrigger> | {};
+  sort?: SortQuery<TriggerModel> | {};
   skip?: number;
   limit?: number;
 }
 
 export interface TriggerOptionalData
-  extends Partial<Omit<ITrigger, "_id" | "createdAt" | "updatedAt">> {}
+  extends Partial<Omit<TriggerModel, "_id" | "createdAt" | "updatedAt">> {}
 
 export interface TriggerCreateData
-  extends Pick<ITrigger, "name" | "words" | "messages">,
+  extends Pick<TriggerModel, "name" | "words" | "messages">,
     TriggerOptionalData {}
 
 export interface TriggerUpdateData

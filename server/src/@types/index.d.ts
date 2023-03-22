@@ -21,51 +21,51 @@ declare global {
   }
 }
 
-interface IRequestParams extends ParamsDictionary {
+interface RequestParams extends ParamsDictionary {
   id: string;
 }
 
-interface IRequestQuery extends Query {
+interface RequestQuery extends Query {
   limit?: number;
   page?: number;
 }
 
-interface IRequestSearch extends IRequestQuery {
+interface RequestSearch extends RequestQuery {
   search_name?: string;
 }
 
-interface IRequestSearchDate {
+interface RequestSearchDate {
   start_date?: Date;
   end_date?: Date;
 }
 
-interface IRequestQueryMessage extends IRequestSearch, IRequestSearchDate {
+interface RequestQueryMessage extends RequestSearch, RequestSearchDate {
   owner?: string;
 }
 
-interface IRequestQueryMessageCategories extends IRequestQuery {
+interface RequestQueryMessageCategories extends RequestQuery {
   category?: string;
   messages?: string;
 }
 
-interface IRequestQueryUser extends IRequestSearch {
+interface RequestQueryUser extends RequestSearch {
   seen_start?: Date;
   seen_end?: Date;
   privilege?: number;
   created_start?: Date;
   created_end?: Date;
 }
-interface IRequestQuerySession extends IRequestSearch, IRequestSearchDate {
+interface RequestQuerySession extends RequestSearch, RequestSearchDate {
   tags?: string;
   categories?: string;
 }
 
-interface IRequestRedemptionQuery extends IRequestSearch, IRequestSearchDate {
+interface RequestRedemptionQuery extends RequestSearch, RequestSearchDate {
   receiver?: string;
   cost?: number;
   message?: string;
 }
-interface IRequestCommandsQuery extends IRequestSearch, IRequestSearchDate {
+interface RequestCommandsQuery extends RequestSearch, RequestSearchDate {
   created?: string;
   privilege?: number;
   description?: string;
@@ -73,12 +73,12 @@ interface IRequestCommandsQuery extends IRequestSearch, IRequestSearchDate {
   messages?: string;
 }
 
-interface IRequestTriggerQuery extends IRequestSearch, IRequestSearchDate {
+interface RequestTriggerQuery extends RequestSearch, RequestSearchDate {
   words?: string;
   messages?: string;
 }
 
-interface IAuthorizationTwitch {
+interface AuthorizationTwitch {
   access_token: string;
   expires_in: number;
   refresh_token: string;

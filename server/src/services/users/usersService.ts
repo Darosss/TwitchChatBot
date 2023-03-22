@@ -1,4 +1,4 @@
-import { IUser, IUserDocument } from "@models/types";
+import { UserModel, UserDocument } from "@models/types";
 import { User } from "@models/userModel";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
@@ -12,7 +12,7 @@ import {
 } from "./types";
 
 export const getUsers = async (
-  filter: FilterQuery<IUserDocument> = {},
+  filter: FilterQuery<UserDocument> = {},
   userFindOptions: ManyUsersFindOptions
 ) => {
   const {
@@ -37,7 +37,7 @@ export const getUsers = async (
 };
 
 export const getOneUser = async (
-  filter: FilterQuery<IUserDocument> = {},
+  filter: FilterQuery<UserDocument> = {},
   userFindOptions: UserFindOptions
 ) => {
   const { select = { __v: 0 } } = userFindOptions;
@@ -88,7 +88,7 @@ export const updateUserById = async (
   }
 };
 
-export const getUserCount = async (filter: FilterQuery<IUserDocument>) => {
+export const getUserCount = async (filter: FilterQuery<UserDocument>) => {
   return await User.countDocuments(filter);
 };
 
@@ -146,7 +146,7 @@ export const getTwitchNames = async (
   }
 };
 
-export const isUserInDB = async (userFilter: FilterQuery<IUserDocument>) => {
+export const isUserInDB = async (userFilter: FilterQuery<UserDocument>) => {
   const user = await User.findOne(userFilter);
   if (user) return user;
 };
@@ -162,7 +162,7 @@ export const createUser = async (userData: UserCreateData) => {
 };
 
 export const createUserIfNotExist = async (
-  userFilter: FilterQuery<IUserDocument>,
+  userFilter: FilterQuery<UserDocument>,
   userData: UserCreateData
 ) => {
   const userExist = await isUserInDB(userFilter);
@@ -179,7 +179,7 @@ export const createUserIfNotExist = async (
 };
 
 export const updateUser = async (
-  filter: FilterQuery<IUserDocument>,
+  filter: FilterQuery<UserDocument>,
   updateData: UpdateQuery<UserUpdateData>
 ) => {
   try {

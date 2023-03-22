@@ -1,5 +1,5 @@
 import { Model, model, Schema } from "mongoose";
-import { IWidgetsDocument } from "./types";
+import { WidgetsDocument } from "./types";
 
 const layoutBreakpointSchema = new Schema({
   i: String,
@@ -10,7 +10,7 @@ const layoutBreakpointSchema = new Schema({
   static: Boolean,
 });
 
-const WidgetsModel: Schema<IWidgetsDocument> = new Schema(
+const WidgetsModel: Schema<WidgetsDocument> = new Schema(
   {
     name: { type: String, required: true },
     layout: {
@@ -27,4 +27,4 @@ const WidgetsModel: Schema<IWidgetsDocument> = new Schema(
   { timestamps: true }
 );
 
-export const Widgets: Model<IWidgetsDocument> = model("Widgets", WidgetsModel);
+export const Widgets: Model<WidgetsDocument> = model("Widgets", WidgetsModel);

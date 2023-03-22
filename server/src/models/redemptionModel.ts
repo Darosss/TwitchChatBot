@@ -1,7 +1,7 @@
 import { Model, model, Schema, Types } from "mongoose";
-import { IRedemptionDocument } from "./types";
+import { RedemptionDocument } from "./types";
 
-const RedeptionSchema: Schema<IRedemptionDocument> = new Schema({
+const RedemptionSchema: Schema<RedemptionDocument> = new Schema({
   rewardId: { type: String, required: true },
   userId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
   twitchId: { type: String, required: true },
@@ -14,7 +14,7 @@ const RedeptionSchema: Schema<IRedemptionDocument> = new Schema({
   message: { type: String },
 });
 
-export const Redemption: Model<IRedemptionDocument> = model(
+export const Redemption: Model<RedemptionDocument> = model(
   "Redemptions",
-  RedeptionSchema
+  RedemptionSchema
 );

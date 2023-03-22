@@ -1,16 +1,16 @@
 import { PopulateOption, PopulateOptions } from "mongoose";
 import { SortQuery, SelectQuery } from "@services/types";
-import { IMessage } from "@models/types";
+import { MessageModel } from "@models/types";
 
-export type MessageCreateData = Omit<IMessage, "_id">;
+export type MessageCreateData = Omit<MessageModel, "_id">;
 
 export interface MessageFindOptions {
-  select?: SelectQuery<IMessage> | {};
+  select?: SelectQuery<MessageModel> | {};
   populateSelect?: PopulateOption.select;
 }
 
 export interface ManyMessageFindOptions extends MessageFindOptions {
-  sort?: SortQuery<IMessage> | {};
+  sort?: SortQuery<MessageModel> | {};
   skip?: number;
   limit?: number;
 }

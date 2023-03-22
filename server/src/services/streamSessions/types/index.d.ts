@@ -1,26 +1,26 @@
 import { PopulateOption, PopulateOptions } from "mongoose";
 import { SortQuery, SelectQuery } from "@services/types";
-import { IStreamSession } from "@models/types";
+import { StreamSessionModel } from "@models/types";
 
-export interface IStreamSessionFindOptions {
-  select?: SelectQuery<IStreamSession> | {};
+export interface StreamSessionFindOptions {
+  select?: SelectQuery<StreamSessionModel> | {};
 }
 
-export interface IManyStreamSessionsFindOptions
-  extends IStreamSessionFindOptions {
-  sort?: SortQuery<IStreamSession> | {};
+export interface ManyStreamSessionsFindOptions
+  extends StreamSessionFindOptions {
+  sort?: SortQuery<StreamSessionModel> | {};
   skip?: number;
   limit?: number;
 }
 
-export interface IStreamSessionOptionalData
-  extends Partial<Omit<IStreamSession, "sessionStart">> {}
+export interface StreamSessionOptionalData
+  extends Partial<Omit<StreamSessionModel, "sessionStart">> {}
 
-export interface IStreamSessionCreateData extends IStreamSessionOptionalData {
+export interface StreamSessionCreateData extends StreamSessionOptionalData {
   sessionStart: Date;
 }
 
-export interface IStreamSessionStatisticOptions {
+export interface StreamSessionStatisticOptions {
   limitTopMessageUsers?: number;
   limitTopRedemptionsUsers?: number;
   limitMostUsedWords?: number;

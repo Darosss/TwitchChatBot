@@ -68,7 +68,6 @@ const clientTmi = (
       privileges: 0,
     };
     messageLogger.info(`${userData.username}: ${message}`);
-
     io.emit("messageServer", new Date(), userData.username, message); // emit for socket
 
     const user = await createUserIfNotExist(

@@ -1,19 +1,19 @@
 import { MessageCategory } from "@models/messageCategoryModel";
-import { IMessageCategory } from "@models/types";
+import { MessageCategoryModel } from "@models/types";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
 import { randomWithMax } from "@utils/randomNumbersUtil";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
-  IManyMessageCategoriesFindOptions,
-  IMessageCategoryData,
-  IMessageCategoryFindOptions,
+  ManyMessageCategoriesFindOptions,
+  MessageCategoryData,
+  MessageCategoryFindOptions,
 } from "./types";
 
 export const getMessageCategories = async (
-  filter: FilterQuery<IMessageCategory> = {},
-  categoriesFindOptions: IManyMessageCategoriesFindOptions
+  filter: FilterQuery<MessageCategoryModel> = {},
+  categoriesFindOptions: ManyMessageCategoriesFindOptions
 ) => {
   const {
     limit = 50,
@@ -36,7 +36,7 @@ export const getMessageCategories = async (
 };
 
 export const getMessageCategoriesCount = async (
-  filter: FilterQuery<IMessageCategory>
+  filter: FilterQuery<MessageCategoryModel>
 ) => {
   const count = await MessageCategory.countDocuments(filter);
   return count;
@@ -82,14 +82,14 @@ export const getRandomCategoryMessage = async () => {
 };
 
 export const getRandomMessageFromCategory = async (
-  messageCategory: IMessageCategory
+  messageCategory: MessageCategoryModel
 ) => {
   const { messages } = messageCategory;
   return messages[randomWithMax(messages.length)];
 };
 
 export const createMessageCategories = async (
-  messageCategoryData: IMessageCategoryData | IMessageCategoryData[]
+  messageCategoryData: MessageCategoryData | MessageCategoryData[]
 ) => {
   try {
     const messageCategory = await MessageCategory.create(messageCategoryData);
@@ -101,13 +101,13 @@ export const createMessageCategories = async (
 };
 
 export const updateMessageCategory = async (
-  filter: IMessageCategoryFindOptions,
-  messageCategoryData: IMessageCategoryData
+  filter: MessageCategoryFindOptions,
+  messageCategoryData: MessageCategoryData
 ) => {};
 
 export const updateMessageCategoryById = async (
   id: string,
-  updateData: UpdateQuery<IMessageCategoryData>
+  updateData: UpdateQuery<MessageCategoryData>
 ) => {
   try {
     const updatedMessageCategory = await MessageCategory.findByIdAndUpdate(

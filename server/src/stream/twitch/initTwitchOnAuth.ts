@@ -10,12 +10,12 @@ import {
   InterServerEvents,
   SocketData,
 } from "@libs/types";
-import { IAuthorizationTwitch } from "@types";
+import { AuthorizationTwitch } from "@types";
 import { createNewAuth, createOrGetIfAuthValid } from "@services/auth";
 import { getConfigs } from "@services/configs";
 
 const initTwitchOnAuth = async (
-  authAccesToken: IAuthorizationTwitch,
+  authAccesToken: AuthorizationTwitch,
   socketIO: Server<
     ClientToServerEvents,
     ServerToClientEvents,

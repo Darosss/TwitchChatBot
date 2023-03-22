@@ -1,9 +1,9 @@
-import { IConfig } from "@models/types";
+import { ConfigModel } from "@models/types";
 
-export type TConfigPointsIncrement = IConfig["pointsIncrement"];
+export type TConfigPointsIncrement = ConfigModel["pointsIncrement"];
 
-export interface ILoyaltyHandlerConfig
-  extends Pick<IConfig, "pointsIncrement" | "intervalCheckChatters"> {}
+export interface LoyaltyHandlerConfig
+  extends Pick<ConfigModel, "pointsIncrement" | "intervalCheckChatters"> {}
 
-export interface ITriggersHandlerConfigs
-  extends Pick<IConfig, "randomMessageChance"> {}
+export interface TriggersHandlerConfigs
+  extends Pick<ConfigModel, "randomMessageChance"> {}

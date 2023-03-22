@@ -1,3 +1,3 @@
-import { IConfig } from "@models/types";
+import { ConfigModel } from "@models/types";
 export interface ConfigUpdateData
-  extends Partial<Omit<IConfig, "_id" | "createdAt" | "updatedAt">> {}
+  extends Partial<Omit<ConfigModel, "_id" | "createdAt" | "updatedAt">> {}

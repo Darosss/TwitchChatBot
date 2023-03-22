@@ -1,6 +1,6 @@
 import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
-import { IConfigDocument, IUser } from "@models/types";
-import { IConfigDefaults } from "@defaults/types";
+import { ConfigDocument, UserModel } from "@models/types";
+import { ConfigDefaults } from "@defaults/types";
 import { configDefaults } from "@defaults/configsDefaults";
 import {
   ClientToServerEvents,
@@ -23,8 +23,8 @@ import MessagesHandler from "./MessagesHandler";
 import { getConfigs } from "@services/configs";
 import { headLogger } from "@utils/loggerUtil";
 
-interface IStreamHandlerOptions {
-  config: IConfigDocument;
+interface StreamHandlerOptions {
+  config: ConfigDocument;
   twitchApi: ApiClient;
   socketIO: Server<
     ClientToServerEvents,
@@ -49,9 +49,9 @@ class StreamHandler {
   private triggersHandler: TriggersHandler;
   private messagesHandler: MessagesHandler;
   private loayaltyHandler: LoyaltyHandler;
-  private configs: IConfigDefaults;
+  private configs: ConfigDefaults;
 
-  constructor(options: IStreamHandlerOptions) {
+  constructor(options: StreamHandlerOptions) {
     const { twitchApi, socketIO, authorizedUser } = options;
     this.twitchApi = twitchApi;
     this.socketIO = socketIO;
@@ -75,7 +75,7 @@ class StreamHandler {
     this.initSocketEvents();
   }
 
-  public async onMessageEvents(user: IUser, message: string, self = false) {
+  public async onMessageEvents(user: UserModel, message: string, self = false) {
     let messagesToSend: string[] = [];
     const dataEvent = new Date();
 

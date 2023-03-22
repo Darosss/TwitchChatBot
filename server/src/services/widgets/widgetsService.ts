@@ -1,5 +1,5 @@
 import { Widgets } from "@models/widgetsModel";
-import { IWidgetsDocument } from "@models/types";
+import { WidgetsDocument } from "@models/types";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
@@ -12,7 +12,7 @@ import {
 } from "./types/";
 
 export const getWidgets = async (
-  filter: FilterQuery<IWidgetsDocument> = {},
+  filter: FilterQuery<WidgetsDocument> = {},
   widgetFindOptions: ManyWidgetsFindOptions
 ) => {
   const {
@@ -37,7 +37,7 @@ export const getWidgets = async (
 };
 
 export const getWidgetsCount = async (
-  filter: FilterQuery<IWidgetsDocument> = {}
+  filter: FilterQuery<WidgetsDocument> = {}
 ) => {
   return await Widgets.countDocuments(filter);
 };

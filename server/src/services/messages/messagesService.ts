@@ -1,11 +1,11 @@
 import { Message } from "@models/messageModel";
-import { IMessageDocument } from "@models/types";
+import { MessageDocument } from "@models/types";
 import { handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
 import { FilterQuery } from "mongoose";
 import { ManyMessageFindOptions, MessageCreateData } from "./types";
 export const getMessages = async (
-  filter: FilterQuery<IMessageDocument> = {},
+  filter: FilterQuery<MessageDocument> = {},
   messageFindOptions: ManyMessageFindOptions
 ) => {
   const {
@@ -41,7 +41,7 @@ export const createMessage = async (messageData: MessageCreateData) => {
 };
 
 export const getMessagesCount = async (
-  filter: FilterQuery<IMessageDocument>
+  filter: FilterQuery<MessageDocument>
 ) => {
   return await Message.countDocuments(filter);
 };

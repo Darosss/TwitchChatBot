@@ -1,4 +1,4 @@
-import { IConfig } from "@models/types";
+import { ConfigModel } from "@models/types";
 
-export interface IConfigDefaults
-  extends Omit<IConfig, "_id" | "createdAt" | "updatedAt"> {}
+export interface ConfigDefaults
+  extends Omit<ConfigModel, "_id" | "createdAt" | "updatedAt"> {}

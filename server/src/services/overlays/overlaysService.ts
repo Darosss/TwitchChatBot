@@ -1,5 +1,5 @@
 import { Overlay } from "@models/overlayModel";
-import { IOverlayDocument } from "@models/types";
+import { OverlayDocument } from "@models/types";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
@@ -12,7 +12,7 @@ import {
 } from "./types/";
 
 export const getOverlays = async (
-  filter: FilterQuery<IOverlayDocument> = {},
+  filter: FilterQuery<OverlayDocument> = {},
   overlayFindOptions: ManyOverlaysFindOptions
 ) => {
   const {
@@ -37,7 +37,7 @@ export const getOverlays = async (
 };
 
 export const getOverlaysCount = async (
-  filter: FilterQuery<IOverlayDocument> = {}
+  filter: FilterQuery<OverlayDocument> = {}
 ) => {
   return await Overlay.countDocuments(filter);
 };

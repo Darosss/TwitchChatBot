@@ -1,17 +1,20 @@
 import { PopulateOption, PopulateOptions } from "mongoose";
 import { SortQuery, SelectQuery } from "@services/types";
-import { IMessageCategory } from "@models/types";
+import { MessageCategoryModel } from "@models/types";
 
-export interface IMessageCategoryFindOptions {
+export interface MessageCategoryFindOptions {
   select?: SelectQuery<IStreamSession> | {};
 }
 
-export interface IManyMessageCategoriesFindOptions
-  extends IMessageCategoryFindOptions {
-  sort?: SortQuery<IMessageCategory> | {};
+export interface ManyMessageCategoriesFindOptions
+  extends MessageCategoryFindOptions {
+  sort?: SortQuery<MessageCategoryModel> | {};
   skip?: number;
   limit?: number;
 }
 
-export interface IMessageCategoryData
-  extends Omit<IMessageCategory, "_id" | "createdAt" | "updatedAt" | "uses"> {}
+export interface MessageCategoryData
+  extends Omit<
+    MessageCategoryModel,
+    "_id" | "createdAt" | "updatedAt" | "uses"
+  > {}
