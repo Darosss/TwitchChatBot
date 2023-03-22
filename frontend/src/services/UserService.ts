@@ -1,8 +1,8 @@
-import useAxiosCustom, { IPagination, IResponseData } from "./ApiService";
-import { IMessage } from "./MessageService";
-import { IRedemption } from "./RedemptionService";
+import useAxiosCustom, { PaginationData, ResponseData } from "./ApiService";
+import { Message } from "./MessageService";
+import { Redemption } from "./RedemptionService";
 
-export interface IUser {
+export interface User {
   _id: string;
   twitchId: string;
   username: string;
@@ -20,29 +20,29 @@ export interface IUser {
   follower?: Date;
 }
 
-type IUserUpdateData = Partial<
-  Omit<IUser, "_id" | "twitchId" | "twitchName" | "twitchCreated">
+type UserUpdateData = Partial<
+  Omit<User, "_id" | "twitchId" | "twitchName" | "twitchCreated">
 >;
 
 interface FirstAndLatestMsgs {
-  firstMessages: IMessage[];
-  latestMessages: IMessage[];
+  firstMessages: Message[];
+  latestMessages: Message[];
 }
 
 export const getUsersList = () => {
-  return useAxiosCustom<IPagination<IUser>>({
+  return useAxiosCustom<PaginationData<User>>({
     url: `/users`,
   });
 };
 
 export const getUser = (userId: string) => {
-  return useAxiosCustom<IResponseData<IUser>>({
+  return useAxiosCustom<ResponseData<User>>({
     url: `/users/${userId}`,
   });
 };
 
-export const editUser = (userId: string, data: IUserUpdateData) => {
-  return useAxiosCustom<IUser>({
+export const editUser = (userId: string, data: UserUpdateData) => {
+  return useAxiosCustom<User>({
     url: `/users/${userId}`,
     method: "POST",
     bodyData: data,
@@ -51,7 +51,7 @@ export const editUser = (userId: string, data: IUserUpdateData) => {
 };
 
 export const getUserMessages = (userId: string) => {
-  return useAxiosCustom<IPagination<IMessage>>({
+  return useAxiosCustom<PaginationData<Message>>({
     url: `/users/${userId}/messages`,
   });
 };
@@ -63,7 +63,7 @@ export const getLatestEldestMsgs = (userId: string) => {
 };
 
 export const getUserRedemptions = (userId: string) => {
-  return useAxiosCustom<IPagination<IRedemption>>({
+  return useAxiosCustom<PaginationData<Redemption>>({
     url: `/users/${userId}/redemptions`,
   });
 };

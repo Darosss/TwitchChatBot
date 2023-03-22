@@ -19,7 +19,7 @@ import { useParams } from "react-router-dom";
 import {
   editWidgetById,
   getWidgetById,
-  IWidgets,
+  Widgets,
 } from "@services/WidgetsService";
 import PreviousPage from "@components/previousPage";
 import { addNotification } from "@utils/getNotificationValues";
@@ -228,7 +228,7 @@ function EventsDrawerBar({
     React.SetStateAction<ReactGridLayout.Layouts>
   >;
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
-  editWidgets: () => Promise<IWidgets>;
+  editWidgets: () => Promise<Widgets>;
 }) {
   const [edit, setEdit] = useState(false);
 

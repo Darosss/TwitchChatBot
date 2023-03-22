@@ -1,6 +1,6 @@
 import useAxiosCustom from "./ApiService";
 
-export interface IAuth {
+export interface Auth {
   _id: string;
   accessToken: string;
   refreshToken: string;
@@ -9,12 +9,12 @@ export interface IAuth {
   scope: string[];
 }
 
-export interface IAuthLink {
+export interface AuthLink {
   data: string;
 }
 
 export const getAuthorizeUrl = () => {
-  return useAxiosCustom<IAuthLink>({
+  return useAxiosCustom<AuthLink>({
     url: `/auth/authorize-url`,
   });
 };

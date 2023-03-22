@@ -1,6 +1,6 @@
-import useAxiosCustom, { IPagination } from "./ApiService";
+import useAxiosCustom, { PaginationData } from "./ApiService";
 
-export interface IChatCommand {
+export interface ChatCommand {
   _id: string;
   name: string;
   createdAt: Date;
@@ -14,14 +14,14 @@ export interface IChatCommand {
 }
 
 type IChatCommandCreateData = Omit<
-  IChatCommand,
+  ChatCommand,
   "_id" | "createdAt" | "updatedAt" | "useCount"
 >;
 
 type IChatCommandUpdateData = Partial<IChatCommandCreateData>;
 
 export const getCommands = () => {
-  return useAxiosCustom<IPagination<IChatCommand>>({
+  return useAxiosCustom<PaginationData<ChatCommand>>({
     url: `/chat-commands`,
   });
 };
@@ -30,7 +30,7 @@ export const editCommand = (
   commandId: string,
   data: IChatCommandUpdateData
 ) => {
-  return useAxiosCustom<IChatCommand>({
+  return useAxiosCustom<ChatCommand>({
     url: `/chat-commands/${commandId}`,
     method: "POST",
     bodyData: data,
@@ -39,7 +39,7 @@ export const editCommand = (
 };
 
 export const createCommand = (data: IChatCommandCreateData) => {
-  return useAxiosCustom<IChatCommand>({
+  return useAxiosCustom<ChatCommand>({
     url: `/chat-commands/create/`,
     method: "POST",
     bodyData: data,

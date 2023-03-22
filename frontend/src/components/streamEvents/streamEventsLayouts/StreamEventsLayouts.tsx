@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   createLayout,
   getWidgets,
-  IWidgets,
+  Widgets,
   removeWidgetById,
 } from "@services/WidgetsService";
 import { Link } from "react-router-dom";
@@ -32,7 +32,7 @@ export default function StreamNotifications() {
   );
 
   useEffect(() => {
-    handleDeleteLayout<IWidgets>(layoutIdToDelete, setLayoutIdToDelete, () => {
+    handleDeleteLayout<Widgets>(layoutIdToDelete, setLayoutIdToDelete, () => {
       fetchDeleteLayout().then(() => {
         refetchData();
 

@@ -2,18 +2,18 @@ import useAxios, { configure } from "axios-hooks";
 import Axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { useSearchParams } from "react-router-dom";
 
-export interface IResponseData<T> {
+export interface ResponseData<T> {
   data: T;
 }
 
-export interface IPagination<T> {
+export interface PaginationData<T> {
   data: T[];
   totalPages: number;
   count: number;
   currentPage: number;
 }
 
-interface IAxiosCustomOptions<T> {
+interface AxiosCustomOptions<T> {
   url: string | URL;
   method?: string;
   bodyData?: Partial<T>;
@@ -21,7 +21,7 @@ interface IAxiosCustomOptions<T> {
   urlParams?: boolean;
 }
 
-export interface IAxiosCustomReturn<T> {
+export interface AxiosCustomReturn<T> {
   data: T | undefined;
   loading: boolean;
   error: AxiosError<any, any> | null;
@@ -38,8 +38,8 @@ const axios = Axios.create({
 configure({ axios });
 
 const useAxiosCustom = <T>(
-  options: IAxiosCustomOptions<T>
-): IAxiosCustomReturn<T> => {
+  options: AxiosCustomOptions<T>
+): AxiosCustomReturn<T> => {
   const {
     method = "GET",
     url,

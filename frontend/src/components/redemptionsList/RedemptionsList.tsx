@@ -5,14 +5,14 @@ import Pagination from "@components/pagination";
 import { Link, useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import FilterBarRedemptions from "./filterBarRedemptions";
-import { getRedemptions, IRedemption } from "src/services/RedemptionService";
-import { IPagination } from "@services/ApiService";
+import { getRedemptions, Redemption } from "src/services/RedemptionService";
+import { PaginationData } from "@services/ApiService";
 import { getSessionRedemptions } from "@services/StreamSessionService";
 import { getUserRedemptions } from "@services/UserService";
 import { DateTooltip } from "@components/dateTooltip";
 
 type RedemptionsDetailProps = {
-  redemptions: IRedemption[];
+  redemptions: Redemption[];
 };
 
 export default function RedemptionsList(props: {
@@ -92,7 +92,9 @@ const RedemptionsDetails = ({ redemptions }: RedemptionsDetailProps) => (
   </table>
 );
 
-const Redemptions = (props: { redemptionsData: IPagination<IRedemption> }) => {
+const Redemptions = (props: {
+  redemptionsData: PaginationData<Redemption>;
+}) => {
   const { data, currentPage, count } = props.redemptionsData;
   return (
     <>

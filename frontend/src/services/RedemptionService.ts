@@ -1,6 +1,6 @@
-import useAxiosCustom, { IPagination } from "./ApiService";
+import useAxiosCustom, { PaginationData } from "./ApiService";
 
-export interface IRedemption {
+export interface Redemption {
   _id: string;
   rewardId: string;
   userId: string;
@@ -15,7 +15,7 @@ export interface IRedemption {
 }
 
 export const getRedemptions = () => {
-  return useAxiosCustom<IPagination<IRedemption>>({
+  return useAxiosCustom<PaginationData<Redemption>>({
     url: `/redemptions`,
   });
 };

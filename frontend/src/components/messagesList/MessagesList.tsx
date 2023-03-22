@@ -5,14 +5,14 @@ import Pagination from "@components/pagination";
 import { Link, useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import FilterBarMessages from "./filterBarMessages";
-import { IPagination } from "@services/ApiService";
-import { getMessages, IMessage } from "@services/MessageService";
+import { PaginationData } from "@services/ApiService";
+import { getMessages, Message } from "@services/MessageService";
 import { getUserMessages } from "@services/UserService";
 import { getSessionMessages } from "@services/StreamSessionService";
 import { DateTooltip } from "@components/dateTooltip";
 
 type MessagesDetailsProp = {
-  messages: IMessage[];
+  messages: Message[];
 };
 
 export default function MessagesList(props: {
@@ -92,7 +92,7 @@ const MessagesDetails = ({ messages }: MessagesDetailsProp) => (
     </tbody>
   </table>
 );
-const Messages = (props: { messagesData: IPagination<IMessage> }) => {
+const Messages = (props: { messagesData: PaginationData<Message> }) => {
   const { data, currentPage, count } = props.messagesData;
   return (
     <>

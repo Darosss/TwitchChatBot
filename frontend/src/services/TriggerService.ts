@@ -1,15 +1,15 @@
-import useAxiosCustom, { IPagination } from "./ApiService";
+import useAxiosCustom, { PaginationData } from "./ApiService";
 
-export type ITriggerMode = "WHOLE-WORD" | "STARTS-WITH" | "ALL";
+export type TriggerMode = "WHOLE-WORD" | "STARTS-WITH" | "ALL";
 
-export interface ITrigger {
+export interface Trigger {
   _id: string;
   name: string;
   enabled: boolean;
   chance: number;
   delay: number;
   uses: number;
-  mode: ITriggerMode;
+  mode: TriggerMode;
   onDelay: boolean;
   words: string[];
   messages: string[];
@@ -18,20 +18,20 @@ export interface ITrigger {
 }
 
 type ITriggerCreateData = Omit<
-  ITrigger,
+  Trigger,
   "_id" | "createdAt" | "updatedAt" | "onDelay" | "uses"
 >;
 
 type ITriggerUpdateData = Partial<ITriggerCreateData>;
 
 export const getTriggers = () => {
-  return useAxiosCustom<IPagination<ITrigger>>({
+  return useAxiosCustom<PaginationData<Trigger>>({
     url: `/triggers`,
   });
 };
 
 export const editTrigger = (commandId: string, data: ITriggerUpdateData) => {
-  return useAxiosCustom<ITrigger>({
+  return useAxiosCustom<Trigger>({
     url: `/triggers/${commandId}`,
     method: "POST",
     bodyData: data,
@@ -40,7 +40,7 @@ export const editTrigger = (commandId: string, data: ITriggerUpdateData) => {
 };
 
 export const createTrigger = (data: ITriggerCreateData) => {
-  return useAxiosCustom<ITrigger>({
+  return useAxiosCustom<Trigger>({
     url: `/triggers/create/`,
     method: "POST",
     bodyData: data,
@@ -50,7 +50,7 @@ export const createTrigger = (data: ITriggerCreateData) => {
 };
 
 export const deleteTrigger = (triggerId: string) => {
-  return useAxiosCustom<ITrigger>({
+  return useAxiosCustom<Trigger>({
     url: `/triggers/delete/${triggerId}`,
     method: "DELETE",
     manual: true,

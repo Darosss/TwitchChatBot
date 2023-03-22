@@ -4,21 +4,21 @@ import React, { useEffect, useState } from "react";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
 
-import { IPagination } from "@services/ApiService";
+import { PaginationData } from "@services/ApiService";
 import {
   createMessageCategory,
   deleteMessageCategoryById,
   editMessageCategoryById,
   getMessageCategories,
-  IMessageCategory,
+  MessageCategory,
 } from "@services/MessageCategoriesService";
 import Modal from "@components/modal";
 import FilterBarCategories from "./filterBarCategories";
 import { addNotification } from "@utils/getNotificationValues";
 
 type MessageCategoryDetailsProp = {
-  categories: IMessageCategory[];
-  refetchData: () => Promise<IPagination<IMessageCategory>>;
+  categories: MessageCategory[];
+  refetchData: () => Promise<PaginationData<MessageCategory>>;
 };
 
 export default function MessageCategoriesList() {
@@ -100,7 +100,7 @@ const MessageCategoriesDetails = ({
     }
   }, [categoryIdToDelete]);
 
-  const handleOnClickEditButton = (category: IMessageCategory) => {
+  const handleOnClickEditButton = (category: MessageCategory) => {
     const { _id, category: catName, messages } = category;
     setEditingCategory(_id);
     setCategory(catName);

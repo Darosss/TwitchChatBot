@@ -3,9 +3,9 @@ import React, { useEffect } from "react";
 
 import {
   getCurrentSessionStatistics,
-  ITopMsgsUsers,
-  ITopRedemptionsUsers,
-  ITopUsedWords,
+  TopMsgsUsers,
+  TopRedemptionsUsers,
+  TopUsedWords,
 } from "@services/StreamSessionService";
 import LineChart from "@components/lineChart";
 import SlideShow from "@components/slideShow";
@@ -15,15 +15,15 @@ type SessionMessagesProps = {
 };
 
 type TopUsersMessagesProps = {
-  users: ITopMsgsUsers[];
+  users: TopMsgsUsers[];
 };
 
 type TopRedemptionProps = {
-  users: ITopRedemptionsUsers[];
+  users: TopRedemptionsUsers[];
 };
 
 type TopUsedWordsProps = {
-  words: ITopUsedWords[];
+  words: TopUsedWords[];
 };
 
 type ViewersPeek = {

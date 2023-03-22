@@ -12,7 +12,7 @@ import {
   editCommand,
   createCommand,
   deleteCommand,
-  IChatCommand,
+  ChatCommand,
 } from "@services/ChatCommandService";
 import { addNotification } from "@utils/getNotificationValues";
 import { DateTooltip } from "@components/dateTooltip";
@@ -38,18 +38,14 @@ export default function CommandsList() {
     socket?.emit("refreshCommands");
   };
   useEffect(() => {
-    handleDeleteLayout<IChatCommand>(
-      commandIdDelete,
-      setCommandIdDelete,
-      () => {
-        fetchDeleteCommand().then(() => {
-          refetchData();
-          addNotification("Deleted", `Command deleted successfully`, "danger");
+    handleDeleteLayout<ChatCommand>(commandIdDelete, setCommandIdDelete, () => {
+      fetchDeleteCommand().then(() => {
+        refetchData();
+        addNotification("Deleted", `Command deleted successfully`, "danger");
 
-          setCommandIdDelete(null);
-        });
-      }
-    );
+        setCommandIdDelete(null);
+      });
+    });
   }, [commandIdDelete]);
 
   const { refetchData: fetchEditComman } = editCommand(editingCommand, {
@@ -130,7 +126,7 @@ export default function CommandsList() {
     resetOnChangeClasses();
   };
 
-  const handleOnEdit = (command: IChatCommand) => {
+  const handleOnEdit = (command: ChatCommand) => {
     setEditingCommand(command._id);
     setName(command.name);
     setDescription(command.description || "");

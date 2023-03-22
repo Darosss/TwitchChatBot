@@ -1,6 +1,6 @@
-import useAxiosCustom, { IPagination } from "./ApiService";
+import useAxiosCustom, { PaginationData } from "./ApiService";
 
-export interface IMessageCategory {
+export interface MessageCategory {
   _id: string;
   category: string;
   messages: string[];
@@ -9,15 +9,12 @@ export interface IMessageCategory {
   updatedAt: Date;
 }
 
-type IMessageCategoryCreateData = Pick<
-  IMessageCategory,
-  "category" | "messages"
->;
+type MessageCategoryCreateData = Pick<MessageCategory, "category" | "messages">;
 
-type IMessageCategoryUpdateData = Partial<IMessageCategoryCreateData>;
+type IMessageCategoryUpdateData = Partial<MessageCategoryCreateData>;
 
 export const getMessageCategories = () => {
-  return useAxiosCustom<IPagination<IMessageCategory>>({
+  return useAxiosCustom<PaginationData<MessageCategory>>({
     url: `/message-categories`,
   });
 };
@@ -26,7 +23,7 @@ export const editMessageCategoryById = (
   id: string,
   data: IMessageCategoryUpdateData
 ) => {
-  return useAxiosCustom<IMessageCategory>({
+  return useAxiosCustom<MessageCategory>({
     url: `/message-categories/${id}`,
     method: "POST",
     bodyData: data,
@@ -36,7 +33,7 @@ export const editMessageCategoryById = (
 };
 
 export const incrementUsesCategoryById = (id: string) => {
-  return useAxiosCustom<IMessageCategory>({
+  return useAxiosCustom<MessageCategory>({
     url: `/message-categories/${id}/uses`,
     method: "POST",
     manual: true,
@@ -44,8 +41,8 @@ export const incrementUsesCategoryById = (id: string) => {
   });
 };
 
-export const createMessageCategory = (data: IMessageCategoryCreateData) => {
-  return useAxiosCustom<IMessageCategory>({
+export const createMessageCategory = (data: MessageCategoryCreateData) => {
+  return useAxiosCustom<MessageCategory>({
     url: `/message-categories/create`,
     method: "POST",
     bodyData: data,

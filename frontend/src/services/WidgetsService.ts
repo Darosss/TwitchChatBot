@@ -1,7 +1,7 @@
 import ReactGridLayout from "react-grid-layout";
-import useAxiosCustom, { IPagination, IResponseData } from "./ApiService";
+import useAxiosCustom, { PaginationData, ResponseData } from "./ApiService";
 
-export interface IWidgets {
+export interface Widgets {
   _id: string;
   name: string;
   layout: ReactGridLayout.Layouts;
@@ -10,24 +10,24 @@ export interface IWidgets {
   updatedAt: Date;
 }
 
-export type IWidgetsCreateData = Pick<IWidgets, "name" | "layout" | "toolbox">;
+export type WidgetsCreateData = Pick<Widgets, "name" | "layout" | "toolbox">;
 
-export type IWidgetsUpdateData = Partial<IWidgetsCreateData>;
+export type WidgetsUpdateData = Partial<WidgetsCreateData>;
 
 export const getWidgets = () => {
-  return useAxiosCustom<IPagination<IWidgets>>({
+  return useAxiosCustom<PaginationData<Widgets>>({
     url: `/widgets`,
   });
 };
 
 export const getWidgetById = (id: string) => {
-  return useAxiosCustom<IResponseData<IWidgets>>({
+  return useAxiosCustom<ResponseData<Widgets>>({
     url: `/widgets/${id}`,
   });
 };
 
-export const createLayout = (data: IWidgetsCreateData) => {
-  return useAxiosCustom<IWidgets>({
+export const createLayout = (data: WidgetsCreateData) => {
+  return useAxiosCustom<Widgets>({
     url: `/widgets/create`,
     method: "POST",
     bodyData: data,
@@ -36,8 +36,8 @@ export const createLayout = (data: IWidgetsCreateData) => {
   });
 };
 
-export const editWidgetById = (id: string, data: IWidgetsUpdateData) => {
-  return useAxiosCustom<IWidgets>({
+export const editWidgetById = (id: string, data: WidgetsUpdateData) => {
+  return useAxiosCustom<Widgets>({
     url: `/widgets/${id}`,
     method: "POST",
     bodyData: data,
@@ -46,7 +46,7 @@ export const editWidgetById = (id: string, data: IWidgetsUpdateData) => {
 };
 
 export const removeWidgetById = (id: string) => {
-  return useAxiosCustom<IWidgets>({
+  return useAxiosCustom<Widgets>({
     url: `/widgets/delete/${id}`,
     method: "DELETE",
     manual: true,

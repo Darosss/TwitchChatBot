@@ -1,16 +1,16 @@
-import useAxiosCustom, { IPagination } from "./ApiService";
-import { IUser } from "./UserService";
+import useAxiosCustom, { PaginationData } from "./ApiService";
+import { User } from "./UserService";
 
-export interface IMessage {
+export interface Message {
   _id: string;
   message: string;
   date: Date;
-  owner: IUser;
+  owner: User;
   ownerUsername: string;
 }
 
 export const getMessages = () => {
-  return useAxiosCustom<IPagination<IMessage>>({
+  return useAxiosCustom<PaginationData<Message>>({
     url: `/messages`,
   });
 };

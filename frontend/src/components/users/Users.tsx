@@ -4,12 +4,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-import { getUsersList, IUser } from "@services/UserService";
+import { getUsersList, User } from "@services/UserService";
 import FilterBarUsers from "./filterBarUsers";
 import { DateTooltip } from "@components/dateTooltip";
 
 type UserDetailsProps = {
-  users: IUser[];
+  users: User[];
 };
 
 export default function Users() {

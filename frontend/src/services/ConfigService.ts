@@ -1,6 +1,6 @@
 import useAxiosCustom from "./ApiService";
 
-export interface IConfig {
+export interface Config {
   _id: string;
   commandsPrefix: string;
   timersIntervalDelay: number;
@@ -25,16 +25,16 @@ export interface IConfig {
   updatedAt: Date;
 }
 
-type IConfigUpdateData = Omit<IConfig, "_id" | "createdAt" | "updatedAt">;
+type ConfigUpdateData = Omit<Config, "_id" | "createdAt" | "updatedAt">;
 
 export const getConfigs = () => {
-  return useAxiosCustom<IConfig>({
+  return useAxiosCustom<Config>({
     url: `/configs`,
   });
 };
 
-export const editConfig = (data: IConfigUpdateData) => {
-  return useAxiosCustom<IConfig>({
+export const editConfig = (data: ConfigUpdateData) => {
+  return useAxiosCustom<Config>({
     url: `/configs/edit`,
     method: "POST",
     bodyData: data,

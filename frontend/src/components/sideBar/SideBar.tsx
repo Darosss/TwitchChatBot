@@ -6,7 +6,7 @@ import resetWindowScroll from "@utils/resetScroll";
 import { getAuthorizeUrl } from "src/services/AuthService";
 import DrawerBar from "@components/drawer";
 
-interface INavLinkProps extends LinkProps {
+interface NavLinkProps extends LinkProps {
   label: string;
 }
 
@@ -51,7 +51,7 @@ const routes = [
   { path: "/configs", label: "Configs" },
 ];
 
-const NavLink = ({ label, ...restProps }: INavLinkProps) => {
+const NavLink = ({ label, ...restProps }: NavLinkProps) => {
   function handleClick() {
     resetWindowScroll();
   }

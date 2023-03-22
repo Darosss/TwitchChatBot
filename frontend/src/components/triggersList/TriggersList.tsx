@@ -6,8 +6,8 @@ import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
 import FilterBarTriggers from "./filterBarTriggers";
 import {
-  ITrigger,
-  ITriggerMode,
+  Trigger,
+  TriggerMode,
   getTriggers,
   editTrigger,
   createTrigger,
@@ -32,7 +32,7 @@ export default function TriggersList() {
   const [delay, setDelay] = useState<number>(0);
   const [messages, setMessages] = useState([""]);
   const [words, setWords] = useState([""]);
-  const [mode, setMode] = useState<ITriggerMode>("ALL");
+  const [mode, setMode] = useState<TriggerMode>("ALL");
 
   const { data: commandsData, loading, error, refetchData } = getTriggers();
 
@@ -65,7 +65,7 @@ export default function TriggersList() {
   };
 
   useEffect(() => {
-    handleDeleteLayout<ITrigger>(triggerIdDelete, setTriggerIdDelete, () => {
+    handleDeleteLayout<Trigger>(triggerIdDelete, setTriggerIdDelete, () => {
       fetchDeleteCommand().then(() => {
         refetchData();
         addNotification("Deleted", "Trigger deleted successfully", "danger");
@@ -123,7 +123,7 @@ export default function TriggersList() {
     });
   };
 
-  const handleOnEdit = (trigger: ITrigger) => {
+  const handleOnEdit = (trigger: Trigger) => {
     setEditingTrigger(trigger._id);
     setName(trigger.name);
     setChance(trigger.chance);
@@ -285,7 +285,7 @@ export default function TriggersList() {
           <div>Mode </div>
           <select
             value={mode}
-            onChange={(e) => setMode(e.target.value as ITriggerMode)}
+            onChange={(e) => setMode(e.target.value as TriggerMode)}
           >
             {["ALL", "STARTS-WITH", "WHOLE-WORD"].map((modeTrigger, index) => {
               return (

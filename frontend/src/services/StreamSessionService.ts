@@ -1,8 +1,8 @@
-import useAxiosCustom, { IPagination, IResponseData } from "./ApiService";
-import { IMessage } from "./MessageService";
-import { IRedemption } from "./RedemptionService";
+import useAxiosCustom, { PaginationData, ResponseData } from "./ApiService";
+import { Message } from "./MessageService";
+import { Redemption } from "./RedemptionService";
 
-export interface IStreamSession {
+export interface StreamSession {
   _id: string;
   sessionStart: Date;
   sessionEnd: Date;
@@ -12,70 +12,70 @@ export interface IStreamSession {
   viewers: Map<string, number>;
 }
 
-export interface ITopMsgsUsers {
+export interface TopMsgsUsers {
   _id: string;
   messageCount: number;
   username: string;
 }
 
-export interface ITopRedemptionsUsers {
+export interface TopRedemptionsUsers {
   _id: string;
   redemptionsCount: number;
   redemptionsCost: number;
   username: string;
 }
 
-export interface ITopUsedWords {
+export interface TopUsedWords {
   _id: number;
   count: number;
 }
 
-export interface IStreamSessionStatistics {
+export interface StreamSessionStatistics {
   messagesCount: number;
-  topMsgsUsers: ITopMsgsUsers[];
-  topRedemptionsUsers: ITopRedemptionsUsers[];
-  topUsedWords: ITopUsedWords[];
+  topMsgsUsers: TopMsgsUsers[];
+  topRedemptionsUsers: TopRedemptionsUsers[];
+  topUsedWords: TopUsedWords[];
   viewers: Map<string, number>;
 }
 
 export const getSessions = () => {
-  return useAxiosCustom<IPagination<IStreamSession>>({
+  return useAxiosCustom<PaginationData<StreamSession>>({
     url: `/stream-sessions`,
   });
 };
 
 export const getSessionById = (sessionId: string) => {
-  return useAxiosCustom<IResponseData<IStreamSession>>({
+  return useAxiosCustom<ResponseData<StreamSession>>({
     url: `/stream-sessions/${sessionId}`,
   });
 };
 
 export const getSessionMessages = (sessionId: string) => {
-  return useAxiosCustom<IPagination<IMessage>>({
+  return useAxiosCustom<PaginationData<Message>>({
     url: `/stream-sessions/${sessionId}/messages`,
   });
 };
 
 export const getSessionRedemptions = (sessionId: string) => {
-  return useAxiosCustom<IPagination<IRedemption>>({
+  return useAxiosCustom<PaginationData<Redemption>>({
     url: `/stream-sessions/${sessionId}/redemptions`,
   });
 };
 
 export const getCurrentSessionMessages = () => {
-  return useAxiosCustom<IPagination<IMessage>>({
+  return useAxiosCustom<PaginationData<Message>>({
     url: `/stream-sessions/current-session/messages`,
   });
 };
 
 export const getCurrentSessionRedemptions = () => {
-  return useAxiosCustom<IPagination<IRedemption>>({
+  return useAxiosCustom<PaginationData<Redemption>>({
     url: `/stream-sessions/current-session/redemptions`,
   });
 };
 
 export const getCurrentSessionStatistics = () => {
-  return useAxiosCustom<{ data: IStreamSessionStatistics }>({
+  return useAxiosCustom<{ data: StreamSessionStatistics }>({
     url: `/stream-sessions/current-session/statistics`,
   });
 };
