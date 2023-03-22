@@ -1,3 +1,10 @@
-.redemptions-actions {
-  display: flex;
+.redemptions-list-date {
+  width: 15%;
+  max-width: 15%;
+  height: 5vh;
+  max-height: 5vh;
+}
+
+.redemptions-list-name {
+  text-align: center;
 }

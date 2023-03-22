@@ -37,22 +37,25 @@ export default function StreamSessions() {
             {data.map((session) => {
               return (
                 <tr key={session._id}>
-                  <td>
-                    <Link to={`./${session._id}/messages`}>Messages</Link>
+                  <td colSpan={3}>
+                    <div className="sessions-list-actions">
+                      <Link to={`./${session._id}/messages`}>Messages</Link>
+                      <Link to={`./${session._id}/redemptions`}>
+                        Redemptions
+                      </Link>
+                      <Link to={`/stream-sessions/${session._id}`}>
+                        Session profile
+                      </Link>
+                    </div>
                   </td>
-                  <td>
-                    <Link to={`./${session._id}/redemptions`}>Redemptions</Link>
+
+                  <td className="sessions-list-title">
+                    {Object.values(session.sessionTitles)[0]}
                   </td>
-                  <td>
-                    <Link to={`/stream-sessions/${session._id}`}>
-                      Session profile
-                    </Link>
-                  </td>
-                  <td>{Object.values(session.sessionTitles)[0]}</td>
-                  <td>
+                  <td className="sessions-list-date">
                     <DateTooltip date={session.sessionStart} />
                   </td>
-                  <td>
+                  <td className="sessions-list-date">
                     {session.sessionEnd ? (
                       <DateDifference
                         dateStart={session.sessionStart}
@@ -61,7 +64,7 @@ export default function StreamSessions() {
                       />
                     ) : null}
                   </td>
-                  <td>
+                  <td className="sessions-list-date">
                     {session.sessionEnd ? (
                       <DateTooltip date={session.sessionEnd} />
                     ) : null}

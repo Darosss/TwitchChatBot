@@ -206,8 +206,6 @@ export default function TriggersList() {
                       <div>
                         <DateTooltip date={trigger.createdAt} />
                       </div>
-
-                      <div></div>
                     </div>
                   </td>
                   <td>

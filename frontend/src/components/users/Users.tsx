@@ -73,11 +73,19 @@ const UsersDetails = ({ users }: UserDetailsProps) => (
             <td className="users-list-watch-time">
               {Math.floor(Number(watchTime) / 60)} min
             </td>
-            <td className="users-list-last-seen">
-              {lastSeen ? <DateTooltip date={lastSeen} /> : null}
+            <td className="users-list-date">
+              {lastSeen ? (
+                <div className="users-list-date-div">
+                  <DateTooltip date={lastSeen} />
+                </div>
+              ) : null}
             </td>
-            <td className="users-list-created-at">
-              {createdAt ? <DateTooltip date={createdAt} /> : null}
+            <td className="users-list-date">
+              {createdAt ? (
+                <div className="users-list-date-div">
+                  <DateTooltip date={createdAt} />{" "}
+                </div>
+              ) : null}
             </td>
             <td className="users-list-message-count">
               {messageCount?.toLocaleString()}

@@ -5,6 +5,10 @@
 }
 
 #table-triggers-list td:not(:first-child) {
+  width: 100%;
+}
+
+#table-triggers-list td:not(:first-child) {
   border-left: 0.1rem solid var(--base-bg-color-border);
   text-align: center;
 }
@@ -37,7 +41,9 @@
 
 .trigger-div-data > div {
   flex: 1 1 49%;
-  max-width: 50%;
+  max-height: 3vh;
+  height: 3vh;
+  overflow-x: hidden;
   border-bottom: 0.1rem solid var(--base-bg-color-border);
 }
 

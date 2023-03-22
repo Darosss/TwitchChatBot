@@ -74,13 +74,13 @@ const RedemptionsDetails = ({ redemptions }: RedemptionsDetailProps) => (
       {redemptions.map((redemption) => {
         return (
           <tr key={redemption._id}>
-            <td>{redemption.rewardTitle}</td>
+            <td className="redemptions-list-name">{redemption.rewardTitle}</td>
             <td>
               <Link to={`/users/${redemption.userId}`}>
                 {redemption.userName}
               </Link>
             </td>
-            <td>
+            <td className="redemptions-list-date">
               <DateTooltip date={redemption.redemptionDate} />
             </td>
             <td>{redemption.rewardCost}</td>

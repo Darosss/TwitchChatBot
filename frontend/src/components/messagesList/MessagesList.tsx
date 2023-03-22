@@ -73,15 +73,14 @@ const MessagesDetails = ({ messages }: MessagesDetailsProp) => (
         return (
           <tr key={message._id + new Date()}>
             <td className="message-time">
-              <DateTooltip date={message.date} />
+              <div className="message-time-div">
+                <DateTooltip date={message.date} />
+              </div>
             </td>
 
             <td className="message-username">
               <Link to={`/users/${message.owner._id}`}>
-                <div className="tooltip">
-                  {message.owner.username}
-                  <span className="tooltiptext">{message.ownerUsername}</span>
-                </div>
+                <div>{message.owner.username}</div>
               </Link>
             </td>
             <td className="message" colSpan={4}>

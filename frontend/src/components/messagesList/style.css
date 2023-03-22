@@ -4,7 +4,12 @@
 
 td.message-time {
   color: var(--base-color-time-message);
-  width: 10%;
+  width: 15%;
+}
+
+.message-time-div {
+  height: 5vh;
+  max-height: 5vh;
 }
 
 td.message-username {
@@ -15,5 +20,6 @@ td.message-username {
 td.message {
   color: var(--base-color-message);
   overflow-y: auto;
-  width: 70%;
+  padding-left: 0.5rem;
+  width: 60%;
 }
