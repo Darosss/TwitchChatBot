@@ -1,6 +1,6 @@
 import { ConfigModel } from "@models/types";
 
-export type TConfigPointsIncrement = ConfigModel["pointsIncrement"];
+export type ConfigPointsIncrement = ConfigModel["pointsIncrement"];
 
 export interface LoyaltyHandlerConfig
   extends Pick<ConfigModel, "pointsIncrement" | "intervalCheckChatters"> {}
