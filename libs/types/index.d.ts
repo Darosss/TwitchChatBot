@@ -1,17 +1,17 @@
 import { UserModel } from "../../server/src/models/types";
 
-export interface IEvent {
+export interface Event {
   eventDate: Date;
   eventName: string;
 }
 
-export interface IEventAndIUser extends IEvent, UserModel {}
+export interface EventAndIUser extends Event, UserModel {}
 export interface ServerToClientEvents {
   noArg: () => void;
   withAck: (d: string, callback: (e: number) => void) => void;
   messageServer: (date: Date, username: string, message: string) => void;
-  userJoinTwitchChat: (eventDate: IEvent, user: UserModel) => void;
-  onRedemption: (data: ISoundData) => void;
+  userJoinTwitchChat: (eventDate: Event, user: UserModel) => void;
+  onRedemption: (data: SoundData) => void;
 }
 
 export interface ClientToServerEvents {
@@ -25,7 +25,7 @@ export interface InterServerEvents {
   ping: () => void;
 }
 
-export interface ISoundData {
+export interface SoundData {
   rewardId: string;
   userId: string;
   userName: string;
