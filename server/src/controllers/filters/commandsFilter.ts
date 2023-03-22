@@ -1,6 +1,6 @@
-import { IRequestCommandsQuery } from "@types";
+import { RequestCommandsQuery } from "@types";
 
-export const filterCommandsByUrlParams = (params: IRequestCommandsQuery) => {
+export const filterCommandsByUrlParams = (params: RequestCommandsQuery) => {
   const {
     search_name,
     start_date,

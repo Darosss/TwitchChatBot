@@ -1,6 +1,6 @@
-import { IRequestQuerySession } from "@types";
+import { RequestQuerySession } from "@types";
 
-export const filterSessionByUrlParams = (params: IRequestQuerySession) => {
+export const filterSessionByUrlParams = (params: RequestQuerySession) => {
   const { search_name, start_date, end_date, tags, categories } = params;
 
   const filterTitles = {

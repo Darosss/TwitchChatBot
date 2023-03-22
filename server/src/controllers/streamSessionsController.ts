@@ -1,9 +1,9 @@
 import Express, { Request, Response, NextFunction } from "express";
 import {
-  IRequestParams,
-  IRequestQueryMessage,
-  IRequestQuerySession,
-  IRequestRedemptionQuery,
+  RequestParams,
+  RequestQueryMessage,
+  RequestQuerySession,
+  RequestRedemptionQuery,
 } from "@types";
 import { filterSessionByUrlParams } from "./filters/sessionFilter";
 import {
@@ -20,7 +20,7 @@ import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
 import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
 
 export const getStreamSessionsList = async (
-  req: Request<{}, {}, {}, IRequestQuerySession>,
+  req: Request<{}, {}, {}, RequestQuerySession>,
   res: Response,
   next: NextFunction
 ) => {
@@ -109,7 +109,7 @@ export const getSessionStatisticsById = async (
 };
 
 export const getCurrentSessionMessages = async (
-  req: Request<{}, {}, {}, IRequestQueryMessage>,
+  req: Request<{}, {}, {}, RequestQueryMessage>,
   res: Response,
   next: NextFunction
 ) => {
@@ -151,7 +151,7 @@ export const getCurrentSessionMessages = async (
 };
 
 export const getCurrentSessionRedemptions = async (
-  req: Request<{}, {}, {}, IRequestRedemptionQuery>,
+  req: Request<{}, {}, {}, RequestRedemptionQuery>,
   res: Response,
   next: NextFunction
 ) => {
@@ -216,7 +216,7 @@ export const getCurrentSessionStatistics = async (
 };
 
 export const getSessionMessages = async (
-  req: Request<IRequestParams, {}, {}, IRequestQueryMessage>,
+  req: Request<RequestParams, {}, {}, RequestQueryMessage>,
   res: Response,
   next: NextFunction
 ) => {
@@ -256,7 +256,7 @@ export const getSessionMessages = async (
 };
 
 export const getSessionRedemptions = async (
-  req: Request<IRequestParams, {}, {}, IRequestRedemptionQuery>,
+  req: Request<RequestParams, {}, {}, RequestRedemptionQuery>,
   res: Response,
   next: NextFunction
 ) => {

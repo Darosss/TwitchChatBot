@@ -1,8 +1,8 @@
 import { User } from "@models/userModel";
-import { IRequestQueryMessage } from "@types";
+import { RequestQueryMessage } from "@types";
 
 export const filterMessagesByUrlParams = async (
-  params: IRequestQueryMessage
+  params: RequestQueryMessage
 ) => {
   const { search_name, owner, start_date, end_date } = params;
 

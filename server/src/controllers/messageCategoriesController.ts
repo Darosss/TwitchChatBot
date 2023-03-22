@@ -6,11 +6,11 @@ import {
   createMessageCategories,
   deleteMessageCategory,
 } from "@services/messageCategories";
-import { IRequestQueryMessageCategories } from "@types";
+import { RequestQueryMessageCategories } from "@types";
 import { filterMessageCategoriesByUrlParams } from "./filters/messageCategoriesFilter";
 
 export const getMessageCategoriesList = async (
-  req: Request<{}, {}, {}, IRequestQueryMessageCategories>,
+  req: Request<{}, {}, {}, RequestQueryMessageCategories>,
   res: Response,
   next: NextFunction
 ) => {

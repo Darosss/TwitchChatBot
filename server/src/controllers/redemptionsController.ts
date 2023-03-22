@@ -1,10 +1,10 @@
 import Express, { NextFunction, Request, Response } from "express";
-import { IRequestRedemptionQuery } from "@types";
+import { RequestRedemptionQuery } from "@types";
 import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
 import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
 
 export const getRedemptionsList = async (
-  req: Request<{}, {}, {}, IRequestRedemptionQuery>,
+  req: Request<{}, {}, {}, RequestRedemptionQuery>,
   res: Response,
   next: NextFunction
 ) => {

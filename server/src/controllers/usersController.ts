@@ -1,10 +1,10 @@
 import Express, { NextFunction, Request, Response } from "express";
 import {
-  IRequestParams,
-  IRequestQuery,
-  IRequestQueryMessage,
-  IRequestQueryUser,
-  IRequestRedemptionQuery,
+  RequestParams,
+  RequestQuery,
+  RequestQueryMessage,
+  RequestQueryUser,
+  RequestRedemptionQuery,
 } from "@types";
 import { filterUsersByUrlParams } from "./filters/usersFilter";
 import {
@@ -21,7 +21,7 @@ import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
 import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
 
 export const getUsersList = async (
-  req: Request<{}, {}, {}, IRequestQueryUser>,
+  req: Request<{}, {}, {}, RequestQueryUser>,
   res: Response,
   next: NextFunction
 ) => {
@@ -81,7 +81,7 @@ export const editUserProfile = async (
 };
 
 export const getUserMessages = async (
-  req: Request<IRequestParams, {}, {}, IRequestQueryMessage>,
+  req: Request<RequestParams, {}, {}, RequestQueryMessage>,
   res: Response,
   next: NextFunction
 ) => {
@@ -114,7 +114,7 @@ export const getUserMessages = async (
 };
 
 export const getUserRedemptions = async (
-  req: Request<IRequestParams, {}, {}, IRequestRedemptionQuery>,
+  req: Request<RequestParams, {}, {}, RequestRedemptionQuery>,
   res: Response,
   next: NextFunction
 ) => {
@@ -147,7 +147,7 @@ export const getUserRedemptions = async (
 };
 
 export const getLatestEldestUserMessages = async (
-  req: Request<IRequestParams, {}, {}, IRequestQuery>,
+  req: Request<RequestParams, {}, {}, RequestQuery>,
   res: Response,
   next: NextFunction
 ) => {

@@ -1,10 +1,10 @@
 import Express, { NextFunction, Request, Response } from "express";
-import { IRequestQueryMessage } from "@types";
+import { RequestQueryMessage } from "@types";
 import { filterMessagesByUrlParams } from "./filters/messagesFilter";
 import { getMessages, getMessagesCount } from "@services/messages";
 
 export const getMessagesList = async (
-  req: Request<{}, {}, {}, IRequestQueryMessage>,
+  req: Request<{}, {}, {}, RequestQueryMessage>,
   res: Response,
   next: NextFunction
 ) => {

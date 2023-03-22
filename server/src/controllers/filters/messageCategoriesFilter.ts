@@ -1,7 +1,7 @@
-import { IRequestQueryMessageCategories } from "@types";
+import { RequestQueryMessageCategories } from "@types";
 
 export const filterMessageCategoriesByUrlParams = async (
-  params: IRequestQueryMessageCategories
+  params: RequestQueryMessageCategories
 ) => {
   const { category, messages } = params;
 

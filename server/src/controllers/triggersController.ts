@@ -1,5 +1,5 @@
 import Express, { NextFunction, Request, Response } from "express";
-import { IRequestTriggerQuery } from "@types";
+import { RequestTriggerQuery } from "@types";
 import { filterTriggersByUrlParams } from "./filters/triggersFilter";
 import {
   createTrigger,
@@ -10,7 +10,7 @@ import {
 } from "@services/triggers";
 
 export const getTriggersList = async (
-  req: Request<{}, {}, {}, IRequestTriggerQuery>,
+  req: Request<{}, {}, {}, RequestTriggerQuery>,
   res: Response,
   next: NextFunction
 ) => {

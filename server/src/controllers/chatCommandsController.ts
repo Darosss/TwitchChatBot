@@ -1,5 +1,5 @@
 import Express, { NextFunction, Request, Response } from "express";
-import { IRequestCommandsQuery } from "@types";
+import { RequestCommandsQuery } from "@types";
 import { filterCommandsByUrlParams } from "./filters/commandsFilter";
 import {
   createChatCommand,
@@ -10,7 +10,7 @@ import {
 } from "@services/chatCommands";
 
 export const getChatCommandsList = async (
-  req: Request<{}, {}, {}, IRequestCommandsQuery>,
+  req: Request<{}, {}, {}, RequestCommandsQuery>,
   res: Response,
   next: NextFunction
 ) => {

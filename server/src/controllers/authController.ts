@@ -1,4 +1,4 @@
-import { IAuthorizationTwitch } from "@types";
+import { AuthorizationTwitch } from "@types";
 import retryWithCatch from "@utils/retryWithCatchUtil";
 import Express, { Request, Response } from "express";
 
@@ -30,7 +30,7 @@ export const overlay = async (req: Request, res: Response) => {
 
   //GET auth respons with secret / access token
   if (authRes) {
-    const authTwitchJson = (await authRes.json()) as IAuthorizationTwitch;
+    const authTwitchJson = (await authRes.json()) as AuthorizationTwitch;
 
     initTwitchOnAuth(authTwitchJson, req.io).then(() => {
       res.redirect(process.env.REDIRECT_AFTER_AUTH!);

@@ -1,6 +1,6 @@
-import { IRequestQueryUser } from "@types";
+import { RequestQueryUser } from "@types";
 
-export const filterUsersByUrlParams = (params: IRequestQueryUser) => {
+export const filterUsersByUrlParams = (params: RequestQueryUser) => {
   const {
     search_name,
     seen_start,
