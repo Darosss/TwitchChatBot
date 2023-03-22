@@ -11,9 +11,9 @@ import { getUserMessages } from "@services/UserService";
 import { getSessionMessages } from "@services/StreamSessionService";
 import { DateTooltip } from "@components/dateTooltip";
 
-type MessagesDetailsProp = {
+interface MessagesDetailsProp {
   messages: Message[];
-};
+}
 
 export default function MessagesList(props: {
   messages: "all" | "session" | "user";

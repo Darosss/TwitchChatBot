@@ -9,9 +9,11 @@ export interface MessageCategory {
   updatedAt: Date;
 }
 
-type MessageCategoryCreateData = Pick<MessageCategory, "category" | "messages">;
+interface MessageCategoryCreateData
+  extends Pick<MessageCategory, "category" | "messages"> {}
 
-type IMessageCategoryUpdateData = Partial<MessageCategoryCreateData>;
+interface MessageCategoryUpdateData
+  extends Partial<MessageCategoryCreateData> {}
 
 export const getMessageCategories = () => {
   return useAxiosCustom<PaginationData<MessageCategory>>({
@@ -21,7 +23,7 @@ export const getMessageCategories = () => {
 
 export const editMessageCategoryById = (
   id: string,
-  data: IMessageCategoryUpdateData
+  data: MessageCategoryUpdateData
 ) => {
   return useAxiosCustom<MessageCategory>({
     url: `/message-categories/${id}`,

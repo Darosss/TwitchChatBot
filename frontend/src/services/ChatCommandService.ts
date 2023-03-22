@@ -13,12 +13,10 @@ export interface ChatCommand {
   useCount: number;
 }
 
-type IChatCommandCreateData = Omit<
-  ChatCommand,
-  "_id" | "createdAt" | "updatedAt" | "useCount"
->;
+interface ChatCommandCreateData
+  extends Omit<ChatCommand, "_id" | "createdAt" | "updatedAt" | "useCount"> {}
 
-type IChatCommandUpdateData = Partial<IChatCommandCreateData>;
+interface ChatCommandUpdateData extends Partial<ChatCommandCreateData> {}
 
 export const getCommands = () => {
   return useAxiosCustom<PaginationData<ChatCommand>>({
@@ -26,10 +24,7 @@ export const getCommands = () => {
   });
 };
 
-export const editCommand = (
-  commandId: string,
-  data: IChatCommandUpdateData
-) => {
+export const editCommand = (commandId: string, data: ChatCommandUpdateData) => {
   return useAxiosCustom<ChatCommand>({
     url: `/chat-commands/${commandId}`,
     method: "POST",
@@ -38,7 +33,7 @@ export const editCommand = (
   });
 };
 
-export const createCommand = (data: IChatCommandCreateData) => {
+export const createCommand = (data: ChatCommandCreateData) => {
   return useAxiosCustom<ChatCommand>({
     url: `/chat-commands/create/`,
     method: "POST",

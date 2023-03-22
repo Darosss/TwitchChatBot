@@ -11,9 +11,9 @@ import { getSessionRedemptions } from "@services/StreamSessionService";
 import { getUserRedemptions } from "@services/UserService";
 import { DateTooltip } from "@components/dateTooltip";
 
-type RedemptionsDetailProps = {
+interface RedemptionsDetailProps {
   redemptions: Redemption[];
-};
+}
 
 export default function RedemptionsList(props: {
   redemptions: "all" | "session" | "user";

@@ -10,25 +10,25 @@ import {
 import LineChart from "@components/lineChart";
 import SlideShow from "@components/slideShow";
 
-type SessionMessagesProps = {
+interface SessionMessagesProps {
   count: number;
-};
+}
 
-type TopUsersMessagesProps = {
+interface TopUsersMessagesProps {
   users: TopMsgsUsers[];
-};
+}
 
-type TopRedemptionProps = {
+interface TopRedemptionProps {
   users: TopRedemptionsUsers[];
-};
+}
 
-type TopUsedWordsProps = {
+interface TopUsedWordsProps {
   words: TopUsedWords[];
-};
+}
 
-type ViewersPeek = {
+interface ViewersPeek {
   viewers: Map<string, number>;
-};
+}
 
 export default function StreamStatistics() {
   const FETCH_INTERVAL = 60;

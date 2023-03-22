@@ -8,9 +8,9 @@ import { getUsersList, User } from "@services/UserService";
 import FilterBarUsers from "./filterBarUsers";
 import { DateTooltip } from "@components/dateTooltip";
 
-type UserDetailsProps = {
+interface UserDetailsProps {
   users: User[];
-};
+}
 
 export default function Users() {
   const { data: usersData, loading, error } = getUsersList();

@@ -25,7 +25,8 @@ export interface Config {
   updatedAt: Date;
 }
 
-type ConfigUpdateData = Omit<Config, "_id" | "createdAt" | "updatedAt">;
+interface ConfigUpdateData
+  extends Omit<Config, "_id" | "createdAt" | "updatedAt"> {}
 
 export const getConfigs = () => {
   return useAxiosCustom<Config>({

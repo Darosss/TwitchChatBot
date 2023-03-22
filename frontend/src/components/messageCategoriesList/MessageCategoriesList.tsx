@@ -16,10 +16,10 @@ import Modal from "@components/modal";
 import FilterBarCategories from "./filterBarCategories";
 import { addNotification } from "@utils/getNotificationValues";
 
-type MessageCategoryDetailsProp = {
+interface MessageCategoryDetailsProp {
   categories: MessageCategory[];
   refetchData: () => Promise<PaginationData<MessageCategory>>;
-};
+}
 
 export default function MessageCategoriesList() {
   const { data, loading, error, refetchData } = getMessageCategories();

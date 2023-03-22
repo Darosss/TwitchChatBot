@@ -20,9 +20,10 @@ export interface User {
   follower?: Date;
 }
 
-type UserUpdateData = Partial<
-  Omit<User, "_id" | "twitchId" | "twitchName" | "twitchCreated">
->;
+interface UserUpdateData
+  extends Partial<
+    Omit<User, "_id" | "twitchId" | "twitchName" | "twitchCreated">
+  > {}
 
 interface FirstAndLatestMsgs {
   firstMessages: Message[];

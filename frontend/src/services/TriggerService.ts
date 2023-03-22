@@ -17,12 +17,13 @@ export interface Trigger {
   updatedAt: Date;
 }
 
-type ITriggerCreateData = Omit<
-  Trigger,
-  "_id" | "createdAt" | "updatedAt" | "onDelay" | "uses"
->;
+interface TriggerCreateData
+  extends Omit<
+    Trigger,
+    "_id" | "createdAt" | "updatedAt" | "onDelay" | "uses"
+  > {}
 
-type ITriggerUpdateData = Partial<ITriggerCreateData>;
+interface TriggerUpdateData extends Partial<TriggerCreateData> {}
 
 export const getTriggers = () => {
   return useAxiosCustom<PaginationData<Trigger>>({
@@ -30,7 +31,7 @@ export const getTriggers = () => {
   });
 };
 
-export const editTrigger = (commandId: string, data: ITriggerUpdateData) => {
+export const editTrigger = (commandId: string, data: TriggerUpdateData) => {
   return useAxiosCustom<Trigger>({
     url: `/triggers/${commandId}`,
     method: "POST",
@@ -39,7 +40,7 @@ export const editTrigger = (commandId: string, data: ITriggerUpdateData) => {
   });
 };
 
-export const createTrigger = (data: ITriggerCreateData) => {
+export const createTrigger = (data: TriggerCreateData) => {
   return useAxiosCustom<Trigger>({
     url: `/triggers/create/`,
     method: "POST",
