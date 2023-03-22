@@ -1,15 +1,15 @@
 import { createMessage } from "@services/messages";
 import { MessageCreateData } from "@services/messages/types";
 import { updateUser } from "@services/users";
-import { TConfigPointsIncrement } from "./types";
+import { ConfigPointsIncrement } from "./types";
 
 class MessagesHandler {
-  private configs: TConfigPointsIncrement;
-  constructor(configs: TConfigPointsIncrement) {
+  private configs: ConfigPointsIncrement;
+  constructor(configs: ConfigPointsIncrement) {
     this.configs = configs;
   }
 
-  public async refreshConfigs(refreshedConfigs: TConfigPointsIncrement) {
+  public async refreshConfigs(refreshedConfigs: ConfigPointsIncrement) {
     this.configs = refreshedConfigs;
   }
 
