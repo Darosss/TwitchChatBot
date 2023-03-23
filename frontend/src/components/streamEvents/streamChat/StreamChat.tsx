@@ -65,6 +65,7 @@ export default function StreamChat() {
                     date={message.date}
                     username={message.username}
                     message={message.message}
+                    tooltip={false}
                   />
                 );
               })
