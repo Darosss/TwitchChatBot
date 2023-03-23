@@ -3,14 +3,33 @@ import React from "react";
 
 import moment from "moment";
 
-export function DateTooltip(props: { date: moment.MomentInput }) {
-  const { date } = props;
+export function DateTooltip(props: {
+  date: moment.MomentInput;
+  suffix?: boolean;
+}) {
+  const { date, suffix = true } = props;
 
   return (
     <div className="tooltip">
-      <span className="tooltip-default">{moment(date).fromNow()}</span>
+      <span className="tooltip-default">{moment(date).fromNow(!suffix)}</span>
       <span className="tooltip-text">
         {moment(date).format("dddd, MMMM Do YYYY, HH:mm:ss")}
+      </span>
+    </div>
+  );
+}
+
+export function DateTimeTooltip(props: {
+  date: moment.MomentInput;
+  suffix?: boolean;
+}) {
+  const { date, suffix = true } = props;
+
+  return (
+    <div className="tooltip">
+      <span className="tooltip-default">{moment(date).format("HH:mm:ss")}</span>
+      <span className="tooltip-text">
+        {moment(date).format("MM D YYYY, HH:mm:ss")}
       </span>
     </div>
   );
