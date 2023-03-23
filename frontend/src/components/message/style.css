@@ -1,40 +1,34 @@
-.chat-message {
+.chat-wrapper {
   display: flex;
-  width: 100%;
-  margin-top: 0.5rem;
   border-bottom: 0.1rem solid var(--base-bg-color-border);
+  margin-left: 0.2rem;
 }
 
-.chat-message:hover {
-  background-color: var(--base-bg-hover-color-chat);
-}
-
-.chat-message .username {
-  color: var(--base-color-username-message);
-  font-size: 0.8rem;
-  overflow: hidden;
-  font-weight: 900;
-  width: 25%;
-}
-
-.chat-message .message {
-  color: var(--base-color-message);
-  width: 60%;
-  font-size: 0.8rem;
+.chat-message {
+  margin-top: 0.5rem;
   text-align: left;
-  overflow: auto;
-  overflow-x: hidden;
-  word-wrap: break-word;
-  font-weight: 700;
+  overflow-wrap: break-word;
+  width: 100%;
 }
 
-.chat-message div {
-  padding-left: 0.5rem;
+.chat-message * {
+  font-size: 1vw;
 }
 
-.chat-message .time {
-  color: var(--base-color-time-message);
-  font-size: 0.7rem;
-  font-weight: 500;
-  width: 15%;
+.chat-message > div {
+  display: inline-block !important;
+}
+
+.chat-message > .ms-username {
+  color: var(--base-color-username-message);
+}
+
+.chat-message > .ms-time {
+  width: min-content;
+  max-width: min-content;
+  color: var(--base-color-info);
+}
+
+.chat-message > *:not(:first-child) {
+  margin-left: 0.2rem;
 }
