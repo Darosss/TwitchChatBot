@@ -101,7 +101,7 @@ export default function UserProfile() {
           </div>
           <div className="nested-detail">
             <div>Points:</div>
-            <div>{data.points}</div>
+            <div>{data.points?.toFixed(0)}</div>
           </div>
         </div>
         <div className="notes-details small-details large">
