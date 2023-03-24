@@ -25,6 +25,10 @@ class CommandsHandler {
     this.commandsAliases = (await getChatCommandsAliases()) || [];
   }
 
+  async refreshPrefix(prefix: string) {
+    this.prefix = prefix;
+  }
+
   public async checkMessageForCommand(user: UserModel, message: string) {
     if (!message.startsWith(this.prefix)) return false;
 
