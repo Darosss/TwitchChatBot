@@ -122,8 +122,12 @@ class StreamHandler {
     const refreshedConfigs = await getConfigs();
     if (refreshedConfigs) {
       this.configs = refreshedConfigs;
-      const { pointsIncrement, intervalCheckChatters, randomMessageChance } =
-        this.configs;
+      const {
+        commandsPrefix,
+        pointsIncrement,
+        intervalCheckChatters,
+        randomMessageChance,
+      } = this.configs;
 
       this.messagesHandler.refreshConfigs(pointsIncrement);
       this.loayaltyHandler.refreshConfigs({
@@ -134,6 +138,8 @@ class StreamHandler {
       this.triggersHandler.refreshConfigs({
         randomMessageChance: randomMessageChance,
       });
+
+      this.commandsHandler.refreshPrefix(commandsPrefix);
     }
   }
 
