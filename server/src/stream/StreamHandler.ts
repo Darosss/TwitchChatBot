@@ -1,5 +1,5 @@
 import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
-import { ConfigDocument, UserModel } from "@models/types";
+import { ConfigDocument } from "@models/types";
 import { ConfigDefaults } from "@defaults/types";
 import { configDefaults } from "@defaults/configsDefaults";
 import {
@@ -21,7 +21,10 @@ import TriggersHandler from "./TriggersHandler";
 import LoyaltyHandler from "./LoyaltyHandler";
 import MessagesHandler from "./MessagesHandler";
 import { getConfigs } from "@services/configs";
-import { headLogger } from "@utils/loggerUtil";
+import { headLogger, messageLogger } from "@utils/loggerUtil";
+import { ChatUserstate, Client } from "tmi.js";
+import { createUserIfNotExist } from "@services/users";
+import { UserCreateData } from "@services/users/types";
 
 interface StreamHandlerOptions {
   config: ConfigDocument;
@@ -33,6 +36,7 @@ interface StreamHandlerOptions {
     SocketData
   >;
   authorizedUser: HelixPrivilegedUser;
+  clientTmi: Client;
 }
 
 class StreamHandler {
@@ -44,6 +48,7 @@ class StreamHandler {
     InterServerEvents,
     SocketData
   >;
+  private readonly clientTmi: Client;
 
   private commandsHandler: CommandsHandler;
   private triggersHandler: TriggersHandler;
@@ -52,9 +57,10 @@ class StreamHandler {
   private configs: ConfigDefaults;
 
   constructor(options: StreamHandlerOptions) {
-    const { twitchApi, socketIO, authorizedUser } = options;
+    const { twitchApi, socketIO, authorizedUser, clientTmi } = options;
     this.twitchApi = twitchApi;
     this.socketIO = socketIO;
+    this.clientTmi = clientTmi;
 
     this.authorizedUser = authorizedUser;
     this.configs = { ...configDefaults };
@@ -73,34 +79,59 @@ class StreamHandler {
 
     this.init();
     this.initSocketEvents();
+    this.initOnMessageEvents();
   }
 
-  public async onMessageEvents(user: UserModel, message: string, self = false) {
-    let messagesToSend: string[] = [];
-    const dataEvent = new Date();
+  private async init() {
+    const { id } = this.authorizedUser;
+    await this.refreshConfigs();
 
-    await this.messagesHandler.saveMessageAndUpdateUser(
-      user._id,
-      user.username,
-      dataEvent,
-      message
-    );
+    setInterval(async () => {
+      await this.checkCountOfViewers(id);
+    }, this.configs.intervalCheckViewersPeek * 1000);
+  }
 
-    if (self) return [];
+  private async initOnMessageEvents() {
+    this.clientTmi.on("message", async (channel, userstate, message, self) => {
+      const userData = this.getUserStateInfo(userstate, self);
 
-    const commandAnswer = await this.commandsHandler.checkMessageForCommand(
-      user,
-      message
-    );
+      messageLogger.info(`${userData.username}: ${message}`);
+      this.socketIO.emit(
+        "messageServer",
+        new Date(),
+        userData.username,
+        message
+      ); // emit for socket
 
-    const triggerAnswer = await this.triggersHandler.checkMessageForTrigger(
-      message
-    );
+      const user = await createUserIfNotExist(
+        { twitchId: userData.twitchId },
+        userData
+      );
 
-    commandAnswer ? messagesToSend.push(commandAnswer) : null;
-    triggerAnswer ? messagesToSend.push(triggerAnswer) : null;
+      if (!user) return;
 
-    return messagesToSend;
+      await this.messagesHandler.saveMessageAndUpdateUser(
+        user._id,
+        user.username,
+        new Date(),
+        message
+      );
+
+      if (self) return;
+
+      const messagesQueue = (
+        await Promise.all([
+          this.triggersHandler.checkMessageForTrigger(message),
+          this.commandsHandler.checkMessageForCommand(user, message),
+        ])
+      ).filter((x) => x) as string[];
+
+      this.sendMessagesFromQueue(channel, messagesQueue);
+    });
+  }
+
+  private sendMessagesFromQueue(channel: string, messages: string[]) {
+    messages.forEach((msgInQue) => this.clientTmi.say(channel, msgInQue));
   }
   // private async debugFollows() {
   //   const follows = await this.twitchApi.users.getFollows({
@@ -109,14 +140,6 @@ class StreamHandler {
   //   });
   //   await addFollowersTemp(follows.data);
   // }
-  async init() {
-    const { id } = this.authorizedUser;
-    await this.refreshConfigs();
-
-    setInterval(async () => {
-      await this.checkCountOfViewers(id);
-    }, this.configs.intervalCheckViewersPeek * 1000);
-  }
 
   async refreshConfigs() {
     const refreshedConfigs = await getConfigs();
@@ -143,6 +166,23 @@ class StreamHandler {
     }
   }
 
+  private getUserStateInfo(
+    userstate: ChatUserstate,
+    self: boolean
+  ): UserCreateData {
+    const twitchId =
+      (self && process.env.botid!) ||
+      userstate["user-id"] ||
+      "undefinedTwitchId";
+    const userData = {
+      username: userstate["display-name"] || "undefinedUsername",
+      twitchName: userstate.username || "undefinedTwitchName",
+      twitchId: twitchId,
+      privileges: 0,
+    };
+    return userData;
+  }
+
   initSocketEvents() {
     this.socketIO.on("connect", (socket) => {
       socket.on("saveConfigs", async () => {
@@ -162,6 +202,11 @@ class StreamHandler {
           "Client created/updated/deleted command - refreshing commands"
         );
         await this.commandsHandler.refreshCommands();
+      });
+
+      socket.on("messageClient", (message) => {
+        this.clientTmi.say(this.authorizedUser.name, message);
+        //after connect to client add listen to messageClient event when user connects to socket
       });
     });
   }

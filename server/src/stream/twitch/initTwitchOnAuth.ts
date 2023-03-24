@@ -53,19 +53,19 @@ const initTwitchOnAuth = async (
   const configDB = await getConfigs();
   if (!configDB) return;
 
+  const twitchTmi = ClientTmi.default({
+    userToListen: authorizedUser.name,
+  });
+
   const streamHandler = new StreamHandler({
     twitchApi: twitchApi,
     config: configDB,
     authorizedUser: authorizedUser,
     socketIO: socketIO,
+    clientTmi: twitchTmi,
   });
 
-  const TwitchTmi = ClientTmi.default(
-    socketIO,
-    streamHandler,
-    authorizedUser.name
-  );
-  TwitchTmi.connect();
+  twitchTmi.connect();
 
   eventSub(twitchApi, authorizedUser.id, socketIO);
 };
