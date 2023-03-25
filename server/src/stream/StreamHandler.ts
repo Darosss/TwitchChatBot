@@ -22,6 +22,7 @@ import LoyaltyHandler from "./LoyaltyHandler";
 import MessagesHandler from "./MessagesHandler";
 import { getConfigs } from "@services/configs";
 import { headLogger, messageLogger } from "@utils/loggerUtil";
+import TimersHandler from "./TimersHandler";
 import { ChatUserstate, Client } from "tmi.js";
 import { createUserIfNotExist } from "@services/users";
 import { UserCreateData } from "@services/users/types";
@@ -54,6 +55,7 @@ class StreamHandler {
   private triggersHandler: TriggersHandler;
   private messagesHandler: MessagesHandler;
   private loayaltyHandler: LoyaltyHandler;
+  private timersHandler: TimersHandler;
   private configs: ConfigDefaults;
 
   constructor(options: StreamHandlerOptions) {
@@ -75,6 +77,14 @@ class StreamHandler {
       socketIO,
       this.authorizedUser,
       this.configs
+    );
+
+    this.timersHandler = new TimersHandler(
+      twitchApi,
+      socketIO,
+      this.authorizedUser,
+      { timersIntervalDelay: this.configs.timersIntervalDelay },
+      clientTmi.say.bind(clientTmi)
     );
 
     this.init();
@@ -123,6 +133,7 @@ class StreamHandler {
         await Promise.all([
           this.triggersHandler.checkMessageForTrigger(message),
           this.commandsHandler.checkMessageForCommand(user, message),
+          this.timersHandler.checkMessageForTimer(user),
         ])
       ).filter((x) => x) as string[];
 
@@ -150,6 +161,7 @@ class StreamHandler {
         pointsIncrement,
         intervalCheckChatters,
         randomMessageChance,
+        timersIntervalDelay,
       } = this.configs;
 
       this.messagesHandler.refreshConfigs(pointsIncrement);
@@ -163,6 +175,10 @@ class StreamHandler {
       });
 
       this.commandsHandler.refreshPrefix(commandsPrefix);
+
+      this.timersHandler.refreshConfigs({
+        timersIntervalDelay: timersIntervalDelay,
+      });
     }
   }
 
@@ -202,6 +218,13 @@ class StreamHandler {
           "Client created/updated/deleted command - refreshing commands"
         );
         await this.commandsHandler.refreshCommands();
+      });
+
+      socket.on("refreshTimers", async () => {
+        headLogger.info(
+          "Client created/updated/deleted timer - refreshing timers"
+        );
+        await this.timersHandler.refreshTimers();
       });
 
       socket.on("messageClient", (message) => {
