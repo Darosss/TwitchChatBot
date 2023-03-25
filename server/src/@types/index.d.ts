@@ -78,6 +78,10 @@ interface RequestTriggerQuery extends RequestSearch, RequestSearchDate {
   messages?: string;
 }
 
+interface RequestTimerQuery extends RequestSearch, RequestSearchDate {
+  messages?: string;
+}
+
 interface AuthorizationTwitch {
   access_token: string;
   expires_in: number;

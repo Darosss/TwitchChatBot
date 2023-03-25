@@ -19,6 +19,7 @@ export interface ClientToServerEvents {
   saveConfigs: () => void;
   refreshTriggers: () => void;
   refreshCommands: () => void;
+  refreshTimers: () => void;
 }
 
 export interface InterServerEvents {

@@ -169,3 +169,20 @@ export interface OverlayModel {
 }
 
 export type OverlayDocument = OverlayModel & Document;
+
+export interface TimerModel {
+  _id: string;
+  name: string;
+  enabled: boolean;
+  points: number;
+  reqPoints: number;
+  nonFollowMulti: boolean;
+  nonSubMulti: boolean;
+  uses: number;
+  messages: string[];
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type TimerDocument = TimerModel & Document;

@@ -7,3 +7,6 @@ export interface LoyaltyHandlerConfig
 
 export interface TriggersHandlerConfigs
   extends Pick<ConfigModel, "randomMessageChance"> {}
+
+export interface TimersHandlerConfigs
+  extends Pick<ConfigModel, "timersIntervalDelay"> {}

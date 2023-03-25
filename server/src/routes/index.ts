@@ -4,6 +4,7 @@ import configsRouter from "./configsRoute";
 import messagesRouter from "./messagesRoute";
 import redemptionsRouter from "./redemptionsRoute";
 import triggersRouter from "./triggersRoute";
+import timersRouter from "./timersRoute";
 import usersRouter from "./usersRoute";
 import streamSessionsRouter from "./streamSessionsRoute";
 import messageCategoriesRouter from "./messageCategoriesRoute";
@@ -21,6 +22,7 @@ const initRoutes = (app: any) => {
   app.use("/redemptions", redemptionsRouter);
   app.use("/stream-sessions", streamSessionsRouter);
   app.use("/triggers", triggersRouter);
+  app.use("/timers", timersRouter);
   app.use("/widgets", widgetsRouter);
 };
 

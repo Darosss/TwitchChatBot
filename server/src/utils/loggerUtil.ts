@@ -90,6 +90,24 @@ export const triggerLogger = winston.createLogger({
   ],
 });
 
+export const timerLogger = winston.createLogger({
+  format: combine(
+    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
+    winston.format.prettyPrint(),
+    streamLoggerFormat
+  ),
+  level: "info",
+  transports: [
+    new DailyRotateFile({
+      filename: path.join(
+        __dirname,
+        `${streamLoggerDefaults.folder}/%DATE%/timers.log`
+      ),
+      datePattern: streamLoggerDefaults.datePattern,
+    }),
+  ],
+});
+
 export const commandLogger = winston.createLogger({
   format: combine(
     winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),

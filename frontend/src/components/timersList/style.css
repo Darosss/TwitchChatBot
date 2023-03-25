@@ -1,0 +1,118 @@
+#timers-list {
+  margin-right: 2rem;
+  overflow: auto;
+  width: 98vw;
+}
+
+#table-timers-list td:not(:first-child) {
+  width: 100%;
+}
+
+#table-timers-list td:not(:first-child) {
+  border-left: 0.1rem solid var(--base-bg-color-border);
+  text-align: center;
+}
+
+.timers-big {
+  width: 25vw;
+  height: 30vh;
+  display: flex;
+  overflow: auto;
+  flex-wrap: wrap;
+}
+
+.timers-big > div {
+  flex: 1 1 30%;
+  min-height: 20%;
+  padding: 0.1rem;
+  border: 1px solid var(--base-bg-color-border);
+}
+
+.timers-big > div:hover {
+  background-color: var(--base-bg-color-border);
+}
+
+.timer-div-data {
+  display: flex;
+  flex-wrap: wrap;
+  height: 30vh;
+  overflow-x: hidden;
+}
+
+.timer-div-data > div {
+  flex: 1 1 49%;
+  max-height: 3vh;
+  height: 3vh;
+  overflow-x: hidden;
+  border-bottom: 0.1rem solid var(--base-bg-color-border);
+}
+
+.timer-div-data > div:hover {
+  background-color: var(--base-bg-color-border);
+}
+
+.timer-div-data > div:nth-child(even) {
+  color: var(--base-color-info);
+  border-left: 0.1rem solid var(--base-bg-color-border);
+}
+
+.timer-div-data > div:nth-child(odd) {
+  font-weight: 700;
+}
+
+.timers-textarea {
+  white-space: nowrap;
+  font-size: 1.1rem;
+  height: 15vh;
+  max-height: 15vh;
+  width: 35vw;
+  max-width: 35vw;
+  min-width: 8vw;
+  min-height: 5vw;
+}
+
+.timers-list-input {
+  height: 5vh;
+  font-size: 1.1rem;
+}
+
+.changed-field {
+  color: var(--base-color-info);
+  background-color: var(--base-bg-color-info);
+}
+
+.timers-list-modal-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+  min-height: 15vh;
+}
+
+.timers-list-modal-wrapper > div {
+  flex: 1 1 45%;
+  border-bottom: 0.1rem solid var(--base-bg-color-border);
+  margin-top: 0.1rem;
+}
+
+.timers-list-modal-wrapper > div:hover {
+  flex: 1 1 45%;
+  background: var(--base-bg-color-border);
+}
+
+.timers-list-modal-wrapper > div > * {
+  width: 100%;
+}
+
+.timers-list-mode {
+  display: flex;
+}
+
+.timers-list-action-buttons-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.timers-list-action-buttons-wrapper > button {
+  height: 10vh;
+}

@@ -16,6 +16,7 @@ import { TriggerRoutes } from "@routes/TriggerRoute";
 import { UserRoutes } from "@routes/UserRoute";
 import { MessageCategoriesRoute } from "@routes/MessageCategoriesRoute";
 import { ReactNotifications } from "react-notifications-component";
+import { TimersRoute } from "@routes/TimersRoute";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
                 path="/stream-sessions/*"
                 element={<StreamSessionRoutes />}
               />
+              <Route path="/timers/*" element={<TimersRoute />} />
               <Route path="/triggers/*" element={<TriggerRoutes />} />
               <Route path="/configs/*" element={<ConfigRoutes />} />
               <Route path="/*" element={<>Not found</>} />
