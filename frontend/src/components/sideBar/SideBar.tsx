@@ -48,6 +48,7 @@ const routes = [
   { path: "/redemptions", label: "Redemptions" },
   { path: "/commands", label: "Commands" },
   { path: "/triggers", label: "Triggers" },
+  { path: "/timers", label: "Timers" },
   { path: "/configs", label: "Configs" },
 ];
 
