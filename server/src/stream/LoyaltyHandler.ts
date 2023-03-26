@@ -27,7 +27,7 @@ class LoyaltyHandler extends HeadHandler {
   private configs: LoyaltyConfigsHandler;
   private usersBefore = new Set<string>();
   private currentSession: StreamSessionModel | null | undefined;
-
+  private checkChattersTimeout: NodeJS.Timeout | undefined;
   constructor(
     twitchApi: ApiClient,
     socketIO: Server<
@@ -41,18 +41,19 @@ class LoyaltyHandler extends HeadHandler {
   ) {
     super(socketIO, twitchApi, authorizedUser);
     this.configs = configs;
-
     this.init();
   }
 
   async init() {
-    setInterval(async () => {
+    this.checkChattersTimeout = setInterval(async () => {
       await this.checkChatters(/* id */);
     }, this.configs.intervalCheckChatters * 1000);
   }
 
   public async refreshConfigs(configs: LoyaltyConfigsHandler) {
+    clearInterval(this.checkChattersTimeout);
     this.configs = configs;
+    this.init();
   }
 
   async getStreamChatters() {
@@ -97,12 +98,30 @@ class LoyaltyHandler extends HeadHandler {
     await this.updateWatcherStatistics(userId, pointsWithMultip);
   }
 
+  async checkUserFollow(user: HelixChatChatter) {
+    const twitchUser = await retryWithCatch(() => user.getUser());
+
+    const follow = await retryWithCatch(() =>
+      twitchUser.getFollowTo(this.authorizedUser.id)
+    );
+
+    return follow?.followDate;
+  }
+
+  async updateFollowerStatus(users: HelixChatChatter[]) {
+    for (const user of users) {
+      const userFollow = await this.checkUserFollow(user);
+      await updateUser({ twitchName: user.userName }, { follower: userFollow });
+    }
+  }
+
   async handleActiveUsers(chatters: HelixChatChatter[]) {
     const usersNow = new Set<string>();
     for await (const user of chatters) {
       const { userName, userDisplayName, userId } = user;
 
       usersNow.add(userName);
+
       const userDB = await createUserIfNotExist(
         { twitchName: userName },
         {
@@ -153,10 +172,13 @@ class LoyaltyHandler extends HeadHandler {
 
     const usersNow = await this.handleActiveUsers(chatters);
 
+    await this.updateFollowerStatus(chatters);
+
     removeDifferenceFromSet(this.usersBefore, usersNow);
 
     await this.handleLeftUsers();
     this.usersBefore = new Set(usersNow);
+
     usersNow.clear();
   }
 
