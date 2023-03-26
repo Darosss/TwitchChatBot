@@ -6,6 +6,8 @@ export const configDefaults: ConfigDefaults = {
   },
   timersConfigs: {
     timersIntervalDelay: 20,
+    nonFollowTimerPoints: 10,
+    nonSubTimerPoints: 10,
   },
   chatGamesConfigs: {
     activeUserTimeDelay: 150,
