@@ -36,128 +36,38 @@ const streamLoggerDefaults = {
   folder: `../data`,
 };
 
-export const headLogger = winston.createLogger({
-  format: combine(
-    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
-    winston.format.prettyPrint(),
-    streamLoggerFormat
-  ),
-  level: "info",
-  transports: [
-    new DailyRotateFile({
-      filename: path.join(
-        __dirname,
-        `${streamLoggerDefaults.folder}/%DATE%/headLogs.log`
-      ),
-      datePattern: streamLoggerDefaults.datePattern,
-    }),
-  ],
-});
+const optionsLoggers = (fileName: string) => {
+  return {
+    format: combine(
+      winston.format.timestamp({
+        format: streamLoggerDefaults.timestampFormat,
+      }),
+      winston.format.prettyPrint(),
+      streamLoggerFormat
+    ),
+    level: "info",
+    transports: [
+      new DailyRotateFile({
+        filename: path.join(
+          __dirname,
+          `${streamLoggerDefaults.folder}/%DATE%/${fileName}.log`
+        ),
+        datePattern: streamLoggerDefaults.datePattern,
+      }),
+    ],
+  };
+};
 
-export const messageLogger = winston.createLogger({
-  format: combine(
-    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
-    winston.format.prettyPrint(),
-    streamLoggerFormat
-  ),
-  level: "info",
-  transports: [
-    new DailyRotateFile({
-      filename: path.join(
-        __dirname,
-        `${streamLoggerDefaults.folder}/%DATE%/messages.log`
-      ),
-      datePattern: streamLoggerDefaults.datePattern,
-    }),
-  ],
-});
+export const headLogger = winston.createLogger(optionsLoggers("headLogs"));
 
-export const triggerLogger = winston.createLogger({
-  format: combine(
-    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
-    winston.format.prettyPrint(),
-    streamLoggerFormat
-  ),
-  level: "info",
-  transports: [
-    new DailyRotateFile({
-      filename: path.join(
-        __dirname,
-        `${streamLoggerDefaults.folder}/%DATE%/triggers.log`
-      ),
-      datePattern: streamLoggerDefaults.datePattern,
-    }),
-  ],
-});
+export const messageLogger = winston.createLogger(optionsLoggers("messages"));
 
-export const timerLogger = winston.createLogger({
-  format: combine(
-    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
-    winston.format.prettyPrint(),
-    streamLoggerFormat
-  ),
-  level: "info",
-  transports: [
-    new DailyRotateFile({
-      filename: path.join(
-        __dirname,
-        `${streamLoggerDefaults.folder}/%DATE%/timers.log`
-      ),
-      datePattern: streamLoggerDefaults.datePattern,
-    }),
-  ],
-});
+export const triggerLogger = winston.createLogger(optionsLoggers("triggers"));
 
-export const commandLogger = winston.createLogger({
-  format: combine(
-    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
-    winston.format.prettyPrint(),
-    streamLoggerFormat
-  ),
-  level: "info",
-  transports: [
-    new DailyRotateFile({
-      filename: path.join(
-        __dirname,
-        `${streamLoggerDefaults.folder}/%DATE%/commands.log`
-      ),
-      datePattern: streamLoggerDefaults.datePattern,
-    }),
-  ],
-});
+export const timerLogger = winston.createLogger(optionsLoggers("timers"));
 
-export const watcherLogger = winston.createLogger({
-  format: combine(
-    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
-    winston.format.prettyPrint(),
-    streamLoggerFormat
-  ),
-  level: "info",
-  transports: [
-    new DailyRotateFile({
-      filename: path.join(
-        __dirname,
-        `${streamLoggerDefaults.folder}/%DATE%/watchers.log`
-      ),
-      datePattern: streamLoggerDefaults.datePattern,
-    }),
-  ],
-});
+export const commandLogger = winston.createLogger(optionsLoggers("commands"));
 
-export const eventsubLogger = winston.createLogger({
-  format: combine(
-    winston.format.timestamp({ format: streamLoggerDefaults.timestampFormat }),
-    winston.format.prettyPrint(),
-    streamLoggerFormat
-  ),
-  level: "info",
-  transports: [
-    new DailyRotateFile({
-      filename: path.join(
-        __dirname,
-        `${streamLoggerDefaults.folder}/%DATE%/eventsub.log`
-      ),
-      datePattern: streamLoggerDefaults.datePattern,
-    }),
-  ],
-});
+export const watcherLogger = winston.createLogger(optionsLoggers("watchers"));
+
+export const eventsubLogger = winston.createLogger(optionsLoggers("eventsub"));
