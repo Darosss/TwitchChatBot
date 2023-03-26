@@ -135,7 +135,7 @@ class TimersHandler extends HeadHandler {
   async updateNonFollowsTimers() {
     const updatedTimers = await updateTimers(
       { nonFollowMulti: true },
-      { $inc: { points: 6 } }
+      { $inc: { points: this.configs.nonFollowTimerPoints } }
     );
 
     return updatedTimers;
@@ -144,7 +144,7 @@ class TimersHandler extends HeadHandler {
   async updateNonSubsTimers() {
     const updatedTimers = await updateTimers(
       { nonSubMulti: true },
-      { $inc: { points: 10 } }
+      { $inc: { points: this.configs.nonSubTimerPoints } }
     );
   }
 
