@@ -2,62 +2,109 @@ import { Model, model, Schema } from "mongoose";
 import { ConfigDocument } from "./types";
 import { configDefaults } from "../defaults/configsDefaults";
 const {
-  commandsPrefix,
-  timersIntervalDelay,
-  activeUserTimeDelay,
-  chatGamesIntervalDelay,
-  minActiveUsersThreshold,
-  pointsIncrement,
-  intervalCheckChatters,
-  intervalCheckViewersPeek,
-  permissionLevels,
-  randomMessageChance,
+  commandsConfigs,
+  timersConfigs,
+  triggersConfigs,
+  pointsConfigs,
+  loyaltyConfigs,
+  chatGamesConfigs,
+  headConfigs,
 } = configDefaults;
 
 const ConfigSchema: Schema<ConfigDocument> = new Schema(
   {
-    commandsPrefix: { type: String, required: true, default: commandsPrefix },
-    timersIntervalDelay: {
-      type: Number,
-      required: true,
-      default: timersIntervalDelay,
+    commandsConfigs: {
+      commandsPrefix: {
+        type: String,
+        required: true,
+        default: commandsConfigs.commandsPrefix,
+      },
     },
-    activeUserTimeDelay: {
-      type: Number,
-      required: true,
-      default: activeUserTimeDelay,
+    timersConfigs: {
+      timersIntervalDelay: {
+        type: Number,
+        required: true,
+        default: timersConfigs.timersIntervalDelay,
+      },
     },
-    chatGamesIntervalDelay: {
-      type: Number,
-      required: true,
-      default: chatGamesIntervalDelay,
+    triggersConfigs: {
+      randomMessageChance: {
+        type: Number,
+        required: true,
+        default: triggersConfigs.randomMessageChance,
+      },
     },
-    minActiveUsersThreshold: {
-      type: Number,
-      required: true,
-      default: minActiveUsersThreshold,
+    pointsConfigs: {
+      pointsIncrement: {
+        message: {
+          type: Number,
+          requried: true,
+          default: pointsConfigs.pointsIncrement.message,
+        },
+        watch: {
+          type: Number,
+          requried: true,
+          default: pointsConfigs.pointsIncrement.watch,
+        },
+        watchMultipler: {
+          type: Number,
+          requried: true,
+          default: pointsConfigs.pointsIncrement.watchMultipler,
+        },
+      },
     },
-    intervalCheckChatters: {
-      type: Number,
-      required: true,
-      default: intervalCheckChatters,
+    loyaltyConfigs: {
+      intervalCheckChatters: {
+        type: Number,
+        required: true,
+        default: loyaltyConfigs.intervalCheckChatters,
+      },
     },
-    randomMessageChance: { type: Number, default: randomMessageChance },
-    pointsIncrement: {
-      message: { type: Number, default: pointsIncrement.message },
-      watch: { type: Number, default: pointsIncrement.watch },
-      watchMultipler: { type: Number, default: pointsIncrement.watchMultipler },
+    chatGamesConfigs: {
+      activeUserTimeDelay: {
+        type: Number,
+        required: true,
+        default: chatGamesConfigs.activeUserTimeDelay,
+      },
+      chatGamesIntervalDelay: {
+        type: Number,
+        required: true,
+        default: chatGamesConfigs.chatGamesIntervalDelay,
+      },
+      minActiveUsersThreshold: {
+        type: Number,
+        required: true,
+        default: chatGamesConfigs.minActiveUsersThreshold,
+      },
     },
-    intervalCheckViewersPeek: {
-      type: Number,
-      required: true,
-      default: intervalCheckViewersPeek,
-    },
-    permissionLevels: {
-      broadcaster: { type: Number, default: permissionLevels.broadcaster },
-      mod: { type: Number, default: permissionLevels.mod },
-      vip: { type: Number, default: permissionLevels.vip },
-      all: { type: Number, default: permissionLevels.all },
+    headConfigs: {
+      permissionLevels: {
+        broadcaster: {
+          type: Number,
+          requried: true,
+          default: headConfigs.permissionLevels.broadcaster,
+        },
+        mod: {
+          type: Number,
+          requried: true,
+          default: headConfigs.permissionLevels.mod,
+        },
+        vip: {
+          type: Number,
+          requried: true,
+          default: headConfigs.permissionLevels.vip,
+        },
+        all: {
+          type: Number,
+          requried: true,
+          default: headConfigs.permissionLevels.all,
+        },
+      },
+      intervalCheckViewersPeek: {
+        type: Number,
+        required: true,
+        default: headConfigs.intervalCheckViewersPeek,
+      },
     },
   },
   {
