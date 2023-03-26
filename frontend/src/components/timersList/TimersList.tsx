@@ -27,6 +27,7 @@ export default function TimersList() {
 
   const [name, setName] = useState("");
   const [enabled, setEnabled] = useState(true);
+  const [delay, setDelay] = useState(360);
   const [nonFollowMulti, setNonFollowMulti] = useState(false);
   const [nonSubMulti, setNonSubMulti] = useState(false);
   const [messages, setMessages] = useState([""]);
@@ -38,6 +39,7 @@ export default function TimersList() {
   const { refetchData: fetchEditTimer } = editTimer(editingTimer, {
     name: name,
     enabled: enabled,
+    delay: delay,
     messages: messages,
     nonFollowMulti: nonFollowMulti,
     nonSubMulti: nonSubMulti,
@@ -48,6 +50,7 @@ export default function TimersList() {
   const { refetchData: fetchCreateTimer } = createTimer({
     name: `New timer${commandsData?.count}`,
     enabled: true,
+    delay: 360,
     description: "New timer description",
     nonFollowMulti: false,
     nonSubMulti: false,
@@ -116,6 +119,7 @@ export default function TimersList() {
   const handleOnEdit = (timer: Timer) => {
     setEditingTimer(timer._id);
     setName(timer.name);
+    setDelay(timer.delay);
     setMessages(timer.messages);
     setReqPoints(timer.reqPoints);
     setShowModal(true);
@@ -173,6 +177,8 @@ export default function TimersList() {
                     <div className="timer-div-data">
                       <div>Name: </div>
                       <div>{timer.name}</div>
+                      <div>Delay: </div>
+                      <div>{timer.delay}</div>
                       <div>Points: </div>
                       <div>{timer.points}</div>
                       <div>Required points: </div>
@@ -243,6 +249,7 @@ export default function TimersList() {
               }}
             />
           </div>
+
           <div> Enabled </div>
           <div>
             <button
@@ -280,10 +287,23 @@ export default function TimersList() {
               {nonSubMulti.toString()}
             </button>
           </div>
+          <div>Delay</div>
+          <div>
+            <input
+              className="timers-list-input"
+              type="number"
+              value={delay}
+              onChange={(e) => {
+                setDelay(e.target.valueAsNumber);
+                changeColorOnChange(e);
+              }}
+            />
+          </div>
           <div>Req points</div>
           <div>
             <input
               className="timers-list-input"
+              type="number"
               value={reqPoints}
               onChange={(e) => {
                 setReqPoints(Number(e.target.value));
