@@ -1,29 +1,49 @@
-.table-list-wrapper {
+.configs-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 95vh;
+  overflow-x: hidden;
+}
+
+.configs-section-wrapper {
   display: flex;
   flex-wrap: wrap;
 }
 
-.table-list-wrapper > div {
-  flex: 0 1 50%;
+.configs-section-wrapper > div.configs-section-header {
+  flex: 100%;
+  color: var(--base-color-info);
+  border-top: 0.3rem solid var(--base-bg-color-info);
+  border-bottom: 0.2rem solid var(--base-bg-color-info);
+}
+
+.configs-section-wrapper > div.configs-section-inner-header {
+  flex: 100%;
+  font-size: 1.5vw;
+  font-weight: 700;
+  background-color: var(--base-bg-color-border);
+}
+
+.configs-section-wrapper > div.configs-section-header:hover {
+  flex: 100%;
+  background-color: var(--base-bg-color-info);
+}
+
+.configs-section-wrapper > div {
+  flex: 0 0 50%;
   border-bottom: 0.1rem solid var(--base-bg-color-border);
   text-align: center;
   font-size: x-large;
 }
 
-.table-list-wrapper > div:hover {
-  background-color: var(--base-bg-color-border);
+.configs-section-wrapper > div:hover {
+  background-color: var(--base-bg-color-info);
 }
 
-.table-list-wrapper > div.config-header {
-  flex: 0 1 100%;
-  border-top: 0.5rem solid var(--base-bg-color-border);
-  border-bottom: 0.5rem solid var(--base-bg-color-border);
-}
-
-.table-list-wrapper input {
+.configs-section-wrapper input {
   text-align: center;
-  background-color: var(--base-bg-color-border);
-  border: 0.2rem solid var(--base-bg-color-border);
-  max-width: 10vw;
+  background-color: var(--base-bg-color);
+  border: 0.1rem solid var(--base-bg-color-border);
+  max-width: 100%;
   font-size: x-large;
 }

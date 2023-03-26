@@ -1,8 +1,18 @@
 import "./style.css";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import PreviousPage from "@components/previousPage";
-import { getConfigs, editConfig } from "@services/ConfigService";
+import {
+  getConfigs,
+  editConfig,
+  TimersConfigs,
+  CommandsConfigs,
+  ChatGamesConfigs,
+  TriggersConfigs,
+  PointsConfigs,
+  LoyaltyConfigs,
+  HeadConfigs,
+} from "@services/ConfigService";
 import { SocketContext } from "@context/SocketContext";
 import { addNotification } from "@utils/getNotificationValues";
 
@@ -11,54 +21,59 @@ export default function ConfigsList() {
 
   const [showEdit, setShowEdit] = useState(false);
 
-  const [prefix, setPrefix] = useState("");
-  const [timersInterval, setTimersInterval] = useState<number>(50);
-  const [activeUserTime, setActiveUserTime] = useState<number>(150);
-  const [chatGamesInterval, setChatGamesInterval] = useState<number>(30);
-  const [intervCheckChatters, setIntervalCheckChatters] = useState<number>(300);
-  const [minActiveUsers, setMinActiveUsers] = useState<number>(4);
-  const [intervCheckViewersPeek, setIntervalCheckViewersPeek] =
-    useState<number>(600);
-  const [randomMsgChance, setRandomMessageChance] = useState<number>(15);
-  const [permissions, setPermissions] = useState({
-    broadcaster: 10,
-    mod: 8,
-    vip: 4,
-    all: 0,
-  });
-  const [ptsIncrement, setPointsIncrement] = useState({
-    watch: 10,
-    watchMultipler: 2,
-    message: 1,
-  });
+  const [commandsCfg, setCommandsCfg] = useState<CommandsConfigs>(
+    {} as CommandsConfigs
+  );
+  const [timersCfg, setTimersCfg] = useState<TimersConfigs>(
+    {} as TimersConfigs
+  );
+  const [chatGamesCfg, setChatGamesCfg] = useState<ChatGamesConfigs>(
+    {} as ChatGamesConfigs
+  );
+  const [triggersCfg, setTriggersCfg] = useState<TriggersConfigs>(
+    {} as TriggersConfigs
+  );
+  const [pointsCfg, setPointsCfg] = useState<PointsConfigs>(
+    {} as PointsConfigs
+  );
+  const [loyaltyCfg, setLoyaltyCfg] = useState<LoyaltyConfigs>(
+    {} as LoyaltyConfigs
+  );
+  const [headCfg, setHeadCfg] = useState<HeadConfigs>({} as HeadConfigs);
 
   const { data, loading, error, refetchData } = getConfigs();
 
   const { refetchData: fetchEditConfig } = editConfig({
-    commandsPrefix: prefix,
-    timersIntervalDelay: timersInterval,
-    activeUserTimeDelay: activeUserTime,
-    chatGamesIntervalDelay: chatGamesInterval,
-    minActiveUsersThreshold: minActiveUsers,
-    permissionLevels: permissions,
-    pointsIncrement: ptsIncrement,
-    intervalCheckViewersPeek: intervCheckViewersPeek,
-    randomMessageChance: randomMsgChance,
-    intervalCheckChatters: intervCheckChatters,
+    commandsConfigs: commandsCfg!,
+    timersConfigs: timersCfg!,
+    chatGamesConfigs: chatGamesCfg!,
+    triggersConfigs: triggersCfg!,
+    pointsConfigs: pointsCfg!,
+    loyaltyConfigs: loyaltyCfg!,
+    headConfigs: headCfg!,
   });
 
-  const setConfigStates = () => {
-    setPrefix(commandsPrefix);
-    setTimersInterval(timersIntervalDelay);
-    setActiveUserTime(activeUserTimeDelay);
-    setChatGamesInterval(chatGamesIntervalDelay);
-    setPointsIncrement(pointsIncrement);
-    setIntervalCheckViewersPeek(intervalCheckViewersPeek);
-    setIntervalCheckChatters(intervalCheckChatters);
-    setRandomMessageChance(randomMessageChance);
-    setMinActiveUsers(minActiveUsersThreshold);
-    setPermissions(permissionLevels);
-  };
+  useEffect(() => {
+    if (!data) return;
+    const {
+      commandsConfigs,
+      timersConfigs,
+      chatGamesConfigs,
+      triggersConfigs,
+      pointsConfigs,
+      loyaltyConfigs,
+      headConfigs,
+    } = data;
+    setCommandsCfg(commandsConfigs);
+    setTimersCfg(timersConfigs);
+    setChatGamesCfg(chatGamesConfigs);
+    setTriggersCfg(triggersConfigs);
+    setPointsCfg(pointsConfigs);
+    setLoyaltyCfg(loyaltyConfigs);
+    setHeadCfg(headConfigs);
+  }, [data]);
+
+  const setConfigStates = () => {};
 
   const onClickEditConfig = () => {
     setShowEdit(false);
@@ -71,18 +86,18 @@ export default function ConfigsList() {
   if (error) return <>There is an error.</>;
   if (!data || loading) return <>Someting went wrong</>;
 
-  const {
-    commandsPrefix,
-    timersIntervalDelay,
-    activeUserTimeDelay,
-    chatGamesIntervalDelay,
-    minActiveUsersThreshold,
-    permissionLevels,
-    intervalCheckViewersPeek,
-    pointsIncrement,
-    randomMessageChance,
-    intervalCheckChatters,
-  } = data;
+  const generateConfigInput = (
+    optionName: string,
+    input: React.ReactNode,
+    value: string | number
+  ) => {
+    return (
+      <>
+        <div> {optionName} </div>
+        <div>{showEdit ? input : value}</div>
+      </>
+    );
+  };
 
   return (
     <>
@@ -106,225 +121,259 @@ export default function ConfigsList() {
           Save
         </button>
       ) : null}
-      <div className="table-list-wrapper">
-        <div>Chat commands prefix</div>
-        <div>
-          {showEdit ? (
+      <div className="configs-list-wrapper">
+        <div className="configs-section-wrapper">
+          <div className="configs-section-header">Commands options </div>
+          {generateConfigInput(
+            "Commands prefix",
             <input
               type="text"
-              value={prefix}
-              onChange={(e) => setPrefix(e.target.value)}
-            />
-          ) : (
-            commandsPrefix
-          )}
-        </div>
-        <div>Check timers every</div>
-        <div>
-          {showEdit ? (
-            <input
-              type="number"
-              value={timersInterval}
-              onChange={(e) => setTimersInterval(Number(e.target.value))}
-            />
-          ) : (
-            timersIntervalDelay
-          )}
-        </div>
-        <div>Active user max time</div>
-        <div>
-          {showEdit ? (
-            <input
-              type="number"
-              value={activeUserTime}
-              onChange={(e) => setActiveUserTime(Number(e.target.value))}
-            />
-          ) : (
-            activeUserTimeDelay
-          )}
-        </div>
-        <div>Check chatters on chat every</div>
-        <div>
-          {showEdit ? (
-            <input
-              type="number"
-              value={intervCheckChatters}
-              onChange={(e) => setIntervalCheckChatters(Number(e.target.value))}
-            />
-          ) : (
-            intervalCheckChatters
-          )}
-        </div>
-        <div>Interval check viewers peek</div>
-        <div>
-          {showEdit ? (
-            <input
-              type="number"
-              value={intervCheckViewersPeek}
+              value={commandsCfg?.commandsPrefix}
               onChange={(e) =>
-                setIntervalCheckViewersPeek(Number(e.target.value))
-              }
-            />
-          ) : (
-            intervalCheckViewersPeek
-          )}
-        </div>
-        <div>Random message chance</div>
-        <div>
-          {showEdit ? (
-            <input
-              type="number"
-              value={randomMsgChance}
-              onChange={(e) => setRandomMessageChance(Number(e.target.value))}
-            />
-          ) : (
-            randomMessageChance
-          )}
-        </div>
-        <div>Check chat games every</div>
-        <div>
-          {showEdit ? (
-            <input
-              type="number"
-              value={chatGamesInterval}
-              onChange={(e) => setChatGamesInterval(Number(e.target.value))}
-            />
-          ) : (
-            chatGamesIntervalDelay
-          )}
-        </div>
-        <div>Minimum users to play chat game</div>
-        <div>
-          {showEdit ? (
-            <input
-              type="number"
-              value={minActiveUsers}
-              onChange={(e) => setMinActiveUsers(Number(e.target.value))}
-            />
-          ) : (
-            minActiveUsersThreshold
-          )}
-        </div>
-
-        <div className="config-header">Permissions</div>
-        <div>Broadcaster</div>
-        <div>
-          {showEdit ? (
-            <input
-              type="number"
-              value={permissions.broadcaster}
-              onChange={(e) =>
-                setPermissions((prevState) => ({
+                setCommandsCfg((prevState) => ({
                   ...prevState,
-                  broadcaster: e.target.valueAsNumber,
+                  commandsPrefix: e.target.value,
                 }))
               }
-            />
-          ) : (
-            permissionLevels.broadcaster
+            />,
+            commandsCfg?.commandsPrefix
           )}
         </div>
-        <div>Mod</div>
-        <div>
-          {showEdit ? (
+        <div className="configs-section-wrapper">
+          <div className="configs-section-header">Timers configs</div>
+          {generateConfigInput(
+            "Timers interval delay",
             <input
               type="number"
-              value={permissions.mod}
+              value={timersCfg?.timersIntervalDelay}
               onChange={(e) =>
-                setPermissions((prevState) => ({
+                setTimersCfg((prevState) => ({
                   ...prevState,
-                  mod: e.target.valueAsNumber,
+                  timersIntervalDelay: e.target.valueAsNumber,
                 }))
               }
-            />
-          ) : (
-            permissionLevels.mod
+            />,
+            timersCfg?.timersIntervalDelay
           )}
         </div>
-        <div>Vip</div>
-        <div>
-          {showEdit ? (
+        <div className="configs-section-wrapper">
+          <div className="configs-section-header">Chat games configs</div>
+          {generateConfigInput(
+            "Max time active user",
             <input
               type="number"
-              value={permissions.vip}
+              value={chatGamesCfg?.activeUserTimeDelay}
               onChange={(e) =>
-                setPermissions((prevState) => ({
+                setChatGamesCfg((prevState) => ({
                   ...prevState,
-                  vip: e.target.valueAsNumber,
+                  activeUserTimeDelay: e.target.valueAsNumber,
                 }))
               }
-            />
-          ) : (
-            permissionLevels.vip
+            />,
+            chatGamesCfg?.activeUserTimeDelay
+          )}
+          {generateConfigInput(
+            "Chat games interval delay",
+            <input
+              type="number"
+              value={chatGamesCfg?.chatGamesIntervalDelay}
+              onChange={(e) =>
+                setChatGamesCfg((prevState) => ({
+                  ...prevState,
+                  chatGamesIntervalDelay: e.target.valueAsNumber,
+                }))
+              }
+            />,
+            chatGamesCfg?.chatGamesIntervalDelay
+          )}
+          {generateConfigInput(
+            "Minimum active users threshhold",
+            <input
+              type="number"
+              value={chatGamesCfg?.minActiveUsersThreshold}
+              onChange={(e) =>
+                setChatGamesCfg((prevState) => ({
+                  ...prevState,
+                  minActiveUsersThreshold: e.target.valueAsNumber,
+                }))
+              }
+            />,
+            chatGamesCfg?.minActiveUsersThreshold
           )}
         </div>
-        <div>All</div>
-        <div>
-          {showEdit ? (
+        <div className="configs-section-wrapper">
+          <div className="configs-section-header">Triggers configs</div>
+          {generateConfigInput(
+            "Random message chance",
             <input
               type="number"
-              value={permissions.all}
+              value={triggersCfg?.randomMessageChance}
               onChange={(e) =>
-                setPermissions((prevState) => ({
+                setTriggersCfg((prevState) => ({
                   ...prevState,
-                  all: e.target.valueAsNumber,
+                  randomMessageChance: e.target.valueAsNumber,
                 }))
               }
-            />
-          ) : (
-            permissionLevels.all
+            />,
+            triggersCfg?.randomMessageChance
           )}
         </div>
-        <div className="config-header">Points increment</div>
-        <div>Message</div>
-        <div>
-          {showEdit ? (
+        <div className="configs-section-wrapper">
+          <div className="configs-section-header">Points configs</div>
+          <div className="configs-section-inner-header">Points increment</div>
+          {generateConfigInput(
+            "Message",
             <input
               type="number"
-              value={ptsIncrement.message}
+              value={pointsCfg?.pointsIncrement.message}
               onChange={(e) =>
-                setPointsIncrement((prevState) => ({
+                setPointsCfg((prevState) => ({
                   ...prevState,
-                  message: e.target.valueAsNumber,
+                  pointsIncrement: {
+                    ...prevState.pointsIncrement,
+                    message: e.target.valueAsNumber,
+                  },
                 }))
               }
-            />
-          ) : (
-            pointsIncrement.message
+            />,
+            pointsCfg?.pointsIncrement.message
+          )}
+          {generateConfigInput(
+            "Watch",
+            <input
+              type="number"
+              value={pointsCfg?.pointsIncrement.watch}
+              onChange={(e) =>
+                setPointsCfg((prevState) => ({
+                  ...prevState,
+                  pointsIncrement: {
+                    ...prevState.pointsIncrement,
+                    watch: e.target.valueAsNumber,
+                  },
+                }))
+              }
+            />,
+            pointsCfg?.pointsIncrement.watch
+          )}
+          {generateConfigInput(
+            "Watch multipler",
+            <input
+              type="number"
+              value={pointsCfg?.pointsIncrement.watchMultipler}
+              onChange={(e) =>
+                setPointsCfg((prevState) => ({
+                  ...prevState,
+                  pointsIncrement: {
+                    ...prevState.pointsIncrement,
+                    watchMultipler: e.target.valueAsNumber,
+                  },
+                }))
+              }
+            />,
+            pointsCfg?.pointsIncrement.watchMultipler
           )}
         </div>
-        <div>Watch</div>
-        <div>
-          {showEdit ? (
+        <div className="configs-section-wrapper">
+          <div className="configs-section-header">Loyalty configs</div>
+          {generateConfigInput(
+            "Interval check chatters delay",
             <input
               type="number"
-              value={ptsIncrement.watch}
+              value={loyaltyCfg?.intervalCheckChatters}
               onChange={(e) =>
-                setPointsIncrement((prevState) => ({
+                setLoyaltyCfg((prevState) => ({
                   ...prevState,
-                  watch: e.target.valueAsNumber,
+                  intervalCheckChatters: e.target.valueAsNumber,
                 }))
               }
-            />
-          ) : (
-            pointsIncrement.watch
+            />,
+            loyaltyCfg?.intervalCheckChatters
           )}
         </div>
-        <div>Watch multipler</div>
-        <div>
-          {showEdit ? (
+        <div className="configs-section-wrapper">
+          <div className="configs-section-header">Head configs</div>
+          {generateConfigInput(
+            "Interval check viewers peek delay",
             <input
               type="number"
-              value={ptsIncrement.watchMultipler}
+              value={headCfg?.intervalCheckViewersPeek}
               onChange={(e) =>
-                setPointsIncrement((prevState) => ({
+                setHeadCfg((prevState) => ({
                   ...prevState,
-                  watchMultipler: e.target.valueAsNumber,
+                  intervalCheckViewersPeek: e.target.valueAsNumber,
                 }))
               }
-            />
-          ) : (
-            pointsIncrement.watchMultipler
+            />,
+            headCfg?.intervalCheckViewersPeek
+          )}
+          <div className="configs-section-inner-header">Permissions levels</div>
+          {generateConfigInput(
+            "Broadcaster",
+            <input
+              type="number"
+              value={headCfg?.permissionLevels.broadcaster}
+              onChange={(e) =>
+                setHeadCfg((prevState) => ({
+                  ...prevState,
+                  permissionLevels: {
+                    ...prevState.permissionLevels,
+                    broadcaster: e.target.valueAsNumber,
+                  },
+                }))
+              }
+            />,
+            headCfg?.permissionLevels.broadcaster
+          )}
+          {generateConfigInput(
+            "Mod",
+            <input
+              type="number"
+              value={headCfg?.permissionLevels.mod}
+              onChange={(e) =>
+                setHeadCfg((prevState) => ({
+                  ...prevState,
+                  permissionLevels: {
+                    ...prevState.permissionLevels,
+                    mod: e.target.valueAsNumber,
+                  },
+                }))
+              }
+            />,
+            headCfg?.permissionLevels.mod
+          )}
+          {generateConfigInput(
+            "Vip",
+            <input
+              type="number"
+              value={headCfg?.permissionLevels.vip}
+              onChange={(e) =>
+                setHeadCfg((prevState) => ({
+                  ...prevState,
+                  permissionLevels: {
+                    ...prevState.permissionLevels,
+                    vip: e.target.valueAsNumber,
+                  },
+                }))
+              }
+            />,
+            headCfg?.permissionLevels.vip
+          )}
+          {generateConfigInput(
+            "All",
+            <input
+              type="number"
+              value={headCfg?.permissionLevels.all}
+              onChange={(e) =>
+                setHeadCfg((prevState) => ({
+                  ...prevState,
+                  permissionLevels: {
+                    ...prevState.permissionLevels,
+                    all: e.target.valueAsNumber,
+                  },
+                }))
+              }
+            />,
+            headCfg?.permissionLevels.all
           )}
         </div>
       </div>
