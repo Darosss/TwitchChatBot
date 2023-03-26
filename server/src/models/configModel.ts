@@ -26,6 +26,16 @@ const ConfigSchema: Schema<ConfigDocument> = new Schema(
         required: true,
         default: timersConfigs.timersIntervalDelay,
       },
+      nonFollowTimerPoints: {
+        type: Number,
+        required: true,
+        default: timersConfigs.nonFollowTimerPoints,
+      },
+      nonSubTimerPoints: {
+        type: Number,
+        required: true,
+        default: timersConfigs.nonSubTimerPoints,
+      },
     },
     triggersConfigs: {
       randomMessageChance: {
