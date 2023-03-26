@@ -77,27 +77,55 @@ export interface TriggerModel {
 
 export type TriggerDocument = TriggerModel & Document;
 
-export interface ConfigModel {
-  _id: string;
-  commandsPrefix: string;
+export interface TimersConfigs {
   timersIntervalDelay: number;
+}
+
+export interface CommandsConfigs {
+  commandsPrefix: string;
+}
+
+export interface ChatGamesConfigs {
   activeUserTimeDelay: number;
   chatGamesIntervalDelay: number;
   minActiveUsersThreshold: number;
-  intervalCheckChatters: number;
+}
+
+export interface TriggersConfigs {
   randomMessageChance: number;
+}
+
+export interface PointsConfigs {
   pointsIncrement: {
     message: number;
     watch: number;
     watchMultipler: number;
   };
-  intervalCheckViewersPeek: number;
+}
+
+export interface LoyaltyConfigs {
+  intervalCheckChatters: number;
+}
+
+export interface HeadConfigs {
   permissionLevels: {
     broadcaster: number;
     mod: number;
     vip: number;
     all: number;
   };
+  intervalCheckViewersPeek: number;
+}
+
+export interface ConfigModel {
+  _id: string;
+  commandsConfigs: CommandsConfigs;
+  timersConfigs: TimersConfigs;
+  chatGamesConfigs: ChatGamesConfigs;
+  triggersConfigs: TriggersConfigs;
+  pointsConfigs: PointsConfigs;
+  loyaltyConfigs: LoyaltyConfigs;
+  headConfigs: HeadConfigs;
   createdAt: Date;
   updatedAt: Date;
 }
