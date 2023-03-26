@@ -21,30 +21,24 @@ export const editConfigs = async (
   next: NextFunction
 ) => {
   const {
-    commandsPrefix,
-    timersIntervalDelay,
-    activeUserTimeDelay,
-    chatGamesIntervalDelay,
-    minActiveUsersThreshold,
-    permissionLevels,
-    pointsIncrement,
-    randomMessageChance,
-    intervalCheckViewersPeek,
-    intervalCheckChatters,
+    commandsConfigs,
+    timersConfigs,
+    chatGamesConfigs,
+    triggersConfigs,
+    pointsConfigs,
+    loyaltyConfigs,
+    headConfigs,
   } = req.body;
 
   try {
     const config = await updateConfigs({
-      commandsPrefix: commandsPrefix,
-      timersIntervalDelay: timersIntervalDelay,
-      activeUserTimeDelay: activeUserTimeDelay,
-      chatGamesIntervalDelay: chatGamesIntervalDelay,
-      minActiveUsersThreshold: minActiveUsersThreshold,
-      permissionLevels: permissionLevels,
-      pointsIncrement: pointsIncrement,
-      randomMessageChance: randomMessageChance,
-      intervalCheckViewersPeek: intervalCheckViewersPeek,
-      intervalCheckChatters: intervalCheckChatters,
+      commandsConfigs: commandsConfigs,
+      timersConfigs: timersConfigs,
+      chatGamesConfigs: chatGamesConfigs,
+      triggersConfigs: triggersConfigs,
+      pointsConfigs: pointsConfigs,
+      loyaltyConfigs: loyaltyConfigs,
+      headConfigs: headConfigs,
     });
     return res.status(200).send({ message: "Updated successfully" });
   } catch (err) {
