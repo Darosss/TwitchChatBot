@@ -156,6 +156,34 @@ export default function ConfigsList() {
             />,
             timersCfg?.timersIntervalDelay
           )}
+          {generateConfigInput(
+            "Non follow timers points increment",
+            <input
+              type="number"
+              value={timersCfg?.nonFollowTimerPoints}
+              onChange={(e) =>
+                setTimersCfg((prevState) => ({
+                  ...prevState,
+                  nonFollowTimerPoints: e.target.valueAsNumber,
+                }))
+              }
+            />,
+            timersCfg?.nonFollowTimerPoints
+          )}
+          {generateConfigInput(
+            "Non sub timers points increment",
+            <input
+              type="number"
+              value={timersCfg?.nonSubTimerPoints}
+              onChange={(e) =>
+                setTimersCfg((prevState) => ({
+                  ...prevState,
+                  nonSubTimerPoints: e.target.valueAsNumber,
+                }))
+              }
+            />,
+            timersCfg?.nonSubTimerPoints
+          )}
         </div>
         <div className="configs-section-wrapper">
           <div className="configs-section-header">Chat games configs</div>
