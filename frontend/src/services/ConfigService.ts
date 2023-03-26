@@ -2,6 +2,8 @@ import useAxiosCustom from "./ApiService";
 
 export interface TimersConfigs {
   timersIntervalDelay: number;
+  nonFollowTimerPoints: number;
+  nonSubTimerPoints: number;
 }
 
 export interface CommandsConfigs {
