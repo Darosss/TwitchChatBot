@@ -5,6 +5,7 @@ const TimerSchema: Schema<TimerDocument> = new Schema(
   {
     name: { type: String, required: true },
     enabled: { type: Boolean, default: true },
+    delay: { type: Number, required: true, default: 360 },
     points: { type: Number, default: 0 },
     reqPoints: { type: Number, default: 20 },
     nonFollowMulti: { type: Boolean, default: false },
