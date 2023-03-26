@@ -202,6 +202,7 @@ export interface TimerModel {
   _id: string;
   name: string;
   enabled: boolean;
+  delay: number;
   points: number;
   reqPoints: number;
   nonFollowMulti: boolean;
