@@ -15,31 +15,33 @@ import {
 } from "@services/ConfigService";
 import { SocketContext } from "@context/SocketContext";
 import { addNotification } from "@utils/getNotificationValues";
-
+import { configDefaults } from "@backend/defaults/configsDefaults";
 export default function ConfigsList() {
   const socket = useContext(SocketContext);
 
   const [showEdit, setShowEdit] = useState(false);
 
   const [commandsCfg, setCommandsCfg] = useState<CommandsConfigs>(
-    {} as CommandsConfigs
+    configDefaults.commandsConfigs
   );
   const [timersCfg, setTimersCfg] = useState<TimersConfigs>(
-    {} as TimersConfigs
+    configDefaults.timersConfigs
   );
   const [chatGamesCfg, setChatGamesCfg] = useState<ChatGamesConfigs>(
-    {} as ChatGamesConfigs
+    configDefaults.chatGamesConfigs
   );
   const [triggersCfg, setTriggersCfg] = useState<TriggersConfigs>(
-    {} as TriggersConfigs
+    configDefaults.triggersConfigs
   );
   const [pointsCfg, setPointsCfg] = useState<PointsConfigs>(
-    {} as PointsConfigs
+    configDefaults.pointsConfigs
   );
   const [loyaltyCfg, setLoyaltyCfg] = useState<LoyaltyConfigs>(
-    {} as LoyaltyConfigs
+    configDefaults.loyaltyConfigs
   );
-  const [headCfg, setHeadCfg] = useState<HeadConfigs>({} as HeadConfigs);
+  const [headCfg, setHeadCfg] = useState<HeadConfigs>(
+    configDefaults.headConfigs
+  );
 
   const { data, loading, error, refetchData } = getConfigs();
 
@@ -83,8 +85,6 @@ export default function ConfigsList() {
       addNotification("Succes", "Configs edited succesfully", "success");
     });
   };
-  if (error) return <>There is an error.</>;
-  if (!data || loading) return <>Someting went wrong</>;
 
   const generateConfigInput = (
     optionName: string,
@@ -98,7 +98,8 @@ export default function ConfigsList() {
       </>
     );
   };
-
+  if (error) return <>There is an error.</>;
+  if (!data || loading) return <>Someting went wrong</>;
   return (
     <>
       <PreviousPage />
