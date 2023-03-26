@@ -1,15 +1,15 @@
 import { createMessage } from "@services/messages";
 import { MessageCreateData } from "@services/messages/types";
 import { updateUser } from "@services/users";
-import { ConfigPointsIncrement } from "./types";
+import { PointsConfigs } from "@models/types";
 
 class MessagesHandler {
-  private configs: ConfigPointsIncrement;
-  constructor(configs: ConfigPointsIncrement) {
+  private configs: PointsConfigs;
+  constructor(configs: PointsConfigs) {
     this.configs = configs;
   }
 
-  public async refreshConfigs(refreshedConfigs: ConfigPointsIncrement) {
+  public async refreshConfigs(refreshedConfigs: PointsConfigs) {
     this.configs = refreshedConfigs;
   }
 
@@ -36,7 +36,7 @@ class MessagesHandler {
 
   async updateUserStatistics(userId: string) {
     const updateData = {
-      $inc: { points: this.configs.message, messageCount: 1 },
+      $inc: { points: this.configs.pointsIncrement.message, messageCount: 1 },
       // add points by message,       count messages
       $set: { lastSeen: new Date() },
       // set last seen to new Date()

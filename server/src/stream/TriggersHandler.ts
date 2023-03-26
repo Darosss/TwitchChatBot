@@ -1,4 +1,4 @@
-import { TriggerModel, TriggerMode } from "@models/types";
+import { TriggerModel, TriggerMode, TriggersConfigs } from "@models/types";
 import {
   getRandomCategoryMessage,
   getRandomMessageFromCategory,
@@ -11,14 +11,13 @@ import {
 } from "@services/triggers";
 import { triggerLogger } from "@utils/loggerUtil";
 import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
-import { TriggersHandlerConfigs } from "./types";
 
 class TriggersHandler {
-  private configs: TriggersHandlerConfigs;
+  private configs: TriggersConfigs;
   private triggersWords: string[] = [];
   private triggersOnDelay: Map<string, NodeJS.Timeout> = new Map();
 
-  constructor(configs: TriggersHandlerConfigs) {
+  constructor(configs: TriggersConfigs) {
     this.configs = configs;
     this.init();
   }
@@ -31,8 +30,8 @@ class TriggersHandler {
     this.triggersWords = (await getTriggersWords()) || [];
   }
 
-  async refreshConfigs(refreshedConfigs: TriggersHandlerConfigs) {
-    this.configs = refreshedConfigs;
+  async refreshConfigs(configs: TriggersConfigs) {
+    this.configs = configs;
   }
 
   private async setEveryTriggerDelayOff() {

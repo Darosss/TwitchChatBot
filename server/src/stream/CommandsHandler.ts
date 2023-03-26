@@ -1,4 +1,4 @@
-import { UserModel } from "@models/types";
+import { CommandsConfigs, UserModel } from "@models/types";
 import {
   getChatCommands,
   getChatCommandsAliases,
@@ -10,10 +10,10 @@ import { randomWithMax } from "@utils/randomNumbersUtil";
 
 class CommandsHandler {
   private commandsAliases: string[] = [];
-  private prefix: string;
+  private configs: CommandsConfigs;
 
-  constructor(prefix: string) {
-    this.prefix = prefix;
+  constructor(configs: CommandsConfigs) {
+    this.configs = configs;
     this.init();
   }
 
@@ -25,12 +25,12 @@ class CommandsHandler {
     this.commandsAliases = (await getChatCommandsAliases()) || [];
   }
 
-  async refreshPrefix(prefix: string) {
-    this.prefix = prefix;
+  async refreshConfigs(configs: CommandsConfigs) {
+    this.configs = configs;
   }
 
   public async checkMessageForCommand(user: UserModel, message: string) {
-    if (!message.startsWith(this.prefix)) return false;
+    if (!message.startsWith(this.configs.commandsPrefix)) return false;
 
     const commandAlias = this.commandsAliases.find((alias) =>
       message.toLowerCase().includes(alias)

@@ -1,5 +1,4 @@
 import HeadHandler from "./HeadHandler";
-import { TimersHandlerConfigs } from "./types";
 import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
 import {
   ClientToServerEvents,
@@ -10,11 +9,11 @@ import {
 import { Server } from "socket.io";
 import { getTimers, updateTimerById, updateTimers } from "@services/timers";
 import { randomWithMax } from "@utils/randomNumbersUtil";
-import { UserModel } from "@models/types";
+import { TimersConfigs, UserModel } from "@models/types";
 import { timerLogger } from "@utils/loggerUtil";
 
 class TimersHandler extends HeadHandler {
-  private configs: TimersHandlerConfigs;
+  private configs: TimersConfigs;
   private clientSay: (channel: string, message: string) => Promise<[string]>;
 
   constructor(
@@ -26,7 +25,7 @@ class TimersHandler extends HeadHandler {
       SocketData
     >,
     authorizedUser: HelixPrivilegedUser,
-    configs: TimersHandlerConfigs,
+    configs: TimersConfigs,
     clientSay: (channel: string, message: string) => Promise<[string]>
   ) {
     super(socketIO, twitchApi, authorizedUser);
@@ -41,7 +40,7 @@ class TimersHandler extends HeadHandler {
     }, this.configs.timersIntervalDelay * 255);
   }
 
-  async refreshConfigs(refreshedConfigs: TimersHandlerConfigs) {
+  async refreshConfigs(refreshedConfigs: TimersConfigs) {
     this.configs = refreshedConfigs;
   }
 

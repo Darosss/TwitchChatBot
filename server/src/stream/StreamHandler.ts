@@ -67,23 +67,21 @@ class StreamHandler {
     this.authorizedUser = authorizedUser;
     this.configs = { ...configDefaults };
 
-    this.commandsHandler = new CommandsHandler(this.configs.commandsPrefix);
-    this.messagesHandler = new MessagesHandler(this.configs.pointsIncrement);
-    this.triggersHandler = new TriggersHandler({
-      randomMessageChance: this.configs.randomMessageChance,
-    });
+    this.commandsHandler = new CommandsHandler(this.configs.commandsConfigs);
+    this.messagesHandler = new MessagesHandler(this.configs.pointsConfigs);
+    this.triggersHandler = new TriggersHandler(this.configs.triggersConfigs);
     this.loayaltyHandler = new LoyaltyHandler(
       twitchApi,
       socketIO,
       this.authorizedUser,
-      this.configs
+      { ...this.configs.loyaltyConfigs, ...this.configs.pointsConfigs }
     );
 
     this.timersHandler = new TimersHandler(
       twitchApi,
       socketIO,
       this.authorizedUser,
-      { timersIntervalDelay: this.configs.timersIntervalDelay },
+      this.configs.timersConfigs,
       clientTmi.say.bind(clientTmi)
     );
 
@@ -98,7 +96,7 @@ class StreamHandler {
 
     setInterval(async () => {
       await this.checkCountOfViewers(id);
-    }, this.configs.intervalCheckViewersPeek * 1000);
+    }, this.configs.headConfigs.intervalCheckViewersPeek * 1000);
   }
 
   private async initOnMessageEvents() {
@@ -157,28 +155,24 @@ class StreamHandler {
     if (refreshedConfigs) {
       this.configs = refreshedConfigs;
       const {
-        commandsPrefix,
-        pointsIncrement,
-        intervalCheckChatters,
-        randomMessageChance,
-        timersIntervalDelay,
+        commandsConfigs,
+        pointsConfigs,
+        loyaltyConfigs,
+        triggersConfigs,
+        timersConfigs,
       } = this.configs;
 
-      this.messagesHandler.refreshConfigs(pointsIncrement);
+      this.messagesHandler.refreshConfigs(pointsConfigs);
       this.loayaltyHandler.refreshConfigs({
-        pointsIncrement: pointsIncrement,
-        intervalCheckChatters: intervalCheckChatters,
+        ...pointsConfigs,
+        ...loyaltyConfigs,
       });
 
-      this.triggersHandler.refreshConfigs({
-        randomMessageChance: randomMessageChance,
-      });
+      this.triggersHandler.refreshConfigs(triggersConfigs);
 
-      this.commandsHandler.refreshPrefix(commandsPrefix);
+      this.commandsHandler.refreshConfigs(commandsConfigs);
 
-      this.timersHandler.refreshConfigs({
-        timersIntervalDelay: timersIntervalDelay,
-      });
+      this.timersHandler.refreshConfigs(timersConfigs);
     }
   }
 
