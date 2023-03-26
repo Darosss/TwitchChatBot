@@ -79,6 +79,8 @@ export type TriggerDocument = TriggerModel & Document;
 
 export interface TimersConfigs {
   timersIntervalDelay: number;
+  nonFollowTimerPoints: number;
+  nonSubTimerPoints: number;
 }
 
 export interface CommandsConfigs {
