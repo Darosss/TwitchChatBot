@@ -4,6 +4,7 @@ export interface Timer {
   _id: string;
   name: string;
   enabled: boolean;
+  delay: number;
   uses: number;
   messages: string[];
   description: string;
