@@ -7,14 +7,21 @@ import {
   SocketData,
 } from "@libs/types";
 import { Server } from "socket.io";
-import { getTimers, updateTimerById, updateTimers } from "@services/timers";
+import {
+  getTimerById,
+  getTimers,
+  updateTimerById,
+  updateTimers,
+} from "@services/timers";
 import { randomWithMax } from "@utils/randomNumbersUtil";
-import { TimersConfigs, UserModel } from "@models/types";
+import { TimerModel, TimersConfigs, UserModel } from "@models/types";
 import { timerLogger } from "@utils/loggerUtil";
 
 class TimersHandler extends HeadHandler {
   private configs: TimersConfigs;
   private clientSay: (channel: string, message: string) => Promise<[string]>;
+  private timers: TimerModel[] = [];
+  private timersTimeouts: Map<string, NodeJS.Timeout> = new Map();
 
   constructor(
     twitchApi: ApiClient,
@@ -35,9 +42,10 @@ class TimersHandler extends HeadHandler {
   }
 
   private async init() {
+    await this.refreshTimers();
     setInterval(async () => {
-      await this.checkTimers(/* id */);
-    }, this.configs.timersIntervalDelay * 255);
+      await this.checkTimersByPoints();
+    }, this.configs.timersIntervalDelay * 1000);
   }
 
   async refreshConfigs(refreshedConfigs: TimersConfigs) {
@@ -45,10 +53,49 @@ class TimersHandler extends HeadHandler {
   }
 
   async refreshTimers() {
-    //TODO: add refresh timers
+    this.timers = (await getTimers({}, {})) || [];
+
+    this.clearTimersTimeouts();
+    this.setTimersTimeouts();
   }
 
-  async checkTimers() {
+  clearTimersTimeouts() {
+    for (const timeout of this.timersTimeouts.values()) {
+      clearTimeout(timeout);
+    }
+    this.timersTimeouts.clear();
+  }
+
+  async setTimersTimeouts() {
+    this.timers.map((timer) => {
+      const { _id, name, delay } = timer;
+      this.setTimerTimeout(_id, name, delay);
+    });
+  }
+
+  setTimerTimeout(id: string, name: string, delay: number) {
+    this.timersTimeouts.set(
+      id,
+      setTimeout(async () => {
+        const timerMessage = await this.getTimerMessage(id);
+
+        timerLogger.info(
+          `Timer ${name} with message: ${timerMessage} - delay finished`
+        );
+        this.clientSay(this.authorizedUser.name, timerMessage);
+        await this.updateTimerAfterUsage(id);
+        this.setTimerTimeout(id, name, delay);
+      }, delay * 1000)
+    );
+  }
+
+  async getTimerMessage(id: string) {
+    const timer = await getTimerById(id);
+    if (!timer) return "";
+    return timer.messages[randomWithMax(timer.messages.length)];
+  }
+
+  async checkTimersByPoints() {
     const timers = await getTimers(
       { $expr: { $gte: ["$points", "$reqPoints"] } },
       {}
@@ -68,6 +115,8 @@ class TimersHandler extends HeadHandler {
       }, index * 2000);
     });
   }
+
+  async setTimersByDelay() {}
 
   async checkMessageForTimer(user: UserModel) {
     await this.updateTimersAfterMessages(user.follower ? true : false);
