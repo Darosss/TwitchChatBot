@@ -42,7 +42,7 @@ export const addNewTimer = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, messages, points, reqPoints } = req.body;
+  const { name, messages, delay, points, reqPoints } = req.body;
 
   try {
     const newTimer = await createTimer({
@@ -50,6 +50,7 @@ export const addNewTimer = async (
       messages: messages,
       points: points,
       reqPoints: reqPoints,
+      delay: delay,
     });
 
     return res
@@ -70,6 +71,7 @@ export const editTimerById = async (
     name,
     messages,
     enabled = true,
+    delay,
     nonFollowMulti,
     nonSubMulti,
     reqPoints,
@@ -80,6 +82,7 @@ export const editTimerById = async (
     const updatedTimer = await updateTimerById(id, {
       name: name,
       enabled: enabled,
+      delay: delay,
       messages: messages,
       nonFollowMulti: nonFollowMulti,
       nonSubMulti: nonSubMulti,
