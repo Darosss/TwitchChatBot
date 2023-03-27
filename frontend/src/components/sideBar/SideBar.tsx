@@ -44,6 +44,7 @@ const routes = [
   { path: "/message-categories", label: "Message categories" },
   { path: "/users", label: "Users" },
   { path: "/events", label: "Events" },
+  { path: "/modes", label: "Modes" },
   { path: "/stream-sessions", label: "Sessions" },
   { path: "/redemptions", label: "Redemptions" },
   { path: "/commands", label: "Commands" },
