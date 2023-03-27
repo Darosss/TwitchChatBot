@@ -17,6 +17,7 @@ import { UserRoutes } from "@routes/UserRoute";
 import { MessageCategoriesRoute } from "@routes/MessageCategoriesRoute";
 import { ReactNotifications } from "react-notifications-component";
 import { TimersRoute } from "@routes/TimersRoute";
+import { ModesRoutes } from "@routes/ModeRoute";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
               />
               <Route path="/commands/*" element={<CommandRoutes />} />
               <Route path="/events/*" element={<EventRoutes />} />
+              <Route path="/modes/*" element={<ModesRoutes />} />
               <Route path="/redemptions/*" element={<RedemptionRoutes />} />
               <Route
                 path="/stream-sessions/*"
