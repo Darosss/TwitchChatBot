@@ -217,3 +217,30 @@ export interface TimerModel {
 }
 
 export type TimerDocument = TimerModel & Document;
+
+export interface MoodModel {
+  _id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type MoodDocument = MoodModel & Document;
+
+export interface PersonalityModel {
+  _id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type PersonalityDocument = PersonalityModel & Document;
+
+export interface TagModel {
+  _id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type TagDocument = TagModel & Document;
