@@ -10,6 +10,9 @@ import streamSessionsRouter from "./streamSessionsRoute";
 import messageCategoriesRouter from "./messageCategoriesRoute";
 import overlayRouter from "./overlayRoute";
 import widgetsRouter from "./widgetsRoute";
+import moodsRouter from "./moodsRoute";
+import tagsRouter from "./tagsRoute";
+import personalitiesRouter from "./personalitiesRoute";
 
 const initRoutes = (app: any) => {
   app.use("/auth", auth);
@@ -17,10 +20,13 @@ const initRoutes = (app: any) => {
   app.use("/configs", configsRouter);
   app.use("/messages", messagesRouter);
   app.use("/message-categories", messageCategoriesRouter);
+  app.use("/moods", moodsRouter);
   app.use("/overlays", overlayRouter);
   app.use("/users", usersRouter);
+  app.use("/personalities", personalitiesRouter);
   app.use("/redemptions", redemptionsRouter);
   app.use("/stream-sessions", streamSessionsRouter);
+  app.use("/tags", tagsRouter);
   app.use("/triggers", triggersRouter);
   app.use("/timers", timersRouter);
   app.use("/widgets", widgetsRouter);
