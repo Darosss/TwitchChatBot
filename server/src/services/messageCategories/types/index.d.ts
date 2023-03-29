@@ -4,6 +4,7 @@ import { MessageCategoryModel } from "@models/types";
 
 export interface MessageCategoryFindOptions {
   select?: SelectQuery<IStreamSession> | {};
+  populateSelect?: PopulateOption.select;
 }
 
 export interface ManyMessageCategoriesFindOptions
