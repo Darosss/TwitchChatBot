@@ -1,5 +1,9 @@
 import { Mood } from "@models/moodModel";
 import { MoodDocument } from "@models/types";
+import { getChatCommandsCount } from "@services/chatCommands";
+import { getMessageCategoriesCount } from "@services/messageCategories";
+import { getTimersCount } from "@services/timers";
+import { getTriggersCount } from "@services/triggers";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
@@ -85,6 +89,20 @@ export const updateMoodById = async (
 
 export const deleteMoodById = async (id: string) => {
   try {
+    const filter = { mood: id };
+    const countMoodsInDocs = await Promise.all([
+      getTriggersCount(filter),
+      getChatCommandsCount(filter),
+      getTimersCount(filter),
+      getMessageCategoriesCount(filter),
+    ]);
+
+    if (countMoodsInDocs.reduce((a, b) => a + b) > 0) {
+      throw new AppError(
+        409,
+        `Mood with id(${id}) is used somewhere else, cannot delete`
+      );
+    }
     const deletedMood = await Mood.findByIdAndDelete(id);
 
     const mood = checkExistResource(deletedMood, `Mood with id(${id})`);

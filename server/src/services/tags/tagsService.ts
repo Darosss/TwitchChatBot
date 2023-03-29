@@ -1,5 +1,9 @@
 import { Tag } from "@models/tagModel";
 import { TagDocument } from "@models/types";
+import { getChatCommandsCount } from "@services/chatCommands";
+import { getMessageCategoriesCount } from "@services/messageCategories";
+import { getTimersCount } from "@services/timers";
+import { getTriggersCount } from "@services/triggers";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
@@ -85,6 +89,21 @@ export const updateTagById = async (
 
 export const deleteTagById = async (id: string) => {
   try {
+    const filter = { tag: id };
+    const countTagsInDocs = await Promise.all([
+      getTriggersCount(filter),
+      getChatCommandsCount(filter),
+      getTimersCount(filter),
+      getMessageCategoriesCount(filter),
+    ]);
+
+    if (countTagsInDocs.reduce((a, b) => a + b) > 0) {
+      throw new AppError(
+        409,
+        `Tag with id(${id}) is used somewhere else, cannot delete`
+      );
+    }
+
     const deletedTag = await Tag.findByIdAndDelete(id);
 
     const tag = checkExistResource(deletedTag, `Tag with id(${id})`);
@@ -121,67 +140,6 @@ export const getOneTag = async (filter: FilterQuery<TagDocument> = {}) => {
     return tag;
   } catch (err) {
     logger.error(`Error occured while getting tag: ${err}`);
-    handleAppError(err);
-  }
-};
-
-export const getTagsWords = async (): Promise<undefined | string[]> => {
-  try {
-    const tagWords = await Tag.aggregate([
-      {
-        $group: {
-          _id: null,
-          words: { $push: "$words" },
-        },
-      },
-      {
-        $project: {
-          words: {
-            $reduce: {
-              input: "$words",
-              initialValue: [],
-              in: { $concatArrays: ["$$value", "$$this"] },
-            },
-          },
-          _id: 0,
-        },
-      },
-      {
-        $unwind: "$words",
-      },
-      {
-        $addFields: {
-          wordsLower: { $toLower: "$words" },
-        },
-      },
-      {
-        $sort: {
-          wordsLower: 1,
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          words: { $push: "$wordsLower" },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          words: 1,
-        },
-      },
-    ]);
-    if (tagWords.length > 0) {
-      const words: string[] = tagWords[0].words;
-      return words.sort((a, b) => b.length - a.length);
-    }
-
-    return [];
-  } catch (err) {
-    logger.error(
-      `Error occured while aggregating chat commands for all aliases words: ${err}`
-    );
     handleAppError(err);
   }
 };

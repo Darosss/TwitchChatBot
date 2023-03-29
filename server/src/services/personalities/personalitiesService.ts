@@ -1,5 +1,9 @@
 import { Personality } from "@models/personalityModel";
 import { PersonalityDocument } from "@models/types";
+import { getChatCommandsCount } from "@services/chatCommands";
+import { getMessageCategoriesCount } from "@services/messageCategories";
+import { getTimersCount } from "@services/timers";
+import { getTriggersCount } from "@services/triggers";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
@@ -100,6 +104,21 @@ export const updatePersonalityById = async (
 
 export const deletePersonalityById = async (id: string) => {
   try {
+    const filter = { personality: id };
+    const countPersonalitiesInDocs = await Promise.all([
+      getTriggersCount(filter),
+      getChatCommandsCount(filter),
+      getTimersCount(filter),
+      getMessageCategoriesCount(filter),
+    ]);
+
+    if (countPersonalitiesInDocs.reduce((a, b) => a + b) > 0) {
+      throw new AppError(
+        409,
+        `Personality with id(${id}) is used somewhere else, cannot delete`
+      );
+    }
+
     const deletedPersonality = await Personality.findByIdAndDelete(id);
 
     const personality = checkExistResource(
