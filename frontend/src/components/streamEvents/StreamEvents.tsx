@@ -23,6 +23,7 @@ import {
 } from "@services/WidgetsService";
 import PreviousPage from "@components/previousPage";
 import { addNotification } from "@utils/getNotificationValues";
+import StreamModes from "./streamModes";
 
 const components = new Map([
   ["stream-chat", StreamChat],
@@ -30,6 +31,7 @@ const components = new Map([
   ["stream-notifications", StreamNotifications],
   ["stream-statistics", StreamStatistics],
   ["messages-window", MessagesWindow],
+  ["stream-modes", StreamModes],
 ]);
 
 export default function StreamEvents() {
