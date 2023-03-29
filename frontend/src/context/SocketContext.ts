@@ -9,3 +9,15 @@ export const socketConn = io(
 export const SocketContext = React.createContext<
   Socket<ServerToClientEvents, ClientToServerEvents>
 >({} as Socket<ServerToClientEvents, ClientToServerEvents>);
+
+export const socketEmitRefreshTriggers = () => {
+  socketConn.emit("refreshTriggers");
+};
+
+export const socketEmitRefreshTimers = () => {
+  socketConn.emit("refreshTimers");
+};
+
+export const socketEmitRefreshCommands = () => {
+  socketConn.emit("refreshCommands");
+};
