@@ -3,7 +3,7 @@ import { MessageCategoryDocument } from "./types";
 
 const MessageCategorySchema: Schema<MessageCategoryDocument> = new Schema(
   {
-    category: {
+    name: {
       type: String,
       required: true,
     },

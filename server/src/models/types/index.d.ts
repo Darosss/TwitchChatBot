@@ -168,7 +168,7 @@ export type AuthDocument = AuthModel & Document;
 
 export interface MessageCategoryModel {
   _id: string;
-  category: string;
+  name: string;
   messages: string[];
   uses: number;
   personality: string | PersonalityModel;
