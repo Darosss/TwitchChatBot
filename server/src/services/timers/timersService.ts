@@ -1,9 +1,10 @@
+import { modesPipeline } from "@aggregations/modesPipeline";
 import { Timer } from "@models/timerModel";
-import { TimerDocument } from "@models/types";
+import { TimerDocument, TimerModel } from "@models/types";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
-import { FilterQuery, UpdateQuery } from "mongoose";
+import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import {
   ManyTimersFindOptions,
   TimerCreateData,
@@ -129,6 +130,36 @@ export const getOneTimer = async (filter: FilterQuery<TimerDocument> = {}) => {
     return timer;
   } catch (err) {
     logger.error(`Error occured while getting timer: ${err}`);
+    handleAppError(err);
+  }
+};
+
+export const getTimersDataWithModesEnabled = async (): Promise<
+  undefined | TimerModel[]
+> => {
+  try {
+    const pipeline: PipelineStage[] = [
+      ...modesPipeline,
+      {
+        $project: {
+          __v: 0,
+          createdAt: 0,
+          updatedAt: 0,
+          tag_info: 0,
+          personality_info: 0,
+          mood_info: 0,
+        },
+      },
+    ];
+
+    const timers = await Timer.aggregate<TimerModel>(pipeline);
+    if (timers.length > 0) {
+      return timers;
+    }
+
+    return;
+  } catch (err) {
+    logger.error(`Error occured while aggregating timers data: ${err}`);
     handleAppError(err);
   }
 };
