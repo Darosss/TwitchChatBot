@@ -75,11 +75,12 @@ export default function MessagesWindow() {
     <>
       <div className="prepared-messages-window">
         <div className="widget-header"> Prepared Messages </div>
-        {msgCateg.map((category, index) => {
-          return (
-            <div key={index} className="message-categories-btn-wrapper">
-              <div>
+        <div className="message-categories-btn-wrapper">
+          {msgCateg.map((category, index) => {
+            return (
+              <div key={index} className="message-section-btn-wrapper">
                 <button
+                  className="primary-button common-button"
                   onClick={() => {
                     handleOnClickRandomMessage(category._id);
                   }}
@@ -89,9 +90,8 @@ export default function MessagesWindow() {
                     {category.category}
                   </span>
                 </button>
-              </div>
-              <div>
                 <button
+                  className="primary-button common-button"
                   onClick={() => {
                     handleOnClickCategory(category._id);
                   }}
@@ -102,9 +102,9 @@ export default function MessagesWindow() {
                   </span>
                 </button>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
       <Modal
         title="Send a message"
@@ -120,6 +120,7 @@ export default function MessagesWindow() {
           {currentMessages.map((message, index) => {
             return (
               <button
+                className="primary-button common-button"
                 key={index}
                 onClick={() => {
                   sendMessage(message);

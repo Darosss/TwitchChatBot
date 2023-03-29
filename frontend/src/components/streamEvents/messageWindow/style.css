@@ -10,26 +10,21 @@
 
 .message-categories-btn-wrapper {
   display: flex;
-  align-items: center;
-  height: 8vh;
+  flex-direction: column;
 }
 
 .prepared-messages-window {
-  height: 100%;
+  height: 99%;
   overflow-x: hidden;
 }
 
 .message-categories-btn-wrapper > div {
-  border: 1px solid black;
-  flex: 1 1 50%;
-  height: 100%;
-  margin-left: 0.5rem;
 }
 
 .message-categories-btn-wrapper button {
-  width: 100%;
-  height: 100%;
-  padding: 6%;
+  height: 10vh;
+  font-size: 1.2vmin;
+  margin: 0.1rem;
 }
 
 .button-category-name {
@@ -47,4 +42,8 @@
 .modal-prepared-messages button {
   flex: 0 0 30%;
   border: 0.1rem solid var(--base-bg-color);
+}
+
+.message-section-btn-wrapper {
+  display: flex;
 }
