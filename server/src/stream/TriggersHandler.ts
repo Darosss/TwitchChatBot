@@ -27,7 +27,7 @@ class TriggersHandler {
   }
 
   async refreshTriggers() {
-    this.triggersWords = (await getTriggersWords()) || [];
+    this.triggersWords = (await getTriggersWords(true)) || [];
   }
 
   async refreshConfigs(configs: TriggersConfigs) {
@@ -89,7 +89,7 @@ class TriggersHandler {
 
   async getRandomMessage() {
     try {
-      const randomCategoryMessage = await getRandomCategoryMessage();
+      const randomCategoryMessage = await getRandomCategoryMessage(true);
       if (!randomCategoryMessage) return;
       return await getRandomMessageFromCategory(randomCategoryMessage);
     } catch (err) {
