@@ -21,6 +21,11 @@ export const getTimersList = async (
     const timers = await getTimers(searchFilter, {
       limit: limit,
       skip: page,
+      populateSelect: [
+        { path: "personality", select: { _id: 1, name: 1, enabled: 1 } },
+        { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
+        { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
+      ],
       sort: { createdAt: -1 },
     });
 
@@ -42,15 +47,33 @@ export const addNewTimer = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, messages, delay, points, reqPoints } = req.body;
+  const {
+    name,
+    messages,
+    enabled = true,
+    delay,
+    nonFollowMulti,
+    tag,
+    mood,
+    personality,
+    nonSubMulti,
+    reqPoints,
+    description,
+  } = req.body;
 
   try {
     const newTimer = await createTimer({
       name: name,
       messages: messages,
-      points: points,
+      enabled: enabled,
       reqPoints: reqPoints,
+      description: description,
       delay: delay,
+      tag: tag,
+      mood: mood,
+      personality: personality,
+      nonFollowMulti: nonFollowMulti,
+      nonSubMulti: nonSubMulti,
     });
 
     return res
@@ -73,6 +96,9 @@ export const editTimerById = async (
     enabled = true,
     delay,
     nonFollowMulti,
+    tag,
+    mood,
+    personality,
     nonSubMulti,
     reqPoints,
     description,
@@ -88,6 +114,9 @@ export const editTimerById = async (
       nonSubMulti: nonSubMulti,
       reqPoints: reqPoints,
       description: description,
+      tag: tag,
+      mood: mood,
+      personality: personality,
     });
 
     return res.status(200).send({

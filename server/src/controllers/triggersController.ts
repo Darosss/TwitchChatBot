@@ -21,6 +21,11 @@ export const getTriggersList = async (
     const triggers = await getTriggers(searchFilter, {
       limit: limit,
       skip: page,
+      populateSelect: [
+        { path: "personality", select: { _id: 1, name: 1, enabled: true } },
+        { path: "tag", select: { _id: 1, name: 1, enabled: true } },
+        { path: "mood", select: { _id: 1, name: 1, enabled: true } },
+      ],
       sort: { createdAt: -1 },
     });
 
@@ -46,6 +51,9 @@ export const addNewTrigger = async (
     name,
     chance,
     delay,
+    tag,
+    mood,
+    personality,
     words,
     messages,
     enabled = true,
@@ -56,6 +64,9 @@ export const addNewTrigger = async (
     const newTrigger = await createTrigger({
       name: name,
       chance: chance,
+      tag: tag,
+      mood: mood,
+      personality: personality,
       enabled: enabled,
       delay: delay,
       messages: messages,
@@ -80,6 +91,9 @@ export const editTriggerById = async (
   const {
     name,
     chance,
+    tag,
+    mood,
+    personality,
     delay,
     words,
     messages,
@@ -92,6 +106,9 @@ export const editTriggerById = async (
       name: name,
       chance: chance,
       enabled: enabled,
+      tag: tag,
+      mood: mood,
+      personality: personality,
       delay: delay,
       messages: messages,
       words: words,

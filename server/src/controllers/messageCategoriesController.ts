@@ -22,6 +22,11 @@ export const getMessageCategoriesList = async (
     const categories = await getMessageCategories(searchFilter, {
       limit: limit,
       skip: page,
+      populateSelect: [
+        { path: "personality", select: { _id: 1, name: 1, enabled: 1 } },
+        { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
+        { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
+      ],
       sort: { uses: -1 },
       select: { __v: 0 },
     });
@@ -44,12 +49,15 @@ export const editMessageCategoryById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, messages } = req.body;
+  const { name, messages, tag, mood, personality } = req.body;
 
   try {
     const updatedCategoryMessage = await updateMessageCategoryById(id, {
       name: name,
       messages: messages,
+      tag: tag,
+      mood: mood,
+      personality: personality,
     });
 
     return res.status(200).send({
@@ -87,12 +95,15 @@ export const addNewCategory = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, messages } = req.body;
+  const { name, messages, tag, mood, personality } = req.body;
 
   try {
     const newMessageCategory = await createMessageCategories({
       name: name,
       messages: messages,
+      tag: tag,
+      mood: mood,
+      personality: personality,
     });
 
     return res.status(200).send({

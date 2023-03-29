@@ -21,6 +21,11 @@ export const getChatCommandsList = async (
     const chatCommands = await getChatCommands(searchFilter, {
       limit: limit,
       skip: page,
+      populateSelect: [
+        { path: "personality", select: { _id: 1, name: 1, enabled: 1 } },
+        { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
+        { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
+      ],
       sort: { createdAt: -1 },
     });
 
@@ -41,7 +46,17 @@ export const addNewCommand = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, description, enabled, aliases, messages, privilege } = req.body;
+  const {
+    name,
+    description,
+    enabled,
+    aliases,
+    messages,
+    privilege,
+    tag,
+    mood,
+    personality,
+  } = req.body;
 
   try {
     const newChatCommand = await createChatCommand({
@@ -49,6 +64,9 @@ export const addNewCommand = async (
       description: description,
       enabled: enabled,
       aliases: aliases,
+      tag: tag,
+      mood: mood,
+      personality: personality,
       messages: messages,
       privilege: privilege,
     });
@@ -67,7 +85,17 @@ export const editChatCommandById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, description, enabled, aliases, messages, privilege } = req.body;
+  const {
+    name,
+    description,
+    enabled,
+    aliases,
+    messages,
+    privilege,
+    tag,
+    mood,
+    personality,
+  } = req.body;
 
   try {
     const updatedChatCommand = await updateChatCommandById(id, {
@@ -75,6 +103,9 @@ export const editChatCommandById = async (
       description: description,
       enabled: enabled,
       aliases: aliases,
+      tag: tag,
+      mood: mood,
+      personality: personality,
       messages: messages,
       privilege: privilege,
     });
