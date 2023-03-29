@@ -137,8 +137,6 @@ table tbody {
 
 .common-button {
   transition: transform 1s;
-  width: 7vw;
-  max-width: 7vw;
   font-size: calc(0.5rem + 1vmin);
   overflow: hidden;
   border-radius: 0.2rem;
