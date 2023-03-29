@@ -3,7 +3,8 @@ import { TriggerDocument } from "@models/types";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
-import { FilterQuery, UpdateQuery } from "mongoose";
+import { modesPipeline } from "@aggregations/modesPipeline";
+import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import {
   ManyTriggersFindOptions,
   TriggerCreateData,
@@ -139,15 +140,12 @@ export const getOneTrigger = async (
   }
 };
 
-export const getTriggersWords = async (): Promise<undefined | string[]> => {
+export const getTriggersWords = async (
+  modesEnabled: boolean = false
+): Promise<undefined | string[]> => {
   try {
-    const triggerWords = await Trigger.aggregate([
-      {
-        $group: {
-          _id: null,
-          words: { $push: "$words" },
-        },
-      },
+    const pipeline: PipelineStage[] = [
+      { $group: { _id: null, words: { $push: "$words" } } },
       {
         $project: {
           words: {
@@ -160,32 +158,18 @@ export const getTriggersWords = async (): Promise<undefined | string[]> => {
           _id: 0,
         },
       },
-      {
-        $unwind: "$words",
-      },
-      {
-        $addFields: {
-          wordsLower: { $toLower: "$words" },
-        },
-      },
-      {
-        $sort: {
-          wordsLower: 1,
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          words: { $push: "$wordsLower" },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          words: 1,
-        },
-      },
-    ]);
+      { $unwind: "$words" },
+      { $addFields: { wordsLower: { $toLower: "$words" } } },
+      { $sort: { wordsLower: 1 } },
+      { $group: { _id: null, words: { $push: "$wordsLower" } } },
+      { $project: { _id: 0, words: 1 } },
+    ];
+
+    if (modesEnabled) {
+      pipeline.unshift(...modesPipeline);
+    }
+
+    const triggerWords = await Trigger.aggregate(pipeline);
     if (triggerWords.length > 0) {
       const words: string[] = triggerWords[0].words;
       return words.sort((a, b) => b.length - a.length);
