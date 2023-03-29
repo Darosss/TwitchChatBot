@@ -10,6 +10,7 @@
       "@services/*": ["services/*"],
       "@types/*": ["@types/*"],
       "@utils/*": ["utils/*"],
+      "@aggregations/*": ["aggregations/*"],
       "@defaults/*": ["defaults/*"]
     },
     "target": "es2017",
