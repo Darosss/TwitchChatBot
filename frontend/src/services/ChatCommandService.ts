@@ -1,20 +1,39 @@
 import useAxiosCustom, { PaginationData } from "./ApiService";
+import { Mood } from "./MoodService";
+import { Personality } from "./PersonalityService";
+import { Tag } from "./TagService";
 
 export interface ChatCommand {
   _id: string;
   name: string;
-  createdAt: Date;
-  updatedAt: Date;
   description?: string;
   enabled: boolean;
   aliases: string[];
   messages: string[];
   privilege: number;
   useCount: number;
+  personality: Personality;
+  tag: Tag;
+  mood: Mood;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-interface ChatCommandCreateData
-  extends Omit<ChatCommand, "_id" | "createdAt" | "updatedAt" | "useCount"> {}
+export interface ChatCommandCreateData
+  extends Omit<
+    ChatCommand,
+    | "_id"
+    | "createdAt"
+    | "updatedAt"
+    | "useCount"
+    | "personality"
+    | "tag"
+    | "mood"
+  > {
+  personality: string;
+  tag: string;
+  mood: string;
+}
 
 interface ChatCommandUpdateData extends Partial<ChatCommandCreateData> {}
 
@@ -25,7 +44,7 @@ export const getCommands = () => {
 };
 
 export const editCommand = (commandId: string, data: ChatCommandUpdateData) => {
-  return useAxiosCustom<ChatCommand>({
+  return useAxiosCustom<ChatCommandUpdateData>({
     url: `/chat-commands/${commandId}`,
     method: "POST",
     bodyData: data,
@@ -34,7 +53,7 @@ export const editCommand = (commandId: string, data: ChatCommandUpdateData) => {
 };
 
 export const createCommand = (data: ChatCommandCreateData) => {
-  return useAxiosCustom<ChatCommand>({
+  return useAxiosCustom<ChatCommandCreateData>({
     url: `/chat-commands/create/`,
     method: "POST",
     bodyData: data,

@@ -1,16 +1,29 @@
 import useAxiosCustom, { PaginationData } from "./ApiService";
+import { Mood } from "./MoodService";
+import { Personality } from "./PersonalityService";
+import { Tag } from "./TagService";
 
 export interface MessageCategory {
   _id: string;
   category: string;
   messages: string[];
   uses: number;
+  personality: Personality;
+  tag: Tag;
+  mood: Mood;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface MessageCategoryCreateData
-  extends Pick<MessageCategory, "category" | "messages"> {}
+export interface MessageCategoryCreateData
+  extends Omit<
+    MessageCategory,
+    "_id" | "createdAt" | "updatedAt" | "uses" | "personality" | "tag" | "mood"
+  > {
+  personality: string;
+  tag: string;
+  mood: string;
+}
 
 interface MessageCategoryUpdateData
   extends Partial<MessageCategoryCreateData> {}
@@ -25,7 +38,7 @@ export const editMessageCategoryById = (
   id: string,
   data: MessageCategoryUpdateData
 ) => {
-  return useAxiosCustom<MessageCategory>({
+  return useAxiosCustom<MessageCategoryUpdateData>({
     url: `/message-categories/${id}`,
     method: "POST",
     bodyData: data,
@@ -44,7 +57,7 @@ export const incrementUsesCategoryById = (id: string) => {
 };
 
 export const createMessageCategory = (data: MessageCategoryCreateData) => {
-  return useAxiosCustom<MessageCategory>({
+  return useAxiosCustom<MessageCategoryCreateData>({
     url: `/message-categories/create`,
     method: "POST",
     bodyData: data,

@@ -1,4 +1,7 @@
 import useAxiosCustom, { PaginationData } from "./ApiService";
+import { Mood } from "./MoodService";
+import { Personality } from "./PersonalityService";
+import { Tag } from "./TagService";
 
 export type TriggerMode = "WHOLE-WORD" | "STARTS-WITH" | "ALL";
 
@@ -13,15 +16,29 @@ export interface Trigger {
   onDelay: boolean;
   words: string[];
   messages: string[];
+  personality: Personality;
+  tag: Tag;
+  mood: Mood;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface TriggerCreateData
+export interface TriggerCreateData
   extends Omit<
     Trigger,
-    "_id" | "createdAt" | "updatedAt" | "onDelay" | "uses"
-  > {}
+    | "_id"
+    | "createdAt"
+    | "updatedAt"
+    | "onDelay"
+    | "uses"
+    | "personality"
+    | "tag"
+    | "mood"
+  > {
+  personality: string;
+  tag: string;
+  mood: string;
+}
 
 interface TriggerUpdateData extends Partial<TriggerCreateData> {}
 
@@ -32,7 +49,7 @@ export const getTriggers = () => {
 };
 
 export const editTrigger = (commandId: string, data: TriggerUpdateData) => {
-  return useAxiosCustom<Trigger>({
+  return useAxiosCustom<TriggerUpdateData>({
     url: `/triggers/${commandId}`,
     method: "POST",
     bodyData: data,
@@ -41,8 +58,8 @@ export const editTrigger = (commandId: string, data: TriggerUpdateData) => {
 };
 
 export const createTrigger = (data: TriggerCreateData) => {
-  return useAxiosCustom<Trigger>({
-    url: `/triggers/create/`,
+  return useAxiosCustom<TriggerCreateData>({
+    url: `/triggers/create`,
     method: "POST",
     bodyData: data,
     manual: true,

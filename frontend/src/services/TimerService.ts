@@ -1,4 +1,7 @@
 import useAxiosCustom, { PaginationData } from "./ApiService";
+import { Mood } from "./MoodService";
+import { Personality } from "./PersonalityService";
+import { Tag } from "./TagService";
 
 export interface Timer {
   _id: string;
@@ -12,12 +15,29 @@ export interface Timer {
   nonSubMulti: boolean;
   reqPoints: number;
   points: number;
+  personality: Personality;
+  tag: Tag;
+  mood: Mood;
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface TimerCreateData
-  extends Omit<Timer, "_id" | "createdAt" | "updatedAt" | "points" | "uses"> {}
+export interface TimerCreateData
+  extends Omit<
+    Timer,
+    | "_id"
+    | "createdAt"
+    | "updatedAt"
+    | "points"
+    | "uses"
+    | "personality"
+    | "tag"
+    | "mood"
+  > {
+  personality: string;
+  tag: string;
+  mood: string;
+}
 
 interface TimerUpdateData extends Partial<TimerCreateData> {}
 
@@ -28,7 +48,7 @@ export const getTimers = () => {
 };
 
 export const editTimer = (commandId: string, data: TimerUpdateData) => {
-  return useAxiosCustom<Timer>({
+  return useAxiosCustom<TimerUpdateData>({
     url: `/timers/${commandId}`,
     method: "POST",
     bodyData: data,
@@ -37,7 +57,7 @@ export const editTimer = (commandId: string, data: TimerUpdateData) => {
 };
 
 export const createTimer = (data: TimerCreateData) => {
-  return useAxiosCustom<Timer>({
+  return useAxiosCustom<TimerCreateData>({
     url: `/timers/create/`,
     method: "POST",
     bodyData: data,
