@@ -34,6 +34,11 @@ a {
   color: var(--base-color-link);
 }
 
+a:hover {
+  color: var(--base-bg-color-border);
+  background-color: rgba(175, 162, 65, 0.4);
+}
+
 a:visited {
   color: var(--base-color-link);
 }
@@ -65,12 +70,6 @@ textarea::-webkit-resizer {
   background-color: var(--base-bg-color);
 }
 
-a:hover,
-button:hover {
-  color: var(--base-bg-color-border);
-  background-color: var(--base-color-link);
-}
-
 .float-right {
   float: right;
 }
@@ -90,11 +89,12 @@ input:focus {
 
 /* DEFAULTS TABLES */
 table {
-  width: 96vw;
+  width: 97vw;
+  border-collapse: collapse;
 }
 
-table td {
-  border-bottom: 4px solid var(--base-bg-color-info);
+table tr {
+  border-bottom: 0.1rem solid var(--base-color-info);
 }
 
 table thead th {
@@ -133,10 +133,13 @@ table tbody {
   border-top: 0.3rem solid var(--base-bg-color-border);
 }
 
+/* BUTTONS */
+
 .common-button {
+  transition: transform 1s;
   width: 7vw;
   max-width: 7vw;
-  font-size: calc(0.5rem + 1vw);
+  font-size: calc(0.5rem + 1vmin);
   overflow: hidden;
   border-radius: 0.2rem;
   align-items: center;
@@ -151,7 +154,29 @@ table tbody {
   background-color: var(--base-bg-color-danger);
 }
 
-.changed-field {
+button.common-button:hover {
+  transform: rotate(2deg);
+}
+
+button.primary-button:hover {
+  background-color: rgba(47, 47, 181, 0.4);
+}
+
+button.primary-button:active {
+  background-color: rgb(47, 47, 181);
+}
+
+button.danger-button:hover {
+  background-color: rgba(160, 16, 16, 0.4);
+}
+
+button.danger-button:active {
+  background-color: rgb(160, 16, 16);
+}
+
+/* BUTTONS */
+
+select {
   color: var(--base-color-info);
-  background-color: var(--base-bg-color-info);
+  background-color: var(--base-bg-color-border);
 }
