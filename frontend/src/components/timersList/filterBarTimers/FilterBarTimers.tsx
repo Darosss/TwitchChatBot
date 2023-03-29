@@ -9,7 +9,7 @@ export default function FilterBarTimers() {
         <input
           {...{ queryparam: "search_name" }}
           type="search"
-          placeholder={"Trigger name"}
+          placeholder={"Timer name"}
         ></input>
         <input
           {...{ queryparam: "messages" }}

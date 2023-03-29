@@ -1,6 +1,6 @@
 import "./style.css";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
@@ -11,60 +11,31 @@ import {
   editTimer,
   createTimer,
   deleteTimer,
+  TimerCreateData,
 } from "@services/TimerService";
-import { SocketContext } from "@context/SocketContext";
+import { socketEmitRefreshTimers } from "@context/SocketContext";
 import { handleDeleteLayout } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
-import { DateTooltip } from "@components/dateTooltip";
+import { getAllModes } from "@utils/getListModes";
+import { DispatchAction } from "./types";
+import TimersData from "./TimersData";
+import TimerModalData from "./TimerModalData";
 
 export default function TimersList() {
-  const socket = useContext(SocketContext);
-
   const [showModal, setShowModal] = useState(false);
 
   const [editingTimer, setEditingTimer] = useState("");
   const [timerIdDelete, setTimerIdDelete] = useState<string | null>(null);
 
-  const [name, setName] = useState("");
-  const [enabled, setEnabled] = useState(true);
-  const [delay, setDelay] = useState(360);
-  const [nonFollowMulti, setNonFollowMulti] = useState(false);
-  const [nonSubMulti, setNonSubMulti] = useState(false);
-  const [messages, setMessages] = useState([""]);
-  const [description, setDescription] = useState("");
-  const [reqPoints, setReqPoints] = useState(10);
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const modes = getAllModes();
 
   const { data: commandsData, loading, error, refetchData } = getTimers();
 
-  const { refetchData: fetchEditTimer } = editTimer(editingTimer, {
-    name: name,
-    enabled: enabled,
-    delay: delay,
-    messages: messages,
-    nonFollowMulti: nonFollowMulti,
-    nonSubMulti: nonSubMulti,
-    description: description,
-    reqPoints: reqPoints,
-  });
-
-  const { refetchData: fetchCreateTimer } = createTimer({
-    name: `New timer${commandsData?.count}`,
-    enabled: true,
-    delay: 360,
-    description: "New timer description",
-    nonFollowMulti: false,
-    nonSubMulti: false,
-    reqPoints: 10,
-    messages: [`New timer${commandsData?.count} default message`],
-  });
-
-  const { refetchData: fetchDeleteCommand } = deleteTimer(
-    timerIdDelete ? timerIdDelete : ""
-  );
-
-  const socketRefreshTimer = () => {
-    socket?.emit("refreshTimers");
-  };
+  const { refetchData: fetchEditTimer } = editTimer(editingTimer, state);
+  const { refetchData: fetchCreateTimer } = createTimer(state);
+  const { refetchData: fetchDeleteCommand } = deleteTimer(timerIdDelete || "");
 
   useEffect(() => {
     handleDeleteLayout<Timer>(timerIdDelete, setTimerIdDelete, () => {
@@ -77,148 +48,77 @@ export default function TimersList() {
   }, [timerIdDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (loading || !commandsData) return <> Loading...</>;
+  if (loading || !commandsData || !modes) return <> Loading...</>;
 
   const { data, count, currentPage } = commandsData;
 
-  const createNewTimer = () => {
+  const onSubmitModalCreate = () => {
     fetchCreateTimer().then(() => {
-      socketRefreshTimer();
+      socketEmitRefreshTimers();
       addNotification("Success", "Timer created successfully", "success");
       refetchData();
+      setShowModal(false);
     });
   };
 
-  const onSubmitEditModal = () => {
+  const onSubmitModalEdit = () => {
     fetchEditTimer().then(() => {
-      socketRefreshTimer();
+      socketEmitRefreshTimers();
       addNotification("Success", "Timer edited successfully", "success");
       refetchData();
-    });
-    resetOnChangeClasses();
-    setShowModal(false);
-  };
-
-  const onCloseModal = () => {
-    setShowModal(false);
-    resetOnChangeClasses();
-  };
-
-  const changeColorOnChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    e.target.classList.add("changed-field");
-  };
-
-  const resetOnChangeClasses = () => {
-    document.querySelectorAll(".changed-field").forEach((changed) => {
-      changed.classList.remove("changed-field");
+      handleOnHideModal();
     });
   };
 
-  const handleOnEdit = (timer: Timer) => {
+  const setState = (timer: Timer) => {
+    dispatch({
+      type: "SET_STATE",
+      payload: {
+        name: timer.name,
+        enabled: timer.enabled,
+        delay: timer.delay,
+        description: timer.description,
+        nonFollowMulti: timer.nonFollowMulti,
+        nonSubMulti: timer.nonSubMulti,
+        reqPoints: timer.reqPoints,
+        messages: timer.messages,
+        personality: timer.personality._id,
+        tag: timer.tag._id,
+        mood: timer.mood._id,
+      },
+    });
+  };
+
+  const handleOnShowEditModal = (timer: Timer) => {
     setEditingTimer(timer._id);
-    setName(timer.name);
-    setDelay(timer.delay);
-    setMessages(timer.messages);
-    setReqPoints(timer.reqPoints);
+    setState(timer);
     setShowModal(true);
-    setEnabled(timer.enabled);
-    setNonFollowMulti(timer.nonFollowMulti);
-    setNonSubMulti(timer.nonSubMulti);
+  };
+
+  const handleOnShowCreateModal = (timer?: Timer) => {
+    if (timer) {
+      setState(timer);
+    } else {
+      dispatch({ type: "SET_STATE", payload: initialState });
+    }
+    setShowModal(true);
+  };
+
+  const handleOnHideModal = () => {
+    setShowModal(false);
+    setEditingTimer("");
   };
 
   return (
     <>
       <PreviousPage />
       <FilterBarTimers />
-
-      <div id="timers-list" className="table-list-wrapper">
-        <table id="table-timers-list">
-          <thead>
-            <tr>
-              <th>
-                Actions
-                <button
-                  className="common-button primary-button"
-                  onClick={(e) => createNewTimer()}
-                >
-                  New
-                </button>
-              </th>
-              <th colSpan={5}>Data</th>
-              <th>Messages</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {data.map((timer) => {
-              return (
-                <tr key={timer._id}>
-                  <td>
-                    <div className="timers-list-action-buttons-wrapper">
-                      <button
-                        className="common-button primary-button"
-                        onClick={() => {
-                          handleOnEdit(timer);
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="common-button danger-button"
-                        onClick={() => setTimerIdDelete(timer._id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                  <td colSpan={5}>
-                    <div className="timer-div-data">
-                      <div>Name: </div>
-                      <div>{timer.name}</div>
-                      <div>Delay: </div>
-                      <div>{timer.delay}</div>
-                      <div>Points: </div>
-                      <div>{timer.points}</div>
-                      <div>Required points: </div>
-                      <div>{timer.reqPoints}</div>
-                      <div>Enabled: </div>
-                      <div
-                        style={{
-                          background: `${timer.enabled ? "green" : "red"}`,
-                        }}
-                      >
-                        {timer.enabled.toString()}
-                      </div>
-                      <div>Uses: </div>
-                      <div>{timer.uses}</div>
-                      <div>Non follow multi: </div>
-                      <div>{timer.nonFollowMulti.toString()}</div>
-                      <div>Non sub multi:</div>
-                      <div>{timer.nonSubMulti.toString()}</div>
-                      <div>Description:</div>
-                      <div>{timer.description}</div>
-                      <div>Created at:</div>
-                      <div>
-                        <DateTooltip date={timer.createdAt} />
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="timers-big timers-messages">
-                      {timer.messages.map((message, index) => {
-                        return <div key={index}>{message}</div>;
-                      })}
-                    </div>
-                  </td>
-                  <td></td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <TimersData
+        data={data}
+        handleOnShowCreateModal={handleOnShowCreateModal}
+        handleOnShowEditModal={handleOnShowEditModal}
+        setTimerIdToDelete={setTimerIdDelete}
+      />
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
@@ -229,112 +129,66 @@ export default function TimersList() {
         />
       </div>
       <Modal
-        title="Edit timer"
-        onClose={() => onCloseModal()}
+        title={`${editingTimer ? "Edit" : "Create"} timer`}
+        onClose={handleOnHideModal}
         onSubmit={() => {
-          onSubmitEditModal();
+          editingTimer ? onSubmitModalEdit() : onSubmitModalCreate();
         }}
         show={showModal}
       >
-        <div className="timers-list-modal-wrapper">
-          <div>Name</div>
-          <div>
-            <input
-              className="timers-list-input"
-              type="text"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                changeColorOnChange(e);
-              }}
-            />
-          </div>
-
-          <div> Enabled </div>
-          <div>
-            <button
-              onClick={() => setEnabled(!enabled)}
-              className={
-                `${!enabled ? "danger-button" : "primary-button"} ` +
-                "common-button "
-              }
-            >
-              {enabled.toString()}
-            </button>
-          </div>
-
-          <div>Non follow multi </div>
-          <div>
-            <button
-              onClick={() => setNonFollowMulti(!nonFollowMulti)}
-              className={
-                `${!nonFollowMulti ? "danger-button" : "primary-button"} ` +
-                "common-button "
-              }
-            >
-              {nonFollowMulti.toString()}
-            </button>
-          </div>
-          <div>Non sub multi </div>
-          <div>
-            <button
-              onClick={() => setNonSubMulti(!nonSubMulti)}
-              className={
-                `${!nonSubMulti ? "danger-button" : "primary-button"} ` +
-                "common-button "
-              }
-            >
-              {nonSubMulti.toString()}
-            </button>
-          </div>
-          <div>Delay</div>
-          <div>
-            <input
-              className="timers-list-input"
-              type="number"
-              value={delay}
-              onChange={(e) => {
-                setDelay(e.target.valueAsNumber);
-                changeColorOnChange(e);
-              }}
-            />
-          </div>
-          <div>Req points</div>
-          <div>
-            <input
-              className="timers-list-input"
-              type="number"
-              value={reqPoints}
-              onChange={(e) => {
-                setReqPoints(Number(e.target.value));
-                changeColorOnChange(e);
-              }}
-            />
-          </div>
-          <div>description </div>
-          <div>
-            <input
-              className="timers-list-input"
-              value={description}
-              onChange={(e) => {
-                setDescription(e.target.value);
-                changeColorOnChange(e);
-              }}
-            />
-          </div>
-          <div>Messages</div>
-          <div>
-            <textarea
-              className="timers-textarea"
-              value={messages?.join("\n")}
-              onChange={(e) => {
-                setMessages(e.target.value?.split("\n"));
-                changeColorOnChange(e);
-              }}
-            />
-          </div>
-        </div>
+        <TimerModalData state={state} dispatch={dispatch} modes={modes} />
       </Modal>
     </>
   );
+}
+
+const initialState: TimerCreateData = {
+  name: "",
+  enabled: true,
+  delay: 360,
+  description: "",
+  nonFollowMulti: false,
+  nonSubMulti: false,
+  reqPoints: 10,
+  messages: [""],
+  personality: "",
+  tag: "",
+  mood: "",
+};
+
+function reducer(
+  state: TimerCreateData,
+  action: DispatchAction
+): TimerCreateData {
+  switch (action.type) {
+    case "SET_NAME":
+      return { ...state, name: action.payload };
+    case "SET_ENABLED":
+      return { ...state, enabled: action.payload || !state.enabled };
+    case "SET_DELAY":
+      return { ...state, delay: action.payload };
+    case "SET_REQ_POINTS":
+      return { ...state, reqPoints: action.payload };
+    case "SET_NON_FOLLOW_MULTI":
+      return {
+        ...state,
+        nonFollowMulti: action.payload || !state.nonFollowMulti,
+      };
+    case "SET_NON_SUB_MULTI":
+      return { ...state, nonSubMulti: action.payload || !state.nonSubMulti };
+    case "SET_DESC":
+      return { ...state, description: action.payload };
+    case "SET_MESSAGES":
+      return { ...state, messages: action.payload };
+    case "SET_TAG":
+      return { ...state, tag: action.payload };
+    case "SET_PERSONALITY":
+      return { ...state, personality: action.payload };
+    case "SET_MOOD":
+      return { ...state, mood: action.payload };
+    case "SET_STATE":
+      return { ...state, ...action.payload };
+    default:
+      throw new Error("Invalid action type");
+  }
 }

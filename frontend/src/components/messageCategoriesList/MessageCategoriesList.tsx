@@ -1,42 +1,143 @@
 import "./style.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
 
-import { PaginationData } from "@services/ApiService";
 import {
   createMessageCategory,
   deleteMessageCategoryById,
   editMessageCategoryById,
   getMessageCategories,
   MessageCategory,
+  MessageCategoryCreateData,
 } from "@services/MessageCategoriesService";
 import Modal from "@components/modal";
 import FilterBarCategories from "./filterBarCategories";
 import { addNotification } from "@utils/getNotificationValues";
-
-interface MessageCategoryDetailsProp {
-  categories: MessageCategory[];
-  refetchData: () => Promise<PaginationData<MessageCategory>>;
-}
+import { getAllModes } from "@utils/getListModes";
+import { DispatchAction } from "./types";
+import { handleDeleteLayout } from "@utils/handleDeleteApi";
+import CategoriesData from "./CategoriesData";
+import CategoriesModalData from "./CategoriesModalData";
 
 export default function MessageCategoriesList() {
-  const { data, loading, error, refetchData } = getMessageCategories();
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
+  const [showModal, setShowModal] = useState(false);
 
-  const { data: categoriesData, currentPage, count } = data;
+  const [editingCategory, setEditingCategory] = useState("");
+  const [categoryIdDelete, setCategoryIdDelete] = useState<string | null>(null);
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const modes = getAllModes();
+
+  const {
+    data: categoriesData,
+    loading,
+    error,
+    refetchData,
+  } = getMessageCategories();
+
+  const { refetchData: fetchEditCategory } = editMessageCategoryById(
+    editingCategory,
+    state
+  );
+  const { refetchData: fetchCreateCategory } = createMessageCategory(state);
+  const { refetchData: fetchDeleteCategory } = deleteMessageCategoryById(
+    categoryIdDelete || ""
+  );
+
+  useEffect(() => {
+    handleDeleteLayout<MessageCategory>(
+      categoryIdDelete,
+      setCategoryIdDelete,
+      () => {
+        fetchDeleteCategory().then(() => {
+          refetchData();
+          addNotification(
+            "Deleted",
+            "Message category deleted successfully",
+            "danger"
+          );
+          setCategoryIdDelete(null);
+        });
+      }
+    );
+  }, [categoryIdDelete]);
+
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!categoriesData || loading || !modes) return <>Loading!</>;
+
+  const { data, currentPage, count } = categoriesData;
+
+  const onSubmitModalCreate = () => {
+    fetchCreateCategory().then(() => {
+      addNotification(
+        "Success",
+        "Message category created successfully",
+        "success"
+      );
+      refetchData();
+      setShowModal(false);
+    });
+  };
+
+  const onSubmitModalEdit = () => {
+    fetchEditCategory().then(() => {
+      addNotification(
+        "Success",
+        "Message category edited successfully",
+        "success"
+      );
+      refetchData();
+      handleOnHideModal();
+    });
+  };
+
+  const setState = (category: MessageCategory) => {
+    dispatch({
+      type: "SET_STATE",
+      payload: {
+        category: category.category,
+        messages: category.messages,
+        mood: category.mood._id,
+        personality: category.personality._id,
+        tag: category.tag._id,
+      },
+    });
+  };
+
+  const handleOnShowEditModal = (category: MessageCategory) => {
+    setEditingCategory(category._id);
+    setState(category);
+    setShowModal(true);
+  };
+
+  const handleOnShowCreateModal = (category?: MessageCategory) => {
+    if (category) {
+      setState(category);
+    } else {
+      dispatch({ type: "SET_STATE", payload: initialState });
+    }
+
+    setShowModal(true);
+  };
+
+  const handleOnHideModal = () => {
+    setShowModal(false);
+    setEditingCategory("");
+  };
   return (
     <>
       <PreviousPage />
       <FilterBarCategories />
-      <div id="message-categories-list" className="table-list-wrapper">
-        <MessageCategoriesDetails
-          categories={categoriesData}
-          refetchData={refetchData}
-        />
-      </div>
+      <CategoriesData
+        data={data}
+        handleOnShowCreateModal={handleOnShowCreateModal}
+        handleOnShowEditModal={handleOnShowEditModal}
+        setCategoryIdToDelete={setCategoryIdDelete}
+      />
+
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
@@ -46,188 +147,49 @@ export default function MessageCategoriesList() {
           siblingCount={1}
         />
       </div>
+      <Modal
+        title={`${editingCategory ? "Edit" : "Create"} message category`}
+        onClose={handleOnHideModal}
+        onSubmit={() => {
+          editingCategory ? onSubmitModalEdit() : onSubmitModalCreate();
+        }}
+        show={showModal}
+      >
+        <CategoriesModalData state={state} dispatch={dispatch} modes={modes} />
+      </Modal>
     </>
   );
 }
 
-const MessageCategoriesDetails = ({
-  categories,
-  refetchData,
-}: MessageCategoryDetailsProp) => {
-  const [showModal, setShowModal] = useState(false);
-
-  const [editingCategory, setEditingCategory] = useState("");
-  const [categoryIdToDelete, setCategoryIdToDelete] = useState<string | null>(
-    null
-  );
-  const [category, setCategory] = useState("");
-  const [messages, setMessages] = useState([""]);
-
-  const { refetchData: fetchEditCategory } = editMessageCategoryById(
-    editingCategory,
-    {
-      category: category,
-      messages: messages,
-    }
-  );
-
-  const { refetchData: fetchCreateCategory } = createMessageCategory({
-    category: `new category ${new Date().getTime().toString()}`,
-    messages: ["example message 1"],
-  });
-
-  const { refetchData: fetchDeleteCategory } = deleteMessageCategoryById(
-    categoryIdToDelete ? categoryIdToDelete : ""
-  );
-
-  useEffect(() => {
-    if (
-      categoryIdToDelete !== null &&
-      confirm(`Are you sure you want to delete command: ${categoryIdToDelete}?`)
-    ) {
-      fetchDeleteCategory().then(() => {
-        // socketRefreshMessageCategories();
-        refetchData();
-        addNotification(
-          "Deleted",
-          "Message category deleted successfully",
-          "danger"
-        );
-        setCategoryIdToDelete(null);
-      });
-    } else {
-      setCategoryIdToDelete(null);
-    }
-  }, [categoryIdToDelete]);
-
-  const handleOnClickEditButton = (category: MessageCategory) => {
-    const { _id, category: catName, messages } = category;
-    setEditingCategory(_id);
-    setCategory(catName);
-    setMessages(messages);
-
-    setShowModal(true);
-  };
-
-  const onCloseModal = () => {
-    setShowModal(false);
-  };
-
-  const onSubmitEditModal = () => {
-    fetchEditCategory().then(() => {
-      // socketRefreshMessageCategories();
-      addNotification(
-        "Success",
-        "Message category edited successfully",
-        "success"
-      );
-      refetchData();
-    });
-    setShowModal(false);
-  };
-
-  const createNewCategory = () => {
-    fetchCreateCategory().then(() => {
-      // socketRefreshMessageCategories();
-      addNotification(
-        "Success",
-        "Message category created successfully",
-        "success"
-      );
-      refetchData();
-    });
-  };
-
-  return (
-    <>
-      <table id="table-message-categories-list">
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>
-              Actions
-              <button
-                className="common-button primary-button"
-                onClick={(e) => createNewCategory()}
-              >
-                New
-              </button>
-            </th>
-            <th>Uses</th>
-            <th>Messages</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {categories.map((category, index) => {
-            return (
-              <tr key={index}>
-                <td className="message-category-name">{category.category}</td>
-                <td className="message-category-edit">
-                  <button
-                    className="common-button primary-button"
-                    onClick={() => {
-                      handleOnClickEditButton(category);
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="common-button danger-button"
-                    onClick={() => setCategoryIdToDelete(category._id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-                <td className="message-category-uses ">{category.uses}</td>
-
-                <td className="message-category-messages">
-                  <div className="message-category-messages-wrapper">
-                    {category.messages.map((message, index) => {
-                      return <div key={index}>{message}</div>;
-                    })}
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <Modal
-        title="Edit message category"
-        onClose={() => onCloseModal()}
-        onSubmit={() => {
-          onSubmitEditModal();
-        }}
-        show={showModal}
-      >
-        <div className="message-categories-edit-modal">
-          <div>
-            <div className="message-categories-modal-header">Category</div>
-            <div>
-              <input
-                className="message-categories-input"
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                }}
-              />
-            </div>
-          </div>
-          <div>
-            <div className="message-categories-modal-header">Messages</div>
-            <div>
-              <textarea
-                className="message-categories-textarea"
-                value={messages?.join("\n")}
-                onChange={(e) => {
-                  setMessages(e.target.value?.split("\n"));
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </Modal>
-    </>
-  );
+const initialState: MessageCategoryCreateData = {
+  category: "",
+  messages: [""],
+  personality: "",
+  tag: "",
+  mood: "",
 };
+function reducer(
+  state: MessageCategoryCreateData,
+  action: DispatchAction
+): MessageCategoryCreateData {
+  switch (action.type) {
+    case "SET_CATEGORY":
+      return { ...state, category: action.payload };
+    // case "SET_ENABLED":
+    //   return { ...state, enabled: action.payload || !state.enabled };
+    // case "SET_DESC":
+    //   return { ...state, description: action.payload };
+    case "SET_MESSAGES":
+      return { ...state, messages: action.payload };
+    case "SET_TAG":
+      return { ...state, tag: action.payload };
+    case "SET_PERSONALITY":
+      return { ...state, personality: action.payload };
+    case "SET_MOOD":
+      return { ...state, mood: action.payload };
+    case "SET_STATE":
+      return { ...state, ...action.payload };
+    default:
+      throw new Error("Invalid action type");
+  }
+}
