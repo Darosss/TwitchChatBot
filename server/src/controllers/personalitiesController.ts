@@ -62,10 +62,13 @@ export const editPersonalityById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, enabled } = req.body;
 
   try {
-    const updatedPersonality = await updatePersonalityById(id, { name: name });
+    const updatedPersonality = await updatePersonalityById(id, {
+      name: name,
+      enabled: enabled,
+    });
 
     return res.status(200).send({
       message: "Personality updated successfully",

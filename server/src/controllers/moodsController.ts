@@ -61,10 +61,13 @@ export const editMoodById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, enabled } = req.body;
 
   try {
-    const updatedMood = await updateMoodById(id, { name: name });
+    const updatedMood = await updateMoodById(id, {
+      name: name,
+      enabled: enabled,
+    });
 
     return res.status(200).send({
       message: "Mood updated successfully",

@@ -61,10 +61,13 @@ export const editTagById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, enabled } = req.body;
 
   try {
-    const updatedTag = await updateTagById(id, { name: name });
+    const updatedTag = await updateTagById(id, {
+      name: name,
+      enabled: enabled,
+    });
 
     return res.status(200).send({
       message: "Tag updated successfully",
