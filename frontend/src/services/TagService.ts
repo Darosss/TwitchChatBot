@@ -3,17 +3,21 @@ import useAxiosCustom, { PaginationData } from "./ApiService";
 export interface Tag {
   _id: string;
   name: string;
+  enabled: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
 interface TagCreateData extends Pick<Tag, "name"> {}
 
-interface TagUpdateData extends Partial<TagCreateData> {}
+interface TagUpdateData extends Partial<TagCreateData> {
+  enabled?: boolean;
+}
 
-export const getTags = () => {
+export const getTags = (urlParams = true) => {
   return useAxiosCustom<PaginationData<Tag>>({
     url: `/tags`,
+    urlParams: urlParams,
   });
 };
 

@@ -3,17 +3,21 @@ import useAxiosCustom, { PaginationData } from "./ApiService";
 export interface Personality {
   _id: string;
   name: string;
+  enabled: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
 interface PersonalityCreateData extends Pick<Personality, "name"> {}
 
-interface PersonalityUpdateData extends Partial<PersonalityCreateData> {}
+interface PersonalityUpdateData extends Partial<PersonalityCreateData> {
+  enabled?: boolean;
+}
 
-export const getPersonalities = () => {
+export const getPersonalities = (urlParams = true) => {
   return useAxiosCustom<PaginationData<Personality>>({
     url: `/personalities`,
+    urlParams: urlParams,
   });
 };
 

@@ -3,17 +3,21 @@ import useAxiosCustom, { PaginationData } from "./ApiService";
 export interface Mood {
   _id: string;
   name: string;
+  enabled: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
 interface MoodCreateData extends Pick<Mood, "name"> {}
 
-interface MoodUpdateData extends Partial<MoodCreateData> {}
+interface MoodUpdateData extends Partial<MoodCreateData> {
+  enabled?: boolean;
+}
 
-export const getMoods = () => {
+export const getMoods = (urlParams = true) => {
   return useAxiosCustom<PaginationData<Mood>>({
     url: `/moods`,
+    urlParams: urlParams,
   });
 };
 
