@@ -50,6 +50,7 @@
     "@utils": "dist/utils",
     "@services": "dist/services",
     "@defaults": "dist/defaults",
+    "@aggregations": "dist/aggregations",
     "@types": "@types"
   }
 }
