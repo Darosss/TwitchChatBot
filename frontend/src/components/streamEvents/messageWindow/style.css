@@ -8,27 +8,31 @@
   border-radius: 0.5rem;
 }
 
-.message-categories-btn-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
 .prepared-messages-window {
   height: 99%;
   overflow-x: hidden;
 }
 
-.message-categories-btn-wrapper > div {
-}
-
 .message-categories-btn-wrapper button {
-  height: 10vh;
+  height: 4vh;
   font-size: 1.2vmin;
   margin: 0.1rem;
 }
 
 .button-category-name {
   color: var(--base-color-info);
+}
+
+.message-section-btn-wrapper {
+  display: flex;
+}
+
+.message-section-btn-wrapper > div {
+  flex: 1 1 49%;
+}
+
+.message-section-btn-wrapper > div * {
+  width: 96%;
 }
 
 .modal-prepared-messages {
@@ -42,8 +46,4 @@
 .modal-prepared-messages button {
   flex: 0 0 30%;
   border: 0.1rem solid var(--base-bg-color);
-}
-
-.message-section-btn-wrapper {
-  display: flex;
 }

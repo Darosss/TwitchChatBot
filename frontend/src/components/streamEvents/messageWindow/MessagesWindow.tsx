@@ -79,28 +79,32 @@ export default function MessagesWindow() {
           {msgCateg.map((category, index) => {
             return (
               <div key={index} className="message-section-btn-wrapper">
-                <button
-                  className="primary-button common-button"
-                  onClick={() => {
-                    handleOnClickRandomMessage(category._id);
-                  }}
-                >
-                  <div>Send random</div>
-                  <span className="button-category-name">
-                    {category.category}
-                  </span>
-                </button>
-                <button
-                  className="primary-button common-button"
-                  onClick={() => {
-                    handleOnClickCategory(category._id);
-                  }}
-                >
-                  <div>Show</div>
-                  <span className="button-category-name">
-                    {category.category}
-                  </span>
-                </button>
+                <div>
+                  <button
+                    className="primary-button common-button"
+                    onClick={() => {
+                      handleOnClickRandomMessage(category._id);
+                    }}
+                  >
+                    <div>Send random</div>
+                    <span className="button-category-name">
+                      {category.category}
+                    </span>
+                  </button>
+                </div>
+                <div>
+                  <button
+                    className="primary-button common-button"
+                    onClick={() => {
+                      handleOnClickCategory(category._id);
+                    }}
+                  >
+                    <div>Show</div>
+                    <span className="button-category-name">
+                      {category.category}
+                    </span>
+                  </button>
+                </div>
               </div>
             );
           })}
