@@ -13,6 +13,13 @@ const TimerSchema: Schema<TimerDocument> = new Schema(
     uses: { type: Number, default: 0 },
     description: { type: String },
     messages: [String],
+    personality: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Personalities",
+    },
+    tag: { type: Schema.Types.ObjectId, required: true, ref: "Tags" },
+    mood: { type: Schema.Types.ObjectId, required: true, ref: "Moods" },
   },
   { timestamps: true }
 );

@@ -18,6 +18,13 @@ const ChatCommandSchema: Schema<ChatCommandDocument> = new Schema(
       type: Number,
       default: 0,
     },
+    personality: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Personalities",
+    },
+    tag: { type: Schema.Types.ObjectId, required: true, ref: "Tags" },
+    mood: { type: Schema.Types.ObjectId, required: true, ref: "Moods" },
   },
   { timestamps: true }
 );

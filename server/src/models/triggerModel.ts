@@ -11,6 +11,13 @@ const TriggerSchema: Schema<TriggerDocument> = new Schema(
     words: [String],
     messages: [String],
     mode: { type: String, default: "WHOLE-WORD" },
+    personality: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Personalities",
+    },
+    tag: { type: Schema.Types.ObjectId, required: true, ref: "Tags" },
+    mood: { type: Schema.Types.ObjectId, required: true, ref: "Moods" },
   },
   { timestamps: true }
 );
