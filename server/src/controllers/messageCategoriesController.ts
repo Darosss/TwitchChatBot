@@ -44,11 +44,11 @@ export const editMessageCategoryById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { category, messages } = req.body;
+  const { name, messages } = req.body;
 
   try {
     const updatedCategoryMessage = await updateMessageCategoryById(id, {
-      category: category,
+      name: name,
       messages: messages,
     });
 
@@ -87,11 +87,11 @@ export const addNewCategory = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { category, messages } = req.body;
+  const { name, messages } = req.body;
 
   try {
     const newMessageCategory = await createMessageCategories({
-      category: category,
+      name: name,
       messages: messages,
     });
 
