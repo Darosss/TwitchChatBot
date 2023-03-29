@@ -10,6 +10,7 @@ import { Server } from "socket.io";
 import {
   getTimerById,
   getTimers,
+  getTimersDataWithModesEnabled,
   updateTimerById,
   updateTimers,
 } from "@services/timers";
@@ -53,7 +54,7 @@ class TimersHandler extends HeadHandler {
   }
 
   async refreshTimers() {
-    this.timers = (await getTimers({}, {})) || [];
+    this.timers = (await getTimersDataWithModesEnabled()) || [];
 
     this.clearTimersTimeouts();
     this.setTimersTimeouts();
