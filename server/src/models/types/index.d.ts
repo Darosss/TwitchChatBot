@@ -70,9 +70,12 @@ export interface TriggerModel {
   uses: number;
   words: string[];
   messages: string[];
+  mode: TriggerMode;
+  personality: string | PersonalityModel;
+  mood: string | MoodModel;
+  tag: string | TagModel;
   createdAt: Date;
   updatedAt: Date;
-  mode: TriggerMode;
 }
 
 export type TriggerDocument = TriggerModel & Document;
@@ -137,14 +140,17 @@ export type ConfigDocument = ConfigModel & Document;
 export interface ChatCommandModel {
   _id: string;
   name: string;
-  createdAt: Date;
-  updatedAt: Date;
   description?: string;
   enabled: boolean;
   aliases: string[];
   messages: string[];
   privilege: number;
   uses: number;
+  personality: string | PersonalityModel;
+  mood: string | MoodModel;
+  tag: string | TagModel;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type ChatCommandDocument = ChatCommandModel & Document;
@@ -165,6 +171,9 @@ export interface MessageCategoryModel {
   category: string;
   messages: string[];
   uses: number;
+  personality: string | PersonalityModel;
+  mood: string | MoodModel;
+  tag: string | TagModel;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -212,6 +221,9 @@ export interface TimerModel {
   uses: number;
   messages: string[];
   description: string;
+  personality: string | PersonalityModel;
+  mood: string | MoodModel;
+  tag: string | TagModel;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -221,6 +233,7 @@ export type TimerDocument = TimerModel & Document;
 export interface MoodModel {
   _id: string;
   name: string;
+  enabled: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -230,6 +243,7 @@ export type MoodDocument = MoodModel & Document;
 export interface PersonalityModel {
   _id: string;
   name: string;
+  enabled: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -239,6 +253,7 @@ export type PersonalityDocument = PersonalityModel & Document;
 export interface TagModel {
   _id: string;
   name: string;
+  enabled: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
