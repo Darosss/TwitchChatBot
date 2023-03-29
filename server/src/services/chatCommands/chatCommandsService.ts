@@ -1,9 +1,10 @@
+import { modesPipeline } from "@aggregations/modesPipeline";
 import { ChatCommand } from "@models/chatCommandModel";
 import { ChatCommandDocument } from "@models/types";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
-import { FilterQuery, UpdateQuery } from "mongoose";
+import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import {
   ChatCommandCreateData,
   ChatCommandsFindOptions,
@@ -175,17 +176,12 @@ export const deleteChatCommandById = async (id: string) => {
   }
 };
 
-export const getChatCommandsAliases = async (): Promise<
-  string[] | undefined
-> => {
+export const getChatCommandsAliases = async (
+  modesEnabled: boolean = false
+): Promise<string[] | undefined> => {
   try {
-    const commandsAliases = await ChatCommand.aggregate([
-      {
-        $group: {
-          _id: null,
-          aliases: { $push: "$aliases" },
-        },
-      },
+    const pipeline: PipelineStage[] = [
+      { $group: { _id: null, aliases: { $push: "$aliases" } } },
       {
         $project: {
           aliases: {
@@ -198,32 +194,18 @@ export const getChatCommandsAliases = async (): Promise<
           _id: 0,
         },
       },
-      {
-        $unwind: "$aliases",
-      },
-      {
-        $addFields: {
-          aliasesLower: { $toLower: "$aliases" },
-        },
-      },
-      {
-        $sort: {
-          aliasesLower: 1,
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          aliases: { $push: "$aliasesLower" },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          aliases: 1,
-        },
-      },
-    ]);
+      { $unwind: "$aliases" },
+      { $addFields: { aliasesLower: { $toLower: "$aliases" } } },
+      { $sort: { aliasesLower: 1 } },
+      { $group: { _id: null, aliases: { $push: "$aliasesLower" } } },
+      { $project: { _id: 0, aliases: 1 } },
+    ];
+
+    if (modesEnabled) {
+      pipeline.unshift(...modesPipeline);
+    }
+
+    const commandsAliases = await ChatCommand.aggregate(pipeline);
 
     if (commandsAliases.length > 0) {
       return commandsAliases[0].aliases;
