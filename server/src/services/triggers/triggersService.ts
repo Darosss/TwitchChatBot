@@ -20,6 +20,7 @@ export const getTriggers = async (
     skip = 1,
     sort = { createdAt: -1 },
     select = { __v: 0 },
+    populateSelect,
   } = triggerFindOptions;
 
   try {
@@ -27,6 +28,7 @@ export const getTriggers = async (
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
+      .populate(populateSelect)
       .sort(sort);
 
     return trigger;

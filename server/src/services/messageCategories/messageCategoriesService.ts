@@ -21,12 +21,14 @@ export const getMessageCategories = async (
     skip = 1,
     sort = {},
     select = { __v: 0 },
+    populateSelect,
   } = categoriesFindOptions;
   try {
     const categories = await MessageCategory.find(filter)
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
+      .populate(populateSelect)
       .sort(sort);
 
     return categories;

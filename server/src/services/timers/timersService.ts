@@ -20,6 +20,7 @@ export const getTimers = async (
     skip = 1,
     sort = { createdAt: -1 },
     select = { __v: 0 },
+    populateSelect,
   } = timerFindOptions;
 
   try {
@@ -27,6 +28,7 @@ export const getTimers = async (
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
+      .populate(populateSelect)
       .sort(sort);
 
     return timer;
