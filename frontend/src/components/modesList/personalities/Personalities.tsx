@@ -42,7 +42,7 @@ export default function Personalities() {
     name: createName,
   });
 
-  const { refetchData: fetchDeleteCommand } = deletePersonality(
+  const { refetchData: fetchDeletePersonality } = deletePersonality(
     personalityIdDelete ? personalityIdDelete : ""
   );
 
@@ -51,15 +51,19 @@ export default function Personalities() {
       personalityIdDelete,
       setPersonalityIdDelete,
       () => {
-        fetchDeleteCommand().then(() => {
-          refetchData();
-          addNotification(
-            "Deleted",
-            "Personality deleted successfully",
-            "danger"
-          );
-          setPersonalityIdDelete(null);
-        });
+        fetchDeletePersonality()
+          .then(() => {
+            refetchData();
+            addNotification(
+              "Deleted",
+              "Personality deleted successfully",
+              "danger"
+            );
+            setPersonalityIdDelete(null);
+          })
+          .catch((err) => {
+            addNotification("Warning", err.response.data.message, "warning");
+          });
       }
     );
   }, [personalityIdDelete]);

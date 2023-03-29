@@ -32,17 +32,21 @@ export default function Moods() {
     name: createName,
   });
 
-  const { refetchData: fetchDeleteCommand } = deleteMood(
+  const { refetchData: fetchDeleteMood } = deleteMood(
     moodIdDelete ? moodIdDelete : ""
   );
 
   useEffect(() => {
     handleDeleteLayout<Mood>(moodIdDelete, setMoodIdDelete, () => {
-      fetchDeleteCommand().then(() => {
-        refetchData();
-        addNotification("Deleted", "Mood deleted successfully", "danger");
-        setMoodIdDelete(null);
-      });
+      fetchDeleteMood()
+        .then(() => {
+          refetchData();
+          addNotification("Deleted", "Mood deleted successfully", "danger");
+          setMoodIdDelete(null);
+        })
+        .catch((err) => {
+          addNotification("Warning", err.response.data.message, "warning");
+        });
     });
   }, [moodIdDelete]);
 

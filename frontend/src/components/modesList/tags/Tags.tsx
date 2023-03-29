@@ -32,17 +32,21 @@ export default function Tags() {
     name: createName,
   });
 
-  const { refetchData: fetchDeleteCommand } = deleteTag(
+  const { refetchData: fetchDeleteTag } = deleteTag(
     tagIdDelete ? tagIdDelete : ""
   );
 
   useEffect(() => {
     handleDeleteLayout<Tag>(tagIdDelete, setTagIdDelete, () => {
-      fetchDeleteCommand().then(() => {
-        refetchData();
-        addNotification("Deleted", "Tag deleted successfully", "danger");
-        setTagIdDelete(null);
-      });
+      fetchDeleteTag()
+        .then(() => {
+          refetchData();
+          addNotification("Deleted", "Tag deleted successfully", "danger");
+          setTagIdDelete(null);
+        })
+        .catch((err) => {
+          addNotification("Warning", err.response.data.message, "warning");
+        });
     });
   }, [tagIdDelete]);
 
