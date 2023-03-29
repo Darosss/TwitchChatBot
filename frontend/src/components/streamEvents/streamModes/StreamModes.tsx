@@ -81,69 +81,73 @@ export default function StreamModes() {
   } = modes;
 
   return (
-    <div className="stream-modes-wrapper">
-      <div className="stream-modes-section">
-        <div className="stream-modes-section-name">Tags</div>
-        {tags?.map((tag, index) => {
-          return (
-            <div key={index}>
-              <button
-                className={`common-button ${
-                  tag.enabled ? "primary-button" : "danger-button"
-                }`}
-                onClick={() => {
-                  setTagToUpdate([tag._id, !tag.enabled]);
-                }}
-              >
-                {tag.name}
-              </button>
-            </div>
-          );
-        })}
-      </div>
-      <div className="stream-modes-section">
-        <div className="stream-modes-section-name">Personalities</div>
+    <>
+      <div className="stream-modes-wrapper">
+        <div className="stream-modes-section-wrapper">
+          <div className="stream-modes-section">
+            <div className="stream-modes-section-name">Tags</div>
+            {tags?.map((tag, index) => {
+              return (
+                <div key={index}>
+                  <button
+                    className={`common-button ${
+                      tag.enabled ? "primary-button" : "danger-button"
+                    }`}
+                    onClick={() => {
+                      setTagToUpdate([tag._id, !tag.enabled]);
+                    }}
+                  >
+                    {tag.name}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+          <div className="stream-modes-section">
+            <div className="stream-modes-section-name">Personalities</div>
 
-        {personalities?.map((personality, index) => {
-          return (
-            <div key={index}>
-              <button
-                className={`common-button ${
-                  personality.enabled ? "primary-button" : "danger-button"
-                }`}
-                onClick={() => {
-                  setPersonalityToUpdate([
-                    personality._id,
-                    !personality.enabled,
-                  ]);
-                }}
-              >
-                {personality.name}
-              </button>
-            </div>
-          );
-        })}
-      </div>
-      <div className="stream-modes-section">
-        <div className="stream-modes-section-name">Moods</div>
+            {personalities?.map((personality, index) => {
+              return (
+                <div key={index}>
+                  <button
+                    className={`common-button ${
+                      personality.enabled ? "primary-button" : "danger-button"
+                    }`}
+                    onClick={() => {
+                      setPersonalityToUpdate([
+                        personality._id,
+                        !personality.enabled,
+                      ]);
+                    }}
+                  >
+                    {personality.name}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+          <div className="stream-modes-section">
+            <div className="stream-modes-section-name">Moods</div>
 
-        {moods?.map((mood, index) => {
-          return (
-            <div key={index}>
-              <button
-                className={`common-button ${
-                  mood.enabled ? "primary-button" : "danger-button"
-                }`}
-                onClick={() => {
-                  setMoodToUpdate([mood._id, !mood.enabled]);
-                }}
-              >
-                {mood.name}
-              </button>
-            </div>
-          );
-        })}
+            {moods?.map((mood, index) => {
+              return (
+                <div key={index}>
+                  <button
+                    className={`common-button ${
+                      mood.enabled ? "primary-button" : "danger-button"
+                    }`}
+                    onClick={() => {
+                      setMoodToUpdate([mood._id, !mood.enabled]);
+                    }}
+                  >
+                    {mood.name}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,25 +1,28 @@
 .stream-modes-wrapper {
-  margin-top: 0.4rem;
+  display: flex;
+  height: 100%;
+  overflow-y: auto;
+  flex-direction: column;
+}
+
+.stream-modes-section-wrapper {
   display: flex;
 }
 
-.stream-modes-wrapper > div {
-  text-align: center;
+.stream-modes-section-wrapper > div {
   flex: 1 1 30%;
+  text-align: center;
 }
 
 .stream-modes-section > div {
   display: flex;
+  margin: 0.1rem;
   flex-direction: column;
-}
-
-.stream-modes-section > div:not(:first-child) {
-  height: 10vh;
 }
 
 .stream-modes-section button {
   margin-top: 0.1rem;
-  height: 10vh;
+  height: 4vh;
 }
 
 .stream-modes-section-name {
