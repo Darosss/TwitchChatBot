@@ -22,7 +22,7 @@ class CommandsHandler {
   }
 
   async refreshCommands() {
-    this.commandsAliases = (await getChatCommandsAliases()) || [];
+    this.commandsAliases = (await getChatCommandsAliases(true)) || [];
   }
 
   async refreshConfigs(configs: CommandsConfigs) {
