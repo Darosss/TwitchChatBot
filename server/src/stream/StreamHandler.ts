@@ -200,6 +200,17 @@ class StreamHandler {
         await this.refreshConfigs();
       });
 
+      socket.on("changeModes", async () => {
+        headLogger.info(
+          "Client changed modes(tag, mood, personality) - refreshing triggers, commands, message categories and timers"
+        );
+        await Promise.all([
+          this.triggersHandler.refreshTriggers(),
+          this.commandsHandler.refreshCommands(),
+          this.timersHandler.refreshTimers(),
+        ]);
+      });
+
       socket.on("refreshTriggers", async () => {
         headLogger.info(
           "Client created/updated/deleted trigger - refreshing triggers"
