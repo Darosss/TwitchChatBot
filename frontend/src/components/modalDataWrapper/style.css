@@ -1,0 +1,41 @@
+.modal-data-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+  min-height: 15vh;
+}
+
+.modal-data-wrapper * {
+  font-size: 2vmin;
+}
+
+.modal-data-wrapper > div {
+  flex: 1 1 45%;
+  border-bottom: 0.1rem solid var(--base-bg-color-border);
+  margin-top: 0.1rem;
+}
+
+.modal-data-wrapper > div:hover {
+  flex: 1 1 45%;
+  background: var(--base-bg-color-border);
+}
+
+.modal-data-wrapper > div > * {
+  width: 100%;
+}
+
+.modal-data-wrapper input,
+.modal-data-wrapper select {
+  height: 5vh;
+}
+
+.modal-data-wrapper textarea {
+  white-space: nowrap;
+  height: 15vh;
+  max-height: 15vh;
+  min-width: 15vw;
+  max-width: 35vw;
+  min-width: 8vw;
+  min-height: 5vw;
+}
