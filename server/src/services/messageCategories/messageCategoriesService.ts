@@ -1,10 +1,11 @@
+import { modesPipeline } from "@aggregations/modesPipeline";
 import { MessageCategory } from "@models/messageCategoryModel";
-import { MessageCategoryModel } from "@models/types";
+import { MessageCategoryDocument, MessageCategoryModel } from "@models/types";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
 import { randomWithMax } from "@utils/randomNumbersUtil";
-import { FilterQuery, UpdateQuery } from "mongoose";
+import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import {
   ManyMessageCategoriesFindOptions,
   MessageCategoryData,
@@ -60,21 +61,21 @@ export const getMessagesByCategory = async (category: string) => {
   }
 };
 
-export const getRandomCategoryMessage = async () => {
-  const countCategories = await getMessageCategoriesCount({});
-  var skipRandom = Math.floor(Math.random() * countCategories);
-
+export const getRandomCategoryMessage = async (
+  modesEnabled: boolean = false
+) => {
   try {
-    const foundMessageCategory = await MessageCategory.findOne().skip(
-      skipRandom
-    );
+    const pipeline: PipelineStage[] = [{ $sample: { size: 1 } }];
 
-    const category = checkExistResource(
-      foundMessageCategory,
-      "Message category"
-    );
-
-    return category;
+    if (modesEnabled) {
+      pipeline.unshift(...modesPipeline);
+    }
+    const foundMessageCategory =
+      await MessageCategory.aggregate<MessageCategoryDocument>(pipeline);
+    if (foundMessageCategory.length > 0) {
+      return foundMessageCategory[0];
+    }
+    return;
   } catch (err) {
     logger.error(`Error occured while getting random message category: ${err}`);
     handleAppError(err);
@@ -113,9 +114,7 @@ export const updateMessageCategoryById = async (
     const updatedMessageCategory = await MessageCategory.findByIdAndUpdate(
       id,
       updateData,
-      {
-        new: true,
-      }
+      { new: true }
     );
 
     const messageCategory = checkExistResource(
