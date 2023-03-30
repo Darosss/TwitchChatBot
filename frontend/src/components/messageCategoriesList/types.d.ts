@@ -1,7 +1,7 @@
 import { MessageCategoryCreateData } from "@services/MessageCategoriesService";
 
 type DispatchAction =
-  | { type: "SET_CATEGORY"; payload: string }
+  | { type: "SET_NAME"; payload: string }
   | { type: "SET_MESSAGES"; payload: string[] }
   | { type: "SET_TAG"; payload: string }
   | { type: "SET_PERSONALITY"; payload: string }

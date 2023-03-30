@@ -70,7 +70,7 @@ export default function CategoriesData(props: {
               <td colSpan={5}>
                 <TableDataWrapper>
                   <div>Name</div>
-                  <div>{category.category}</div>
+                  <div>{category.name}</div>
                   <div>Enabled</div>
                   {generateEnabledDisabledDiv(
                     category.enabled,

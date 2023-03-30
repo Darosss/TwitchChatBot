@@ -18,9 +18,9 @@ export default function CategoriesModalData(props: {
         <input
           className="categories-list-modal-input"
           type="text"
-          value={state.category}
+          value={state.name}
           onChange={(e) => {
-            dispatch({ type: "SET_CATEGORY", payload: e.target.value });
+            dispatch({ type: "SET_NAME", payload: e.target.value });
           }}
         />
       </div>

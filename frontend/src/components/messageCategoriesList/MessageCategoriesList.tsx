@@ -98,7 +98,7 @@ export default function MessageCategoriesList() {
     dispatch({
       type: "SET_STATE",
       payload: {
-        category: category.category,
+        name: category.name,
         messages: category.messages,
         enabled: category.enabled,
         mood: category.mood._id,
@@ -163,7 +163,7 @@ export default function MessageCategoriesList() {
 }
 
 const initialState: MessageCategoryCreateData = {
-  category: "",
+  name: "",
   enabled: true,
   messages: [""],
   personality: "",
@@ -175,8 +175,8 @@ function reducer(
   action: DispatchAction
 ): MessageCategoryCreateData {
   switch (action.type) {
-    case "SET_CATEGORY":
-      return { ...state, category: action.payload };
+    case "SET_NAME":
+      return { ...state, name: action.payload };
     case "SET_ENABLED":
       return { ...state, enabled: action.payload || !state.enabled };
     // case "SET_DESC":
