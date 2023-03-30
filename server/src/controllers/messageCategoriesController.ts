@@ -49,7 +49,7 @@ export const editMessageCategoryById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, messages, tag, mood, personality } = req.body;
+  const { name, messages, tag, mood, personality, enabled } = req.body;
 
   try {
     const updatedCategoryMessage = await updateMessageCategoryById(id, {
@@ -57,6 +57,7 @@ export const editMessageCategoryById = async (
       messages: messages,
       tag: tag,
       mood: mood,
+      enabled: enabled,
       personality: personality,
     });
 
@@ -95,12 +96,13 @@ export const addNewCategory = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, messages, tag, mood, personality } = req.body;
+  const { name, messages, tag, mood, personality, enabled } = req.body;
 
   try {
     const newMessageCategory = await createMessageCategories({
       name: name,
       messages: messages,
+      enabled: enabled,
       tag: tag,
       mood: mood,
       personality: personality,
