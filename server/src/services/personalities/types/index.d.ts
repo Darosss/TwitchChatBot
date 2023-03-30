@@ -18,5 +18,4 @@ export interface PersonalityCreateData
     PersonalityOptionalData {}
 
 export interface PersonalityUpdateData
-  extends PersonalityOptionalData,
-    Partial<PersonalityCreateData> {}
+  extends Partial<Pick<PersonalityModel, "name" | "enabled">> {}

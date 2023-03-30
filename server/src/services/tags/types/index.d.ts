@@ -15,4 +15,5 @@ export interface ManyTagsFindOptions extends TagFindOptions {
 
 export interface TagCreateData extends Pick<TagModel, "name"> {}
 
-export interface TagUpdateData extends Partial<TagCreateData> {}
+export interface TagUpdateData
+  extends Partial<Pick<TagModel, "name" | "enabled">> {}

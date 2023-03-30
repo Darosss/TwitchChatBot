@@ -16,4 +16,4 @@ export interface ManyWidgetsFindOptions extends WidgetsFindOptions {
 export interface WidgetCreateData
   extends Pick<IWidget, "name" | "layout" | "toolbox"> {}
 
-export interface WidgetUpdateData extends Partial<ChatCommandOptionalData> {}
+export interface WidgetUpdateData extends Partial<WidgetCreateData> {}

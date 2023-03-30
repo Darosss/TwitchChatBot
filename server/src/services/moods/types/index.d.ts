@@ -16,5 +16,4 @@ export interface ManyMoodsFindOptions extends MoodFindOptions {
 export interface MoodCreateData extends Pick<MoodModel, "name"> {}
 
 export interface MoodUpdateData
-  extends MoodOptionalData,
-    Partial<MoodCreateData> {}
+  extends Partial<Pick<MoodModel, "name" | "enabled">> {}
