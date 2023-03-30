@@ -1,25 +1,22 @@
+import {
+  baseChatFeaturesFields,
+  commonChatFeaturesFields,
+  delayField,
+  descriptionField,
+} from "@utils/commonSchemaFieldsUtil";
 import { Model, model, Schema } from "mongoose";
 import { TimerDocument } from "./types";
 
 const TimerSchema: Schema<TimerDocument> = new Schema(
   {
-    name: { type: String, required: true },
-    enabled: { type: Boolean, default: true },
-    delay: { type: Number, required: true, default: 360 },
+    ...baseChatFeaturesFields,
+    ...commonChatFeaturesFields,
+    ...delayField,
+    ...descriptionField,
     points: { type: Number, default: 0 },
     reqPoints: { type: Number, default: 20 },
     nonFollowMulti: { type: Boolean, default: false },
     nonSubMulti: { type: Boolean, default: false },
-    uses: { type: Number, default: 0 },
-    description: { type: String },
-    messages: [String],
-    personality: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: "Personalities",
-    },
-    tag: { type: Schema.Types.ObjectId, required: true, ref: "Tags" },
-    mood: { type: Schema.Types.ObjectId, required: true, ref: "Moods" },
   },
   { timestamps: true }
 );

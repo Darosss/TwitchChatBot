@@ -1,3 +1,4 @@
+import { nameField } from "@utils/commonSchemaFieldsUtil";
 import { Model, model, Schema } from "mongoose";
 import { WidgetsDocument } from "./types";
 
@@ -12,7 +13,7 @@ const layoutBreakpointSchema = new Schema({
 
 const WidgetsModel: Schema<WidgetsDocument> = new Schema(
   {
-    name: { type: String, required: true },
+    ...nameField,
     layout: {
       type: Map,
       of: [layoutBreakpointSchema],
