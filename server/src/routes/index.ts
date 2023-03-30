@@ -1,3 +1,4 @@
+import express, { Express } from "express";
 import auth from "./authRoute";
 import chatCommandsRouter from "./chatCommandsRoute";
 import configsRouter from "./configsRoute";
@@ -14,7 +15,7 @@ import moodsRouter from "./moodsRoute";
 import tagsRouter from "./tagsRoute";
 import personalitiesRouter from "./personalitiesRoute";
 
-const initRoutes = (app: any) => {
+const initRoutes = (app: Express) => {
   app.use("/auth", auth);
   app.use("/chat-commands", chatCommandsRouter);
   app.use("/configs", configsRouter);
