@@ -7,6 +7,11 @@ const MessageCategorySchema: Schema<MessageCategoryDocument> = new Schema(
       type: String,
       required: true,
     },
+    enabled: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
     messages: [String],
     uses: {
       type: Number,
