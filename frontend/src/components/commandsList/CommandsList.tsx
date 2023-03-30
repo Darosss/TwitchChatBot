@@ -97,6 +97,7 @@ export default function CommandsList() {
 
   const handleOnShowEditModal = (command: ChatCommand) => {
     setEditingCommand(command._id);
+    setState(command);
     setShowModal(true);
   };
 
