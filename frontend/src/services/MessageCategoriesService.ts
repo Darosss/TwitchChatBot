@@ -5,7 +5,7 @@ import { Tag } from "./TagService";
 
 export interface MessageCategory {
   _id: string;
-  category: string;
+  name: string;
   enabled: boolean;
   messages: string[];
   uses: number;
