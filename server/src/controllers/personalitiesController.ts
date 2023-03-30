@@ -1,5 +1,5 @@
 import Express, { NextFunction, Request, Response } from "express";
-import { RequestSearch } from "@types";
+import { RequestParams, RequestSearch } from "@types";
 import { filterPersonalitiesByUrlParams } from "./filters/personalitiesFilter";
 import {
   createPersonality,
@@ -8,6 +8,10 @@ import {
   getPersonalitiesCount,
   updatePersonalityById,
 } from "@services/personalities";
+import {
+  PersonalityCreateData,
+  PersonalityUpdateData,
+} from "@services/personalities/types";
 
 export const getPersonalitiesList = async (
   req: Request<{}, {}, {}, RequestSearch>,
@@ -38,7 +42,7 @@ export const getPersonalitiesList = async (
 };
 
 export const addNewPersonality = async (
-  req: Request,
+  req: Request<{}, {}, PersonalityCreateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -57,7 +61,7 @@ export const addNewPersonality = async (
 };
 
 export const editPersonalityById = async (
-  req: Request,
+  req: Request<RequestParams, {}, PersonalityUpdateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -80,7 +84,7 @@ export const editPersonalityById = async (
 };
 
 export const deletePersonality = async (
-  req: Request,
+  req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {

@@ -1,5 +1,6 @@
 import Express, { NextFunction, Request, Response } from "express";
 import { getConfigs, updateConfigs } from "@services/configs";
+import { ConfigUpdateData } from "@services/configs/types";
 
 export const getConfigsList = async (
   req: Request,
@@ -16,7 +17,7 @@ export const getConfigsList = async (
 };
 
 export const editConfigs = async (
-  req: Request,
+  req: Request<{}, {}, ConfigUpdateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -26,8 +27,6 @@ export const editConfigs = async (
     chatGamesConfigs,
     triggersConfigs,
     pointsConfigs,
-    nonFollowTimerPoints,
-    nonSubTimerPoints,
     loyaltyConfigs,
     headConfigs,
   } = req.body;
@@ -38,8 +37,6 @@ export const editConfigs = async (
       timersConfigs: timersConfigs,
       chatGamesConfigs: chatGamesConfigs,
       triggersConfigs: triggersConfigs,
-      nonFollowTimerPoints: nonFollowTimerPoints,
-      nonSubTimerPoints: nonSubTimerPoints,
       pointsConfigs: pointsConfigs,
       loyaltyConfigs: loyaltyConfigs,
       headConfigs: headConfigs,

@@ -1,5 +1,5 @@
 import Express, { NextFunction, Request, Response } from "express";
-import { RequestSearch } from "@types";
+import { RequestParams, RequestSearch } from "@types";
 import { filterMoodsByUrlParams } from "./filters/moodsFilter";
 import {
   createMood,
@@ -8,6 +8,7 @@ import {
   getMoodsCount,
   updateMoodById,
 } from "@services/moods";
+import { MoodCreateData, MoodUpdateData } from "@services/moods/types";
 
 export const getMoodsList = async (
   req: Request<{}, {}, {}, RequestSearch>,
@@ -38,7 +39,7 @@ export const getMoodsList = async (
 };
 
 export const addNewMood = async (
-  req: Request,
+  req: Request<{}, {}, MoodCreateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -56,7 +57,7 @@ export const addNewMood = async (
 };
 
 export const editMoodById = async (
-  req: Request,
+  req: Request<RequestParams, {}, MoodUpdateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -79,7 +80,7 @@ export const editMoodById = async (
 };
 
 export const deleteMood = async (
-  req: Request,
+  req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {

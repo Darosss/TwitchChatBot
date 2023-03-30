@@ -1,5 +1,5 @@
 import Express, { NextFunction, Request, Response } from "express";
-import { RequestCommandsQuery } from "@types";
+import { RequestCommandsQuery, RequestParams } from "@types";
 import { filterCommandsByUrlParams } from "./filters/commandsFilter";
 import {
   createChatCommand,
@@ -8,6 +8,10 @@ import {
   getChatCommandsCount,
   updateChatCommandById,
 } from "@services/chatCommands";
+import {
+  ChatCommandCreateData,
+  ChatCommandUpdateData,
+} from "@services/chatCommands/types";
 
 export const getChatCommandsList = async (
   req: Request<{}, {}, {}, RequestCommandsQuery>,
@@ -42,7 +46,7 @@ export const getChatCommandsList = async (
 };
 
 export const addNewCommand = async (
-  req: Request,
+  req: Request<{}, {}, ChatCommandCreateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -80,7 +84,7 @@ export const addNewCommand = async (
 };
 
 export const editChatCommandById = async (
-  req: Request,
+  req: Request<RequestParams, {}, ChatCommandUpdateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -120,7 +124,7 @@ export const editChatCommandById = async (
 };
 
 export const deleteCommandById = async (
-  req: Request,
+  req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {

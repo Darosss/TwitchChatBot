@@ -1,5 +1,5 @@
 import Express, { NextFunction, Request, Response } from "express";
-import { RequestTimerQuery } from "@types";
+import { RequestParams, RequestTimerQuery } from "@types";
 import { filterTimersByUrlParams } from "./filters/timersFilter";
 import {
   createTimer,
@@ -8,6 +8,7 @@ import {
   getTimersCount,
   updateTimerById,
 } from "@services/timers";
+import { TimerCreateData, TimerUpdateData } from "@services/timers/types";
 
 export const getTimersList = async (
   req: Request<{}, {}, {}, RequestTimerQuery>,
@@ -43,7 +44,7 @@ export const getTimersList = async (
 };
 
 export const addNewTimer = async (
-  req: Request,
+  req: Request<{}, {}, TimerCreateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -85,7 +86,7 @@ export const addNewTimer = async (
 };
 
 export const editTimerById = async (
-  req: Request,
+  req: Request<RequestParams, {}, TimerUpdateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -129,7 +130,7 @@ export const editTimerById = async (
 };
 
 export const deleteTimer = async (
-  req: Request,
+  req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {

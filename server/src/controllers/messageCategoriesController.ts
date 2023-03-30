@@ -6,8 +6,9 @@ import {
   createMessageCategories,
   deleteMessageCategory,
 } from "@services/messageCategories";
-import { RequestQueryMessageCategories } from "@types";
+import { RequestParams, RequestQueryMessageCategories } from "@types";
 import { filterMessageCategoriesByUrlParams } from "./filters/messageCategoriesFilter";
+import { MessageCategoryData } from "@services/messageCategories/types";
 
 export const getMessageCategoriesList = async (
   req: Request<{}, {}, {}, RequestQueryMessageCategories>,
@@ -44,7 +45,7 @@ export const getMessageCategoriesList = async (
 };
 
 export const editMessageCategoryById = async (
-  req: Request,
+  req: Request<RequestParams, {}, MessageCategoryData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -71,7 +72,7 @@ export const editMessageCategoryById = async (
 };
 
 export const updateUsesCategoryById = async (
-  req: Request,
+  req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -92,7 +93,7 @@ export const updateUsesCategoryById = async (
 };
 
 export const addNewCategory = async (
-  req: Request,
+  req: Request<{}, {}, MessageCategoryData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -118,7 +119,7 @@ export const addNewCategory = async (
 };
 
 export const deleteMessageCategoryById = async (
-  req: Request,
+  req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {

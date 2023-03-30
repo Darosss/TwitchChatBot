@@ -19,6 +19,7 @@ import { getMessages, getMessagesCount } from "@services/messages";
 
 import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
 import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
+import { UserUpdateData } from "@services/users/types";
 
 export const getUsersList = async (
   req: Request<{}, {}, {}, RequestQueryUser>,
@@ -49,7 +50,7 @@ export const getUsersList = async (
 };
 
 export const getUsersProfile = async (
-  req: Request,
+  req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -65,7 +66,7 @@ export const getUsersProfile = async (
 };
 
 export const editUserProfile = async (
-  req: Request,
+  req: Request<RequestParams, {}, UserUpdateData, {}>,
   res: Response,
   next: NextFunction
 ) => {

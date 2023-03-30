@@ -1,5 +1,5 @@
 import Express, { NextFunction, Request, Response } from "express";
-import { RequestTriggerQuery } from "@types";
+import { RequestParams, RequestTriggerQuery } from "@types";
 import { filterTriggersByUrlParams } from "./filters/triggersFilter";
 import {
   createTrigger,
@@ -8,6 +8,7 @@ import {
   getTriggersCount,
   updateTriggerById,
 } from "@services/triggers";
+import { TriggerCreateData, TriggerUpdateData } from "@services/triggers/types";
 
 export const getTriggersList = async (
   req: Request<{}, {}, {}, RequestTriggerQuery>,
@@ -43,7 +44,7 @@ export const getTriggersList = async (
 };
 
 export const addNewTrigger = async (
-  req: Request,
+  req: Request<RequestParams, {}, TriggerCreateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -83,7 +84,7 @@ export const addNewTrigger = async (
 };
 
 export const editTriggerById = async (
-  req: Request,
+  req: Request<RequestParams, {}, TriggerUpdateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -125,7 +126,7 @@ export const editTriggerById = async (
 };
 
 export const deleteTrigger = async (
-  req: Request,
+  req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {

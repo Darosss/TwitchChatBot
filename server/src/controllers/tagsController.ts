@@ -1,5 +1,5 @@
 import Express, { NextFunction, Request, Response } from "express";
-import { RequestSearch } from "@types";
+import { RequestParams, RequestSearch } from "@types";
 import { filterTagsByUrlParams } from "./filters/tagsFilter";
 import {
   createTag,
@@ -8,6 +8,7 @@ import {
   getTagsCount,
   updateTagById,
 } from "@services/tags";
+import { TagCreateData, TagUpdateData } from "@services/tags/types";
 
 export const getTagsList = async (
   req: Request<{}, {}, {}, RequestSearch>,
@@ -38,7 +39,7 @@ export const getTagsList = async (
 };
 
 export const addNewTag = async (
-  req: Request,
+  req: Request<{}, {}, TagCreateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -56,7 +57,7 @@ export const addNewTag = async (
 };
 
 export const editTagById = async (
-  req: Request,
+  req: Request<RequestParams, {}, TagUpdateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -79,7 +80,7 @@ export const editTagById = async (
 };
 
 export const deleteTag = async (
-  req: Request,
+  req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {

@@ -7,15 +7,17 @@ import {
   getWidgetsCount,
   updateWidgetById,
 } from "@services/widgets";
+import { RequestParams, RequestSearch } from "@types";
+import { WidgetCreateData, WidgetUpdateData } from "@services/widgets/types";
 
 export const getWidgetsList = async (
-  req: Request<{}, {}, {}, any>,
+  req: Request<{}, {}, {}, RequestSearch>,
   res: Response,
   next: NextFunction
 ) => {
   const { page = 1, limit = 25 } = req.query;
 
-  const searchFilter = {}; // filterCommandsByUrlParams(req.query);
+  const searchFilter = {};
   try {
     const widgets = await getWidgets(searchFilter, {
       limit: limit,
@@ -36,7 +38,7 @@ export const getWidgetsList = async (
 };
 
 export const getWidgetById = async (
-  req: Request,
+  req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -54,7 +56,7 @@ export const getWidgetById = async (
 };
 
 export const addNewWidget = async (
-  req: Request,
+  req: Request<RequestParams, {}, WidgetCreateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -75,7 +77,7 @@ export const addNewWidget = async (
 };
 
 export const editWidgetById = async (
-  req: Request,
+  req: Request<RequestParams, {}, WidgetUpdateData, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -98,7 +100,7 @@ export const editWidgetById = async (
 };
 
 export const removeWidgetById = async (
-  req: Request,
+  req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {

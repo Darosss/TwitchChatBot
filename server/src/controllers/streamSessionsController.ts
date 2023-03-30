@@ -66,7 +66,7 @@ export const getCurrentSession = async (
 };
 
 export const getSessionById = async (
-  req: Request,
+  req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {
@@ -84,7 +84,7 @@ export const getSessionById = async (
 };
 
 export const getSessionStatisticsById = async (
-  req: Request,
+  req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {
