@@ -1,11 +1,14 @@
 import { Document, Types } from "mongoose";
 
-export interface UserModel {
+interface BaseModel {
   _id: string;
-  twitchId: string;
-  username: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface UserModel extends BaseModel {
+  twitchId: string;
+  username: string;
   privileges: number;
   points?: number;
   watchTime?: number;
@@ -60,8 +63,7 @@ export type StreamSessionDocument = StreamSessionModel & Document;
 
 export type TriggerMode = "WHOLE-WORD" | "STARTS-WITH" | "ALL";
 
-export interface TriggerModel {
-  _id: string;
+export interface TriggerModel extends BaseModel {
   name: string;
   enabled: boolean;
   chance: number;
@@ -74,8 +76,6 @@ export interface TriggerModel {
   personality: string | PersonalityModel;
   mood: string | MoodModel;
   tag: string | TagModel;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export type TriggerDocument = TriggerModel & Document;
@@ -122,8 +122,7 @@ export interface HeadConfigs {
   intervalCheckViewersPeek: number;
 }
 
-export interface ConfigModel {
-  _id: string;
+export interface ConfigModel extends BaseModel {
   commandsConfigs: CommandsConfigs;
   timersConfigs: TimersConfigs;
   chatGamesConfigs: ChatGamesConfigs;
@@ -131,14 +130,11 @@ export interface ConfigModel {
   pointsConfigs: PointsConfigs;
   loyaltyConfigs: LoyaltyConfigs;
   headConfigs: HeadConfigs;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export type ConfigDocument = ConfigModel & Document;
 
-export interface ChatCommandModel {
-  _id: string;
+export interface ChatCommandModel extends BaseModel {
   name: string;
   description?: string;
   enabled: boolean;
@@ -149,8 +145,6 @@ export interface ChatCommandModel {
   personality: string | PersonalityModel;
   mood: string | MoodModel;
   tag: string | TagModel;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export type ChatCommandDocument = ChatCommandModel & Document;
@@ -166,8 +160,7 @@ export interface AuthModel {
 
 export type AuthDocument = AuthModel & Document;
 
-export interface MessageCategoryModel {
-  _id: string;
+export interface MessageCategoryModel extends BaseModel {
   name: string;
   enabled: boolean;
   messages: string[];
@@ -175,8 +168,6 @@ export interface MessageCategoryModel {
   personality: string | PersonalityModel;
   mood: string | MoodModel;
   tag: string | TagModel;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export type MessageCategoryDocument = MessageCategoryModel & Document;
@@ -189,29 +180,22 @@ interface LayoutBreakpoint {
   h: number;
   static: boolean;
 }
-export interface WidgetsModel {
-  _id: string;
+export interface WidgetsModel extends BaseModel {
   name: string;
   layout: { [P: string]: LayoutBreakpoint[] };
   toolbox: { [P: string]: LayoutBreakpoint[] };
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export type WidgetsDocument = WidgetsModel & Document;
 
-export interface OverlayModel {
-  _id: string;
+export interface OverlayModel extends BaseModel {
   name: string;
   layout: Array;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export type OverlayDocument = OverlayModel & Document;
 
-export interface TimerModel {
-  _id: string;
+export interface TimerModel extends BaseModel {
   name: string;
   enabled: boolean;
   delay: number;
@@ -225,38 +209,27 @@ export interface TimerModel {
   personality: string | PersonalityModel;
   mood: string | MoodModel;
   tag: string | TagModel;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export type TimerDocument = TimerModel & Document;
 
-export interface MoodModel {
-  _id: string;
+export interface MoodModel extends BaseModel {
   name: string;
   enabled: boolean;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export type MoodDocument = MoodModel & Document;
 
-export interface PersonalityModel {
-  _id: string;
+export interface PersonalityModel extends BaseModel {
   name: string;
   enabled: boolean;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export type PersonalityDocument = PersonalityModel & Document;
 
-export interface TagModel {
-  _id: string;
+export interface TagModel extends BaseModel {
   name: string;
   enabled: boolean;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export type TagDocument = TagModel & Document;
