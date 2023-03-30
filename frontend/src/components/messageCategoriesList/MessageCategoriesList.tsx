@@ -100,6 +100,7 @@ export default function MessageCategoriesList() {
       payload: {
         category: category.category,
         messages: category.messages,
+        enabled: category.enabled,
         mood: category.mood._id,
         personality: category.personality._id,
         tag: category.tag._id,
@@ -163,6 +164,7 @@ export default function MessageCategoriesList() {
 
 const initialState: MessageCategoryCreateData = {
   category: "",
+  enabled: true,
   messages: [""],
   personality: "",
   tag: "",
@@ -175,8 +177,8 @@ function reducer(
   switch (action.type) {
     case "SET_CATEGORY":
       return { ...state, category: action.payload };
-    // case "SET_ENABLED":
-    //   return { ...state, enabled: action.payload || !state.enabled };
+    case "SET_ENABLED":
+      return { ...state, enabled: action.payload || !state.enabled };
     // case "SET_DESC":
     //   return { ...state, description: action.payload };
     case "SET_MESSAGES":

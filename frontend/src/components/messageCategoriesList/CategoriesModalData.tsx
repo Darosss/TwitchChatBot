@@ -24,6 +24,18 @@ export default function CategoriesModalData(props: {
           }}
         />
       </div>
+      <div> Enabled </div>
+      <div>
+        <button
+          onClick={() => dispatch({ type: "SET_ENABLED" })}
+          className={
+            `${!state.enabled ? "danger-button" : "primary-button"} ` +
+            "common-button "
+          }
+        >
+          {state.enabled.toString()}
+        </button>
+      </div>
       <div>Tag</div>
       <div>
         {generateSelectModes(

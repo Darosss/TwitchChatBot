@@ -71,6 +71,11 @@ export default function CategoriesData(props: {
                 <TableDataWrapper>
                   <div>Name</div>
                   <div>{category.category}</div>
+                  <div>Enabled</div>
+                  {generateEnabledDisabledDiv(
+                    category.enabled,
+                    category.enabled.toString().toUpperCase()
+                  )}
                   <div>Uses</div>
                   <div>{category.uses}</div>
                   <div>Tag:</div>
