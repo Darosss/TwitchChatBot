@@ -147,6 +147,7 @@ export const getTriggersWords = async (
 ): Promise<undefined | string[]> => {
   try {
     const pipeline: PipelineStage[] = [
+      { $match: { enabled: true } },
       { $group: { _id: null, words: { $push: "$words" } } },
       {
         $project: {
@@ -172,6 +173,7 @@ export const getTriggersWords = async (
     }
 
     const triggerWords = await Trigger.aggregate(pipeline);
+
     if (triggerWords.length > 0) {
       const words: string[] = triggerWords[0].words;
       return words.sort((a, b) => b.length - a.length);

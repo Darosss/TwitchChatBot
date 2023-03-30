@@ -183,6 +183,7 @@ export const getChatCommandsAliases = async (
 ): Promise<string[] | undefined> => {
   try {
     const pipeline: PipelineStage[] = [
+      { $match: { enabled: true } },
       { $group: { _id: null, aliases: { $push: "$aliases" } } },
       {
         $project: {

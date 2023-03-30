@@ -67,7 +67,10 @@ export const getRandomCategoryMessage = async (
   modesEnabled: boolean = false
 ) => {
   try {
-    const pipeline: PipelineStage[] = [{ $sample: { size: 1 } }];
+    const pipeline: PipelineStage[] = [
+      { $match: { enabled: true } },
+      { $sample: { size: 1 } },
+    ];
 
     if (modesEnabled) {
       pipeline.unshift(...modesPipeline);

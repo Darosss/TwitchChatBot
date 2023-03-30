@@ -141,6 +141,7 @@ export const getTimersDataWithModesEnabled = async (): Promise<
 > => {
   try {
     const pipeline: PipelineStage[] = [
+      { $match: { enabled: true } },
       ...modesPipeline,
       {
         $project: {
