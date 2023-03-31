@@ -14,6 +14,6 @@ export interface ManyOverlaysFindOptions extends OverlaysFindOptions {
 }
 
 export interface OverlayCreateData
-  extends Pick<OverlayModel, "name" | "layout"> {}
+  extends Pick<OverlayModel, "name" | "layout" | "toolbox"> {}
 
-export interface OverlayUpdateData extends Partial<ChatCommandOptionalData> {}
+export interface OverlayUpdateData extends Partial<OverlayCreateData> {}
