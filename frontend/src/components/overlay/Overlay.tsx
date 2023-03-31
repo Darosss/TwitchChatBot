@@ -28,7 +28,7 @@ export default function Overlay() {
     getInitialCurrentBreakpoint()
   );
 
-  const { data, loading, error } = getOverlayById(overlayId || "");
+  const { data, error } = getOverlayById(overlayId || "");
   const { refetchData: fetchEditOverlay } = editOverlayById(overlayId || "", {
     layout: layoutOverlay,
     toolbox: toolbox,
@@ -43,12 +43,10 @@ export default function Overlay() {
   }, [data]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
-
   return (
     <div>
       <ReactGrid
-        layoutName={data.data.name}
+        layoutName={data?.data.name || ""}
         layoutState={[layoutOverlay, setLayoutOverlay]}
         toolboxState={[toolbox, setToolbox]}
         currentBreakpointState={[currentBreakpoint, setCurrentBreakpoint]}
