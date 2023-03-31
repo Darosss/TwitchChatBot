@@ -13,6 +13,10 @@ import {
   Overlay,
   removeOverlayById,
 } from "@services/OverlayService";
+import CardboxWrapper, {
+  CardboxInput,
+  CardboxItem,
+} from "@components/cardboxWrapper/CardboxWrapper";
 
 export default function OverlaysList() {
   const { data, loading, error, refetchData } = getOverlays();
@@ -60,38 +64,36 @@ export default function OverlaysList() {
 
   return (
     <>
-      <div className="overlays-wrapper">
-        <div className="overlays-header">Overlays</div>
-        <div className="overlays-list">
-          <div className="overlays-btn">
-            <input
-              type="text"
-              placeholder="Name"
-              value={overlayName}
-              onChange={(e) => setLayoutName(e.target.value)}
-            ></input>
-            <button
-              onClick={() => createNewOverlay()}
-              className="common-button primary-button"
+      <CardboxWrapper title={"Overlays list"}>
+        <CardboxInput title="Create overlay">
+          <input
+            type="text"
+            placeholder="Name"
+            value={overlayName}
+            onChange={(e) => setLayoutName(e.target.value)}
+          ></input>
+          <button
+            onClick={() => createNewOverlay()}
+            className="common-button primary-button"
+          >
+            Create
+          </button>
+        </CardboxInput>
+        {overlays.map((overlay, index) => {
+          return (
+            <CardboxItem
+              title={overlay.name}
+              onClickX={() => {
+                setLayoutIdDelete(overlay._id);
+              }}
+              key={index}
             >
-              Create
-            </button>
-          </div>
-          {overlays.map((overlay, index) => {
-            return (
-              <div key={index} className="widget-overlays-div">
-                <button
-                  onClick={() => setLayoutIdDelete(overlay._id)}
-                  className="common-button danger-button remove-overlay-btn"
-                >
-                  X
-                </button>
-                <Link to={`${overlay._id}`}>{overlay.name}</Link>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+              <Link to={`${overlay._id}`}>Show</Link>
+              <Link to={`${overlay._id}/editor`}>Edit</Link>
+            </CardboxItem>
+          );
+        })}
+      </CardboxWrapper>
     </>
   );
 }
