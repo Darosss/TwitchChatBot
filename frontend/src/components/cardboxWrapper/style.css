@@ -1,0 +1,80 @@
+.cardbox-wrapper * {
+  font-size: 1vw;
+}
+
+.cardbox-wrapper {
+  background-color: var(--base-bg-color);
+  height: 100vh;
+}
+
+.cardbox-header {
+  text-align: center;
+  font-size: xx-large;
+}
+
+.cardbox-list {
+  display: flex;
+}
+
+.cardbox-list > div,
+.cardbox-list > button {
+  border: 0.1rem solid black;
+  flex: 0 1 15%;
+  margin: 0.5rem;
+  width: 15vw;
+  height: 25vh;
+  display: flex;
+  justify-content: center;
+}
+
+.cardbox-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardbox-title {
+  height: 40%;
+  text-align: center;
+  color: black;
+  background-color: var(--base-color-info);
+  font-size: 3vmin;
+  overflow-y: hidden;
+}
+
+.cardbox-content {
+  display: flex;
+  width: 100%;
+  height: 60%;
+  text-align: center;
+  align-items: end;
+}
+
+.cardbox-content > a,
+.cardbox-content > button {
+  background-color: var(--base-bg-color-action);
+  width: 35%;
+  height: 5vh;
+}
+
+.cardbox-content > a:hover,
+.cardbox-content > button:hover {
+  color: white;
+  border: 1px solid var(--base-bg-color-action);
+}
+
+.remove-cardbox-btn {
+  position: absolute;
+  height: 25%;
+  width: 25%;
+  right: 0;
+  bottom: 0;
+}
+
+.cardbox-item.cardbox-input input {
+  border-top: 1px solid var(--base-bg-color);
+  border-right: 1px solid var(--base-bg-color);
+  width: 100%;
+  margin-right: 0.1rem;
+  font-size: x-large;
+}
