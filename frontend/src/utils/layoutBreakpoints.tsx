@@ -16,3 +16,12 @@ export const getDefaultBreakpoints = {
   xs: 480,
   xxs: 200,
 };
+
+export const getDefaultCols = {
+  ulg: 16,
+  lg: 12,
+  md: 10,
+  sm: 6,
+  xs: 4,
+  xxs: 2,
+};
