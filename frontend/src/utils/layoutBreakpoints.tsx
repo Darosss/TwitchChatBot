@@ -7,3 +7,12 @@ export const getInitialCurrentBreakpoint = () => {
   else if (width >= 480) return "xs";
   else return "xxs";
 };
+
+export const getDefaultBreakpoints = {
+  ulg: 1700,
+  lg: 1200,
+  md: 996,
+  sm: 768,
+  xs: 480,
+  xxs: 200,
+};
