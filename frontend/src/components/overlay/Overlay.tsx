@@ -16,7 +16,8 @@ import { editOverlayById, getOverlayById } from "@services/OverlayService";
 
 const components = new Map([["overlay-redemptions", Redemptions]]);
 
-export default function Overlay() {
+export default function Overlay(params: { editor?: boolean }) {
+  const { editor = false } = params;
   const { overlayId } = useParams();
   const [layoutOverlay, setLayoutOverlay] = useState<ReactGridLayout.Layouts>(
     initialLayoutOverlays
@@ -52,6 +53,7 @@ export default function Overlay() {
         currentBreakpointState={[currentBreakpoint, setCurrentBreakpoint]}
         componentsMap={components}
         onEdit={fetchEditOverlay}
+        showDrawer={editor}
       ></ReactGrid>
     </div>
   );
