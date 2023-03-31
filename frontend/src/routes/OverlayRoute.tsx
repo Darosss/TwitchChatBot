@@ -7,7 +7,8 @@ export function OverlayRoutes() {
     <Routes>
       <Route>
         <Route index element={<OverlaysList />} />
-        <Route path=":overlayId" element={<Overlay />} />
+        <Route path=":overlayId" element={<Overlay editor={false} />} />
+        <Route path=":overlayId/editor" element={<Overlay editor={true} />} />
 
         <Route path="*" element={<>Not found</>} />
       </Route>
