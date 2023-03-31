@@ -190,7 +190,8 @@ export type WidgetsDocument = WidgetsModel & Document;
 
 export interface OverlayModel extends BaseModel {
   name: string;
-  layout: Array;
+  layout: { [P: string]: LayoutBreakpoint[] };
+  toolbox: { [P: string]: LayoutBreakpoint[] };
 }
 
 export type OverlayDocument = OverlayModel & Document;
