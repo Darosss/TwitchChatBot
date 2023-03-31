@@ -1,0 +1,41 @@
+.overlay-header {
+  height: 100%;
+  background-color: transparent;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+}
+
+.overlay-header > div {
+  text-align: center;
+}
+
+.overlay-redemption {
+  animation-name: change-colors;
+  animation-duration: 15s;
+  animation-iteration-count: infinite;
+}
+
+#overlay-redemption img {
+  width: 10%;
+}
+
+.overlay-hidden {
+  border: 0px;
+  visibility: hidden;
+}
+
+@keyframes change-colors {
+  0% {
+    color: red;
+  }
+  25% {
+    color: yellow;
+  }
+  50% {
+    color: blue;
+  }
+  100% {
+    color: green;
+  }
+}

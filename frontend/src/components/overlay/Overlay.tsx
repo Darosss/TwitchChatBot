@@ -1,50 +1,60 @@
 import "./style.css";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
+import React, { useEffect, useState } from "react";
+import ReactGridLayout from "react-grid-layout";
 
-import { SocketContext } from "@context/SocketContext";
+import Redemptions from "./redemptions";
+import {
+  initialLayoutOverlays,
+  initialToolboxOverlays,
+} from "src/layout/initialLayoutOverlays";
+import { useParams } from "react-router-dom";
+import { getInitialCurrentBreakpoint } from "@utils/getInitialCurrentBreakpoint";
+import ReactGrid from "@components/reactGrid";
+import { editOverlayById, getOverlayById } from "@services/OverlayService";
+
+const components = new Map([["overlay-redemptions", Redemptions]]);
 
 export default function Overlay() {
-  const socket = useContext(SocketContext);
-  const overlayRef = useRef<HTMLDivElement>(null);
+  const { overlayId } = useParams();
+  const [layoutOverlay, setLayoutOverlay] = useState<ReactGridLayout.Layouts>(
+    initialLayoutOverlays
+  );
+  const [toolbox, setToolbox] = useState<ReactGridLayout.Layouts>(
+    initialToolboxOverlays
+  );
+  const [currentBreakpoint, setCurrentBreakpoint] = useState(
+    getInitialCurrentBreakpoint()
+  );
 
-  const [redemptionInfo, setRedemptionInfo] = useState("");
-  const [redemptionImg, setRedemptionImg] = useState("");
+  const { data, loading, error } = getOverlayById(overlayId || "");
+  const { refetchData: fetchEditOverlay } = editOverlayById(overlayId || "", {
+    layout: layoutOverlay,
+    toolbox: toolbox,
+  });
 
   useEffect(() => {
-    socket?.on("onRedemption", (data) => {
-      const { rewardTitle, userDisplayName, rewardImage } = data;
+    if (!data) return;
+    const { data: layoutData } = data;
 
-      let redemptionAudio: HTMLAudioElement;
+    setLayoutOverlay(layoutData.layout);
+    setToolbox(layoutData.toolbox);
+  }, [data]);
 
-      setRedemptionImg(rewardImage);
-      setRedemptionInfo(`${userDisplayName} has redeemed - ${rewardTitle}`);
-      overlayRef.current?.classList.remove("overlay-hidden");
-
-      setTimeout(() => {
-        redemptionAudio?.pause();
-        overlayRef.current?.classList.add("overlay-hidden");
-      }, Number(import.meta.env.VITE_REDEMPTION_ALERT_MAX_TIME!) * 1000);
-
-      if (rewardTitle.includes(import.meta.env.VITE_PREFIX_ALERT_SOUND!)) {
-        const redemptionAudio = new Audio(
-          `/alertSounds/${rewardTitle.split(":")[1].trim()}.mp3`
-        );
-        redemptionAudio.volume = 0.03;
-        redemptionAudio.play();
-      }
-    });
-
-    return () => {
-      socket.off("onRedemption");
-    };
-  }, [socket]);
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading!</>;
 
   return (
-    <div id="overlay-header">
-      <div ref={overlayRef} id="overlay-redemption" className="overlay-hidden">
-        {redemptionInfo}
-        {redemptionImg ? <img alt="no" src={redemptionImg} /> : null}
-      </div>
+    <div>
+      <ReactGrid
+        layoutName={data.data.name}
+        layoutState={[layoutOverlay, setLayoutOverlay]}
+        toolboxState={[toolbox, setToolbox]}
+        currentBreakpointState={[currentBreakpoint, setCurrentBreakpoint]}
+        componentsMap={components}
+        onEdit={fetchEditOverlay}
+      ></ReactGrid>
     </div>
   );
 }
