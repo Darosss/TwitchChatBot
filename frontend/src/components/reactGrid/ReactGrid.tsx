@@ -25,6 +25,7 @@ export default function ReactGrid<T = unknown>(props: {
   currentBreakpointState: CurrentBreakpointState;
   componentsMap: Map<string, () => JSX.Element>;
   onEdit: () => Promise<T>;
+  showDrawer?: boolean;
 }) {
   const {
     layoutName,
@@ -33,6 +34,7 @@ export default function ReactGrid<T = unknown>(props: {
     currentBreakpointState,
     componentsMap,
     onEdit,
+    showDrawer = true,
   } = props;
   const [layout, setLayout] = layoutState;
   const [toolbox, setToolbox] = toolboxState;
@@ -116,15 +118,17 @@ export default function ReactGrid<T = unknown>(props: {
 
   return (
     <div>
-      <LayoutDrawerBar
-        layoutName={layoutName}
-        toolbox={toolbox}
-        currentBreakpoint={currentBreakpoint}
-        onTakeItem={onTakeItem}
-        setLayout={setLayout}
-        isEditState={[isEdit, setIsEdit]}
-        editFn={onEdit}
-      />
+      {showDrawer ? (
+        <LayoutDrawerBar
+          layoutName={layoutName}
+          toolbox={toolbox}
+          currentBreakpoint={currentBreakpoint}
+          onTakeItem={onTakeItem}
+          setLayout={setLayout}
+          isEditState={[isEdit, setIsEdit]}
+          editFn={onEdit}
+        />
+      ) : null}
 
       <ResponsiveReactGridLayout
         onLayoutChange={onLayoutChange}
