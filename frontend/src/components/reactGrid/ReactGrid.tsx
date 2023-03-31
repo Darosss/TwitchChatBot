@@ -4,6 +4,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import PreviousPage from "@components/previousPage";
 import { addNotification } from "@utils/getNotificationValues";
+import {
+  getDefaultBreakpoints,
+  getDefaultCols,
+} from "@utils/layoutBreakpoints";
 
 type LayoutState = [
   ReactGridLayout.Layouts,
@@ -128,14 +132,13 @@ export default function ReactGrid<T = unknown>(props: {
         compactType={null}
         layouts={layout}
         onBreakpointChange={onBreakpointChange}
-        breakpoints={{ ulg: 1500, lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+        breakpoints={getDefaultBreakpoints}
         preventCollision={false}
         rowHeight={30}
-        cols={{ ulg: 16, lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+        cols={getDefaultCols}
         autoSize={true}
-        margin={{
-          ulg: [12, 12],
-          lg: [10, 10],
+        containerPadding={{
+          lg: [12, 12],
           md: [8, 8],
           sm: [6, 6],
           xs: [4, 4],
