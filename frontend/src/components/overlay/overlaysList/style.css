@@ -1,0 +1,56 @@
+.overlays-wrapper {
+  background-color: var(--base-bg-color);
+  height: 100vh;
+}
+.overlays-header {
+  text-align: center;
+  font-size: xx-large;
+}
+
+.overlays-list {
+  display: flex;
+}
+
+.overlays-list > div,
+.overlays-list > button {
+  border: 0.1rem solid black;
+  flex: 0 1 10%;
+  margin: 0.5rem;
+  width: 10vw;
+  height: 15vh;
+  display: flex;
+  justify-content: center;
+}
+
+div.overlays-btn {
+  flex: 0 1 25%;
+}
+
+div.overlays-btn input {
+  width: 100%;
+  margin-right: 0.1rem;
+  font-size: x-large;
+}
+
+.overlays-btn input {
+  width: 50%;
+}
+
+.overlays-list a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.remove-overlay-btn {
+  position: absolute;
+  height: 25%;
+  width: 25%;
+  right: 0;
+}
+
+.widget-overlays-div {
+  position: relative;
+}
