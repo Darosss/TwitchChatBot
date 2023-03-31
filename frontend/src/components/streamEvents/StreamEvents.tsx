@@ -185,14 +185,17 @@ export default function StreamEvents() {
   );
 }
 
-function ToolBox(props: { items: any; onTakeItem: any }) {
+function ToolBox(props: {
+  items: ReactGridLayout.Layout[];
+  onTakeItem: (item: ReactGridLayout.Layout) => void;
+}) {
   const { items, onTakeItem } = props;
   return (
     <>
       <div className="widgets-toolbox-title">Available widgets</div>
       <div className="widgets-toolbox">
         <div className="widgets-toolbox-items">
-          {items.map((item: ReactGridLayout.Layout) => (
+          {items.map((item) => (
             <ToolBoxItem key={item.i} item={item} onTakeItem={onTakeItem} />
           ))}
         </div>
@@ -201,7 +204,10 @@ function ToolBox(props: { items: any; onTakeItem: any }) {
   );
 }
 
-function ToolBoxItem(props: { item: any; onTakeItem: any }) {
+function ToolBoxItem(props: {
+  item: ReactGridLayout.Layout;
+  onTakeItem: (item: ReactGridLayout.Layout) => void;
+}) {
   const { item, onTakeItem } = props;
   return (
     <div
