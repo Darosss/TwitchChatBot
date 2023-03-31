@@ -10,7 +10,7 @@ import {
   initialToolboxOverlays,
 } from "src/layout/initialLayoutOverlays";
 import { useParams } from "react-router-dom";
-import { getInitialCurrentBreakpoint } from "@utils/getInitialCurrentBreakpoint";
+import { getInitialCurrentBreakpoint } from "@utils/layoutBreakpoints";
 import ReactGrid from "@components/reactGrid";
 import { editOverlayById, getOverlayById } from "@services/OverlayService";
 

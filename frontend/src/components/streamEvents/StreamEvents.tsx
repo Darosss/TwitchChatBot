@@ -17,7 +17,7 @@ import {
 import { useParams } from "react-router-dom";
 import { editWidgetById, getWidgetById } from "@services/WidgetsService";
 import StreamModes from "./streamModes";
-import { getInitialCurrentBreakpoint } from "@utils/getInitialCurrentBreakpoint";
+import { getInitialCurrentBreakpoint } from "@utils/layoutBreakpoints";
 import ReactGrid from "@components/reactGrid";
 
 const components = new Map([
