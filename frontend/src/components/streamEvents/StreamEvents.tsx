@@ -29,7 +29,8 @@ const components = new Map([
   ["stream-modes", StreamModes],
 ]);
 
-export default function StreamEvents() {
+export default function StreamEvents(params: { editor?: boolean }) {
+  const { editor = false } = params;
   const { eventsId } = useParams();
   const [layoutWidgets, setLayoutWidgets] =
     useState<ReactGridLayout.Layouts>(initialLayoutWidgets);
@@ -66,6 +67,7 @@ export default function StreamEvents() {
         currentBreakpointState={[currentBreakpoint, setCurrentBreakpoint]}
         componentsMap={components}
         onEdit={fetchEditWidgets}
+        showDrawer={editor}
       ></ReactGrid>
     </div>
   );
