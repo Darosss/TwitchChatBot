@@ -255,10 +255,24 @@ function LayoutDrawerBar<T = unknown>(props: {
               </span>
             </div>
             <div>
-              <button onClick={toggleStaticMode}>Toggle Edit</button>
+              <button
+                className={`common-button ${
+                  isEdit ? "danger-button" : "primary-button"
+                }`}
+                onClick={toggleStaticMode}
+              >
+                Toggle Edit
+              </button>
             </div>
             <div>
-              {!isEdit ? <button onClick={handleOnSave}>Save</button> : null}
+              {!isEdit ? (
+                <button
+                  className="common-button primary-button"
+                  onClick={handleOnSave}
+                >
+                  Save
+                </button>
+              ) : null}
             </div>
           </div>
         </div>
