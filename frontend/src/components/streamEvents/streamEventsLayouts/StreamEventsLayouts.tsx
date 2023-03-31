@@ -13,6 +13,11 @@ import {
 } from "src/layout/initialLayoutWidgets";
 import { handleDeleteLayout } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
+import CardboxWrapper from "@components/cardboxWrapper";
+import {
+  CardboxInput,
+  CardboxItem,
+} from "@components/cardboxWrapper/CardboxWrapper";
 
 export default function StreamNotifications() {
   const { data, loading, error, refetchData } = getWidgets();
@@ -64,9 +69,8 @@ export default function StreamNotifications() {
 
   return (
     <>
-      <div className="events-layouts-header">Stream events layouts</div>
-      <div className="events-layouts-list">
-        <div className="events-layouts-btn">
+      <CardboxWrapper title={"Events widgets list"}>
+        <CardboxInput title="Create widgets layout">
           <input
             type="text"
             placeholder="Name"
@@ -79,21 +83,22 @@ export default function StreamNotifications() {
           >
             Create
           </button>
-        </div>
+        </CardboxInput>
         {layouts.map((layout, index) => {
           return (
-            <div key={index} className="widget-layouts-div">
-              <button
-                onClick={() => setLayoutIdToDelete(layout._id)}
-                className="common-button danger-button remove-layout-btn"
-              >
-                X
-              </button>
-              <Link to={`${layout._id}`}>{layout.name}</Link>
-            </div>
+            <CardboxItem
+              title={layout.name}
+              onClickX={() => {
+                setLayoutIdToDelete(layout._id);
+              }}
+              key={index}
+            >
+              <Link to={`${layout._id}`}>Show</Link>
+              <Link to={`${layout._id}/editor`}>Edit</Link>
+            </CardboxItem>
           );
         })}
-      </div>
+      </CardboxWrapper>
     </>
   );
 }
