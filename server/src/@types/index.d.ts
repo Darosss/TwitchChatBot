@@ -7,6 +7,11 @@ import {
   SocketData,
 } from "@libs/types";
 import { ParamsDictionary, Query } from "express-serve-static-core";
+import {
+  MessageCategoryModel,
+  StreamSessionModel,
+  TriggerModel,
+} from "@models/types";
 
 declare global {
   namespace Express {
@@ -25,47 +30,52 @@ interface RequestParams extends ParamsDictionary {
   id: string;
 }
 
-interface RequestQuery extends Query {
+interface RequestQuery<T = unknown> extends Query {
   limit?: number;
   page?: number;
+  sortBy?: keyof T;
+  sortOrder?: "asc" | "desc";
 }
 
-interface RequestSearch extends RequestQuery {
+interface RequestSearch<T> extends RequestQuery<T> {
   search_name?: string;
 }
 
-interface RequestSearchDate {
+interface RequestSearchDate<T> extends RequestSearch<T> {
   start_date?: Date;
   end_date?: Date;
 }
 
-interface RequestQueryMessage extends RequestSearch, RequestSearchDate {
+interface RequestQueryMessage extends RequestSearchDate<MessageModel> {
   owner?: string;
 }
 
-interface RequestQueryMessageCategories extends RequestQuery {
-  category?: string;
+interface RequestQueryMessageCategories
+  extends RequestSearchDate<MessageCategoryModel> {
   messages?: string;
 }
 
-interface RequestQueryUser extends RequestSearch {
+interface RequestQueryUser extends RequestSearch<UserModel> {
   seen_start?: Date;
   seen_end?: Date;
   privilege?: number;
   created_start?: Date;
   created_end?: Date;
 }
-interface RequestQuerySession extends RequestSearch, RequestSearchDate {
+
+interface RequestQueryLatestEldestMsgs extends RequestSearch<MessageModel> {}
+
+interface RequestQuerySession extends RequestSearchDate<StreamSessionModel> {
   tags?: string;
   categories?: string;
 }
 
-interface RequestRedemptionQuery extends RequestSearch, RequestSearchDate {
+interface RequestRedemptionQuery extends RequestSearchDate<RedemptionModel> {
   receiver?: string;
   cost?: number;
   message?: string;
 }
-interface RequestCommandsQuery extends RequestSearch, RequestSearchDate {
+interface RequestCommandsQuery extends RequestSearchDate<ChatCommandModel> {
   created?: string;
   privilege?: number;
   description?: string;
@@ -73,12 +83,14 @@ interface RequestCommandsQuery extends RequestSearch, RequestSearchDate {
   messages?: string;
 }
 
-interface RequestTriggerQuery extends RequestSearch, RequestSearchDate {
+interface RequestTriggerQuery extends RequestSearchDate<TriggerModel> {
   words?: string;
   messages?: string;
 }
 
-interface RequestTimerQuery extends RequestSearch, RequestSearchDate {
+interface RequestTimerQuery
+  extends RequestQuery<TimerModel>,
+    RequestSearchDate {
   messages?: string;
 }
 
