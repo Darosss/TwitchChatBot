@@ -103,18 +103,13 @@ table thead th {
   position: sticky;
   z-index: 1;
   top: 0;
-  font-size: 1.2rem;
+  font-size: 1.2vw;
 }
 
 table th {
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
-}
-
-table th:hover {
-  color: var(--base-color-link);
-  background-color: var(--base-bg-color-border);
 }
 
 table tbody {
@@ -125,7 +120,6 @@ table tbody {
 .table-list-wrapper {
   font-size: 0.9rem;
   height: 80vh;
-  overflow-x: hidden;
   overflow-y: scroll;
 }
 /* DEFAULTS TABLES */
