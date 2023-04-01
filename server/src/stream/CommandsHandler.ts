@@ -109,7 +109,7 @@ class CommandsHandler {
     );
 
     mostUsedCommands.forEach((command) => {
-      notFoundCommandMessage += ` [${command.aliases.join(", ")}]`;
+      notFoundCommandMessage += ` ${this.configs.commandsPrefix}${command.aliases[0]} `;
     });
 
     return notFoundCommandMessage;
