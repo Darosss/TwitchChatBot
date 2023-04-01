@@ -3,6 +3,7 @@ server/dist
 server/node_modules
 server/logs
 
+
 *.temp.*
 
 #FRONTEND
@@ -11,7 +12,7 @@ server/logs
 frontend/node_modules
 frontend/.pnp
 frontend/.pnp.js
-frontend/public/alert-sounds/*
+frontend/public/alertSounds/*
 
 # testing
 /coverage
