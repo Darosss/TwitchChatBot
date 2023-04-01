@@ -24,14 +24,19 @@ export const getStreamSessionsList = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { page = 1, limit = 50 } = req.query;
+  const {
+    page = 1,
+    limit = 50,
+    sortBy = "sessionStart",
+    sortOrder = "desc",
+  } = req.query;
 
   const searchFilter = filterSessionByUrlParams(req.query);
   try {
     const streamSessions = await getStreamSessions(searchFilter, {
       limit: limit,
       skip: page,
-      sort: { sessionStart: -1 },
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
     });
 
     const count = await getStreamSessionsCount(searchFilter);

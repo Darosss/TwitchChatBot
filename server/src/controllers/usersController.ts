@@ -2,6 +2,7 @@ import Express, { NextFunction, Request, Response } from "express";
 import {
   RequestParams,
   RequestQuery,
+  RequestQueryLatestEldestMsgs,
   RequestQueryMessage,
   RequestQueryUser,
   RequestRedemptionQuery,
@@ -26,14 +27,18 @@ export const getUsersList = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { page = 1, limit = 50 } = req.query;
+  const {
+    page = 1,
+    limit = 50,
+    sortBy = "lastSeen",
+    sortOrder = "desc",
+  } = req.query;
   const searchFilter = filterUsersByUrlParams(req.query);
-
   try {
     const users = await getUsers(searchFilter, {
       limit: limit,
       skip: page,
-      sort: { lastSeen: -1 },
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
     });
 
     const count = await getUserCount(searchFilter);
@@ -148,7 +153,7 @@ export const getUserRedemptions = async (
 };
 
 export const getLatestEldestUserMessages = async (
-  req: Request<RequestParams, {}, {}, RequestQuery>,
+  req: Request<RequestParams, {}, {}, RequestQueryLatestEldestMsgs>,
   res: Response,
   next: NextFunction
 ) => {

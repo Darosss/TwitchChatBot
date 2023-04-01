@@ -9,9 +9,10 @@ import {
   updateMoodById,
 } from "@services/moods";
 import { MoodCreateData, MoodUpdateData } from "@services/moods/types";
+import { MoodModel } from "@models/types";
 
 export const getMoodsList = async (
-  req: Request<{}, {}, {}, RequestSearch>,
+  req: Request<{}, {}, {}, RequestSearch<MoodModel>>,
   res: Response,
   next: NextFunction
 ) => {

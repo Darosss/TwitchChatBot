@@ -9,9 +9,10 @@ import {
 } from "@services/overlays";
 import { RequestParams, RequestSearch } from "@types";
 import { OverlayCreateData, OverlayUpdateData } from "@services/overlays/types";
+import { OverlayModel } from "@models/types";
 
 export const getOverlaysList = async (
-  req: Request<{}, {}, {}, RequestSearch>,
+  req: Request<{}, {}, {}, RequestSearch<OverlayModel>>,
   res: Response,
   next: NextFunction
 ) => {

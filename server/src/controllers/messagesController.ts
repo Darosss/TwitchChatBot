@@ -8,14 +8,19 @@ export const getMessagesList = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { page = 1, limit = 50 } = req.query;
+  const {
+    page = 1,
+    limit = 50,
+    sortBy = "date",
+    sortOrder = "desc",
+  } = req.query;
 
   const searchFilter = await filterMessagesByUrlParams(req.query);
   try {
     const messages = await getMessages(searchFilter, {
       limit: limit,
       skip: page,
-      sort: { date: -1 },
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
       select: { __v: 0 },
     });
 

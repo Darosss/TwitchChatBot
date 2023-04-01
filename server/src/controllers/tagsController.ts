@@ -9,9 +9,10 @@ import {
   updateTagById,
 } from "@services/tags";
 import { TagCreateData, TagUpdateData } from "@services/tags/types";
+import { TagModel } from "@models/types";
 
 export const getTagsList = async (
-  req: Request<{}, {}, {}, RequestSearch>,
+  req: Request<{}, {}, {}, RequestSearch<TagModel>>,
   res: Response,
   next: NextFunction
 ) => {

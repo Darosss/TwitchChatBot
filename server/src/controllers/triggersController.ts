@@ -15,7 +15,12 @@ export const getTriggersList = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { page = 1, limit = 50 } = req.query;
+  const {
+    page = 1,
+    limit = 50,
+    sortBy = "createdAt",
+    sortOrder = "desc",
+  } = req.query;
 
   const searchFilter = filterTriggersByUrlParams(req.query);
   try {
@@ -27,7 +32,7 @@ export const getTriggersList = async (
         { path: "tag", select: { _id: 1, name: 1, enabled: true } },
         { path: "mood", select: { _id: 1, name: 1, enabled: true } },
       ],
-      sort: { createdAt: -1 },
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
     });
 
     const count = await getTriggersCount(searchFilter);

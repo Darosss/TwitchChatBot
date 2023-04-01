@@ -18,7 +18,12 @@ export const getChatCommandsList = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { page = 1, limit = 25 } = req.query;
+  const {
+    page = 1,
+    limit = 25,
+    sortBy = "createdAt",
+    sortOrder = "desc",
+  } = req.query;
 
   const searchFilter = filterCommandsByUrlParams(req.query);
   try {
@@ -30,7 +35,7 @@ export const getChatCommandsList = async (
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
       ],
-      sort: { createdAt: -1 },
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
     });
 
     const count = await getChatCommandsCount(searchFilter);

@@ -8,16 +8,19 @@ export const getRedemptionsList = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { page = 1, limit = 50 } = req.query;
+  const {
+    page = 1,
+    limit = 50,
+    sortBy = "redemptionDate",
+    sortOrder = "desc",
+  } = req.query;
 
   const searchFilter = filterRedemptionsByUrlParams(req.query);
   try {
     const redemptions = await getRedemptions(searchFilter, {
       limit: limit,
       skip: page,
-      sort: {
-        redemptionDate: -1,
-      },
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
     });
 
     const count = await getRedemptionsCount(searchFilter);

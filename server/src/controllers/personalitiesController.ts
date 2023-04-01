@@ -12,9 +12,10 @@ import {
   PersonalityCreateData,
   PersonalityUpdateData,
 } from "@services/personalities/types";
+import { PersonalityModel } from "@models/types";
 
 export const getPersonalitiesList = async (
-  req: Request<{}, {}, {}, RequestSearch>,
+  req: Request<{}, {}, {}, RequestSearch<PersonalityModel>>,
   res: Response,
   next: NextFunction
 ) => {

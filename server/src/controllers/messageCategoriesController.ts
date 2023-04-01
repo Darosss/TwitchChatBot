@@ -15,7 +15,12 @@ export const getMessageCategoriesList = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { page = 1, limit = 50 } = req.query;
+  const {
+    page = 1,
+    limit = 50,
+    sortBy = "uses",
+    sortOrder = "desc",
+  } = req.query;
 
   const searchFilter = await filterMessageCategoriesByUrlParams(req.query);
 
@@ -28,7 +33,7 @@ export const getMessageCategoriesList = async (
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
       ],
-      sort: { uses: -1 },
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
       select: { __v: 0 },
     });
 

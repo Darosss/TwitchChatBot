@@ -9,20 +9,26 @@ import {
 } from "@services/widgets";
 import { RequestParams, RequestSearch } from "@types";
 import { WidgetCreateData, WidgetUpdateData } from "@services/widgets/types";
+import { WidgetsModel } from "@models/types";
 
 export const getWidgetsList = async (
-  req: Request<{}, {}, {}, RequestSearch>,
+  req: Request<{}, {}, {}, RequestSearch<WidgetsModel>>,
   res: Response,
   next: NextFunction
 ) => {
-  const { page = 1, limit = 25 } = req.query;
+  const {
+    page = 1,
+    limit = 25,
+    sortBy = "createdAt",
+    sortOrder = "desc",
+  } = req.query;
 
   const searchFilter = {};
   try {
     const widgets = await getWidgets(searchFilter, {
       limit: limit,
       skip: page,
-      sort: { createdAt: -1 },
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
     });
 
     const count = await getWidgetsCount(searchFilter);
