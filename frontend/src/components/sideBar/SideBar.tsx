@@ -11,9 +11,7 @@ interface NavLinkProps extends LinkProps {
 }
 
 export default function SideBar() {
-  const { data: authData, loading, error } = getAuthorizeUrl();
-  if (error) return <>Error!</>;
-  if (loading) return <>Loading...</>;
+  const { data: authData, error } = getAuthorizeUrl();
 
   return (
     <DrawerBar direction={"right"} size={"15vw"} overlay={true}>
