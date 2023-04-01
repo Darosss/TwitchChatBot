@@ -11,7 +11,7 @@ import {
   deleteTag,
   Tag,
 } from "@services/TagService";
-import { handleDeleteLayout } from "@utils/handleDeleteApi";
+import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import FilterBarModes from "../filterBarModes";
 
@@ -37,7 +37,7 @@ export default function Tags() {
   );
 
   useEffect(() => {
-    handleDeleteLayout<Tag>(tagIdDelete, setTagIdDelete, () => {
+    handleActionOnChangeState(tagIdDelete, setTagIdDelete, () => {
       fetchDeleteTag()
         .then(() => {
           refetchData();

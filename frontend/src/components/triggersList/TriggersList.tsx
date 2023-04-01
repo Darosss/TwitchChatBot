@@ -13,7 +13,7 @@ import {
   TriggerCreateData,
 } from "@services/TriggerService";
 import { socketEmitRefreshTriggers } from "@context/SocketContext";
-import { handleDeleteLayout } from "@utils/handleDeleteApi";
+import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import { getAllModes } from "@utils/getListModes";
 import TriggersData from "./TriggersData";
@@ -39,7 +39,7 @@ export default function TriggersList() {
   );
 
   useEffect(() => {
-    handleDeleteLayout<Trigger>(triggerIdDelete, setTriggerIdDelete, () => {
+    handleActionOnChangeState(triggerIdDelete, setTriggerIdDelete, () => {
       fetchDeleteTrigger().then(() => {
         refetchData();
         addNotification("Deleted", "Trigger deleted successfully", "danger");

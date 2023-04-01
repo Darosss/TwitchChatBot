@@ -8,7 +8,7 @@ import {
   SocketContext,
   socketEmitRefreshCommands,
 } from "@context/SocketContext";
-import { handleDeleteLayout } from "@utils/handleDeleteApi";
+import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import {
   getCommands,
   editCommand,
@@ -43,7 +43,7 @@ export default function CommandsList() {
     commandIdDelete || ""
   );
   useEffect(() => {
-    handleDeleteLayout<ChatCommand>(commandIdDelete, setCommandIdDelete, () => {
+    handleActionOnChangeState(commandIdDelete, setCommandIdDelete, () => {
       fetchDeleteCommand().then(() => {
         refetchData();
         addNotification("Deleted", `Command deleted successfully`, "danger");

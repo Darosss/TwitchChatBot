@@ -14,7 +14,7 @@ import {
   TimerCreateData,
 } from "@services/TimerService";
 import { socketEmitRefreshTimers } from "@context/SocketContext";
-import { handleDeleteLayout } from "@utils/handleDeleteApi";
+import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import { getAllModes } from "@utils/getListModes";
 import { DispatchAction } from "./types";
@@ -38,7 +38,7 @@ export default function TimersList() {
   const { refetchData: fetchDeleteCommand } = deleteTimer(timerIdDelete || "");
 
   useEffect(() => {
-    handleDeleteLayout<Timer>(timerIdDelete, setTimerIdDelete, () => {
+    handleActionOnChangeState(timerIdDelete, setTimerIdDelete, () => {
       fetchDeleteCommand().then(() => {
         refetchData();
         addNotification("Deleted", "Timer deleted successfully", "danger");

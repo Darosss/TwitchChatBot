@@ -17,7 +17,7 @@ import FilterBarCategories from "./filterBarCategories";
 import { addNotification } from "@utils/getNotificationValues";
 import { getAllModes } from "@utils/getListModes";
 import { DispatchAction } from "./types";
-import { handleDeleteLayout } from "@utils/handleDeleteApi";
+import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import CategoriesData from "./CategoriesData";
 import CategoriesModalData from "./CategoriesModalData";
 
@@ -48,21 +48,17 @@ export default function MessageCategoriesList() {
   );
 
   useEffect(() => {
-    handleDeleteLayout<MessageCategory>(
-      categoryIdDelete,
-      setCategoryIdDelete,
-      () => {
-        fetchDeleteCategory().then(() => {
-          refetchData();
-          addNotification(
-            "Deleted",
-            "Message category deleted successfully",
-            "danger"
-          );
-          setCategoryIdDelete(null);
-        });
-      }
-    );
+    handleActionOnChangeState(categoryIdDelete, setCategoryIdDelete, () => {
+      fetchDeleteCategory().then(() => {
+        refetchData();
+        addNotification(
+          "Deleted",
+          "Message category deleted successfully",
+          "danger"
+        );
+        setCategoryIdDelete(null);
+      });
+    });
   }, [categoryIdDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

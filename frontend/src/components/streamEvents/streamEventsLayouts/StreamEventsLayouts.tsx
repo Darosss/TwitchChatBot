@@ -11,7 +11,7 @@ import {
   initialLayoutWidgets,
   initialToolboxWidgets,
 } from "src/layout/initialLayoutWidgets";
-import { handleDeleteLayout } from "@utils/handleDeleteApi";
+import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import CardboxWrapper from "@components/cardboxWrapper";
 import {
@@ -37,7 +37,7 @@ export default function StreamNotifications() {
   );
 
   useEffect(() => {
-    handleDeleteLayout<Widgets>(layoutIdToDelete, setLayoutIdToDelete, () => {
+    handleActionOnChangeState(layoutIdToDelete, setLayoutIdToDelete, () => {
       fetchDeleteLayout().then(() => {
         refetchData();
 

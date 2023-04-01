@@ -11,7 +11,7 @@ import {
   deleteMood,
   Mood,
 } from "@services/MoodService";
-import { handleDeleteLayout } from "@utils/handleDeleteApi";
+import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import FilterBarModes from "../filterBarModes";
 
@@ -37,7 +37,7 @@ export default function Moods() {
   );
 
   useEffect(() => {
-    handleDeleteLayout<Mood>(moodIdDelete, setMoodIdDelete, () => {
+    handleActionOnChangeState(moodIdDelete, setMoodIdDelete, () => {
       fetchDeleteMood()
         .then(() => {
           refetchData();

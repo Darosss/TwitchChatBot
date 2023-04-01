@@ -11,7 +11,7 @@ import {
   deletePersonality,
   Personality,
 } from "@services/PersonalityService";
-import { handleDeleteLayout } from "@utils/handleDeleteApi";
+import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import FilterBarModes from "../filterBarModes";
 
@@ -47,7 +47,7 @@ export default function Personalities() {
   );
 
   useEffect(() => {
-    handleDeleteLayout<Personality>(
+    handleActionOnChangeState(
       personalityIdDelete,
       setPersonalityIdDelete,
       () => {

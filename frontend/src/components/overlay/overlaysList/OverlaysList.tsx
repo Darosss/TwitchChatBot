@@ -1,6 +1,6 @@
 import "./style.css";
 import React, { useEffect, useState } from "react";
-import { handleDeleteLayout } from "@utils/handleDeleteApi";
+import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import { Link } from "react-router-dom";
 import {
@@ -36,7 +36,7 @@ export default function OverlaysList() {
   );
 
   useEffect(() => {
-    handleDeleteLayout<Overlay>(overlayIdDelete, setLayoutIdDelete, () => {
+    handleActionOnChangeState(overlayIdDelete, setLayoutIdDelete, () => {
       fetchDeleteLayout().then(() => {
         refetchData();
 
