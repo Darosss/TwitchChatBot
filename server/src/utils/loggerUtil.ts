@@ -1,7 +1,7 @@
 import winston, { format } from "winston";
 import path from "path";
 import DailyRotateFile from "winston-daily-rotate-file";
-
+const isProduction = process.env.NODE_ENV === "production";
 const { combine, timestamp, printf } = format;
 
 const loggerFormat = printf(({ level, message, timestamp }) => {
@@ -18,7 +18,7 @@ export const logger = winston.createLogger({
   ],
 });
 
-if (process.env.NODE_ENV !== "production") {
+if (!isProduction) {
   logger.add(
     new winston.transports.Console({
       format: loggerFormat,
@@ -45,7 +45,7 @@ const optionsLoggers = (fileName: string) => {
       winston.format.prettyPrint(),
       streamLoggerFormat
     ),
-    level: "info",
+    level: "debug",
     transports: [
       new DailyRotateFile({
         filename: path.join(
@@ -53,7 +53,23 @@ const optionsLoggers = (fileName: string) => {
           `${streamLoggerDefaults.folder}/%DATE%/${fileName}.log`
         ),
         datePattern: streamLoggerDefaults.datePattern,
+        level: "info",
       }),
+      new DailyRotateFile({
+        filename: path.join(
+          __dirname,
+          `${streamLoggerDefaults.folder}/%DATE%/${fileName}-debug.log`
+        ),
+        datePattern: streamLoggerDefaults.datePattern,
+        level: "debug",
+      }),
+      ...(!isProduction
+        ? [
+            new winston.transports.Console({
+              format: streamLoggerFormat,
+            }),
+          ]
+        : []),
     ],
   };
 };
