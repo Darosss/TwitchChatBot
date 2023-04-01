@@ -1,6 +1,4 @@
-import { callback } from "chart.js/dist/helpers/helpers.core";
-
-export const handleDeleteLayout = <T = unknown>(
+export const handleActionOnChangeState = (
   idToDelete: string | null,
   setIdToDelete: React.Dispatch<React.SetStateAction<string | null>>,
   callback: () => void
