@@ -7,6 +7,7 @@ import {
   TableItemsListWrapper,
   TableListWrapper,
 } from "@components/tableWrapper";
+import SortByParamsButton from "@components/SortByParamsButton";
 
 export default function TimersData(props: {
   data: Timer[];
@@ -34,7 +35,28 @@ export default function TimersData(props: {
                 New
               </button>
             </th>
-            <th colSpan={5}>Data</th>
+            <th colSpan={5}>
+              <div>
+                <SortByParamsButton buttonText="Name" sortBy="name" />
+                <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
+                <SortByParamsButton buttonText="Uses" sortBy="uses" />
+                <SortByParamsButton buttonText="Delay" sortBy="delay" />
+                <SortByParamsButton buttonText="Points" sortBy="points" />
+                <SortByParamsButton
+                  buttonText="Non follow"
+                  sortBy="nonFollowMulti"
+                />
+                <SortByParamsButton buttonText="Non sub" sortBy="nonSubMulti" />
+                <SortByParamsButton
+                  buttonText="Required points"
+                  sortBy="reqPoints"
+                />
+                <SortByParamsButton
+                  buttonText="Created at"
+                  sortBy="createdAt"
+                />
+              </div>
+            </th>
             <th>Messages</th>
           </tr>
         }

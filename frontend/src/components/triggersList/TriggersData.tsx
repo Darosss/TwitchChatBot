@@ -7,6 +7,7 @@ import {
   TableItemsListWrapper,
   TableListWrapper,
 } from "@components/tableWrapper";
+import SortByParamsButton from "@components/SortByParamsButton";
 
 export default function TriggersData(props: {
   data: Trigger[];
@@ -34,7 +35,19 @@ export default function TriggersData(props: {
                 New
               </button>
             </th>
-            <th colSpan={5}>Data</th>
+            <th colSpan={5}>
+              <div>
+                <SortByParamsButton buttonText="Name" sortBy="name" />
+                <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
+                <SortByParamsButton buttonText="Uses" sortBy="uses" />
+                <SortByParamsButton buttonText="Delay" sortBy="delay" />
+                <SortByParamsButton buttonText="Mode" sortBy="mode" />
+                <SortByParamsButton
+                  buttonText="Created at"
+                  sortBy="createdAt"
+                />
+              </div>
+            </th>
             <th>Words</th>
             <th>Messages</th>
           </tr>
@@ -84,8 +97,6 @@ export default function TriggersData(props: {
                   <div>{trigger.delay}</div>
                   <div>Uses: </div>
                   <div>{trigger.uses}</div>
-                  <div>Delay: </div>
-                  <div>{trigger.delay}</div>
                   <div>Mode:</div>
                   <div>{trigger.mode}</div>
                   <div>Tag:</div>

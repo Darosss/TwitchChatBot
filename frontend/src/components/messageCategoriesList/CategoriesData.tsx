@@ -6,6 +6,7 @@ import {
   TableListWrapper,
 } from "@components/tableWrapper";
 import { MessageCategory } from "@services/MessageCategoriesService";
+import SortByParamsButton from "@components/SortByParamsButton";
 
 export default function CategoriesData(props: {
   data: MessageCategory[];
@@ -33,7 +34,13 @@ export default function CategoriesData(props: {
                 New
               </button>
             </th>
-            <th colSpan={5}>Data</th>
+            <th colSpan={5}>
+              <div>
+                <SortByParamsButton buttonText="Name" sortBy="name" />
+                <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
+                <SortByParamsButton buttonText="Uses" sortBy="uses" />
+              </div>
+            </th>
             <th>Messages</th>
           </tr>
         }

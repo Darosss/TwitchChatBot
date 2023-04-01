@@ -7,6 +7,7 @@ import {
   TableListWrapper,
 } from "@components/tableWrapper";
 import { ChatCommand } from "@services/ChatCommandService";
+import SortByParamsButton from "@components/SortByParamsButton";
 
 export default function CommandsData(props: {
   data: ChatCommand[];
@@ -34,7 +35,18 @@ export default function CommandsData(props: {
                 New
               </button>
             </th>
-            <th colSpan={5}>Data</th>
+            <th colSpan={5}>
+              <div>
+                <SortByParamsButton buttonText="Name" sortBy="name" />
+                <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
+                <SortByParamsButton buttonText="Uses" sortBy="uses" />
+                <SortByParamsButton
+                  buttonText="Created at"
+                  sortBy="createdAt"
+                />
+                <SortByParamsButton buttonText="Privilege" sortBy="privilege" />
+              </div>
+            </th>
             <th>Aliases</th>
             <th>Messages</th>
           </tr>

@@ -10,6 +10,7 @@ import { getMessages, Message } from "@services/MessageService";
 import { getUserMessages } from "@services/UserService";
 import { getSessionMessages } from "@services/StreamSessionService";
 import { DateTooltip } from "@components/dateTooltip";
+import SortByParamsButton from "@components/SortByParamsButton";
 
 interface MessagesDetailsProp {
   messages: Message[];
@@ -62,9 +63,13 @@ const MessagesDetails = ({ messages }: MessagesDetailsProp) => (
   <table id="table-messages-list">
     <thead>
       <tr>
-        <th>Date</th>
+        <th>
+          <SortByParamsButton buttonText="Date" sortBy="date" />
+        </th>
         <th>Username</th>
-        <th colSpan={4}>Message</th>
+        <th colSpan={4}>
+          <SortByParamsButton buttonText="Message" sortBy="message" />
+        </th>
       </tr>
     </thead>
 

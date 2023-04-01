@@ -7,6 +7,7 @@ import PreviousPage from "@components/previousPage";
 import { getUsersList, User } from "@services/UserService";
 import FilterBarUsers from "./filterBarUsers";
 import { DateTooltip } from "@components/dateTooltip";
+import SortByParamsButton from "@components/SortByParamsButton";
 
 interface UserDetailsProps {
   users: User[];
@@ -43,13 +44,28 @@ const UsersDetails = ({ users }: UserDetailsProps) => (
   <table id="table-users-list">
     <thead>
       <tr>
-        <th>Username</th>
+        <th>
+          <SortByParamsButton buttonText="Username" sortBy="username" />
+        </th>
         <th>Achievements</th>
-        <th>Watch</th>
-        <th>Last seen</th>
-        <th>Created</th>
-        <th>Message count</th>
-        <th>Points</th>
+        <th>
+          <SortByParamsButton buttonText="Watch" sortBy="watchTime" />
+        </th>
+        <th>
+          <SortByParamsButton buttonText="Last seen" sortBy="lastSeen" />
+        </th>
+        <th>
+          <SortByParamsButton buttonText="Created" sortBy="createdAt" />
+        </th>
+        <th>
+          <SortByParamsButton
+            buttonText="Message count"
+            sortBy="messageCount"
+          />
+        </th>
+        <th>
+          <SortByParamsButton buttonText="Points" sortBy="points" />
+        </th>
       </tr>
     </thead>
 

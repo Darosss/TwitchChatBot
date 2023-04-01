@@ -7,6 +7,7 @@ import PreviousPage from "@components/previousPage";
 import FilterBarSessions from "./filterBarSessions";
 import { getSessions } from "@services/StreamSessionService";
 import { DateDifference, DateTooltip } from "@components/dateTooltip";
+import SortByParamsButton from "@components/SortByParamsButton";
 
 export default function StreamSessions() {
   const { data: sessionsData, loading, error, refetchData } = getSessions();
@@ -24,13 +25,30 @@ export default function StreamSessions() {
         <table id="table-stream-session-list">
           <thead>
             <tr>
-              <th colSpan={3}>Action</th>
-              <th>Titles</th>
-              <th>Start date</th>
+              <th colSpan={3}>Action </th>
+              <th>
+                <SortByParamsButton
+                  buttonText="Titles"
+                  sortBy="sessionTitles"
+                />
+              </th>
+              <th>
+                <SortByParamsButton
+                  buttonText="Start date"
+                  sortBy="sessionStart"
+                />
+              </th>
               <th>Session time</th>
-              <th>End date</th>
+              <th>
+                <SortByParamsButton buttonText="End date" sortBy="sessionEnd" />
+              </th>
               <th>Tags</th>
-              <th>Categories</th>
+              <th>
+                <SortByParamsButton
+                  buttonText="Categories"
+                  sortBy="categories"
+                />
+              </th>
             </tr>
           </thead>
           <tbody>

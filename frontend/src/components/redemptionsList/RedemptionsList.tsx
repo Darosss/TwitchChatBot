@@ -10,6 +10,7 @@ import { PaginationData } from "@services/ApiService";
 import { getSessionRedemptions } from "@services/StreamSessionService";
 import { getUserRedemptions } from "@services/UserService";
 import { DateTooltip } from "@components/dateTooltip";
+import SortByParamsButton from "@components/SortByParamsButton";
 
 interface RedemptionsDetailProps {
   redemptions: Redemption[];
@@ -62,11 +63,21 @@ const RedemptionsDetails = ({ redemptions }: RedemptionsDetailProps) => (
   <table id="table-redemptions-list">
     <thead>
       <tr>
-        <th>Reward name</th>
-        <th>Receiver</th>
-        <th>Date</th>
-        <th>Cost</th>
-        <th>Message</th>
+        <th>
+          <SortByParamsButton buttonText="Reward name" sortBy="rewardTitle" />
+        </th>
+        <th>
+          <SortByParamsButton buttonText="Receiver" sortBy="userName" />
+        </th>
+        <th>
+          <SortByParamsButton buttonText="Date" sortBy="redemptionDate" />
+        </th>
+        <th>
+          <SortByParamsButton buttonText="Cost" sortBy="rewardCost" />
+        </th>
+        <th>
+          <SortByParamsButton buttonText="Message" sortBy="message" />
+        </th>
       </tr>
     </thead>
 
