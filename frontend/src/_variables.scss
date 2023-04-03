@@ -1,0 +1,34 @@
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$tertiary-color: #9147ff;
+$success-color: #28a745;
+$warning-color: #ffc107;
+$danger-color: #dc3545;
+$info-color: #fffd97;
+
+$link-color: #afa241;
+
+// Light mode colors
+$background-color-light: #dcdcdc;
+$font-color-light: #2d2d2d;
+
+// Dark mode colors
+$background-color-dark: #393939;
+$font-color-dark: #ffffff;
+
+//Stream events variables
+$bg-color-popup: rgba(128, 128, 128, 0.131);
+$color-user-warn: rgb(127, 127, 11);
+$color-user-usual: rgb(40, 18, 182);
+$color-user-new-user: rgb(18, 114, 20);
+$color-user-blacklist: rgb(71, 17, 17);
+$color-user-danger: rgba(99, 52, 52, 0.2);
+//Stream events variables
+
+$screen-xs: 320px; /* Px for media queries for smallest screens */
+$screen-sm: 480px; /* Px for media queries for small screens */
+$screen-md: 768px; /* Px for media queries for medium screens */
+$screen-lg: 1024px; /* Px for media queries for large screens */
+$screen-ulg: 1200px; /* Px for media queries for ultra large screens */
+
+$width-without-drawer: 98vw;
