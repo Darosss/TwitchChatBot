@@ -55,7 +55,7 @@ export default function Redemptions() {
         className="redemption-popup"
         style={{ fontSize: (redemptionRef.current?.offsetWidth || 200) / 24 }}
       >
-        {redemptionInfo}test
+        {redemptionInfo}
       </div>
     </div>
   );
