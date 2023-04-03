@@ -115,13 +115,12 @@ const eventSub = async (
       const stream = await retryWithCatch(() => e.getStream());
 
       const newStreamSession = await createStreamSessionHelper(
-        e.startDate || new Date(),
-        stream?.title || "",
-        stream?.gameName || ""
+        e.startDate || new Date(), // Because twitch goes wild
+        stream?.title || "", // Because twitch goes wild
+        stream?.gameName || "" // Because twitch goes wild
       );
     }
   );
-  // eventsubLogger.info(`Event sub online subscription error ${err}`);
 
   if (apiStream) {
     eventsubLogger.info("Stream found - checking for session");
