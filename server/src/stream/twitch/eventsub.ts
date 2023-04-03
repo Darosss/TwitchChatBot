@@ -130,7 +130,7 @@ const eventSub = async (
     let currentSession = await getCurrentStreamSession({});
     if (!currentSession) return;
 
-    const { startDate, title, gameName } = apiStream;
+    const { startDate, title = "", gameName = "" } = apiStream;
 
     if (currentSession.sessionStart.getTime() !== startDate.getTime()) {
       eventsubLogger.info(`Session not found - create new one - ${startDate}`);
