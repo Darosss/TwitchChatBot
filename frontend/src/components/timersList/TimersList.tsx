@@ -1,5 +1,3 @@
-import "./style.css";
-
 import React, { useEffect, useReducer, useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";

@@ -1,4 +1,3 @@
-import "./style.css";
 import React, { useEffect, useRef } from "react";
 
 import { useSearchParams } from "react-router-dom";
@@ -71,7 +70,7 @@ export default function UrlParamsInput(props: {
   return (
     <div className="filter-wrapper">
       <button
-        className="filter-clear-btn"
+        className="filter-clear-btn common-button danger-button"
         onClick={(e) => {
           clearFilters(e);
         }}

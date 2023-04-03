@@ -1,4 +1,3 @@
-import "./style.css";
 import React, { useContext, useEffect, useReducer, useState } from "react";
 
 import Message from "@components/message";
@@ -47,7 +46,7 @@ export default function StreamChat() {
   }, [socket]);
 
   return (
-    <div id="stream-chat" className={`stream-chat`}>
+    <div id="stream-chat" className="stream-chat">
       <div className="widget-header chat-header">STREAM CHAT</div>
       <div className="stream-chat-messages">
         {messages

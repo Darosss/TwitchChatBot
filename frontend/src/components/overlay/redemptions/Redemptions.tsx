@@ -1,11 +1,10 @@
-import "./style.css";
 import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { SocketContext } from "@context/SocketContext";
 
 export default function Redemptions() {
   const socket = useContext(SocketContext);
-  const overlayRef = useRef<HTMLDivElement>(null);
+  const redemptionRef = useRef<HTMLDivElement>(null);
 
   const [redemptionInfo, setRedemptionInfo] = useState("");
   const [redemptionImg, setRedemptionImg] = useState("");
@@ -18,13 +17,13 @@ export default function Redemptions() {
 
       setRedemptionImg(rewardImage);
       setRedemptionInfo(`${userDisplayName} has redeemed - ${rewardTitle}`);
-      overlayRef.current?.classList.remove("overlay-hidden");
+      redemptionRef.current?.classList.remove("redemption-popup-hidden");
 
       setTimeout(() => {
         redemptionAudio?.pause();
-        // overlayRef.current?.classList.add("overlay-hidden");
-        // setRedemptionImg("");
-        // setRedemptionInfo("");
+        redemptionRef.current?.classList.add("overlay-hidden");
+        setRedemptionImg("");
+        setRedemptionInfo("");
       }, Number(import.meta.env.VITE_REDEMPTION_ALERT_MAX_TIME!) * 1000);
 
       if (rewardTitle.includes(import.meta.env.VITE_PREFIX_ALERT_SOUND!)) {
@@ -42,21 +41,21 @@ export default function Redemptions() {
   }, [socket]);
 
   return (
-    <div ref={overlayRef} className="overlay-header">
+    <div ref={redemptionRef} className="redemption-wrapper">
       <div>
         {redemptionImg ? (
           <img
             alt="no"
             src={redemptionImg}
-            style={{ width: (overlayRef.current?.offsetWidth || 200) / 12 }}
+            style={{ width: (redemptionRef.current?.offsetWidth || 200) / 12 }}
           />
         ) : null}
       </div>
       <div
-        className="overlay-redemption"
-        style={{ fontSize: (overlayRef.current?.offsetWidth || 200) / 24 }}
+        className="redemption-popup"
+        style={{ fontSize: (redemptionRef.current?.offsetWidth || 200) / 24 }}
       >
-        {redemptionInfo}
+        {redemptionInfo}test
       </div>
     </div>
   );

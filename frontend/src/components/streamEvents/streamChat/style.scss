@@ -1,5 +1,5 @@
 .stream-chat {
-  background-color: var(--base-bg-color-chat);
+  background-color: var(--background-color-darker);
   height: 100%;
   text-align: center;
   overflow-y: auto;
@@ -7,53 +7,49 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
 
-.stream-chat > div {
-  width: 100%;
-}
+  & > div {
+    width: 100%;
+  }
 
-.stream-chat-messages {
-  overflow-y: scroll;
-  border-top: 1px solid yellow;
-  border-bottom: 1px solid yellow;
-  height: 70%;
-}
+  .stream-chat-messages {
+    overflow-y: scroll;
+    border-top: 1px solid yellow;
+    border-bottom: 1px solid yellow;
+    height: 70%;
+  }
 
-.chat-header {
-  background-color: var(--base-bg-color-chat);
-}
+  .stream-chat-textarea {
+    color: var(--font-color);
+    background-color: var(--background-color);
+    border-radius: 0.2rem;
+    min-width: 95%;
+    width: 95%;
+    max-width: 100%;
+    min-height: 3vh;
+    max-height: 10vmin;
+    font-size: calc(0.9rem + 1vmin);
+  }
 
-.stream-chat-textarea {
-  color: white;
-  background-color: var(--base-bg-textarea-chat);
-  border-radius: 0.2rem;
-  min-width: 95%;
-  width: 95%;
-  max-width: 100%;
-  min-height: 3vh;
-  max-height: 10vmin;
-  font-size: calc(0.9rem + 1vmin);
-}
+  .stream-chat-send-message-btn {
+    display: flex;
+    justify-content: right;
+  }
 
-.stream-chat-send-message-btn {
-  display: flex;
-  justify-content: right;
-}
+  .stream-chat-btn-send-message {
+    background-color: $tertiary-color;
+    border: 0;
+    border-radius: 0.3rem;
+    color: white;
+    font-weight: 700;
+    height: 4vmin;
+    width: 20%;
+    font-size: 0.7vw;
+    margin-right: 0.3rem;
+    overflow: hidden;
 
-.stream-chat-btn-send-message {
-  background-color: var(--base-color-button-action);
-  border: 0;
-  border-radius: 0.3rem;
-  color: white;
-  font-weight: 700;
-  height: 4vmin;
-  width: 20%;
-  font-size: 0.7vw;
-  margin-right: 0.3rem;
-  overflow: hidden;
-}
-
-.stream-chat-btn-send-message:active {
-  background-color: var(--base-color-button-action-active);
+    &:active {
+      background-color: lighten($tertiary-color, 10%);
+    }
+  }
 }

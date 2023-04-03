@@ -1,4 +1,3 @@
-import "./style.css";
 import React, { useContext, useEffect, useReducer, useState } from "react";
 import FilterBarCommands from "./filterBarCommands";
 import Modal from "@components/modal";

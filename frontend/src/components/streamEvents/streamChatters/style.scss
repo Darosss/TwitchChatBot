@@ -1,41 +1,38 @@
-#stream-notifications {
-  overflow: auto;
-  height: 100%;
-}
-
 .stream-last-chatters {
   overflow: auto;
   height: 100%;
-}
 
-.stream-last-chatters > div:not(:first-child) {
-  border: 0.1rem solid var(--color-user-usual);
-}
+  & > div {
+    &:not(:first-child) {
+      border: 0.1rem solid $color-user-usual;
+    }
+  }
 
-.stream-last-chatters .limit {
-  border: 0.1rem solid var(--color-user-warn) !important;
-}
+  .stream-last-chatters .limit {
+    border: 0.1rem solid $color-user-warn !important;
+  }
 
-.user-chatter {
-  display: flex;
-  background-color: var(--bg-color-popup);
-  min-height: 8%;
-  align-items: center;
-  margin: 0.5rem;
-  padding-left: 1rem;
-}
+  .user-chatter {
+    display: flex;
+    background-color: $bg-color-popup;
+    min-height: 8%;
+    align-items: center;
+    margin: 0.5rem;
+    padding-left: 1rem;
+  }
 
-.user-chatter-username {
-  font-size: 0.9vw;
-  border-right: 0.2rem solid var(--base-bg-color);
-  width: 60%;
-  overflow-x: auto;
-}
+  .user-chatter-username {
+    font-size: 0.9vw;
+    border-right: 0.2rem solid var(--background-color);
+    width: 60%;
+    overflow-x: auto;
+  }
 
-.user-chatter-last-seen {
-  overflow-x: auto;
-  text-align: center;
-  font-size: 1.5vmin;
-  width: 35%;
-  color: var(--base-color-info);
+  .user-chatter-last-seen {
+    overflow-x: auto;
+    text-align: center;
+    font-size: 1.5vmin;
+    width: 35%;
+    color: var(--info-bg-color);
+  }
 }

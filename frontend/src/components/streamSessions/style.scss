@@ -1,21 +1,23 @@
-.sessions-list-title {
-  width: 20%;
-}
+#stream-session-list {
+  .sessions-list-title {
+    width: 20%;
+  }
 
-.sessions-list-date {
-  width: 15%;
-  max-width: 15%;
-  height: 5vh;
-  max-height: 5vh;
-  text-align: center;
-}
+  .sessions-list-date {
+    width: 15%;
+    max-width: 15%;
+    height: 5vh;
+    max-height: 5vh;
+    text-align: center;
+  }
 
-.sessions-list-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+  .sessions-list-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-.sessions-list-actions > a {
-  border-bottom: 0.1rem solid var(--base-bg-color-border);
+    a {
+      border-bottom: 0.1rem solid var(--revert-background-color);
+    }
+  }
 }

@@ -84,13 +84,10 @@ export default function CommandsData(props: {
                   <div>Uses: </div>
                   <div>{command.useCount}</div>
                   <div>Enabled: </div>
-                  <div
-                    style={{
-                      background: `${command.enabled ? "green" : "red"}`,
-                    }}
-                  >
-                    {command.enabled.toString()}
-                  </div>
+                  {generateEnabledDisabledDiv(
+                    command.enabled,
+                    command.enabled.toString().toUpperCase()
+                  )}
                   <div>Privilege: </div>
                   <div>{command.privilege}</div>
                   <div>Tag:</div>

@@ -1,25 +1,42 @@
-.users-list-achievements {
-  width: 15%;
+#table-users-list {
+  font-size: 1.5vmin;
+
+  .users-list-date {
+    width: 25%;
+    max-width: 25%;
+  }
 }
 
-.users-list-date {
-  width: 15%;
-  max-width: 15%;
-}
+@media screen and (max-width: $screen-md) {
+  #table-users-list {
+    font-size: 2.5vmin;
+    .users-list-achievements {
+      width: 15%;
+    }
 
-.users-list-message-count {
-  width: 10%;
-}
+    .users-list-date {
+      width: 15%;
+      max-width: 15%;
+    }
 
-.users-list-points {
-  width: 10%;
-}
+    .users-list-message-count {
+      width: 10%;
+    }
 
-.users-list-watch-time {
-  width: 7%;
-}
+    .users-list-points {
+      width: 10%;
+    }
 
-.users-list-date-div {
-  height: 5vh;
-  max-height: 5vh;
+    .users-list-watch-time {
+      width: 7%;
+    }
+    .users-list-date {
+      width: 15%;
+      max-width: 15%;
+    }
+    .users-list-date-div {
+      height: 7vh;
+      max-height: 7vh;
+    }
+  }
 }

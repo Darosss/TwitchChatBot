@@ -1,4 +1,3 @@
-import "./style.css";
 import React from "react";
 
 import Pagination from "@components/pagination";
@@ -60,7 +59,7 @@ const MessagesAll = () => {
 };
 
 const MessagesDetails = ({ messages }: MessagesDetailsProp) => (
-  <table id="table-messages-list">
+  <table className="table-messages-list">
     <thead>
       <tr>
         <th>
@@ -89,7 +88,7 @@ const MessagesDetails = ({ messages }: MessagesDetailsProp) => (
               </Link>
             </td>
             <td className="message" colSpan={4}>
-              {message.message}
+              <div> {message.message}</div>
             </td>
           </tr>
         );

@@ -22,13 +22,17 @@ export default function FilterBarSessions() {
           type="search"
           placeholder={"Categories"}
         ></input>
-
-        <input
-          {...{ queryparam: "start_date" }}
-          id="start-seen"
-          type="date"
-        ></input>
-        <input {...{ queryparam: "end_date" }} type="date"></input>
+        <div>
+          <label>Session date [start / end ] </label>
+          <div>
+            <input
+              {...{ queryparam: "start_date" }}
+              id="start-seen"
+              type="date"
+            ></input>
+            <input {...{ queryparam: "end_date" }} type="date"></input>
+          </div>
+        </div>
       </UrlParamsInput>
     </div>
   );

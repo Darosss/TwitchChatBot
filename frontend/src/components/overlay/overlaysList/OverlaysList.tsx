@@ -1,4 +1,3 @@
-import "./style.css";
 import React, { useEffect, useState } from "react";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
@@ -88,8 +87,18 @@ export default function OverlaysList() {
               }}
               key={index}
             >
-              <Link to={`${overlay._id}`}>Show</Link>
-              <Link to={`${overlay._id}/editor`}>Edit</Link>
+              <Link
+                className="common-button primary-button"
+                to={`${overlay._id}`}
+              >
+                Show
+              </Link>
+              <Link
+                className="common-button primary-button"
+                to={`${overlay._id}/editor`}
+              >
+                Edit
+              </Link>
             </CardboxItem>
           );
         })}

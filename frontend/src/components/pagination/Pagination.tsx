@@ -1,4 +1,3 @@
-import "./style.css";
 import React, { useEffect } from "react";
 
 import usePagination, { DOTS } from "@hooks/usePaginationHook";
@@ -55,7 +54,7 @@ export default function Pagination(props: {
     return (
       <select
         name="page-size"
-        id="page-size"
+        className="page-size"
         value={pageSizeT}
         onChange={(e) => {
           setSearchParams((prevState) => {
@@ -99,7 +98,7 @@ export default function Pagination(props: {
     return (
       <>
         <TotalResults />
-        <div className="page-size-alone">
+        <div className="page-size-single">
           <label>Page size</label>
           <PageSizeSelect />
         </div>
@@ -166,7 +165,7 @@ export default function Pagination(props: {
             disabled: currentPage === lastPage,
           })}
           onClick={() => {
-            currentPage < lastPage ? onNext() : "";
+            currentPage < Number(lastPage) ? onNext() : "";
           }}
         >
           <div className="arrow right" />

@@ -1,17 +1,32 @@
-.navbar {
-  right: -20vw;
-  width: 15vw;
-  position: absolute;
-  height: 100vh;
-  background-color: var(--base-bg-color);
-}
-
-.navbar ul {
-  list-style: none;
-}
-
 .connect-twitch {
-  font-size: 0.7rem;
+  font-size: 2vw;
   border: 0.1rem solid black;
   background-color: purple;
+}
+
+.sidebar-ul {
+  list-style: none;
+  font-size: 1.7vw;
+  margin: 0;
+  padding: 1vw;
+}
+
+@media screen and (max-width: $screen-md) {
+  .sidebar-ul {
+    font-size: 4vw;
+  }
+
+  .connect-twitch {
+    font-size: 4vw;
+  }
+}
+
+@media screen and (max-width: $screen-lg) {
+  .sidebar-ul {
+    font-size: 3vw;
+  }
+
+  .connect-twitch {
+    font-size: 3vw;
+  }
 }

@@ -1,4 +1,3 @@
-import "./style.css";
 import React, { useContext, useEffect, useState } from "react";
 import "react-notifications-component/dist/theme.css";
 
@@ -88,7 +87,7 @@ export default function MessagesWindow() {
                   >
                     <div>Send random</div>
                     <span className="button-category-name">
-                      {category.category}
+                      {category.name}
                     </span>
                   </button>
                 </div>
@@ -101,7 +100,7 @@ export default function MessagesWindow() {
                   >
                     <div>Show</div>
                     <span className="button-category-name">
-                      {category.category}
+                      {category.name}
                     </span>
                   </button>
                 </div>

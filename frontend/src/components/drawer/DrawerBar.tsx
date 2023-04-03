@@ -1,4 +1,3 @@
-import "./style.css";
 import React, { useEffect } from "react";
 import Drawer from "react-modern-drawer";
 import "react-modern-drawer/dist/index.css";
@@ -12,9 +11,10 @@ export default function DrawerBar(props: {
 }) {
   const { children, direction, size, sticky, overlay } = props;
   const [isOpen, setIsOpen] = React.useState(false);
+  const [wrapperStyle, setWrapperStyle] = React.useState<React.CSSProperties>();
   const [btnStyle, setBtnStyle] = React.useState<React.CSSProperties>();
   const [btnText, setBtnText] = React.useState<string>();
-
+  const [drawerClass, setDrawerClass] = React.useState("");
   const toggleDrawer = () => {
     setIsOpen((prevState) => !prevState);
   };
@@ -22,26 +22,34 @@ export default function DrawerBar(props: {
   useEffect(() => {
     switch (direction) {
       case "bottom":
-        setBtnStyle({ top: "95%", width: "100%" });
+        setWrapperStyle({ top: "95%", width: "100%" });
+        setBtnStyle({ width: "100%" });
         setBtnText("\u2191");
+        setDrawerClass("drawer-horizontal");
         break;
       case "left":
+        setWrapperStyle({ height: "100%" });
         setBtnStyle({ height: "100%" });
         setBtnText("\u2192");
+        setDrawerClass("drawer-vertical");
         break;
       case "right":
-        setBtnStyle({ right: "0", height: "100%" });
+        setWrapperStyle({ right: "0", height: "100%" });
+        setBtnStyle({ height: "100%" });
         setBtnText("\u2190");
+        setDrawerClass("drawer-vertical");
         break;
       case "top":
+        setWrapperStyle({ top: "-1%", width: "100%" });
         setBtnStyle({ width: "100%" });
         setBtnText("\u2193");
+        setDrawerClass("drawer-horizontal");
         break;
     }
   }, [direction]);
 
   return (
-    <>
+    <div className="btn-drawer-wrapper" style={wrapperStyle}>
       <button className="btn-drawer" style={btnStyle} onClick={toggleDrawer}>
         {btnText}
       </button>
@@ -51,6 +59,7 @@ export default function DrawerBar(props: {
         onClose={toggleDrawer}
         size={size ? size : 250}
         enableOverlay={overlay}
+        className={`${drawerClass}`}
         style={{
           background: "#18181b",
           position: isOpen && sticky ? "sticky" : "absolute",
@@ -69,6 +78,6 @@ export default function DrawerBar(props: {
           {children}
         </div>
       </Drawer>
-    </>
+    </div>
   );
 }

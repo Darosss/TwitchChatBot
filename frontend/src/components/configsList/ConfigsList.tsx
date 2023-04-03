@@ -1,4 +1,3 @@
-import "./style.css";
 import React, { useContext, useEffect, useState } from "react";
 
 import PreviousPage from "@components/previousPage";

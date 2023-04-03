@@ -1,121 +1,120 @@
-.pagination-container {
-  width: 100%;
+ul.pagination-container {
   border-top: 0.2rem solid black;
   padding-top: 0.2rem;
   display: flex;
   bottom: 0;
+
+  font-size: 2vmin;
   list-style-type: none;
+
+  li.pagination-item {
+    padding: 0 0.1rem;
+    margin: auto 0.7vmin;
+    color: var(--font-color);
+
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+    letter-spacing: 0.1rem;
+    border-radius: 0.5rem;
+    min-width: 3vw;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    &.dots {
+      &:hover {
+        background-color: transparent;
+        cursor: default;
+      }
+    }
+
+    .arrow {
+      &.right {
+        transform: rotate(45deg);
+      }
+      &.left {
+        transform: rotate(-135deg) translate(-50%);
+      }
+      &::before {
+        position: relative;
+
+        content: "";
+        display: inline-block;
+        width: 0.4em;
+        height: 0.4em;
+        border-right: 0.12em solid rgba(0, 0, 0, 0.87);
+        border-top: 0.12em solid rgba(0, 0, 0, 0.87);
+      }
+    }
+
+    &.selected {
+      background-color: rgba(0, 0, 0, 0.28);
+    }
+
+    &:hover {
+      background-color: rgba(31, 16, 16, 0.1);
+      cursor: pointer;
+    }
+
+    &.disabled {
+      .arrow {
+        &::before {
+          border-right: 0.12em solid rgba(0, 0, 0, 0.43);
+          border-top: 0.12em solid rgba(0, 0, 0, 0.43);
+          pointer-events: none;
+          opacity: 0.4;
+        }
+      }
+
+      &:hover {
+        background-color: transparent;
+        pointer-events: none;
+      }
+    }
+  }
 }
 
-.pagination-item {
-  padding: 0 0.1rem;
-  margin: auto 0.6rem;
-  color: rgba(0, 0, 0, 0.87);
-
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  justify-content: center;
-
-  box-sizing: border-box;
-  letter-spacing: 0.1rem;
-  border-radius: 0.5rem;
-  font-size: 1.5rem;
-  min-width: 3vw;
-
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.dots:hover {
-  background-color: transparent;
-  cursor: default;
-}
-
-.pagination-item:hover {
-  background-color: rgba(0, 0, 0, 0.04);
-
-  cursor: pointer;
-}
-
-.pagination-item.selected {
-  background-color: rgba(0, 0, 0, 0.28);
-}
-
-.arrow::before {
-  position: relative;
-
-  content: "";
-  /* By using an em scale, the arrows will size with the font */
-  display: inline-block;
-  width: 0.4em;
-  height: 0.4em;
-  border-right: 0.12em solid rgba(0, 0, 0, 0.87);
-  border-top: 0.12em solid rgba(0, 0, 0, 0.87);
-}
-
-.arrow.left {
-  transform: rotate(-135deg) translate(-50%);
-}
-
-.arrow.right {
-  transform: rotate(45deg);
-}
-
-.disabled .arrow::before {
-  border-right: 0.12em solid rgba(0, 0, 0, 0.43);
-  border-top: 0.12em solid rgba(0, 0, 0, 0.43);
-  pointer-events: none;
-  opacity: 0.4;
-}
-
-.disabled:hover {
-  background-color: transparent;
-  pointer-events: none;
-}
-
-#page-size {
-  font-size: 1.5rem;
-  background-color: var(--base-bg-color-action);
+.page-size {
+  background-color: $primary-color;
   text-align: center;
   border-radius: 0.5rem;
   appearance: none;
+  font-size: 2.5vmin;
+  &::-ms-expand {
+    display: none; /* Hide the default arrow in Internet Explorer 10 and Internet Explorer 11 */
+  }
 }
 
-#page-size::selection {
-  color: red;
-}
-
-#page-size::-ms-expand {
-  display: none; /* Hide the default arrow in Internet Explorer 10 and Internet Explorer 11 */
-}
-
-.page-size-alone {
+.page-size-single {
   margin-left: 3vw;
   margin-top: 0.2rem;
-}
+  font-size: 2.5vmin;
 
-.page-size-alone label {
-  font-size: 1.2rem;
-  margin-right: 1rem;
+  label {
+    margin-right: 1rem;
+  }
 }
 
 .total-count {
   position: absolute;
-  right: 0;
+  right: 8%;
+  font-size: 2.5vmin;
 
-  color: var(--base-color);
+  color: var(--font-color);
   width: 15vw;
   height: 4vh;
   text-align: center;
-  font-size: 1.2rem;
   font-weight: 700;
-}
 
-.total-count span {
-  color: var(--base-color-info);
+  span {
+    color: var(--info-bg-color);
+  }
 }

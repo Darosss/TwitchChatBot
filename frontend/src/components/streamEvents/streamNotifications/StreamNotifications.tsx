@@ -1,9 +1,8 @@
-import "./style.css";
 import React, { useContext, useEffect, useReducer, useState } from "react";
 
 import { SocketContext } from "@context/SocketContext";
 import { Link } from "react-router-dom";
-import { IEventAndIUser } from "@libs/types";
+import { EventAndIUser } from "@libs/types";
 import { DateTooltip } from "@components/dateTooltip";
 
 export default function StreamNotifications() {
@@ -13,7 +12,7 @@ export default function StreamNotifications() {
 
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
-  const [userNotif, setUserNotif] = useState<IEventAndIUser[]>([]);
+  const [userNotif, setUserNotif] = useState<EventAndIUser[]>([]);
 
   const removeParentElement = (
     e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
@@ -24,7 +23,7 @@ export default function StreamNotifications() {
   useEffect(() => {
     socket?.on("userJoinTwitchChat", (event, user) => {
       setUserNotif((prevState) => {
-        prevState.unshift(Object.assign(user, event) as IEventAndIUser);
+        prevState.unshift(Object.assign(user, event) as EventAndIUser);
         return prevState;
       });
 
@@ -59,7 +58,7 @@ export default function StreamNotifications() {
             key={notif._id + notif.eventDate + index}
           >
             <button
-              id="button-close"
+              className="button-close danger-button"
               onClick={(e) => {
                 removeParentElement(e);
               }}
@@ -100,7 +99,6 @@ export default function StreamNotifications() {
               />
               :
               <span>
-                {" "}
                 <DateTooltip date={notif.createdAt} />
               </span>
             </div>

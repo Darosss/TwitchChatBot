@@ -11,14 +11,13 @@
 }
 
 .modal-data-wrapper > div {
-  flex: 1 1 45%;
-  border-bottom: 0.1rem solid var(--base-bg-color-border);
+  flex: 0 1 48%;
+  border-bottom: 0.1rem solid var(--revert-background-color);
   margin-top: 0.1rem;
 }
 
 .modal-data-wrapper > div:hover {
-  flex: 1 1 45%;
-  background: var(--base-bg-color-border);
+  background: var(--revert-background-color);
 }
 
 .modal-data-wrapper > div > * {
@@ -34,8 +33,7 @@
   white-space: nowrap;
   height: 15vh;
   max-height: 15vh;
-  min-width: 15vw;
-  max-width: 35vw;
+  max-width: 40vw;
   min-width: 8vw;
   min-height: 5vw;
 }

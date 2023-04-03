@@ -1,4 +1,3 @@
-import "./style.css";
 import React from "react";
 
 import { Link, LinkProps } from "react-router-dom";
@@ -10,12 +9,26 @@ interface NavLinkProps extends LinkProps {
   label: string;
 }
 
-export default function SideBar() {
+export default function SideBar(props: {
+  theme: string;
+  handleThemeChange: () => void;
+}) {
+  const { theme, handleThemeChange } = props;
   const { data: authData, error } = getAuthorizeUrl();
 
   return (
     <DrawerBar direction={"right"} size={"15vw"} overlay={true}>
-      <ul>
+      <ul className="sidebar-ul">
+        <li>
+          <button
+            className={`common-button ${
+              theme === "light" ? "secondary-button" : "primary-button"
+            }`}
+            onClick={handleThemeChange}
+          >
+            {theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+          </button>
+        </li>
         {routes.map((route) => {
           return (
             <NavLink key={route.path} to={route.path} label={route.label} />

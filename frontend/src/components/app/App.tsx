@@ -1,5 +1,4 @@
-import "./style.css";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { SocketContext, socketConn } from "@context/SocketContext";
 import SideBar from "@components/sideBar";
@@ -20,12 +19,31 @@ import { TimersRoute } from "@routes/TimersRoute";
 import { ModesRoutes } from "@routes/ModeRoute";
 
 function App() {
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    const prefersDarkMode =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (prefersDarkMode) {
+      setTheme("dark");
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  const handleThemeChange = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
+
   return (
     <SocketContext.Provider value={socketConn}>
       <BrowserRouter>
         <div className="main">
           <ReactNotifications />
-          <SideBar />
+          <SideBar theme={theme} handleThemeChange={handleThemeChange} />
           <Routes>
             <Route element={<OverlayLayout />}>
               <Route path="/overlay/*" element={<OverlayRoutes />} />

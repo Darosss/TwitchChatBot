@@ -14,6 +14,7 @@ import {
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import FilterBarModes from "../filterBarModes";
+import ModalDataWrapper from "@components/modalDataWrapper";
 
 export default function Moods() {
   const [showModal, setShowModal] = useState(false);
@@ -98,7 +99,7 @@ export default function Moods() {
     <>
       <PreviousPage />
       <FilterBarModes />
-      <div id="mode-list" className="table-list-wrapper mode-list-wrapper">
+      <div className="table-list-wrapper mode-list-wrapper">
         <div>
           <div className="mode-list-create">
             <input
@@ -151,7 +152,7 @@ export default function Moods() {
         }}
         show={showModal}
       >
-        <div className="moods-list-modal-wrapper">
+        <ModalDataWrapper>
           <div>Name</div>
           <div>
             <input
@@ -164,7 +165,7 @@ export default function Moods() {
               }}
             />
           </div>
-        </div>
+        </ModalDataWrapper>
       </Modal>
     </>
   );

@@ -4,39 +4,46 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: 1vw;
+  /* font-size: calc(0.2rem + 1vw); */
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  .tooltip-default {
+    opacity: 1;
+    margin-left: 0.4rem;
+  }
+
+  .tooltip-text {
+    opacity: 0;
+    transition: opacity 1s, color 2s;
+    height: 0;
+    width: 0;
+    overflow: hidden;
+  }
+
+  &:hover .tooltip-text {
+    opacity: 1;
+    color: var(--info-bg-color);
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+  }
+
+  &:hover .tooltip-default {
+    opacity: 0;
+    height: 0;
+    width: 0;
+    overflow: hidden;
+    color: var(--info-bg-color);
+    border-radius: 0.5rem;
+  }
 }
 
-.tooltip:hover {
-  cursor: pointer;
-}
-
-.tooltip .tooltip-default {
-  opacity: 1;
-  margin-left: 0.4rem;
-}
-
-.tooltip .tooltip-text {
-  opacity: 0;
-  transition: opacity 1s, color 2s;
-  height: 0;
-  width: 0;
-  overflow: hidden;
-}
-
-.tooltip:hover .tooltip-text {
-  opacity: 1;
-  color: var(--base-color-info);
-  height: 100%;
-  width: 100%;
-  overflow: auto;
-}
-
-.tooltip:hover .tooltip-default {
-  opacity: 0;
-  height: 0;
-  width: 0;
-  overflow: hidden;
-  color: var(--base-color-info);
-  border-radius: 0.5rem;
+@media screen and (max-width: $screen-lg) {
+  .tooltip {
+    font-size: 2vw;
+  }
 }

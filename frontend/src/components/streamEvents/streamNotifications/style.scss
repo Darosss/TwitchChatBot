@@ -5,7 +5,7 @@
 
 .user-info {
   position: relative;
-  background-color: var(--bg-color-popup);
+  background-color: $bg-color-popup;
   font-size: 0.7rem;
   margin: 0.5rem;
   height: 12vh;
@@ -33,27 +33,27 @@
 }
 
 .user-info.warn {
-  border: 0.2rem solid var(--color-user-warn);
+  border: 0.1rem solid $color-user-warn;
 }
 
 .user-info.left-chat {
-  background-color: var(--color-user-danger);
+  background-color: $color-user-danger;
 }
 
 .user-info.new-user {
-  border: 0.2rem solid var(--color-user-new-user);
+  border: 0.2rem solid $color-user-new-user;
 }
 
 .user-info.usual {
-  border: 0.2rem solid var(--color-user-usual);
+  border: 0.1rem solid $color-user-usual;
 }
 
 .user-info.blacklist {
-  border: 0.2rem solid var(--color-user-blacklist);
+  border: 0.1rem solid $color-user-blacklist;
 }
 
 .user-info span {
-  color: var(--base-color-info);
+  color: var(--info-bg-color);
   margin-left: 0.5rem;
   font-weight: 400;
 }
@@ -63,14 +63,14 @@
 }
 
 .user-info-event {
-  color: var(--base-color-info);
+  color: var(--info-bg-color);
   font-size: 1rem;
   grid-area: event;
 }
 
 .user-info-date {
   grid-area: date;
-  color: var(--base-color-info);
+  color: var(--info-bg-color);
 }
 
 .user-info-last-seen {
@@ -101,19 +101,8 @@
   grid-area: subsriber;
 }
 
-#button-close {
+.button-close {
   position: absolute;
-  background: var(--base-bg-color-danger);
-  color: white;
   top: 0px;
   right: 0px;
-}
-
-#button-close:hover {
-  color: var(--base-bg-color-danger);
-  background: white;
-}
-
-#button-close:active {
-  background: var(--base-bg-color-danger);
 }

@@ -1,5 +1,4 @@
 import DrawerBar from "@components/drawer";
-import "./style.css";
 import React, { useEffect, useMemo, useState } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import PreviousPage from "@components/previousPage";
@@ -98,7 +97,7 @@ export default function ReactGrid<T = unknown>(props: {
       return (
         <div
           key={item.i}
-          style={{ border: !item.static ? "2px solid pink" : "" }}
+          className={`${!item.static ? "react-grid-item-edit" : ""}`}
         >
           {isEdit ? (
             <div
@@ -162,7 +161,7 @@ const ToolBox = (props: {
   const { items, onTakeItem } = props;
   return (
     <>
-      <div className="grid-toolbox-title">Available grid</div>
+      <div className="grid-toolbox-title">Available grid items</div>
       <div className="grid-toolbox">
         <div className="grid-toolbox-items">
           {items.map((item) => (

@@ -1,5 +1,3 @@
-import "./style.css";
-
 import React from "react";
 import PreviousPage from "@components/previousPage";
 import { Link } from "react-router-dom";

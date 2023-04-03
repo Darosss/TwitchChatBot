@@ -1,9 +1,7 @@
-import "./style.css";
 import React, { useEffect, useState } from "react";
 import {
   createLayout,
   getWidgets,
-  Widgets,
   removeWidgetById,
 } from "@services/WidgetsService";
 import { Link } from "react-router-dom";
@@ -93,8 +91,18 @@ export default function StreamNotifications() {
               }}
               key={index}
             >
-              <Link to={`${layout._id}`}>Show</Link>
-              <Link to={`${layout._id}/editor`}>Edit</Link>
+              <Link
+                className="common-button primary-button"
+                to={`${layout._id}`}
+              >
+                Show
+              </Link>
+              <Link
+                className="common-button primary-button"
+                to={`${layout._id}/editor`}
+              >
+                Edit
+              </Link>
             </CardboxItem>
           );
         })}

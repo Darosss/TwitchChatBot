@@ -1,23 +1,58 @@
 .filter-wrapper {
   margin-top: 0.1rem;
   display: flex;
-  width: 100%;
-  position: relative;
-  border: 1px solid yellow;
-}
+  font-size: 2vmin;
+  width: 96vw;
+  max-height: 7vh;
+  overflow-y: hidden;
+  align-items: end;
 
-.filter-inputs input {
-  margin-left: 0.2rem;
-  text-align: center;
-  height: 5vh;
-  width: 12vw;
-}
+  button.filter-clear-btn {
+    position: sticky;
+    left: 0;
+    min-width: 10vw;
+    height: 3vh;
+    margin-left: 0.1rem;
+  }
 
-.filter-inputs input[type="datetime-local"] {
-  width: 15vw;
-}
+  .filter-inputs {
+    display: flex;
+    flex-flow: nowrap;
+    flex-direction: row;
+    align-items: flex-end;
 
-.filter-clear-btn {
-  margin-left: 0.2rem;
-  background-color: var(--base-bg-color-danger);
+    input {
+      font-size: 1.9vmin;
+      margin-left: 0.2rem;
+      text-align: center;
+      height: 3vh;
+      width: 15vw;
+    }
+
+    div {
+      display: flex;
+      flex-direction: column;
+      label {
+        text-align: center;
+      }
+
+      div {
+        display: flex;
+        flex-direction: row;
+        input {
+          height: 3vh;
+        }
+      }
+    }
+
+    input[type="datetime-local"] {
+      width: 24vw;
+      font-size: 1.4vw;
+    }
+
+    input[type="date"] {
+      width: 15vw;
+      font-size: 1.4vw;
+    }
+  }
 }

@@ -101,13 +101,10 @@ export default function TimersData(props: {
                   <div>Required points: </div>
                   <div>{timer.reqPoints}</div>
                   <div>Enabled: </div>
-                  <div
-                    style={{
-                      background: `${timer.enabled ? "green" : "red"}`,
-                    }}
-                  >
-                    {timer.enabled.toString()}
-                  </div>
+                  {generateEnabledDisabledDiv(
+                    timer.enabled,
+                    timer.enabled.toString().toUpperCase()
+                  )}
                   <div>Uses: </div>
                   <div>{timer.uses}</div>
                   <div>Non follow multi: </div>

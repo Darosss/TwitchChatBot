@@ -1,5 +1,3 @@
 export const generateEnabledDisabledDiv = (enabled: boolean, value: string) => {
-  return (
-    <div style={{ background: `${enabled ? "green" : "red"}` }}>{value}</div>
-  );
+  return <div className={`${enabled ? "enabled" : "disabled"}`}>{value}</div>;
 };

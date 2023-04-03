@@ -1,4 +1,3 @@
-import "./style.css";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -55,20 +54,21 @@ export default function SortByParamsButton(props: {
 
   return (
     <div className="sort-by-params-button-wrapper">
-      <button
-        className="common-button sort-by-params-button"
-        onClick={handleOnClickSortBtn}
-      >
-        {buttonText}
-        <span>{currentSearch}</span>
-      </button>
-      <div></div>
-      <button
-        className="sort-by-params-remove-sort danger-button"
-        onClick={removeSortParams}
-      >
-        X
-      </button>
+      <div>
+        <button
+          className="common-button sort-by-params-button"
+          onClick={handleOnClickSortBtn}
+        >
+          {buttonText}
+          <span>{currentSearch}</span>
+        </button>
+        <button
+          className="sort-by-params-remove-sort danger-button"
+          onClick={removeSortParams}
+        >
+          X
+        </button>
+      </div>
     </div>
   );
 }

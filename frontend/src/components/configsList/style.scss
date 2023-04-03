@@ -3,47 +3,35 @@
   flex-direction: column;
   height: 95vh;
   overflow-x: hidden;
-}
 
-.configs-section-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-}
+  input {
+    text-align: center;
+    background-color: var(--background-color);
+    border: 0.1rem solid var(--revert-background-color);
+    max-width: 100%;
+  }
 
-.configs-section-wrapper > div.configs-section-header {
-  flex: 100%;
-  color: var(--base-color-info);
-  border-top: 0.3rem solid var(--base-bg-color-info);
-  border-bottom: 0.2rem solid var(--base-bg-color-info);
-}
+  .configs-section-wrapper {
+    display: flex;
+    flex-wrap: wrap;
 
-.configs-section-wrapper > div.configs-section-inner-header {
-  flex: 100%;
-  font-size: 1.5vw;
-  font-weight: 700;
-  background-color: var(--base-bg-color-border);
-}
+    & > div {
+      flex: 0 0 50%;
+      border-bottom: 0.1rem solid var(--revert-background-color);
+      text-align: center;
+    }
 
-.configs-section-wrapper > div.configs-section-header:hover {
-  flex: 100%;
-  background-color: var(--base-bg-color-info);
-}
+    & > div.configs-section-header {
+      flex: 100%;
+      border-top: 0.3rem solid var(--info-bg-color);
+      border-bottom: 0.2rem solid var(--info-bg-color);
+    }
 
-.configs-section-wrapper > div {
-  flex: 0 0 50%;
-  border-bottom: 0.1rem solid var(--base-bg-color-border);
-  text-align: center;
-  font-size: x-large;
-}
-
-.configs-section-wrapper > div:hover {
-  background-color: var(--base-bg-color-info);
-}
-
-.configs-section-wrapper input {
-  text-align: center;
-  background-color: var(--base-bg-color);
-  border: 0.1rem solid var(--base-bg-color-border);
-  max-width: 100%;
-  font-size: x-large;
+    & > div.configs-section-inner-header {
+      flex: 100%;
+      font-size: 1.5vw;
+      font-weight: 700;
+      background-color: var(--background-color-opposite);
+    }
+  }
 }

@@ -17,8 +17,19 @@ export default function FilterBarRedemptions() {
           type="search"
           placeholder={"Receiver"}
         ></input>
-        <input {...{ queryparam: "start_date" }} type="datetime-local"></input>
-        <input {...{ queryparam: "end_date" }} type="datetime-local"></input>
+        <div>
+          <label> Redemption date [ start / end ]</label>
+          <div>
+            <input
+              {...{ queryparam: "start_date" }}
+              type="datetime-local"
+            ></input>
+            <input
+              {...{ queryparam: "end_date" }}
+              type="datetime-local"
+            ></input>
+          </div>
+        </div>
         <input
           {...{ queryparam: "cost" }}
           placeholder={"Cost"}

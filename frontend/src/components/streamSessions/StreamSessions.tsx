@@ -1,5 +1,3 @@
-import "./style.css";
-
 import React from "react";
 import Pagination from "@components/pagination";
 import { Link } from "react-router-dom";

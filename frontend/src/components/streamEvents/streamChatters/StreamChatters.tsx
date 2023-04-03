@@ -1,4 +1,3 @@
-import "./style.css";
 import React, { useContext, useEffect, useReducer, useState } from "react";
 
 import { SocketContext } from "@context/SocketContext";
@@ -44,7 +43,7 @@ export default function StreamChatters() {
   }, [socket]);
 
   return (
-    <div id="stream-last-chatters" className={`stream-last-chatters`}>
+    <div id="stream-last-chatters" className="stream-last-chatters">
       <div className="widget-header"> Last chatters </div>
       {[...lastChatters.keys()].map((chatter, index) => {
         return (

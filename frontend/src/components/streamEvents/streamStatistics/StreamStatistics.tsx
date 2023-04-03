@@ -1,4 +1,3 @@
-import "./style.css";
 import React, { useEffect } from "react";
 
 import {
@@ -88,9 +87,7 @@ export function SessionMessages({ count }: SessionMessagesProps) {
   return (
     <div className="session-statistic session-messages">
       <div> Messages</div>
-      <div className="stats-wrapper stats-header">
-        <div>Session Messages</div>
-      </div>
+      <div className="stats-wrapper stats-header">Session Messages</div>
       <div className="stats-wrapper">
         <div className="statistic-full"> {count}</div>
       </div>

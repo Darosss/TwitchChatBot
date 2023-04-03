@@ -1,45 +1,54 @@
-.cardbox-wrapper * {
-  font-size: 1vw;
-}
-
 .cardbox-wrapper {
-  background-color: var(--base-bg-color);
+  background-color: var(--background-color);
   height: 100vh;
-}
+  overflow-y: auto;
 
-.cardbox-header {
-  text-align: center;
-  font-size: xx-large;
+  * {
+    font-size: 2vw;
+  }
+
+  .cardbox-header {
+    text-align: center;
+    font-size: xx-large;
+  }
 }
 
 .cardbox-list {
   display: flex;
-}
+  flex-direction: row;
+  flex-wrap: wrap;
 
-.cardbox-list > div,
-.cardbox-list > button {
-  border: 0.1rem solid black;
-  flex: 0 1 15%;
-  margin: 0.5rem;
-  width: 15vw;
-  height: 25vh;
-  display: flex;
-  justify-content: center;
+  & > div {
+    flex: 0 1 20%;
+    max-width: 20%;
+    margin: 0.5rem;
+    height: 20vh;
+  }
+
+  .remove-cardbox-btn {
+    position: absolute;
+    height: 25%;
+    width: 25%;
+    right: 0;
+    top: 50%;
+    margin: 0;
+    bottom: 0;
+  }
 }
 
 .cardbox-item {
   position: relative;
-  display: flex;
-  flex-direction: column;
-}
 
-.cardbox-title {
-  height: 40%;
-  text-align: center;
-  color: black;
-  background-color: var(--base-color-info);
-  font-size: 3vmin;
-  overflow-y: hidden;
+  .cardbox-title {
+    border-top-left-radius: 0.4rem;
+    border-top-right-radius: 0.4rem;
+    height: 40%;
+    overflow: auto;
+    text-align: center;
+    color: black;
+    background-color: var(--info-bg-color);
+    font-size: 3vmin;
+  }
 }
 
 .cardbox-content {
@@ -48,33 +57,44 @@
   height: 60%;
   text-align: center;
   align-items: end;
+  background-color: var(--background-color-lighter);
+  & > a {
+    flex: 1 1 49%;
+    height: 5vh;
+    color: var(--font-color);
+  }
 }
 
-.cardbox-content > a,
-.cardbox-content > button {
-  background-color: var(--base-bg-color-action);
-  width: 35%;
-  height: 5vh;
+.cardbox-input {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  .cardbox-content {
+    display: flex;
+    flex-direction: column;
+
+    input {
+      width: 80%;
+      flex: 0 0 20%;
+      padding: 0;
+    }
+  }
 }
 
-.cardbox-content > a:hover,
-.cardbox-content > button:hover {
-  color: white;
-  border: 1px solid var(--base-bg-color-action);
-}
+@media screen and (max-width: $screen-lg) {
+  .cardbox-list {
+    display: flex;
+    & > div {
+      flex: 0 1 44%;
+      max-width: 44%;
+      height: 15vh;
+    }
+  }
 
-.remove-cardbox-btn {
-  position: absolute;
-  height: 25%;
-  width: 25%;
-  right: 0;
-  bottom: 0;
-}
-
-.cardbox-item.cardbox-input input {
-  border-top: 1px solid var(--base-bg-color);
-  border-right: 1px solid var(--base-bg-color);
-  width: 100%;
-  margin-right: 0.1rem;
-  font-size: x-large;
+  .cardbox-content {
+    & > a {
+      height: 2vh;
+    }
+  }
 }

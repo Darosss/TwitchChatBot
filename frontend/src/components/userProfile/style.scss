@@ -1,131 +1,63 @@
 .profile-details-wrapper {
+  width: $width-without-drawer;
   font-size: 2vmin;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(9, 11vh);
-}
-
-.profile-details-wrapper div {
-  border-radius: 0.2rem;
-}
-
-.small-details.small > div {
-  border: 0.1rem solid var(--base-bg-color-border);
   display: flex;
-}
+  flex-direction: column;
 
-.small-details.small > div > div {
-  width: 50%;
-  height: 5vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  & > div.detail-section-wrapper {
+    flex: 1 1 50%;
+    border-bottom: 1px solid var(--revert-background-color);
 
-.small-details.small > div > div:first-child {
-  font-weight: 700;
-  border-right: 0.1rem solid var(--base-bg-color);
-  user-select: none; /* supported by Chrome and Opera */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-}
+    & > div {
+      display: flex;
+      flex-direction: row;
+      height: 5vh;
 
-.small-details.small > div > div:first-child:hover {
-  background-color: var(--base-bg-color-border);
-}
+      & > div {
+        flex: 0 1 20%;
+        text-align: center;
+        border: 0.1rem solid var(--revert-background-color);
+        margin-bottom: 0.1rem;
 
-.large-details {
-  overflow: auto;
-  border: 1px solid black;
-  display: flex;
-}
+        &:nth-child(odd) {
+          border-right: 0.2rem solid var(--background-color-darker);
+          border-left: 0.2rem solid var(--background-color-darker);
+          color: $info-color;
+        }
+      }
+    }
+  }
 
-.small-details {
-  grid-row-start: 1;
-  grid-row-end: 3;
-  overflow-y: auto;
-}
+  & > div.detail-section-wrapper-big {
+    border: 1px solid yellow;
+    height: 20vh;
+    & > div {
+      display: flex;
+      flex-direction: row;
+      height: 20vh;
 
-.user-details {
-  grid-column-start: 1;
-  grid-column-end: 2;
-}
+      & > div {
+        overflow-y: auto;
+        flex: 1 1 49%;
+      }
+    }
 
-.twitch-details {
-  grid-column-start: 2;
-  grid-column-end: 3;
-}
+    .profile-messages {
+      .profile-messages-header {
+        color: $info-color;
+        background-color: var(--background-color);
+        text-align: center;
+        position: sticky;
+        top: 0;
+      }
+    }
+  }
 
-.messages-points-details {
-  grid-column-start: 3;
-  grid-column-end: 3;
-}
-
-.notes-details {
-  grid-column-start: 4;
-  grid-column-end: 4;
-  grid-row-end: 5;
-}
-
-.latest-messages-details {
-  grid-column-start: 1;
-  grid-column-end: 4;
-  grid-row-start: 3;
-  grid-row-end: 5;
-}
-
-.notes-graphs-details {
-  grid-column-start: 1;
-  grid-column-end: 5;
-  grid-row-start: 5;
-  grid-row-end: 7;
-}
-
-.graphs-details {
-  grid-column-start: 1;
-  grid-column-end: 5;
-  grid-row-start: 7;
-  grid-row-end: 9;
-}
-
-.edit-notes-btn-list {
-  list-style: none;
-  margin-left: -10%;
-}
-
-.textarea-edit {
-  font-size: 1rem;
-  width: 70vw;
-  height: 15vh;
-}
-
-.profile-user-messages {
-  width: 100%;
-  display: flex;
-}
-
-.profile-user-messages .profile-user-messages-inner {
-  width: 49%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 20vh;
-  font-size: 1rem;
-  text-align: left;
-}
-
-.profile-messages-header {
-  background-color: var(--base-bg-color);
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  text-align: center;
-  font-weight: 700;
-  letter-spacing: 0.3rem;
-  color: var(--base-color-info);
-}
-
-.user-save-profile {
-  margin: 0.5rem;
+  .textarea-profile-edit {
+    width: 90%;
+    height: 10vh;
+  }
+  .profile-button {
+    width: 100%;
+  }
 }

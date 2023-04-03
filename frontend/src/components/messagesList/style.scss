@@ -1,25 +1,33 @@
-.messages-actions {
-  display: flex;
-}
+.table-messages-list {
+  .messages-actions {
+    display: flex;
+  }
 
-td.message-time {
-  color: var(--base-color-time-message);
-  width: 15%;
-}
+  td > div {
+    max-height: 10vh;
+  }
 
-.message-time-div {
-  height: 5vh;
-  max-height: 5vh;
-}
+  td.message-time {
+    color: var(--time-color);
+    width: 15%;
+  }
 
-td.message-username {
-  color: var(--base-color-username-message);
-  width: 15%;
-}
+  .message-time-div {
+    height: 5vh;
+    max-height: 5vh;
+  }
 
-td.message {
-  color: var(--base-color-message);
-  overflow-y: auto;
-  padding-left: 0.5rem;
-  width: 60%;
+  td.message-username {
+    width: 15%;
+    text-align: center;
+  }
+
+  td.message {
+    color: var(--font-color);
+    overflow-y: auto;
+    padding-left: 0.5rem;
+    width: 60%;
+    word-break: break-all;
+    max-height: 5vh;
+  }
 }

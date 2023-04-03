@@ -14,6 +14,7 @@ import {
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import FilterBarModes from "../filterBarModes";
+import ModalDataWrapper from "@components/modalDataWrapper";
 
 export default function Tags() {
   const [showModal, setShowModal] = useState(false);
@@ -98,7 +99,7 @@ export default function Tags() {
     <>
       <PreviousPage />
       <FilterBarModes />
-      <div id="mode-list" className="table-list-wrapper mode-list-wrapper">
+      <div className="table-list-wrapper mode-list-wrapper">
         <div>
           <div className="mode-list-create">
             <input
@@ -151,11 +152,10 @@ export default function Tags() {
         }}
         show={showModal}
       >
-        <div className="tags-list-modal-wrapper">
+        <ModalDataWrapper>
           <div>Name</div>
           <div>
             <input
-              className="triggers-list-input"
               type="text"
               value={name}
               onChange={(e) => {
@@ -164,7 +164,7 @@ export default function Tags() {
               }}
             />
           </div>
-        </div>
+        </ModalDataWrapper>
       </Modal>
     </>
   );

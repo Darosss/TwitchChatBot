@@ -1,6 +1,6 @@
 .modal {
   z-index: 1;
-  color: var(--base-color);
+  color: var(--font-color);
   position: fixed;
   left: 0;
   top: 0;
@@ -12,48 +12,49 @@
   background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
   visibility: hidden;
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  &.show .modal-content {
+    transform: translateY(0);
+  }
+
+  .modal-content {
+    width: 50vw;
+    background-color: var(--background-color);
+    transform: translateY(-10vh);
+    transition: all 0.1s ease-out;
+  }
+
+  .modal-header,
+  .modal-footer {
+    padding: 1rem;
+  }
+
+  .modal-title {
+    margin: 0;
+  }
+
+  .modal-body {
+    padding: 1rem;
+    border-top: 0.1rem solid var(--revert-background-color);
+    border-bottom: 0.1rem solid var(--revert-background-color);
+  }
+
+  .modal-button {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0.2rem;
+  }
 }
 
-.modal-content {
-  width: 50vw;
-  background-color: var(--base-bg-color);
-  transform: translateY(-10vh);
-  transition: all 0.1s ease-out;
-}
-
-.modal-header,
-.modal-footer {
-  padding: 1rem;
-}
-
-.modal-title {
-  margin: 0;
-}
-
-.modal-body {
-  padding: 1rem;
-  border-top: 0.1rem solid var(--base-bg-color-border);
-  border-bottom: 0.1rem solid var(--base-bg-color-border);
-}
-
-.modal.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal.show .modal-content {
-  transform: translateY(0);
-}
-
-.modal-button {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0.2rem;
-}
-
-.modal-submit-button {
-  background-color: var(--base-bg-color-action);
-}
-.modal-close-button {
-  background-color: var(--base-bg-color-danger);
+@media screen and (max-width: $screen-lg) {
+  .modal {
+    .modal-content {
+      width: 90vw;
+    }
+  }
 }

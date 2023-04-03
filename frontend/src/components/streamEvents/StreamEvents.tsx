@@ -1,4 +1,3 @@
-import "./style.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import React, { useEffect, useState } from "react";

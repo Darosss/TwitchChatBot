@@ -1,5 +1,3 @@
-import "./style.css";
-
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -58,74 +56,80 @@ export default function UserProfile() {
     <>
       <PreviousPage />
       <div className="profile-details-wrapper">
-        <div className="user-details small-details small">
-          <div className="nested-detail">
+        <div className="detail-section-wrapper">
+          <div>
             <div>Username:</div> <div>{data.username}</div>
+            <div>Twitch name:</div>
+            <div>{data.twitchName}</div>
           </div>
-          <div className="nested-detail">
+          <div>
             <div>First seen:</div>
             <div>
               <DateTooltip date={data.createdAt} />
             </div>
-          </div>
-          <div className="nested-detail">
-            <div>Last seen:</div>
-            <div>
-              {data.lastSeen ? <DateTooltip date={data.lastSeen} /> : null}
-            </div>
-          </div>
-        </div>
-        <div className="twitch-details small-details small">
-          <div className="nested-detail">
-            <div>Twitch name:</div> <div>{data.twitchName}</div>
-          </div>
-          <div className="nested-detail">
             <div>Twitch created:</div>
             <div>
               {data.twitchCreated ? (
                 <DateTooltip date={data.twitchCreated} />
               ) : null}
             </div>
+            <div>Last seen:</div>
+            <div>
+              {data.lastSeen ? <DateTooltip date={data.lastSeen} /> : null}
+            </div>
           </div>
-          <div className="nested-detail">
+          <div>
+            <div>Messages:</div>
+            <div>{data.messageCount}</div>
+            <div>Points:</div>
+            <div>{data.points?.toFixed(0)}</div>
             <div>Follow:</div>
             <div>
               {data.follower ? <DateTooltip date={data.follower} /> : null}
             </div>
           </div>
         </div>
-        <div className="messages-points-details small-details small">
-          <div className="nested-detail">
-            <div>Messages:</div>
-            <div>{data.messageCount}</div>
-          </div>
-          <div className="nested-detail">
-            <div>Points:</div>
-            <div>{data.points?.toFixed(0)}</div>
-          </div>
-        </div>
-        <div className="notes-details small-details large">
-          <div className="nested-detail">
+
+        <div className="detail-section-wrapper-big">
+          <div>
             <div>
-              <ul>
-                <li className="edit-notes-btn-list">
-                  <button
-                    onClick={showEdit}
-                    className="common-button primary-button"
-                  >
-                    Edit
-                  </button>
-                </li>
-                {data.notes?.map((note, index) => {
-                  return <li key={index}>{note}</li>;
-                })}
-              </ul>
+              <button
+                onClick={showEdit}
+                className="common-button primary-button profile-button"
+              >
+                Edit
+              </button>
+              {isEditingNotes ? (
+                <button
+                  className="common-button danger-button profile-button"
+                  onClick={saveNote}
+                >
+                  Save
+                </button>
+              ) : null}
+            </div>
+            <div>
+              {isEditingNotes ? (
+                <div>
+                  <textarea
+                    className="textarea-profile-edit"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                  />
+                </div>
+              ) : (
+                <ul>
+                  {data.notes?.map((note, index) => {
+                    return <li key={index}>{note}</li>;
+                  })}
+                </ul>
+              )}
             </div>
           </div>
         </div>
-        <div className="latest-messages-details large-details">
-          <div className="profile-user-messages">
-            <div className="profile-first-messages profile-user-messages-inner">
+        <div className="detail-section-wrapper-big">
+          <div>
+            <div className="profile-messages">
               <div className="profile-messages-header"> First messages</div>
               {msgsData.data.firstMessages.map((msg) => {
                 return (
@@ -138,8 +142,7 @@ export default function UserProfile() {
                 );
               })}
             </div>
-
-            <div className="profile-last-messages profile-user-messages-inner">
+            <div className="profile-messages">
               <div className="profile-messages-header"> Latest messages</div>
               {msgsData.data.latestMessages.map((msg) => {
                 return (
@@ -154,30 +157,11 @@ export default function UserProfile() {
             </div>
           </div>
         </div>
-        {isEditingNotes ? (
-          <div className="notes-graphs-details large-details">
-            <div className="nested-detail">
-              <textarea
-                className="textarea-edit"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
-              <button
-                className="common-button danger-button user-save-profile"
-                onClick={saveNote}
-              >
-                Save
-              </button>
-            </div>
-            <div className="nested-detail"></div>
+        <div className="detail-section-wrapper-big">
+          <div>
+            <div>Graphs</div>
+            <div>Graphs</div>
           </div>
-        ) : null}
-        <div
-          className={`${
-            isEditingNotes ? "graphs-details" : "notes-graphs-details"
-          } large-details`}
-        >
-          GRAPHS
         </div>
       </div>
     </>

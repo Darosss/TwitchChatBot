@@ -1,5 +1,3 @@
-import "./style.css";
-
 import React, { Children, useRef, useState } from "react";
 
 const SLIDE_DELAY = 9999;
@@ -79,8 +77,9 @@ export default function Slideshow(props: {
               }}
             ></div>
           ))}
-          <div className="slideshow-button">
+          <div className="slideshow-button-wrapper">
             <button
+              className="common-button primary-button"
               onClick={(e) => {
                 toggleSlideShow(e);
               }}

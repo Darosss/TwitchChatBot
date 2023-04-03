@@ -1,5 +1,3 @@
-import "./style.css";
-
 export default function CardboxWrapper(props: {
   title: string;
   children: React.ReactNode;

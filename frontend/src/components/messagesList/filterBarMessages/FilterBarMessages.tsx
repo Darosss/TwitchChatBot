@@ -17,8 +17,19 @@ export default function FilterBarMessages() {
           type="search"
           placeholder={"Owner of message"}
         ></input>
-        <input {...{ queryparam: "start_date" }} type="datetime-local"></input>
-        <input {...{ queryparam: "end_date" }} type="datetime-local"></input>
+        <div>
+          <label> Date [start / end]</label>
+          <div>
+            <input
+              {...{ queryparam: "start_date" }}
+              type="datetime-local"
+            ></input>
+            <input
+              {...{ queryparam: "end_date" }}
+              type="datetime-local"
+            ></input>
+          </div>
+        </div>
       </UrlParamsInput>
     </div>
   );

@@ -1,95 +1,100 @@
-.react-grid-item:hover {
-  border: 0.1rem solid var(--base-bg-color-danger);
+.react-grid-item {
+  &.react-grid-item-edit {
+    border: 0.1rem solid $danger-color;
+  }
+
+  .grid-hide-button {
+    position: absolute;
+    top: 0;
+    right: 3%;
+    width: 2vw;
+    text-align: center;
+    z-index: 100;
+    border: 0.1rem solid var(--revert-background-color);
+    background-color: rgba(28, 28, 15, 0.645); // add
+    font-size: 1vmin;
+  }
+
+  .grid-hide-button:hover {
+    cursor: pointer;
+    background-color: rgba(28, 28, 15, 1);
+  }
 }
 
 .grid-menu-drawer {
   display: flex;
   margin-top: 0.5rem;
+
+  .grid-edit-save {
+    display: flex;
+    align-items: center;
+    height: 10vh;
+    font-size: 2vmin;
+
+    & > div {
+      flex: 1 1 30%;
+    }
+  }
+
+  .grid-header-drawer {
+    font-size: 2vmin;
+
+    & > span {
+      color: var(--info-bg-color);
+      font-weight: 700;
+    }
+  }
+
+  & > div {
+    margin-left: 0.5rem;
+    width: 50%;
+    border: 1px solid black;
+    text-align: center;
+  }
+
+  button {
+    font-size: 2vmin;
+  }
+
+  .grid-menu-drawer-toolbox {
+    .grid-toolbox {
+      display: flex;
+      flex-wrap: wrap;
+      height: 50%;
+      overflow-x: hidden;
+    }
+
+    .grid-toolbox-title {
+      text-align: center;
+      top: 0;
+    }
+
+    .grid-toolbox-items {
+      display: flex;
+      margin: 0.2rem;
+      flex-wrap: wrap;
+
+      .grid-items-item {
+        background-color: var(--background-color);
+        width: 49%;
+        overflow-x: auto;
+        border: 0.1rem solid black;
+        flex: 1 0 49%;
+
+        &:hover {
+          cursor: pointer;
+          background-color: $primary-color;
+        }
+      }
+    }
+  }
 }
 
-.grid-menu-drawer > div {
-  margin-left: 0.5rem;
-  width: 50%;
-  border: 1px solid black;
-  text-align: center;
-}
-
-.grid-menu-drawer button {
-  font-size: larger;
-}
-
-.grid-toolbox {
-  display: flex;
-  flex-wrap: wrap;
-  height: 50%;
-  overflow-x: hidden;
-}
-
-.grid-toolbox-title {
-  text-align: center;
-  top: 0;
-}
-
-.grid-toolbox-items {
-  display: flex;
-  margin: 0.2rem;
-  flex-wrap: wrap;
-}
-
-.grid-items-item {
-  background-color: var(--base-bg-color);
-  width: 49%;
-  overflow-x: auto;
-  border: 0.1rem solid black;
-  flex: 1 0 49%;
-}
-
-.grid-items-item:hover {
-  cursor: pointer;
-  background-color: var(--base-bg-color-danger);
-}
-
-.grid-hide-button {
-  position: absolute;
-  top: 0;
-  right: 3%;
-  width: 10%;
-  text-align: center;
-  z-index: 10;
-  border: 0.1rem solid var(--base-bg-color-border);
-  background-color: rgba(28, 28, 15, 0.645);
-  font-size: large;
-}
-
-.grid-hide-button:hover {
-  cursor: pointer;
-  background-color: rgba(28, 28, 15, 1);
-}
-
-.grid-header {
-  text-align: center;
-  font-size: larger;
-  position: sticky;
-  top: 0;
-  background-color: var(--base-bg-color);
-  border-bottom: 1px solid yellow;
-}
-
-.grid-edit-save {
-  display: flex;
-  align-items: center;
-  height: 10vh;
-}
-
-.grid-edit-save > div {
-  flex: 1 1 30%;
-}
-
-.grid-header-drawer {
-  font-size: large;
-}
-
-.grid-header-drawer > span {
-  color: var(--base-color-info);
-  font-weight: 700;
+@media screen and (max-width: $screen-lg) {
+  .react-grid-item {
+    .grid-hide-button {
+      width: 5vw;
+      font-size: 2vmin;
+    }
+  }
 }

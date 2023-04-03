@@ -1,22 +1,30 @@
 :root {
-  --base-color: #ffffff;
-  --base-bg-color: #282c34;
-  --base-bg-color-chat: #18181b;
-  --base-bg-color-border: rgb(74, 74, 74);
-  --base-bg-color-action: #2f2fb5;
-  --base-bg-color-head: rgb(91, 89, 89);
-  --base-bg-color-danger: #a01010;
-  --base-bg-hover-color-chat: hsla(0, 0%, 100%, 0.16);
-  --base-bg-textarea-chat: hsla(0, 0%, 81%, 0.456);
-  --base-bg-color-info: #474117;
+  --background-color: #{$background-color-light};
+  --background-color-opposite: #{lighten($background-color-dark, 5%)};
+  --background-color-darker: #{darken($background-color-light, 15%)};
+  --background-color-lighter: #{lighten($background-color-light, 30%)};
+  --revert-background-color: #{lighten($background-color-dark, 40%)};
+  --font-color: #{$font-color-light};
+  --info-bg-color: #{darken($info-color, 25%)};
+  --time-color: #{(darken($info-color, 50%))};
+  --message-username-color: #{$danger-color};
+}
 
-  --base-color-time-message: #f7f7f8;
-  --base-color-username-message: #ff0000;
-  --base-color-message: white;
-  --base-color-button-action: #9147ff;
-  --base-color-button-action-active: #602dab;
-  --base-color-link: #afa241;
-  --base-color-info: #ecf2b4;
+// Use dark mode
+[data-theme="dark"] {
+  --background-color: #{$background-color-dark};
+  --background-color-opposite: #{darken($background-color-light, 30%)};
+  --background-color-darker: #{darken($background-color-dark, 15%)};
+  --background-color-lighter: #{lighten($background-color-dark, 30%)};
+  --font-color: #{$font-color-dark};
+  --revert-background-color: #{darken($background-color-light, 40%)};
+  --info-bg-color: #{adjust-hue($info-color, -30deg)};
+  --time-color: #{(lighten($info-color, 30%))};
+  --message-username-color: #{$success-color};
+}
+
+#root {
+  height: 100vh;
 }
 
 body {
@@ -27,60 +35,56 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-y: hidden;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 a {
   text-decoration: none;
-  color: var(--base-color-link);
+  color: $link-color;
+
+  &:hover {
+    color: var(--revert-background-color);
+    background-color: rgba(175, 162, 65, 0.4);
+  }
+
+  &:visited {
+    color: $link-color;
+  }
 }
 
-a:hover {
-  color: var(--base-bg-color-border);
-  background-color: rgba(175, 162, 65, 0.4);
+* {
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: var(--background-color);
+  }
+  &::-webkit-scrollbar {
+    width: 1vmin;
+    height: 1.5vmin;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: var(--background-color-opposite);
+  }
 }
 
-a:visited {
-  color: var(--base-color-link);
-}
-
-/* DEFAULTS SCROLLBARS */
-body::-webkit-scrollbar {
-  display: none;
-}
-
-*::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-
-  background-color: var(--base-bg-color);
-}
-
-*::-webkit-scrollbar {
-  width: 12px;
-  height: 2vmin;
-  background-color: #f5f5f5;
-}
-
-*::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: var(--base-bg-color-chat);
-}
 /* DEFAULTS SCROLLBARS */
 
 textarea::-webkit-resizer {
-  background-color: var(--base-bg-color);
-}
-
-.float-right {
-  float: right;
+  background-color: var(--background-color);
 }
 
 textarea,
 input,
 button {
   border: 0;
-  background-color: var(--base-bg-color-border);
-  color: var(--base-color-message);
+  background-color: var(--revert-background-color);
+  color: var(--font-color);
 }
 
 textarea:focus,
@@ -88,44 +92,58 @@ input:focus {
   background-color: rgba(75, 72, 72, 0.446);
 }
 
+input {
+  &::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: var(--font-color);
+    opacity: 1; /* Firefox */
+  }
+
+  &:-ms-input-placeholder {
+    /* Internet Explorer 10-11 */
+    color: var(--font-color);
+  }
+
+  &::-ms-input-placeholder {
+    /* Microsoft Edge */
+    color: var(--font-color);
+  }
+}
+
 /* DEFAULTS TABLES */
 table {
   width: 97vw;
   border-collapse: collapse;
-}
 
-table tr {
-  border-bottom: 0.1rem solid var(--base-color-info);
-}
+  thead th {
+    background-color: var(--background-color-opposite);
+    position: sticky;
+    z-index: 1;
+    top: 0;
+    font-size: 1.2vw;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+  }
 
-table thead th {
-  background-color: var(--base-bg-color-head);
-  position: sticky;
-  z-index: 1;
-  top: 0;
-  font-size: 1.2vw;
-}
+  tr {
+    border-bottom: 0.1rem solid var(--info-bg-color);
+  }
 
-table th {
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
-}
-
-table tbody {
-  border: 2px solid black;
-  overflow-y: scroll;
+  tbody {
+    border: 2px solid black;
+  }
 }
 
 .table-list-wrapper {
-  font-size: 0.9rem;
+  font-size: 1.5vmin;
   height: 80vh;
   overflow-y: scroll;
 }
 /* DEFAULTS TABLES */
 
 .table-list-pagination {
-  border-top: 0.3rem solid var(--base-bg-color-border);
+  border-top: 0.3rem solid var(--revert-background-color);
 }
 
 /* BUTTONS */
@@ -140,36 +158,63 @@ table tbody {
 }
 
 .primary-button {
-  background-color: var(--base-bg-color-action);
+  background-color: $primary-color;
 }
 
 .danger-button {
-  background-color: var(--base-bg-color-danger);
+  background-color: $danger-color;
 }
 
-button.common-button:hover {
-  transform: rotate(2deg);
-}
+button {
+  &.common-button:hover {
+    transform: rotate(2deg);
+  }
 
-button.primary-button:hover {
-  background-color: rgba(47, 47, 181, 0.4);
-}
+  &.primary-button:hover {
+    background-color: rgba(47, 47, 181, 0.4);
+  }
 
-button.primary-button:active {
-  background-color: rgb(47, 47, 181);
-}
+  &.primary-button:active {
+    background-color: rgb(47, 47, 181);
+  }
 
-button.danger-button:hover {
-  background-color: rgba(160, 16, 16, 0.4);
-}
+  &.secondary-button:hover {
+    background-color: rgba(130, 130, 134, 0.4);
+  }
 
-button.danger-button:active {
-  background-color: rgb(160, 16, 16);
+  &.secondary-button:active {
+    background-color: rgb(96, 96, 96);
+  }
+
+  &.danger-button:hover {
+    background-color: rgba(160, 16, 16, 0.4);
+  }
+
+  &.danger-button:active {
+    background-color: rgb(160, 16, 16);
+  }
 }
 
 /* BUTTONS */
 
 select {
-  color: var(--base-color-info);
-  background-color: var(--base-bg-color-border);
+  color: var(--font-color);
+  background-color: var(--revert-background-color);
+}
+
+div {
+  &.enabled {
+    background-color: $success-color;
+
+    &:hover {
+      background-color: lighten($success-color, 20%) !important;
+    }
+  }
+
+  &.disabled {
+    background-color: $danger-color;
+    &:hover {
+      background-color: lighten($danger-color, 20%) !important;
+    }
+  }
 }

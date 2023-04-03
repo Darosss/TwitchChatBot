@@ -1,4 +1,3 @@
-import "./style.css";
 import React from "react";
 
 import { createPortal } from "react-dom";
@@ -22,12 +21,15 @@ export default function Modal(props: {
         <div className="modal-body">{children}</div>
 
         <div className="modal-footer">
-          <button onClick={onClose} className="modal-button modal-close-button">
+          <button
+            onClick={onClose}
+            className="modal-button common-button danger-button"
+          >
             Close
           </button>
           <button
             onClick={onSubmit}
-            className="modal-button modal-submit-button"
+            className="modal-button common-button primary-button"
           >
             Submit
           </button>

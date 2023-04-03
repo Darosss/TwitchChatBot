@@ -14,6 +14,7 @@ import {
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import FilterBarModes from "../filterBarModes";
+import ModalDataWrapper from "@components/modalDataWrapper";
 
 export default function Personalities() {
   const [showModal, setShowModal] = useState(false);
@@ -116,7 +117,7 @@ export default function Personalities() {
     <>
       <PreviousPage />
       <FilterBarModes />
-      <div id="mode-list" className="table-list-wrapper mode-list-wrapper">
+      <div className="table-list-wrapper mode-list-wrapper">
         <div>
           <div className="mode-list-create">
             <input
@@ -169,7 +170,7 @@ export default function Personalities() {
         }}
         show={showModal}
       >
-        <div className="personalities-list-modal-wrapper">
+        <ModalDataWrapper>
           <div>Name</div>
           <div>
             <input
@@ -182,7 +183,7 @@ export default function Personalities() {
               }}
             />
           </div>
-        </div>
+        </ModalDataWrapper>
       </Modal>
     </>
   );
