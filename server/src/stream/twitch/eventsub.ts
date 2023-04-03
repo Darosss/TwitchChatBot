@@ -16,6 +16,7 @@ import {
   updateCurrentStreamSession,
 } from "@services/streamSessions";
 import { eventsubLogger } from "@utils/loggerUtil";
+import retryWithCatch from "@utils/retryWithCatchUtil";
 
 const eventSub = async (
   apiClient: ApiClient,
@@ -109,21 +110,18 @@ const eventSub = async (
 
   const onlineSubscription = await listener.subscribeToStreamOnlineEvents(
     userId,
-    (e) => {
+    async (e) => {
       eventsubLogger.info(`${e.broadcasterDisplayName} just went live!`);
-      e.getStream()
-        .then(async (stream) => {
-          const newStreamSession = await createStreamSessionHelper(
-            e.startDate,
-            stream.title,
-            stream.gameName
-          );
-        })
-        .catch((err) => {
-          eventsubLogger.info(`Event sub online subscription error ${err}`);
-        });
+      const stream = await retryWithCatch(() => e.getStream());
+
+      const newStreamSession = await createStreamSessionHelper(
+        e.startDate || new Date(),
+        stream?.title || "",
+        stream?.gameName || ""
+      );
     }
   );
+  // eventsubLogger.info(`Event sub online subscription error ${err}`);
 
   if (apiStream) {
     eventsubLogger.info("Stream found - checking for session");
