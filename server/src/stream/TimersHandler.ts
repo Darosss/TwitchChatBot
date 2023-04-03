@@ -11,8 +11,8 @@ import {
   getTimerById,
   getTimers,
   getTimersDataWithModesEnabled,
+  updateEnabledTimersAndEnabledModes,
   updateTimerById,
-  updateTimers,
 } from "@services/timers";
 import { randomWithMax } from "@utils/randomNumbersUtil";
 import { TimerModel, TimersConfigs, UserModel } from "@models/types";
@@ -134,23 +134,25 @@ class TimersHandler extends HeadHandler {
   }
 
   async updateNonFollowsTimers() {
-    const updatedTimers = await updateTimers(
-      { nonFollowMulti: true },
-      { $inc: { points: this.configs.nonFollowTimerPoints } }
+    const updatedTimers = await updateEnabledTimersAndEnabledModes(
+      this.configs.nonFollowTimerPoints,
+      { nonFollowMulti: false }
     );
 
     return updatedTimers;
   }
 
   async updateNonSubsTimers() {
-    const updatedTimers = await updateTimers(
-      { nonSubMulti: true },
-      { $inc: { points: this.configs.nonSubTimerPoints } }
+    const updatedTimers = await updateEnabledTimersAndEnabledModes(
+      this.configs.nonSubTimerPoints,
+      { nonSubMulti: false }
     );
   }
 
   async updateDefaultsTimers() {
-    const updatedTimers = await updateTimers({}, { $inc: { points: 1 } });
+    const updatedTimers = await updateEnabledTimersAndEnabledModes(1, {});
+
+    return updatedTimers;
   }
 
   async updateTimerAfterUsage(id: string) {
