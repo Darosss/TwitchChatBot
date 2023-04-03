@@ -8,6 +8,7 @@ import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import {
   ManyTimersFindOptions,
   TimerCreateData,
+  TimerFindOptions,
   TimerUpdateData,
 } from "./types";
 
@@ -72,6 +73,30 @@ export const updateTimers = async (
     return updatedTimers;
   } catch (err) {
     logger.error(`Error occured while updating many timers. ${err}`);
+    handleAppError(err);
+  }
+};
+
+export const updateEnabledTimersAndEnabledModes = async (
+  pointsInrement: number,
+  matchOption?: FilterQuery<TimerDocument>
+) => {
+  try {
+    const pipeline: PipelineStage[] = [
+      ...modesPipeline,
+      { $match: { enabled: true, ...matchOption } },
+      { $set: { points: { $add: ["$points", pointsInrement] } } },
+      { $unset: ["tag_info", "personality_info", "mood_info"] },
+      { $merge: { into: "timers", on: "_id", whenMatched: "replace" } },
+    ];
+
+    const timers = await Timer.aggregate(pipeline);
+
+    return timers;
+  } catch (err) {
+    logger.error(
+      `Error occured while aggregating timers for update by enabled and enabled modes: ${err}`
+    );
     handleAppError(err);
   }
 };
