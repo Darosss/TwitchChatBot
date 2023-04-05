@@ -5,13 +5,29 @@ export interface Event {
   eventName: string;
 }
 
+export interface AudioStreamData {
+  audioBuffer: Buffer;
+  name: string;
+  duration: number;
+  currentTime: number;
+}
+
+export interface AudioStreamDataInfo {
+  name: string;
+  duration: number;
+  songsInQue: string[];
+}
+
 export interface EventAndIUser extends Event, UserModel {}
 export interface ServerToClientEvents {
   noArg: () => void;
-  withAck: (d: string, callback: (e: number) => void) => void;
+  withAck: (callback: (e: number) => void) => void;
   messageServer: (date: Date, username: string, message: string) => void;
   userJoinTwitchChat: (eventDate: Event, user: UserModel) => void;
   onRedemption: (data: SoundData) => void;
+  audio: (data: AudioStreamData) => void;
+  audioStop: () => void;
+  getAudioInfo: (data: AudioStreamDataInfo) => void;
 }
 
 export interface ClientToServerEvents {
@@ -21,6 +37,11 @@ export interface ClientToServerEvents {
   refreshCommands: () => void;
   refreshTimers: () => void;
   changeModes: () => void;
+  musicPause: () => void;
+  musicStop: () => void;
+  musicPlay: () => void;
+  musicNext: () => void;
+  getAudioInfo: () => void;
 }
 
 export interface InterServerEvents {
