@@ -12,8 +12,12 @@ import { useParams } from "react-router-dom";
 import { getInitialCurrentBreakpoint } from "@utils/layoutBreakpoints";
 import ReactGrid from "@components/reactGrid";
 import { editOverlayById, getOverlayById } from "@services/OverlayService";
+import MusicPlayer from "./musicPlayer";
 
-const components = new Map([["overlay-redemptions", Redemptions]]);
+const components = new Map([
+  ["overlay-redemptions", Redemptions],
+  ["overlay-music-player", MusicPlayer],
+]);
 
 export default function Overlay(params: { editor?: boolean }) {
   const { editor = false } = params;
