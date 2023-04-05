@@ -1,0 +1,31 @@
+.music-player-widget {
+  font-size: 1.5vmin;
+  text-align: center;
+
+  height: 100%;
+  overflow-y: auto;
+
+  button {
+    border-radius: 1rem;
+    height: 3vh;
+    width: 50%;
+  }
+
+  & > div {
+    display: flex;
+    flex: 1 1 50%;
+  }
+}
+
+.audio-data-wrapper {
+  display: flex;
+  flex-direction: column;
+  & > div {
+    border: 1px solid $primary-color;
+    overflow-y: auto;
+
+    ul {
+      text-align: left;
+    }
+  }
+}

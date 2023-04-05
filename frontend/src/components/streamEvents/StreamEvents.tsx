@@ -18,6 +18,7 @@ import { editWidgetById, getWidgetById } from "@services/WidgetsService";
 import StreamModes from "./streamModes";
 import { getInitialCurrentBreakpoint } from "@utils/layoutBreakpoints";
 import ReactGrid from "@components/reactGrid";
+import MusicPlayer from "./musicPlayer";
 
 const components = new Map([
   ["stream-chat", StreamChat],
@@ -26,6 +27,7 @@ const components = new Map([
   ["stream-statistics", StreamStatistics],
   ["messages-window", MessagesWindow],
   ["stream-modes", StreamModes],
+  ["music-player", MusicPlayer],
 ]);
 
 export default function StreamEvents(params: { editor?: boolean }) {
