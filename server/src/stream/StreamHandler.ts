@@ -131,10 +131,12 @@ class StreamHandler {
         await Promise.all([
           this.triggersHandler.checkMessageForTrigger(message),
           this.commandsHandler.checkMessageForCommand(user, message),
+
           this.timersHandler.checkMessageForTimer(user),
         ])
       ).filter((x) => x) as string[];
 
+      console.log(messagesQueue, "lol");
       this.sendMessagesFromQueue(channel, messagesQueue);
     });
   }
@@ -193,50 +195,58 @@ class StreamHandler {
     return userData;
   }
 
-  initSocketEvents() {
+  private initSocketEvents() {
     this.socketIO.on("connect", (socket) => {
-      socket.on("saveConfigs", async () => {
-        headLogger.info("Client saved configs - refreshing");
-        await this.refreshConfigs();
-      });
+      socket.on("saveConfigs", async () => await this.onSaveConfigs());
 
-      socket.on("changeModes", async () => {
-        headLogger.info(
-          "Client changed modes(tag, mood, personality) - refreshing triggers, commands, message categories and timers"
-        );
-        await Promise.all([
-          this.triggersHandler.refreshTriggers(),
-          this.commandsHandler.refreshCommands(),
-          this.timersHandler.refreshTimers(),
-        ]);
-      });
+      socket.on("refreshTriggers", async () => await this.onRefreshTriggers());
 
-      socket.on("refreshTriggers", async () => {
-        headLogger.info(
-          "Client created/updated/deleted trigger - refreshing triggers"
-        );
-        await this.triggersHandler.refreshTriggers();
-      });
+      socket.on("refreshCommands", async () => await this.onRefreshCommands());
 
-      socket.on("refreshCommands", async () => {
-        headLogger.info(
-          "Client created/updated/deleted command - refreshing commands"
-        );
-        await this.commandsHandler.refreshCommands();
-      });
+      socket.on("refreshTimers", async () => await this.onRefreshTimers());
 
-      socket.on("refreshTimers", async () => {
-        headLogger.info(
-          "Client created/updated/deleted timer - refreshing timers"
-        );
-        await this.timersHandler.refreshTimers();
-      });
+      socket.on("changeModes", async () => await this.onChangeModes());
 
-      socket.on("messageClient", (message) => {
-        this.clientTmi.say(this.authorizedUser.name, message);
-        //after connect to client add listen to messageClient event when user connects to socket
-      });
+      socket.on("messageClient", (message) => this.onMessageClient(message));
     });
+  }
+
+  private async onSaveConfigs() {
+    headLogger.info("Client saved configs - refreshing");
+    await this.refreshConfigs();
+  }
+
+  private async onChangeModes() {
+    headLogger.info(
+      "Client changed modes(tag, mood, personality) - refreshing triggers, commands, message categories and timers"
+    );
+    await Promise.all([
+      this.triggersHandler.refreshTriggers(),
+      this.commandsHandler.refreshCommands(),
+      this.timersHandler.refreshTimers(),
+    ]);
+  }
+
+  private async onRefreshTriggers() {
+    headLogger.info(
+      "Client created/updated/deleted trigger - refreshing triggers"
+    );
+    await this.triggersHandler.refreshTriggers();
+  }
+  private async onRefreshCommands() {
+    headLogger.info(
+      "Client created/updated/deleted command - refreshing commands"
+    );
+    await this.commandsHandler.refreshCommands();
+  }
+
+  private async onRefreshTimers() {
+    headLogger.info("Client created/updated/deleted timer - refreshing timers");
+    await this.timersHandler.refreshTimers();
+  }
+
+  private onMessageClient(message: string) {
+    this.clientTmi.say(this.authorizedUser.name, message);
   }
 
   async checkCountOfViewers(broadcasterId: string) {
