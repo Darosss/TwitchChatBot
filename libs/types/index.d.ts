@@ -28,6 +28,7 @@ export interface ServerToClientEvents {
   audio: (data: AudioStreamData) => void;
   audioStop: () => void;
   getAudioInfo: (data: AudioStreamDataInfo) => void;
+  forceReconnect: () => void;
 }
 
 export interface ClientToServerEvents {
@@ -42,6 +43,7 @@ export interface ClientToServerEvents {
   musicPlay: () => void;
   musicNext: () => void;
   getAudioInfo: () => void;
+  getAudioStreamData: () => void;
 }
 
 export interface InterServerEvents {
