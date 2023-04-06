@@ -265,7 +265,11 @@ class StreamHandler {
       SocketData
     >
   ) {
-    this.musicHandler.addJoinedClientAsListener(socket.id);
+    socket.on("getAudioStreamData", () => {
+      const audioData = this.musicHandler.getAudioStreamData();
+      if (audioData) this.socketIO.to(socket.id).emit("audio", audioData);
+    });
+
     socket.on("musicPause", () => {
       this.musicHandler.pausePlayer();
     });
