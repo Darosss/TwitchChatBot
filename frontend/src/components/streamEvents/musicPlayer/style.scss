@@ -11,21 +11,30 @@
     width: 50%;
   }
 
-  & > div {
+  & > div:not(:first-child) {
     display: flex;
     flex: 1 1 50%;
   }
 }
 
 .audio-data-wrapper {
+  margin-top: 0.3rem;
   display: flex;
   flex-direction: column;
+  border-bottom: 0.2rem solid $primary-color;
+  height: 80%;
   & > div {
-    border: 1px solid $primary-color;
+    font-size: 1.5vmin;
+    height: 15%;
+    border-top: 0.1rem solid $primary-color;
     overflow-y: auto;
 
     ul {
       text-align: left;
     }
+  }
+
+  .audio-playlist {
+    height: 100%;
   }
 }

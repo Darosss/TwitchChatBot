@@ -21,16 +21,16 @@ export default function MusicPlayer() {
   };
 
   useEffect(() => {
-    console.log("test");
     socket.on("getAudioInfo", (data) => {
       setAudioData(data);
     });
+
+    socket.emit("getAudioInfo");
 
     return () => {
       socket.off("getAudioInfo");
     };
   }, []);
-
   return (
     <div className="music-player-widget">
       <div className="widget-header"> Music player </div>
@@ -51,7 +51,7 @@ export default function MusicPlayer() {
         <div className="audio-data-wrapper">
           <div>{audioData.name}</div>
           <div> {Math.round(audioData.duration)} sec</div>
-          <div>
+          <div className="audio-playlist">
             <ul>
               {audioData.songsInQue.map((song, index) => {
                 return <li key={index}>{song}</li>;
