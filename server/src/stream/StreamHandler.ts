@@ -8,7 +8,7 @@ import {
   InterServerEvents,
   SocketData,
 } from "@libs/types";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 
 import {
   getCurrentStreamSession,
@@ -26,6 +26,7 @@ import TimersHandler from "./TimersHandler";
 import { ChatUserstate, Client } from "tmi.js";
 import { createUserIfNotExist } from "@services/users";
 import { UserCreateData } from "@services/users/types";
+import MusicStreamHandler from "./MusicStreamHandler";
 
 interface StreamHandlerOptions {
   config: ConfigDocument;
@@ -56,6 +57,7 @@ class StreamHandler {
   private messagesHandler: MessagesHandler;
   private loayaltyHandler: LoyaltyHandler;
   private timersHandler: TimersHandler;
+  private musicHandler: MusicStreamHandler;
   private configs: ConfigDefaults;
 
   constructor(options: StreamHandlerOptions) {
@@ -66,8 +68,9 @@ class StreamHandler {
 
     this.authorizedUser = authorizedUser;
     this.configs = { ...configDefaults };
-
+    this.musicHandler = new MusicStreamHandler(socketIO);
     this.commandsHandler = new CommandsHandler(this.configs.commandsConfigs);
+
     this.messagesHandler = new MessagesHandler(this.configs.pointsConfigs);
     this.triggersHandler = new TriggersHandler(this.configs.triggersConfigs);
     this.loayaltyHandler = new LoyaltyHandler(
@@ -88,6 +91,8 @@ class StreamHandler {
     this.init();
     this.initSocketEvents();
     this.initOnMessageEvents();
+
+    this.musicHandler.init();
   }
 
   private async init() {
@@ -197,6 +202,7 @@ class StreamHandler {
 
   private initSocketEvents() {
     this.socketIO.on("connect", (socket) => {
+      console.log("Connected - every function in bot should work now");
       socket.on("saveConfigs", async () => await this.onSaveConfigs());
 
       socket.on("refreshTriggers", async () => await this.onRefreshTriggers());
@@ -208,6 +214,8 @@ class StreamHandler {
       socket.on("changeModes", async () => await this.onChangeModes());
 
       socket.on("messageClient", (message) => this.onMessageClient(message));
+
+      this.onMusicHandlerEvents(socket);
     });
   }
 
@@ -247,6 +255,35 @@ class StreamHandler {
 
   private onMessageClient(message: string) {
     this.clientTmi.say(this.authorizedUser.name, message);
+  }
+
+  private onMusicHandlerEvents(
+    socket: Socket<
+      ClientToServerEvents,
+      ServerToClientEvents,
+      InterServerEvents,
+      SocketData
+    >
+  ) {
+    this.musicHandler.addJoinedClientAsListener(socket.id);
+    socket.on("musicPause", () => {
+      this.musicHandler.pausePlayer();
+    });
+    socket.on("musicStop", () => {});
+    socket.on("musicPlay", () => {
+      this.musicHandler.resumePlayer();
+    });
+
+    socket.on("musicNext", () => {
+      this.musicHandler.nextSong();
+    });
+
+    socket.on("getAudioInfo", () => {
+      const audioInfo = this.musicHandler.getAudioInfo();
+      if (!audioInfo) return;
+
+      this.socketIO.to(socket.id).emit("getAudioInfo", audioInfo);
+    });
   }
 
   async checkCountOfViewers(broadcasterId: string) {
