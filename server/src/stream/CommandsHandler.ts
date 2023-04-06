@@ -1,3 +1,4 @@
+import { AudioPlayerOptions } from "@libs/types";
 import { CommandsConfigs, UserModel } from "@models/types";
 import {
   getChatCommands,
@@ -7,13 +8,48 @@ import {
 } from "@services/chatCommands";
 import { commandLogger } from "@utils/loggerUtil";
 import { randomWithMax } from "@utils/randomNumbersUtil";
+import {
+  ClientToServerEvents,
+  InterServerEvents,
+  ServerToClientEvents,
+  SocketData,
+} from "@libs/types";
+import { Server } from "socket.io";
+import MusicStreamHandler from "./MusicStreamHandler";
+
+const musicStreamDefaultsAliases: AudioPlayerOptions[] = [
+  "next",
+  "pause",
+  "play",
+  "resume",
+  "stop",
+];
 
 class CommandsHandler {
   private commandsAliases: string[] = [];
+  private defaultsMusicAliases: AudioPlayerOptions[] =
+    musicStreamDefaultsAliases;
   private configs: CommandsConfigs;
-
-  constructor(configs: CommandsConfigs) {
+  private readonly musicHandler: MusicStreamHandler;
+  private readonly socketIO: Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >;
+  constructor(
+    socketIO: Server<
+      ClientToServerEvents,
+      ServerToClientEvents,
+      InterServerEvents,
+      SocketData
+    >,
+    musicHandler: MusicStreamHandler,
+    configs: CommandsConfigs
+  ) {
     this.configs = configs;
+    this.socketIO = socketIO;
+    this.musicHandler = musicHandler;
     this.init();
   }
 
@@ -23,6 +59,7 @@ class CommandsHandler {
 
   async refreshCommands() {
     this.commandsAliases = (await getChatCommandsAliases(true)) || [];
+    commandLogger.debug(`Commands words [${this.commandsAliases}]`);
   }
 
   async refreshConfigs(configs: CommandsConfigs) {
@@ -30,14 +67,64 @@ class CommandsHandler {
   }
 
   public async checkMessageForCommand(user: UserModel, message: string) {
-    if (!message.startsWith(this.configs.commandsPrefix)) return false;
+    const isCommand = this.messageStartsWithPrefix(message);
+    if (!isCommand) return;
 
+    const answers = await Promise.all([
+      this.checkMessageForDefaultMusicCommand(user, message),
+      this.checkMessageForCustomCommand(user, message),
+    ]);
+
+    const [musicCmdAnswer, customCmdAnswer] = answers;
+
+    if (musicCmdAnswer) return;
+    else if (customCmdAnswer) return customCmdAnswer;
+  }
+
+  private async checkMessageForCustomCommand(user: UserModel, message: string) {
     const commandAlias = this.commandsAliases.find((alias) =>
       message.toLowerCase().includes(alias)
     );
     if (!commandAlias) return await this.notFoundCommand();
 
     return await this.findAndCheckCommandByAlias(user, commandAlias);
+  }
+
+  private async checkMessageForDefaultMusicCommand(
+    user: UserModel,
+    message: string
+  ) {
+    const defaultMusicAlias = this.defaultsMusicAliases.find((alias: string) =>
+      message.toLowerCase().includes(alias)
+    );
+    if (defaultMusicAlias) {
+      return this.onMessageMusicCommand(defaultMusicAlias);
+    }
+  }
+
+  private async onMessageMusicCommand(musicCommand: AudioPlayerOptions) {
+    commandLogger.info(`Music command ${musicCommand} was invoked`);
+    switch (musicCommand) {
+      case "play":
+        this.musicHandler.resumePlayer(true);
+        return true;
+      case "stop":
+        return "Stop player! (Not implemented yet)";
+        return true;
+      case "resume":
+        this.musicHandler.resumePlayer(true);
+        return true;
+      case "pause":
+        this.musicHandler.pausePlayer(true);
+        return true;
+      case "next":
+        this.musicHandler.nextSong(true);
+        return true;
+    }
+  }
+
+  private messageStartsWithPrefix(message: string) {
+    if (message.startsWith(this.configs.commandsPrefix)) return true;
   }
 
   async findAndCheckCommandByAlias(user: UserModel, alias: string) {
@@ -105,11 +192,15 @@ class CommandsHandler {
 
     const mostUsedCommands = await getChatCommands(
       {},
-      { limit: 5, sort: { useCount: -1 }, select: { aliases: 1 } }
+      { limit: 3, sort: { useCount: -1 }, select: { aliases: 1 } }
     );
 
     mostUsedCommands.forEach((command) => {
       notFoundCommandMessage += ` ${this.configs.commandsPrefix}${command.aliases[0]} `;
+    });
+
+    this.defaultsMusicAliases.forEach((defaultMusicCmd) => {
+      notFoundCommandMessage += ` ${this.configs.commandsPrefix}${defaultMusicCmd}`;
     });
 
     return notFoundCommandMessage;
