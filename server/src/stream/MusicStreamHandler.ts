@@ -17,7 +17,7 @@ class MusicStreamHandler {
   private songList: string[] = [];
   private musicPath: string;
   private isPlayingTimeout: NodeJS.Timeout | undefined;
-  private readonly maxBufferedQue = 3;
+  private readonly maxBufferedQue = 5;
   private readonly encodedPrefix = `[encoded]`;
   private readonly secondsBetweenAudio = 1;
   private readonly delayBetweenServer = 2;
@@ -70,6 +70,7 @@ class MusicStreamHandler {
   private async prepareInitialQue(shuffle = true) {
     if (shuffle) this.shuffleSongs();
     for (let i = 0; i < this.maxBufferedQue; i++) {
+      console.log("buff", i);
       this.addNextItemToQueAndPushToEnd();
     }
   }
@@ -124,7 +125,6 @@ class MusicStreamHandler {
       (song) => !song.includes(this.encodedPrefix)
     );
     nonBufferedSongs.forEach((song) => {
-      console.log(song);
       this.prepareAudioBuffer(song);
     });
   }
@@ -174,7 +174,6 @@ class MusicStreamHandler {
 
   private sendAudioInfo() {
     const audioInfo = this.getAudioInfo();
-    console.log(audioInfo, "test");
     if (audioInfo) {
       this.socketIO.emit("getAudioInfo", audioInfo);
     }
@@ -188,8 +187,9 @@ class MusicStreamHandler {
   private async startPlay(delay = 0, newSong = false) {
     this.isPlaying = true;
     this.isPlayingTimeout = setTimeout(() => {
-      this.setCurrentSongFromQue(newSong);
       this.addNextItemToQueAndPushToEnd();
+
+      this.setCurrentSongFromQue(newSong);
 
       if (this.currentSong) {
         this.currentDelay = this.currentSong.duration;
@@ -252,14 +252,14 @@ class MusicStreamHandler {
     return currentTimeSong;
   }
 
-  public addJoinedClientAsListener(socketId: string) {
+  public getAudioStreamData(): AudioStreamData | undefined {
     if (this.currentSong) {
       console.log("PLAY ON CLIENT JOIN");
       const currentTimeSong = this.getCurrentTimeSong();
-      this.socketIO.to(socketId).emit("audio", {
+      return {
         ...this.currentSong,
         currentTime: currentTimeSong,
-      });
+      };
     }
   }
 }
