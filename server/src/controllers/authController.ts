@@ -33,6 +33,7 @@ export const overlay = async (req: Request, res: Response) => {
     const authTwitchJson = (await authRes.json()) as AuthorizationTwitch;
 
     initTwitchOnAuth(authTwitchJson, req.io).then(() => {
+      req.io.emit("forceReconnect");
       res.redirect(process.env.REDIRECT_AFTER_AUTH!);
     });
   }
