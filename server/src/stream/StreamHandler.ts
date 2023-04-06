@@ -68,9 +68,15 @@ class StreamHandler {
 
     this.authorizedUser = authorizedUser;
     this.configs = { ...configDefaults };
-    this.musicHandler = new MusicStreamHandler(socketIO);
-    this.commandsHandler = new CommandsHandler(this.configs.commandsConfigs);
-
+    this.musicHandler = new MusicStreamHandler(
+      socketIO,
+      this.sayInAuthroizedChannel.bind(this)
+    );
+    this.commandsHandler = new CommandsHandler(
+      socketIO,
+      this.musicHandler,
+      this.configs.commandsConfigs
+    );
     this.messagesHandler = new MessagesHandler(this.configs.pointsConfigs);
     this.triggersHandler = new TriggersHandler(this.configs.triggersConfigs);
     this.loayaltyHandler = new LoyaltyHandler(
@@ -213,7 +219,9 @@ class StreamHandler {
 
       socket.on("changeModes", async () => await this.onChangeModes());
 
-      socket.on("messageClient", (message) => this.onMessageClient(message));
+      socket.on("messageClient", (message) =>
+        this.sayInAuthroizedChannel(message)
+      );
 
       this.onMusicHandlerEvents(socket);
     });
@@ -253,7 +261,7 @@ class StreamHandler {
     await this.timersHandler.refreshTimers();
   }
 
-  private onMessageClient(message: string) {
+  private sayInAuthroizedChannel(message: string) {
     this.clientTmi.say(this.authorizedUser.name, message);
   }
 
@@ -271,15 +279,17 @@ class StreamHandler {
     });
 
     socket.on("musicPause", () => {
-      this.musicHandler.pausePlayer();
+      this.musicHandler.pausePlayer(true);
     });
+
     socket.on("musicStop", () => {});
+
     socket.on("musicPlay", () => {
-      this.musicHandler.resumePlayer();
+      this.musicHandler.resumePlayer(true);
     });
 
     socket.on("musicNext", () => {
-      this.musicHandler.nextSong();
+      this.musicHandler.nextSong(true);
     });
 
     socket.on("getAudioInfo", () => {
