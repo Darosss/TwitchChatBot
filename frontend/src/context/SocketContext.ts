@@ -10,6 +10,13 @@ export const SocketContext = React.createContext<
   Socket<ServerToClientEvents, ClientToServerEvents>
 >({} as Socket<ServerToClientEvents, ClientToServerEvents>);
 
+socketConn.on("forceReconnect", () => {
+  console.log("force reconnect");
+  socketConn.disconnect();
+
+  socketConn.connect();
+});
+
 export const socketEmitRefreshTriggers = () => {
   socketConn.emit("refreshTriggers");
 };
