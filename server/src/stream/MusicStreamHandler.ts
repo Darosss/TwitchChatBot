@@ -17,6 +17,7 @@ class MusicStreamHandler {
   private songList: string[] = [];
   private musicPath: string;
   private isPlayingTimeout: NodeJS.Timeout | undefined;
+  private readonly sayInAuthorizedChannel: (message: string) => void;
   private readonly maxBufferedQue = 5;
   private readonly encodedPrefix = `[encoded]`;
   private readonly secondsBetweenAudio = 1;
@@ -27,6 +28,7 @@ class MusicStreamHandler {
   private isPlaying: boolean = false;
   private musicQue = new Map<string, AudioStreamData>();
   private currentTime: number = 0;
+  private config: { info: boolean } = { info: true }; //TODO: add from config later
   private readonly socketIO: Server<
     ClientToServerEvents,
     ServerToClientEvents,
@@ -39,18 +41,20 @@ class MusicStreamHandler {
       ServerToClientEvents,
       InterServerEvents,
       SocketData
-    >
+    >,
+    sayInAuthorizedChannel: (message: string) => void
   ) {
     this.socketIO = socketIO;
     this.musicPath = path.resolve(__dirname, "../data/music");
+    this.sayInAuthorizedChannel = sayInAuthorizedChannel;
   }
 
-  public init(format?: string) {
+  public async init(format?: string) {
     fs.readdir(this.musicPath, async (err, files) => {
       this.songList = files.filter((x) => x.endsWith(format || "mp3"));
       await this.encodeSongs();
       await this.prepareInitialQue();
-      await this.startPlay();
+      await this.startPlay(0, false, true);
     });
   }
 
@@ -71,7 +75,7 @@ class MusicStreamHandler {
     if (shuffle) this.shuffleSongs();
     for (let i = 0; i < this.maxBufferedQue; i++) {
       console.log("buff", i);
-      this.addNextItemToQueAndPushToEnd();
+      await this.addNextItemToQueAndPushToEnd();
     }
   }
 
@@ -93,8 +97,6 @@ class MusicStreamHandler {
       duration: duration,
       currentTime: 0,
     });
-
-    this.sendAudioInfo();
   }
 
   private async prepareAudioBuffer(audioName: string) {
@@ -179,15 +181,27 @@ class MusicStreamHandler {
     }
   }
 
-  public nextSong() {
+  public async nextSong(sayInfo = false) {
     this.clearTimeout();
-    this.startPlay(0, true);
+    this.startPlay(0, true, sayInfo);
   }
 
-  private async startPlay(delay = 0, newSong = false) {
+  private getNameOfNextSongInQue() {
+    try {
+      const audioProps = [...this.musicQue.values()][0];
+      if (!audioProps) return "Couldn't find song :(";
+
+      return this.removeEncodedPrefixFromName(audioProps.name);
+    } catch {
+      return "Not enought songs in que";
+    }
+  }
+
+  private async startPlay(delay = 0, newSong = false, sayInfo = false) {
     this.isPlaying = true;
-    this.isPlayingTimeout = setTimeout(() => {
-      this.addNextItemToQueAndPushToEnd();
+    this.sendAudioInfo();
+    this.isPlayingTimeout = setTimeout(async () => {
+      await this.addNextItemToQueAndPushToEnd();
 
       this.setCurrentSongFromQue(newSong);
 
@@ -195,12 +209,17 @@ class MusicStreamHandler {
         this.currentDelay = this.currentSong.duration;
         this.socketIO.emit("audio", this.currentSong);
 
+        sayInfo
+          ? this.sayInAuthorizedChannel(
+              "Current song: " + this.getNameOfNextSongInQue()
+            )
+          : null;
         console.log(
           `Play - ${this.currentSong?.name} - with delay: ${this.currentDelay}`
         );
         const delayNextSong = this.currentDelay - this.currentSong.currentTime;
         console.log("delay next song ", delayNextSong);
-        this.startPlay(delayNextSong, true);
+        this.startPlay(delayNextSong, true, this.config.info);
       }
     }, delay * 1000 + this.secondsBetweenAudio * 1000);
   }
@@ -210,7 +229,7 @@ class MusicStreamHandler {
     //TODO: add clear  current time in current song
   }
 
-  public pausePlayer() {
+  public pausePlayer(sayInfo = false) {
     const cleared = this.clearTimeout();
     if (!cleared) return;
     console.log(this.isPlaying, "gra czy nie");
@@ -229,13 +248,19 @@ class MusicStreamHandler {
       this.socketIO.emit("audioStop");
 
       this.isPlaying = false;
+
+      if (sayInfo) {
+        this.sayInAuthorizedChannel("Music player paused!");
+      }
     }
   }
 
-  public resumePlayer() {
+  public async resumePlayer(sayInfo = false) {
     if (this.isPlaying) return;
     this.currentSongStart = new Date();
-    this.startPlay(0);
+    this.startPlay(0, false, this.config.info);
+
+    if (sayInfo) this.sayInAuthorizedChannel(`Music player resumed! `);
   }
 
   public clearTimeout() {
