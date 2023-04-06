@@ -18,6 +18,8 @@ export interface AudioStreamDataInfo {
   songsInQue: string[];
 }
 
+export type AudioPlayerOptions = "play" | "stop" | "resume" | "pause" | "next";
+
 export interface EventAndIUser extends Event, UserModel {}
 export interface ServerToClientEvents {
   noArg: () => void;
@@ -48,6 +50,7 @@ export interface ClientToServerEvents {
 
 export interface InterServerEvents {
   ping: () => void;
+  musicOnChatCommand: (option: AudioPlayerOptions) => void;
 }
 
 export interface SoundData {
