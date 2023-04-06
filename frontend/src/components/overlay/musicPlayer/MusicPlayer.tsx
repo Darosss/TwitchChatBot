@@ -16,6 +16,13 @@ export default function MusicPlayer() {
     let source: AudioBufferSourceNode | null = null;
     let timer: NodeJS.Timer | undefined;
 
+    const musicStop = () => {
+      clearInterval(timer);
+      if (source) {
+        source.stop();
+      }
+    };
+
     socket.on("audio", (data) => {
       setSongName(data.name);
       setSongDuration(data.duration);
@@ -64,17 +71,14 @@ export default function MusicPlayer() {
       });
     });
 
-    socket.on("audioStop", () => {
-      clearInterval(timer);
-      if (source) {
-        console.log("SOURCE ALREADY IS SO STOP ");
-        source.stop();
-      }
-    });
+    socket.on("audioStop", () => musicStop());
+
+    socket.emit("getAudioStreamData");
 
     return () => {
       socket.off("audio");
       socket.off("audioStop");
+      musicStop();
     };
   }, []);
 
