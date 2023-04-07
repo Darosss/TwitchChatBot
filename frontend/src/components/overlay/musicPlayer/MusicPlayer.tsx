@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { SocketContext } from "@context/SocketContext";
-import moment from "moment";
+import { convertSecondsToMS } from "@utils/convertSecondsToMS";
 
 export default function MusicPlayer() {
   const socket = useContext(SocketContext);
@@ -10,17 +10,9 @@ export default function MusicPlayer() {
   const [currentTime, setCurrentTime] = useState(0);
 
   const showCurrentSongProgress = () => {
-    const duration = moment.duration(songDuration, "seconds");
-    const maxMinutes = Math.floor(duration.asMinutes());
-    const maxSeconds = (Math.floor(duration.asSeconds()) % 60)
-      .toString()
-      .padStart(2, "0");
+    const [maxMinutes, maxSeconds] = convertSecondsToMS(songDuration);
+    const [currMinutes, currSeconds] = convertSecondsToMS(currentTime);
 
-    const current = moment.duration(currentTime, "seconds");
-    const currMinutes = Math.floor(current.asMinutes());
-    const currSeconds = (Math.floor(current.asSeconds()) % 60)
-      .toString()
-      .padStart(2, "0");
     return (
       <>
         {currMinutes}:{currSeconds} / {maxMinutes}:{maxSeconds}
