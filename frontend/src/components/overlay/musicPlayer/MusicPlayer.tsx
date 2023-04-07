@@ -1,17 +1,32 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { SocketContext } from "@context/SocketContext";
+import moment from "moment";
 
 export default function MusicPlayer() {
   const socket = useContext(SocketContext);
   const [songName, setSongName] = useState("");
   const [songDuration, setSongDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  // Memoize the AudioContext instance
 
-  const remainingTime = (currentTime: string) => {};
+  const showCurrentSongProgress = () => {
+    const duration = moment.duration(songDuration, "seconds");
+    const maxMinutes = Math.floor(duration.asMinutes());
+    const maxSeconds = (Math.floor(duration.asSeconds()) % 60)
+      .toString()
+      .padStart(2, "0");
 
+    const current = moment.duration(currentTime, "seconds");
+    const currMinutes = Math.floor(current.asMinutes());
+    const currSeconds = (Math.floor(current.asSeconds()) % 60)
+      .toString()
+      .padStart(2, "0");
+    return (
+      <>
+        {currMinutes}:{currSeconds} / {maxMinutes}:{maxSeconds}
+      </>
+    );
+  };
   useEffect(() => {
     let source: AudioBufferSourceNode | null = null;
     let timer: NodeJS.Timer | undefined;
@@ -23,6 +38,15 @@ export default function MusicPlayer() {
       }
     };
 
+    const countSongTime = (time: number, duration: number) => {
+      setCurrentTime(time);
+      time++;
+      if (time >= duration) {
+        setCurrentTime(0);
+        clearInterval(timer);
+      }
+    };
+
     socket.on("audio", (data) => {
       setSongName(data.name);
       setSongDuration(data.duration);
@@ -31,14 +55,9 @@ export default function MusicPlayer() {
       let currTime = data.currentTime;
       console.log(currTime, "Piosenka teraz gra od ");
       timer = setInterval(() => {
-        setCurrentTime(currTime);
         currTime++;
-        if (currTime >= data.duration) {
-          setCurrentTime(0);
-          clearInterval(timer);
-        }
+        countSongTime(currTime, data.duration);
       }, 1000);
-
       const audioCtx = new AudioContext();
       audioCtx.decodeAudioData(data.audioBuffer, (buffer) => {
         if (source) {
@@ -57,17 +76,6 @@ export default function MusicPlayer() {
         gainNode.gain.value = 0.12;
 
         source.start(0, data.currentTime);
-        // const source = new AudioBufferSourceNode(memoizedAudioCtx, {
-        //   buffer: buffer,
-        // });
-
-        // const gainNode = memoizedAudioCtx?.createGain();
-        // source.connect(gainNode);
-        // gainNode.connect(memoizedAudioCtx?.destination);
-
-        // gainNode.gain.value = 0.02;
-
-        // source.start(0, data.currentTime);
       });
     });
 
@@ -85,13 +93,11 @@ export default function MusicPlayer() {
   return (
     <div className="music-player-wrapper">
       <div>
-        Name: <span>{songName}</span>
+        Name:<span>{songName}</span>
       </div>
       <div>
         Duration:
-        <span>
-          {" " + currentTime} / {Math.round(songDuration)} sec
-        </span>
+        <span>{showCurrentSongProgress()}</span>
       </div>
     </div>
   );
