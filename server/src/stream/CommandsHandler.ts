@@ -17,17 +17,17 @@ import {
 import { Server } from "socket.io";
 import MusicStreamHandler from "./MusicStreamHandler";
 
-const musicStreamDefaultsAliases: AudioPlayerOptions[] = [
-  "next",
-  "pause",
-  "play",
-  "resume",
-  "stop",
-];
+const musicStreamDefaultsAliases: Map<AudioPlayerOptions, number> = new Map([
+  ["next", 7],
+  ["pause", 7],
+  ["resume", 7],
+  ["stop", 7],
+  ["play", 7],
+]);
 
 class CommandsHandler {
   private commandsAliases: string[] = [];
-  private defaultsMusicAliases: AudioPlayerOptions[] =
+  private defaultsMusicAliases: Map<AudioPlayerOptions, number> =
     musicStreamDefaultsAliases;
   private configs: CommandsConfigs;
   private readonly musicHandler: MusicStreamHandler;
@@ -77,7 +77,7 @@ class CommandsHandler {
 
     const [musicCmdAnswer, customCmdAnswer] = answers;
 
-    if (musicCmdAnswer) return;
+    if (musicCmdAnswer !== undefined) return musicCmdAnswer;
     else if (customCmdAnswer) return customCmdAnswer;
   }
 
@@ -94,32 +94,43 @@ class CommandsHandler {
     user: UserModel,
     message: string
   ) {
-    const defaultMusicAlias = this.defaultsMusicAliases.find((alias: string) =>
-      message.toLowerCase().includes(alias)
+    const defaultMusicAlias = [...this.defaultsMusicAliases.keys()].find(
+      (alias: string) => message.toLowerCase().includes(alias)
     );
     if (defaultMusicAlias) {
-      return this.onMessageMusicCommand(defaultMusicAlias);
+      return this.onMessageMusicCommand(defaultMusicAlias, user.privileges);
     }
   }
 
-  private async onMessageMusicCommand(musicCommand: AudioPlayerOptions) {
-    commandLogger.info(`Music command ${musicCommand} was invoked`);
+  private async onMessageMusicCommand(
+    musicCommand: AudioPlayerOptions,
+    privilege: number
+  ) {
+    if (this.defaultsMusicAliases.get(musicCommand) !== privilege) {
+      commandLogger.info(
+        `Music command: ${musicCommand} - was invoked, but privilege does not match`
+      );
+      return "You have no permission to do that! SabaPing";
+    }
+    commandLogger.info(
+      `Music command: ${musicCommand} - was invoked and executed`
+    );
     switch (musicCommand) {
       case "play":
         this.musicHandler.resumePlayer(true);
-        return true;
+        return "";
       case "stop":
         return "Stop player! (Not implemented yet)";
-        return true;
+        return "";
       case "resume":
         this.musicHandler.resumePlayer(true);
-        return true;
+        return "";
       case "pause":
         this.musicHandler.pausePlayer(true);
-        return true;
+        return "";
       case "next":
         this.musicHandler.nextSong(true);
-        return true;
+        return "";
     }
   }
 
@@ -199,7 +210,7 @@ class CommandsHandler {
       notFoundCommandMessage += ` ${this.configs.commandsPrefix}${command.aliases[0]} `;
     });
 
-    this.defaultsMusicAliases.forEach((defaultMusicCmd) => {
+    [...this.defaultsMusicAliases.keys()].forEach((defaultMusicCmd) => {
       notFoundCommandMessage += ` ${this.configs.commandsPrefix}${defaultMusicCmd}`;
     });
 
