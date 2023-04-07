@@ -49,13 +49,19 @@ class MusicStreamHandler {
     this.sayInAuthorizedChannel = sayInAuthorizedChannel;
   }
 
-  public async init(format?: string) {
-    fs.readdir(this.musicPath, async (err, files) => {
-      this.songList = files.filter((x) => x.endsWith(format || "mp3"));
-      await this.encodeSongs();
-      await this.prepareInitialQue();
-      await this.startPlay(0, false, true);
-    });
+  public async init(format = "mp3") {
+    const files = fs
+      .readdirSync(this.musicPath, { withFileTypes: true })
+      .filter((file) => file.name.endsWith(format));
+
+    await this.encodeSongs(files);
+
+    this.songList = files
+      .filter((file) => file.name.startsWith(this.encodedPrefix))
+      .map((file) => file.name.replace(this.encodedPrefix, ""));
+
+    await this.prepareInitialQue();
+    await this.startPlay(0, false, true);
   }
 
   private shuffleSongs() {
@@ -74,7 +80,6 @@ class MusicStreamHandler {
   private async prepareInitialQue(shuffle = true) {
     if (shuffle) this.shuffleSongs();
     for (let i = 0; i < this.maxBufferedQue; i++) {
-      console.log("buff", i);
       await this.addNextItemToQueAndPushToEnd();
     }
   }
@@ -87,7 +92,7 @@ class MusicStreamHandler {
   }
 
   private async addSongToQue(audioName: string) {
-    const mp3FilePath = `${this.musicPath}\\${audioName}`;
+    const mp3FilePath = `${this.musicPath}\\${this.encodedPrefix}${audioName}`;
     const duration = await this.getAudioDuration(mp3FilePath);
     const mp3FileBuffer = fs.readFileSync(mp3FilePath);
 
@@ -122,12 +127,10 @@ class MusicStreamHandler {
     });
   }
 
-  private async encodeSongs() {
-    const nonBufferedSongs = this.songList.filter(
-      (song) => !song.includes(this.encodedPrefix)
-    );
-    nonBufferedSongs.forEach((song) => {
-      this.prepareAudioBuffer(song);
+  private async encodeSongs(files: fs.Dirent[]) {
+    files.forEach(async (file) => {
+      if (!file.name.startsWith(this.encodedPrefix))
+        await this.prepareAudioBuffer(file.name);
     });
   }
 
@@ -183,6 +186,7 @@ class MusicStreamHandler {
 
   public async nextSong(sayInfo = false) {
     this.clearTimeout();
+    sayInfo ? this.sayInAuthorizedChannel("Skip song!") : null;
     this.startPlay(0, true, sayInfo);
   }
 
@@ -228,6 +232,8 @@ class MusicStreamHandler {
     this.clearTimeout();
     //TODO: add clear  current time in current song
   }
+
+  public requestSong(sayInfo = false) {}
 
   public pausePlayer(sayInfo = false) {
     const cleared = this.clearTimeout();
