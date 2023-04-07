@@ -19,6 +19,7 @@ class MusicStreamHandler {
   private musicPath: string;
   private isPlayingTimeout: NodeJS.Timeout | undefined;
   private readonly sayInAuthorizedChannel: (message: string) => void;
+  private readonly formatFile: string = "mp3";
   private readonly maxBufferedQue = 3;
   private readonly encodedPrefix = `[encoded]`;
   private readonly secondsBetweenAudio = 1;
@@ -53,16 +54,17 @@ class MusicStreamHandler {
     this.sayInAuthorizedChannel = sayInAuthorizedChannel;
   }
 
-  public async init(format = "mp3") {
+  public async init() {
     const files = fs
       .readdirSync(this.musicPath, { withFileTypes: true })
-      .filter((file) => file.name.endsWith(format));
+      .filter((file) => file.name.endsWith(this.formatFile))
+      .map((file) => file.name.replace(this.formatFile, ""));
 
     await this.encodeSongs(files);
 
     this.songList = files
-      .filter((file) => file.name.startsWith(this.encodedPrefix))
-      .map((file) => file.name.replace(this.encodedPrefix, ""));
+      .filter((file) => file.startsWith(this.encodedPrefix))
+      .map((file) => file.replace(this.encodedPrefix, ""));
 
     await this.prepareInitialQue();
     await this.startPlay(0, false, true);
@@ -101,12 +103,12 @@ class MusicStreamHandler {
 
   private async addSongToQue(audioName: string, requester = "") {
     try {
-      const mp3FilePath = `${this.musicPath}\\${this.encodedPrefix}${audioName}`;
+      const mp3FilePath = `${this.musicPath}\\${this.encodedPrefix}${audioName}${this.formatFile}`;
       const duration = await this.getAudioDuration(mp3FilePath);
       const mp3FileBuffer = fs.readFileSync(mp3FilePath);
 
       this.musicQue.set(duration.toString(), {
-        name: audioName.slice(0, -4),
+        name: audioName,
         audioBuffer: mp3FileBuffer,
         duration: duration,
         currentTime: 0,
@@ -144,10 +146,10 @@ class MusicStreamHandler {
     });
   }
 
-  private async encodeSongs(files: fs.Dirent[]) {
+  private async encodeSongs(files: string[]) {
     files.forEach(async (file) => {
-      if (!file.name.startsWith(this.encodedPrefix))
-        await this.prepareAudioBuffer(file.name);
+      if (!file.startsWith(this.encodedPrefix))
+        await this.prepareAudioBuffer(file);
     });
   }
 
