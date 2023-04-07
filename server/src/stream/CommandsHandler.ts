@@ -23,6 +23,7 @@ const musicStreamDefaultsAliases: Map<AudioPlayerOptions, number> = new Map([
   ["resume", 7],
   ["stop", 7],
   ["play", 7],
+  ["sr", 0],
 ]);
 
 class CommandsHandler {
@@ -98,15 +99,23 @@ class CommandsHandler {
       (alias: string) => message.toLowerCase().includes(alias)
     );
     if (defaultMusicAlias) {
-      return this.onMessageMusicCommand(defaultMusicAlias, user.privileges);
+      return this.onMessageMusicCommand(
+        defaultMusicAlias,
+        user.privileges,
+        user.username,
+        message
+      );
     }
   }
 
   private async onMessageMusicCommand(
     musicCommand: AudioPlayerOptions,
-    privilege: number
+    privilege: number,
+    username: string,
+    message: string
   ) {
-    if (this.defaultsMusicAliases.get(musicCommand) !== privilege) {
+    const commandPrivilege = this.defaultsMusicAliases.get(musicCommand);
+    if (commandPrivilege && commandPrivilege >= privilege) {
       commandLogger.info(
         `Music command: ${musicCommand} - was invoked, but privilege does not match`
       );
@@ -130,6 +139,11 @@ class CommandsHandler {
         return "";
       case "next":
         this.musicHandler.nextSong(true);
+        return "";
+      case "sr":
+        const srCommand = `${this.configs.commandsPrefix}sr`;
+        const songName = message.split(srCommand)[1].trim();
+        this.musicHandler.requestSong(username, songName, true);
         return "";
     }
   }
