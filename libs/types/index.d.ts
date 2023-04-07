@@ -10,6 +10,7 @@ export interface AudioStreamData {
   name: string;
   duration: number;
   currentTime: number;
+  requester?: string;
 }
 
 export interface AudioStreamDataInfo {
@@ -18,7 +19,13 @@ export interface AudioStreamDataInfo {
   songsInQue: string[];
 }
 
-export type AudioPlayerOptions = "play" | "stop" | "resume" | "pause" | "next";
+export type AudioPlayerOptions =
+  | "play"
+  | "stop"
+  | "resume"
+  | "pause"
+  | "next"
+  | "sr";
 
 export interface EventAndIUser extends Event, UserModel {}
 export interface ServerToClientEvents {
