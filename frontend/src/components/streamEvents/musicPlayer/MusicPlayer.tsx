@@ -50,6 +50,7 @@ export default function MusicPlayer() {
 
     socket.on("getAudioInfo", (data) => {
       setAudioData(data);
+      clearInterval(timer);
       let currTime = data.currentTime;
       timer = setInterval(() => {
         currTime++;
