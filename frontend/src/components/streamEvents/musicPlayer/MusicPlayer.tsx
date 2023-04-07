@@ -1,10 +1,26 @@
 import { SocketContext } from "@context/SocketContext";
 import { AudioStreamDataInfo } from "@libs/types";
+import { convertSecondsToMS } from "@utils/convertSecondsToMS";
+
 import React, { useContext, useEffect, useState } from "react";
 export default function MusicPlayer() {
   const socket = useContext(SocketContext);
   const [playing, setPlaying] = useState(true);
   const [audioData, setAudioData] = useState<AudioStreamDataInfo>();
+  const [currentTime, setCurrentTime] = useState(0);
+
+  const showCurrentSongProgress = () => {
+    const [maxMinutes, maxSeconds] = convertSecondsToMS(
+      audioData?.duration || 0
+    );
+    const [currMinutes, currSeconds] = convertSecondsToMS(currentTime);
+
+    return (
+      <>
+        {currMinutes}:{currSeconds} / {maxMinutes}:{maxSeconds}
+      </>
+    );
+  };
 
   const togglePlayPause = () => {
     if (playing) {
@@ -21,8 +37,24 @@ export default function MusicPlayer() {
   };
 
   useEffect(() => {
+    let timer: NodeJS.Timer | undefined;
+
+    const countSongTime = (time: number, duration: number) => {
+      setCurrentTime(time);
+      time++;
+      if (time >= duration) {
+        setCurrentTime(0);
+        clearInterval(timer);
+      }
+    };
+
     socket.on("getAudioInfo", (data) => {
       setAudioData(data);
+      let currTime = data.currentTime;
+      timer = setInterval(() => {
+        currTime++;
+        countSongTime(currTime, data.duration);
+      }, 1000);
     });
 
     socket.emit("getAudioInfo");
@@ -50,7 +82,7 @@ export default function MusicPlayer() {
       {audioData ? (
         <div className="audio-data-wrapper">
           <div>{audioData.name}</div>
-          <div> {Math.round(audioData.duration)} sec</div>
+          <div> {showCurrentSongProgress()} </div>
           <div className="audio-playlist">
             <ul>
               {audioData.songsInQue.map((song, index) => {
