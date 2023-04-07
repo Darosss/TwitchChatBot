@@ -32,7 +32,7 @@ class MusicStreamHandler {
   private currentTime: number = 0;
   private config: { info: boolean; songRequest: boolean } = {
     info: true,
-    songRequest: false,
+    songRequest: true,
   }; //TODO: add from config later
   private readonly socketIO: Server<
     ClientToServerEvents,
@@ -281,9 +281,10 @@ class MusicStreamHandler {
   }
 
   private isAddedSongByUser(username: string, sayInfo = false) {
-    if (!this.songRequestList.has(username)) return true;
-
-    this.sayInChannel(sayInfo, `@${username}, you have already added song`);
+    if (this.songRequestList.has(username)) {
+      this.sayInChannel(sayInfo, `@${username}, you have already added song`);
+      return true;
+    }
   }
 
   private checkIfSongExist(songName: string) {
