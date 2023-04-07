@@ -120,8 +120,6 @@ class MusicStreamHandler {
         currentTime: 0,
         requester: requester,
       });
-
-      this.sendAudioInfo();
     } catch (err) {
       console.error("Probably mp3 isn't correct encoded. Skip song.");
 
@@ -246,6 +244,8 @@ class MusicStreamHandler {
           "Current song: " + this.getNameOfCurrentSong()
         );
 
+        this.sendAudioInfo();
+
         const delayNextSong = this.currentDelay - this.currentSong.currentTime;
         this.startPlay(delayNextSong, true, this.config.info);
       }
@@ -279,6 +279,8 @@ class MusicStreamHandler {
       return;
     }
     await this.addRequestedSongToPlayer(username, foundSong);
+
+    this.sendAudioInfo();
 
     this.sayInChannel(sayInfo, `@${username}, added ${foundSong} song to que`);
   }
