@@ -142,8 +142,9 @@ class CommandsHandler {
         return "";
       case "sr":
         const srCommand = `${this.configs.commandsPrefix}sr`;
-        const songName = message.split(srCommand)[1].trim();
-        this.musicHandler.requestSong(username, songName, true);
+        const songName = message.replace(srCommand, "").trim();
+
+        await this.musicHandler.requestSong(username, songName, true);
         return "";
     }
   }
