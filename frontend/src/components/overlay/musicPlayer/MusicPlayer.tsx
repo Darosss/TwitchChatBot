@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { SocketContext } from "@context/SocketContext";
 import { convertSecondsToMS } from "@utils/convertSecondsToMS";
-
+import ProgressBar from "@ramonak/react-progress-bar";
 export default function MusicPlayer() {
   const socket = useContext(SocketContext);
   const [songName, setSongName] = useState("");
@@ -15,7 +15,15 @@ export default function MusicPlayer() {
 
     return (
       <>
-        {currMinutes}:{currSeconds} / {maxMinutes}:{maxSeconds}
+        <ProgressBar
+          completed={currentTime}
+          maxCompleted={songDuration}
+          customLabel={` ${currMinutes}:${currSeconds} / ${maxMinutes}:${maxSeconds}`}
+          labelAlignment="outside"
+          labelSize="20px"
+          width={"60%"}
+          bgColor={"lightblue"}
+        />
       </>
     );
   };
@@ -85,11 +93,11 @@ export default function MusicPlayer() {
   return (
     <div className="music-player-wrapper">
       <div>
-        Name:<span>{songName}</span>
+        Name:<div className="music-player-song-name">{songName}</div>
       </div>
-      <div>
+      <div className="music-player-song-duration">
         Duration:
-        <span>{showCurrentSongProgress()}</span>
+        {showCurrentSongProgress()}
       </div>
     </div>
   );

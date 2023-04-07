@@ -1,11 +1,37 @@
 .music-player-wrapper {
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
   font-weight: 500;
   background-color: rgba(0, 0, 0, 0.2);
-  font-size: 1.5vw;
+  height: 100%;
+  font-size: 1.2vw;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
   color: lightblue;
   span {
     padding-left: 0.3rem;
     font-weight: 700;
     color: white;
+  }
+
+  & > div {
+    flex: 0 1 30%;
+    align-items: center;
+  }
+
+  .music-player-song-name {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    color: white;
+  }
+  .music-player-song-duration {
+    display: flex;
+
+    & > div {
+      flex: 1 1 30%;
+      align-self: center;
+    }
   }
 }
