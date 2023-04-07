@@ -12,6 +12,7 @@ import {
 } from "@libs/types";
 import moment from "moment";
 import path from "path";
+import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";
 
 class MusicStreamHandler {
   private songList: string[] = [];
@@ -25,6 +26,7 @@ class MusicStreamHandler {
   private readonly secondsBetweenAudio = 1;
   private readonly delayBetweenServer = 2;
   private currentSong: AudioStreamData | undefined;
+  private previousSong: string = "";
   private currentDelay: number = 0;
   private currentSongStart: Date = new Date();
   private isPlaying: boolean = false;
@@ -52,6 +54,10 @@ class MusicStreamHandler {
     this.socketIO = socketIO;
     this.musicPath = path.resolve(__dirname, "../data/music");
     this.sayInAuthorizedChannel = sayInAuthorizedChannel;
+
+    setInterval(() => {
+      // console.log(this.sayWhenUserRequestedSong());
+    }, 2500);
   }
 
   public async init() {
@@ -161,6 +167,7 @@ class MusicStreamHandler {
   private async setCurrentSongFromQue(newSong = true) {
     if (this.musicQue.size <= 0) return;
     if (newSong || !this.currentSong) {
+      this.previousSong = this.currentSong?.name || "";
       this.musicQue.delete(this.currentSong?.duration.toString() || "");
 
       const [id, musicProps] = [...this.musicQue][0];
@@ -188,6 +195,7 @@ class MusicStreamHandler {
     const info: AudioStreamDataInfo = {
       name: this.removeEncodedPrefixFromName(this.currentSong.name),
       duration: this.currentSong.duration,
+      currentTime: this.getCurrentTimeSong(),
       songsInQue: [
         ...array.map((x) => this.removeEncodedPrefixFromName(x.name)),
       ],
@@ -361,6 +369,65 @@ class MusicStreamHandler {
         currentTime: currentTimeSong,
       };
     }
+  }
+
+  private getRemainingTimeOfCurrentSong() {
+    if (!this.currentSong) return 0;
+    const time = Math.floor(
+      this.currentSong.duration - this.getCurrentTimeSong()
+    );
+
+    return time;
+  }
+
+  public sayNextSong() {
+    const nextSong = this.musicQue.values().next().value as AudioStreamData;
+    const time = this.getRemainingTimeOfCurrentSong();
+
+    const [minutes, seconds] = convertSecondsToMS(time);
+
+    this.sayInAuthorizedChannel(
+      `Next song: ${nextSong.name} in ~${minutes}:${seconds} min`
+    );
+  }
+  public sayPreviousSong() {
+    try {
+      this.sayInAuthorizedChannel(`Previous song: ${this.previousSong}`);
+    } catch {
+      this.sayInAuthorizedChannel(`Not enought songs to do that uga buga`);
+    }
+  }
+  public sayWhenUserRequestedSong(username: string) {
+    if (!this.isAddedSongByUser(username)) {
+      this.sayInAuthorizedChannel(
+        `@username, you did not add any song to que (: `
+      );
+
+      return;
+    }
+
+    const remainingTime = this.getRemainingTimeToRequestedSong(username);
+
+    this.sayInAuthorizedChannel(
+      `@${username}, your song will be in ~${remainingTime}`
+    );
+  }
+
+  private getRemainingTimeToRequestedSong(username: string) {
+    let totalDuration = 0;
+
+    totalDuration += this.getRemainingTimeOfCurrentSong();
+    [...this.musicQue.values()].every((song) => {
+      if (song.requester !== username) {
+        console.log(Math.floor(totalDuration), song.duration, song.requester);
+        totalDuration += song.duration;
+        return true;
+      }
+    });
+
+    const [minutes, seconds] = convertSecondsToMS(totalDuration);
+
+    return `${minutes}:${seconds}`;
   }
 }
 
