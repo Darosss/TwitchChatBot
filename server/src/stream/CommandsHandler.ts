@@ -19,10 +19,13 @@ import MusicStreamHandler from "./MusicStreamHandler";
 
 const musicStreamDefaultsAliases: Map<AudioPlayerOptions, number> = new Map([
   ["next", 7],
+  ["skip", 7],
   ["pause", 7],
   ["resume", 7],
   ["stop", 7],
   ["play", 7],
+  ["previous", 7],
+  ["when", 7],
   ["sr", 0],
 ]);
 
@@ -115,7 +118,8 @@ class CommandsHandler {
     message: string
   ) {
     const commandPrivilege = this.defaultsMusicAliases.get(musicCommand);
-    if (commandPrivilege && commandPrivilege >= privilege) {
+    if (commandPrivilege && commandPrivilege > privilege) {
+      console.log(commandPrivilege, privilege);
       commandLogger.info(
         `Music command: ${musicCommand} - was invoked, but privilege does not match`
       );
@@ -140,6 +144,16 @@ class CommandsHandler {
       case "skip":
         this.musicHandler.nextSong(true);
         return "";
+      case "next":
+        this.musicHandler.sayNextSong();
+        return "";
+      case "previous":
+        this.musicHandler.sayPreviousSong();
+        return "";
+      case "when":
+        this.musicHandler.sayWhenUserRequestedSong(username);
+        return "";
+
       case "sr":
         const srCommand = `${this.configs.commandsPrefix}sr`;
         const songName = message.replace(srCommand, "").trim();
