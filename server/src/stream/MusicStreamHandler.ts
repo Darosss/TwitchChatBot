@@ -257,10 +257,11 @@ class MusicStreamHandler {
     if (!this.config.songRequest) {
       this.sayInChannel(sayInfo, `@${username}, song request is turned off.`);
       return;
+    } else if (this.isAddedSongByUser(username, sayInfo)) {
+      return;
+    } else if (!this.isEnoughRequestSongInfo(username, songName, sayInfo)) {
+      return;
     }
-
-    if (this.isAddedSongByUser(username, sayInfo)) return;
-
     const foundSong = this.checkIfSongExist(songName);
     if (!foundSong) {
       this.sayInChannel(
@@ -278,6 +279,18 @@ class MusicStreamHandler {
     this.songRequestList.set(username, songName);
 
     await this.addSongToQue(songName, username);
+  }
+
+  private isEnoughRequestSongInfo(
+    username: string,
+    songName: string,
+    sayInfo = false
+  ) {
+    if (songName.length > 3) return true;
+    this.sayInChannel(
+      sayInfo,
+      `@${username}, please provide more info SUBprise`
+    );
   }
 
   private isAddedSongByUser(username: string, sayInfo = false) {
