@@ -100,17 +100,25 @@ class MusicStreamHandler {
   }
 
   private async addSongToQue(audioName: string, requester = "") {
-    const mp3FilePath = `${this.musicPath}\\${this.encodedPrefix}${audioName}`;
-    const duration = await this.getAudioDuration(mp3FilePath);
-    const mp3FileBuffer = fs.readFileSync(mp3FilePath);
+    try {
+      const mp3FilePath = `${this.musicPath}\\${this.encodedPrefix}${audioName}`;
+      const duration = await this.getAudioDuration(mp3FilePath);
+      const mp3FileBuffer = fs.readFileSync(mp3FilePath);
 
-    this.musicQue.set(duration.toString(), {
-      name: audioName.slice(0, -4),
-      audioBuffer: mp3FileBuffer,
-      duration: duration,
-      currentTime: 0,
-      requester: requester,
-    });
+      this.musicQue.set(duration.toString(), {
+        name: audioName.slice(0, -4),
+        audioBuffer: mp3FileBuffer,
+        duration: duration,
+        currentTime: 0,
+        requester: requester,
+      });
+
+      this.sendAudioInfo();
+    } catch (err) {
+      console.error("Probably mp3 isn't correct encoded. Skip song.");
+
+      this.addNextItemToQueAndPushToEnd();
+    }
   }
 
   private async prepareAudioBuffer(audioName: string) {
@@ -165,8 +173,6 @@ class MusicStreamHandler {
       if (musicProps.requester)
         this.clearUserRequestAfterPlay(musicProps.requester);
       if (this.shouldPrepareQue()) await this.addNextItemToQueAndPushToEnd();
-
-      this.sendAudioInfo();
     }
   }
   private removeEncodedPrefixFromName(name: string) {
@@ -262,8 +268,6 @@ class MusicStreamHandler {
       return;
     }
     await this.addRequestedSongToPlayer(username, foundSong);
-
-    this.sendAudioInfo();
 
     this.sayInChannel(sayInfo, `@${username}, added ${foundSong} song to que`);
   }
