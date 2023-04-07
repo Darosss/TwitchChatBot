@@ -137,7 +137,7 @@ class CommandsHandler {
       case "pause":
         this.musicHandler.pausePlayer(true);
         return "";
-      case "next":
+      case "skip":
         this.musicHandler.nextSong(true);
         return "";
       case "sr":
