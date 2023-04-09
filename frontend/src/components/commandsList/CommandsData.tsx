@@ -82,7 +82,7 @@ export default function CommandsData(props: {
                   <div>Name: </div>
                   <div>{command.name}</div>
                   <div>Uses: </div>
-                  <div>{command.useCount}</div>
+                  <div>{command.uses}</div>
                   <div>Enabled: </div>
                   {generateEnabledDisabledDiv(
                     command.enabled,
