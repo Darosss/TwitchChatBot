@@ -21,24 +21,19 @@ export default function StreamChat() {
   };
 
   useEffect(() => {
-    //add timeout - dunno why socket doesnt work without that
-    // FIXME: later
-    setTimeout(() => {
-      console.log("timeout");
-      socket.on("messageServer", (date, username, message) => {
-        setMessages((prevMessages) => {
-          const newMessages = { ...prevMessages };
-          newMessages[Math.random() * 100] = {
-            date: date,
-            username: username,
-            message: message,
-          };
-          return newMessages;
-        });
-
-        forceUpdate();
+    socket.on("messageServer", (date, username, message) => {
+      setMessages((prevMessages) => {
+        const newMessages = { ...prevMessages };
+        newMessages[Math.random() * 100] = {
+          date: date,
+          username: username,
+          message: message,
+        };
+        return newMessages;
       });
-    }, 500);
+
+      forceUpdate();
+    });
 
     return () => {
       socket.off("messageServer");
@@ -57,10 +52,10 @@ export default function StreamChat() {
                   (new Date(a.date) as unknown as number)
                 );
               })
-              .map((message) => {
+              .map((message, index) => {
                 return (
                   <Message
-                    key={message.date + message.username}
+                    key={index}
                     date={message.date}
                     username={message.username}
                     message={message.message}
