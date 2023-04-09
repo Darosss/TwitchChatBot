@@ -3,8 +3,12 @@ import { AudioStreamDataInfo } from "@libs/types";
 import { convertSecondsToMS } from "@utils/convertSecondsToMS";
 
 import React, { useContext, useEffect, useState } from "react";
+import UploadMp3Form from "./UploadMp3Form";
 export default function MusicPlayer() {
   const socket = useContext(SocketContext);
+
+  const [showUpload, setShowUpload] = useState(true);
+
   const [playing, setPlaying] = useState(true);
   const [audioData, setAudioData] = useState<AudioStreamDataInfo>();
   const [currentTime, setCurrentTime] = useState(0);
@@ -77,9 +81,18 @@ export default function MusicPlayer() {
           {playing ? "PAUSE" : "PLAY"}
         </button>
         <button className="common-button primary-button" onClick={emitNextSong}>
-          NEXT
+          NEXT &#8594;
+        </button>
+        <button
+          className="primary-button common-button upload-button-show-hide"
+          onClick={() => setShowUpload(!showUpload)}
+        >
+          {showUpload ? "Hide upload" : "Show upload"}
         </button>
       </div>
+
+      {showUpload ? <UploadMp3Form /> : null}
+
       {audioData ? (
         <div className="audio-data-wrapper">
           <div>{audioData.name}</div>
