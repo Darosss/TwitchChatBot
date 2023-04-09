@@ -8,6 +8,7 @@ export interface ChatCommand {
   name: string;
   description?: string;
   enabled: boolean;
+  uses: number;
   aliases: string[];
   messages: string[];
   privilege: number;
@@ -29,6 +30,7 @@ export interface ChatCommandCreateData
     | "personality"
     | "tag"
     | "mood"
+    | "uses"
   > {
   personality: string;
   tag: string;
