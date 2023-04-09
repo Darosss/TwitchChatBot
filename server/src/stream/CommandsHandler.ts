@@ -1,5 +1,5 @@
 import { AudioPlayerOptions } from "@libs/types";
-import { CommandsConfigs, UserModel } from "@models/types";
+import { ChatCommandModel, CommandsConfigs, UserModel } from "@models/types";
 import {
   getChatCommands,
   getChatCommandsAliases,
@@ -89,6 +89,7 @@ class CommandsHandler {
     const commandAlias = this.commandsAliases.find((alias) =>
       message.toLowerCase().includes(alias)
     );
+    console.log(commandAlias, "alias");
     if (!commandAlias) return await this.notFoundCommand();
 
     return await this.findAndCheckCommandByAlias(user, commandAlias);
@@ -175,10 +176,22 @@ class CommandsHandler {
       commandLogger.info(
         `${user.username} - used (${foundCommand.name}) command with (${alias}) alias`
       );
-      return this.formatCommandMessage(
-        user,
-        foundCommand.messages[randomWithMax(foundCommand.messages.length)]
+      let randomCommandMsg =
+        foundCommand.messages[randomWithMax(foundCommand.messages.length)];
+
+      randomCommandMsg = this.formatCommandMessageCommandData(
+        foundCommand,
+        randomCommandMsg
       );
+
+      randomCommandMsg = this.formatCommandMessageUserData(
+        user,
+        randomCommandMsg
+      );
+
+      this.updateUsesCommand(foundCommand.id);
+
+      return randomCommandMsg;
     }
   }
 
@@ -190,7 +203,7 @@ class CommandsHandler {
 
   async getCommandByAlias(alias: string) {
     const foundCommand = await getOneChatCommand({
-      aliases: { $all: alias },
+      aliases: { $elemMatch: { $regex: alias, $options: "i" } },
     });
 
     return foundCommand;
@@ -202,25 +215,49 @@ class CommandsHandler {
     });
   }
 
-  formatCommandMessage(user: UserModel, message?: string) {
+  formatCommandMessageUserData(user: UserModel, message?: string) {
     let formatMsg = message || "";
+    const regExp = /\$user\{(.*?)\}/;
 
-    let matches = formatMsg.match(/\$\{(.*?)\}/);
+    let matches = formatMsg.match(regExp);
 
     while (matches !== null) {
-      const userDetail = this.formatUserDetail(
+      const userDetail = this.formatModelDetail(
         user[matches[1] as keyof UserModel]
       );
       formatMsg = formatMsg.replace(matches[0], userDetail);
 
-      matches = formatMsg.match(/\$\{(.*?)\}/);
+      matches = formatMsg.match(regExp);
     }
 
     return formatMsg;
   }
 
-  formatUserDetail(detail: any) {
-    if (typeof detail === "number") return Math.round(detail);
+  formatCommandMessageCommandData(
+    chatCommand: ChatCommandModel,
+    message?: string
+  ) {
+    let formatMsg = message || "";
+    const regExp = /\$command\{(.*?)\}/;
+
+    let matches = formatMsg.match(regExp);
+
+    while (matches !== null) {
+      const commandDetail = this.formatModelDetail(
+        chatCommand[matches[1] as keyof ChatCommandModel]
+      );
+
+      formatMsg = formatMsg.replace(matches[0], commandDetail);
+
+      matches = formatMsg.match(regExp);
+    }
+
+    return formatMsg;
+  }
+
+  formatModelDetail(detail: any) {
+    //FIXME: ++1 detail for uses, it doesnt change a thing for points or messages so just for now.
+    if (typeof detail === "number") return Math.round(++detail);
     else if (detail instanceof Date) return detail.toLocaleString();
 
     return detail;
@@ -232,7 +269,7 @@ class CommandsHandler {
 
     const mostUsedCommands = await getChatCommands(
       {},
-      { limit: 3, sort: { useCount: -1 }, select: { aliases: 1 } }
+      { limit: 3, sort: { uses: -1 }, select: { aliases: 1 } }
     );
 
     mostUsedCommands.forEach((command) => {
