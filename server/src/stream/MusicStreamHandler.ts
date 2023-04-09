@@ -1,6 +1,5 @@
 import fs from "fs";
 import { getAudioDurationInSeconds } from "get-audio-duration";
-import { Lame } from "node-lame";
 import { Server } from "socket.io";
 import {
   ClientToServerEvents,
@@ -11,18 +10,16 @@ import {
   AudioStreamDataInfo,
 } from "@libs/types";
 import moment from "moment";
-import path from "path";
 import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";
+import { musicPath } from "@configs/globalPaths";
 
 class MusicStreamHandler {
   private songList: string[] = [];
   private songRequestList = new Map<string, string>();
-  private musicPath: string;
   private isPlayingTimeout: NodeJS.Timeout | undefined;
   private readonly sayInAuthorizedChannel: (message: string) => void;
   private readonly formatFile: string = "mp3";
   private readonly maxBufferedQue = 3;
-  private readonly encodedPrefix = `[encoded]`;
   private readonly secondsBetweenAudio = 1;
   private readonly delayBetweenServer = 2;
   private currentSong: AudioStreamData | undefined;
@@ -52,7 +49,6 @@ class MusicStreamHandler {
     sayInAuthorizedChannel: (message: string) => void
   ) {
     this.socketIO = socketIO;
-    this.musicPath = path.resolve(__dirname, "../data/music");
     this.sayInAuthorizedChannel = sayInAuthorizedChannel;
 
     setInterval(() => {
@@ -61,16 +57,10 @@ class MusicStreamHandler {
   }
 
   public async init() {
-    const files = fs
-      .readdirSync(this.musicPath, { withFileTypes: true })
+    this.songList = fs
+      .readdirSync(musicPath, { withFileTypes: true })
       .filter((file) => file.name.endsWith(this.formatFile))
       .map((file) => file.name.replace(this.formatFile, ""));
-
-    await this.encodeSongs(files);
-
-    this.songList = files
-      .filter((file) => file.startsWith(this.encodedPrefix))
-      .map((file) => file.replace(this.encodedPrefix, ""));
 
     await this.prepareInitialQue();
     await this.startPlay(0, false, true);
@@ -109,7 +99,8 @@ class MusicStreamHandler {
 
   private async addSongToQue(audioName: string, requester = "") {
     try {
-      const mp3FilePath = `${this.musicPath}\\${this.encodedPrefix}${audioName}${this.formatFile}`;
+      // const mp3FilePath = `${musicPath}\\${this.encodedPrefix}${audioName}${this.formatFile}`; // before
+      const mp3FilePath = `${musicPath}\\${audioName}${this.formatFile}`;
       const duration = await this.getAudioDuration(mp3FilePath);
       const mp3FileBuffer = fs.readFileSync(mp3FilePath);
 
@@ -127,36 +118,6 @@ class MusicStreamHandler {
     }
   }
 
-  private async prepareAudioBuffer(audioName: string) {
-    const audioPath = `${this.musicPath}\\${audioName}`;
-    const encodedAudioPath = `${this.musicPath}\\${this.encodedPrefix}${audioName}`;
-
-    const encoder = new Lame({ output: "buffer" }).setFile(audioPath);
-    await encoder.encode();
-    fs.writeFile(encodedAudioPath, encoder.getBuffer(), (err) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      console.log(`Encoded audio saved to ${audioName}`);
-
-      fs.unlink(audioPath, (err) => {
-        if (err) {
-          console.error("Error deleting audio file:", err);
-        } else {
-          console.log("Audio file deleted:", audioPath);
-        }
-      });
-    });
-  }
-
-  private async encodeSongs(files: string[]) {
-    files.forEach(async (file) => {
-      if (!file.startsWith(this.encodedPrefix))
-        await this.prepareAudioBuffer(file);
-    });
-  }
-
   private async getAudioDuration(audioPath: string) {
     const mp3DurationSec = await getAudioDurationInSeconds(audioPath);
     return mp3DurationSec;
@@ -171,10 +132,7 @@ class MusicStreamHandler {
       const [id, musicProps] = [...this.musicQue][0];
       this.currentSongStart = new Date();
 
-      this.currentSong = {
-        ...musicProps,
-        name: this.removeEncodedPrefixFromName(musicProps.name),
-      };
+      this.currentSong = musicProps;
 
       this.musicQue.delete(this.currentSong?.duration.toString() || "");
       if (musicProps.requester)
@@ -182,21 +140,17 @@ class MusicStreamHandler {
       if (this.shouldPrepareQue()) await this.addNextItemToQueAndPushToEnd();
     }
   }
-  private removeEncodedPrefixFromName(name: string) {
-    return name.replace(this.encodedPrefix, "");
-  }
+
   public getAudioInfo(): AudioStreamDataInfo | undefined {
     if (!this.currentSong) return;
 
     const array = [...this.musicQue.values()];
 
     const info: AudioStreamDataInfo = {
-      name: this.removeEncodedPrefixFromName(this.currentSong.name),
+      name: this.currentSong.name,
       duration: this.currentSong.duration,
       currentTime: this.getCurrentTimeSong(),
-      songsInQue: [
-        ...array.map((x) => this.removeEncodedPrefixFromName(x.name)),
-      ],
+      songsInQue: [...array.map((x) => x.name)],
     };
     return info;
   }
@@ -218,7 +172,7 @@ class MusicStreamHandler {
     const audioProps = this.currentSong;
     if (!audioProps) return "Couldn't find song :(";
 
-    let songName = this.removeEncodedPrefixFromName(audioProps.name);
+    let songName = audioProps.name;
 
     if (audioProps.requester)
       songName += ` Requested by @${audioProps.requester}`;
