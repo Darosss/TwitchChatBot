@@ -220,7 +220,7 @@ class CommandsHandler {
   }
 
   formatUserDetail(detail: any) {
-    if (typeof detail === "number") return detail.toLocaleString();
+    if (typeof detail === "number") return Math.round(detail);
     else if (detail instanceof Date) return detail.toLocaleString();
 
     return detail;
