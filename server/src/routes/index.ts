@@ -14,6 +14,7 @@ import widgetsRouter from "./widgetsRoute";
 import moodsRouter from "./moodsRoute";
 import tagsRouter from "./tagsRoute";
 import personalitiesRouter from "./personalitiesRoute";
+import filesRouter from "./filesRoute";
 
 const initRoutes = (app: Express) => {
   app.use("/auth", auth);
@@ -30,6 +31,7 @@ const initRoutes = (app: Express) => {
   app.use("/tags", tagsRouter);
   app.use("/triggers", triggersRouter);
   app.use("/timers", timersRouter);
+  app.use("/files", filesRouter);
   app.use("/widgets", widgetsRouter);
 };
 
