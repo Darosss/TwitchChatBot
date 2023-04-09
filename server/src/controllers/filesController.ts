@@ -1,13 +1,10 @@
 import Express, { NextFunction, Request, Response } from "express";
 import multer from "multer";
-import path from "path";
 import fs from "fs";
 import { AppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
-import { Lame } from "node-lame";
 import { musicPath } from "@configs/globalPaths";
 const maxFilesAtOnce = 30;
-let isEncoding = false;
 
 if (!fs.existsSync(musicPath)) {
   fs.mkdirSync(musicPath, { recursive: true });
@@ -52,41 +49,14 @@ export const uploadMp3File = async (
         return next(err);
       }
 
-      if (isEncoding) {
-        return res.status(400).send({
-          message: "Server is still encoding previous mp3. Try again later!",
-        });
-      }
-
-      const uploadedMp3 = req.files as globalThis.Express.Multer.File[];
-      if (!uploadedMp3) {
-        return res
-          .status(400)
-          .send({ message: "No mp3 found, please try again" });
-      }
-
-      res
+      return res
         .status(200)
-        .send({ message: "Updated successfully, server now encodes audios" });
-      isEncoding = true;
-      for (const mp3 of uploadedMp3) {
-        await encodeUploadedMp3(mp3.path);
-      }
-
-      isEncoding = false;
+        .send({ message: "Mp3 files updated successfully" });
     });
   } catch (err) {
     logger.error(`Error when trying to upload mp3 files ${err}`);
     next(err);
   }
-};
-
-const encodeUploadedMp3 = async (audioPath: string) => {
-  const encoder = new Lame({ output: "buffer" }).setFile(audioPath);
-  await encoder.encode();
-
-  fs.writeFileSync(audioPath, encoder.getBuffer());
-  console.log(`Encoded audio saved to ${audioPath}`);
 };
 
 export const getFoldersList = (
