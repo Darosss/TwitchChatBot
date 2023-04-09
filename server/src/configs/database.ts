@@ -31,13 +31,13 @@ const createDefaultCommands = async () => {
     const defaultCommands = [
       {
         name: "messages",
-        messages: ["@{username}, your messages: {messageCount}"],
+        messages: ["@$user{username}, your messages: $user{messageCount}"],
         aliases: ["messages", "msgs", "msg"],
         description: "Send information about user's message count",
       },
       {
         name: "points",
-        messages: ["@{username}, your points: {points}"],
+        messages: ["@$user{username}, your points: $user{points}"],
         aliases: ["pts", "points"],
         description: "Send information about user's points",
       },
