@@ -50,10 +50,6 @@ class MusicStreamHandler {
   ) {
     this.socketIO = socketIO;
     this.sayInAuthorizedChannel = sayInAuthorizedChannel;
-
-    setInterval(() => {
-      // console.log(this.sayWhenUserRequestedSong());
-    }, 2500);
   }
 
   public async init() {
@@ -232,17 +228,37 @@ class MusicStreamHandler {
       );
       return;
     }
-    await this.addRequestedSongToPlayer(username, foundSong);
+    const added = await this.addRequestedSongToPlayer(username, foundSong);
+    if (added) {
+      this.sendAudioInfo();
+      this.sayInChannel(
+        sayInfo,
+        `@${username}, added ${foundSong} song to que`
+      );
+      return;
+    }
 
-    this.sendAudioInfo();
-
-    this.sayInChannel(sayInfo, `@${username}, added ${foundSong} song to que`);
+    this.sayInChannel(
+      sayInfo,
+      `@${username}, your song is already in que, request something else`
+    );
   }
 
   private async addRequestedSongToPlayer(username: string, songName: string) {
-    this.songRequestList.set(username, songName);
+    if (!this.isAlreadySongInQue(songName)) {
+      this.songRequestList.set(username, songName);
+      await this.addSongToQue(songName, username);
 
-    await this.addSongToQue(songName, username);
+      return true;
+    }
+  }
+
+  private isAlreadySongInQue(songName: string) {
+    const isAdded = [...this.musicQue.values()].some(
+      (song) => song.name === songName
+    );
+
+    return isAdded;
   }
 
   private isEnoughRequestSongInfo(
@@ -259,7 +275,11 @@ class MusicStreamHandler {
 
   private isAddedSongByUser(username: string, sayInfo = false) {
     if (this.songRequestList.has(username)) {
-      this.sayInChannel(sayInfo, `@${username}, you have already added song`);
+      this.sayInChannel(
+        sayInfo,
+        `@${username}, you have already added song. 
+        Your song will be in ~${this.getRemainingTimeToRequestedSong(username)}`
+      );
       return true;
     }
   }
@@ -343,7 +363,9 @@ class MusicStreamHandler {
     const [minutes, seconds] = convertSecondsToMS(time);
 
     this.sayInAuthorizedChannel(
-      `Next song: ${nextSong.name} in ~${minutes}:${seconds} min`
+      `Next song: ${nextSong.name} in ~${minutes}:${seconds} min. 
+      ${nextSong.requester ? `Requested by ${nextSong.requester}` : ""} 
+      `
     );
   }
   public sayPreviousSong() {
@@ -375,7 +397,6 @@ class MusicStreamHandler {
     totalDuration += this.getRemainingTimeOfCurrentSong();
     [...this.musicQue.values()].every((song) => {
       if (song.requester !== username) {
-        console.log(Math.floor(totalDuration), song.duration, song.requester);
         totalDuration += song.duration;
         return true;
       }
