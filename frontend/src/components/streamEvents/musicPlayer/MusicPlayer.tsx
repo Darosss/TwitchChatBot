@@ -7,7 +7,7 @@ import UploadMp3Form from "./UploadMp3Form";
 export default function MusicPlayer() {
   const socket = useContext(SocketContext);
 
-  const [showUpload, setShowUpload] = useState(true);
+  const [showUpload, setShowUpload] = useState(false);
 
   const [playing, setPlaying] = useState(true);
   const [audioData, setAudioData] = useState<AudioStreamDataInfo>();
