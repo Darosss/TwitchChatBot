@@ -56,11 +56,11 @@ export const getOneChatCommand = async (
   try {
     const foundChatCommand = await ChatCommand.findOne(filter);
 
-    const chatCommand = checkExistResource(foundChatCommand, "Chat command");
+    // const chatCommand = checkExistResource(foundChatCommand, "Chat command");
 
-    return chatCommand;
+    return foundChatCommand;
   } catch (err) {
-    logger.error(`Error occured while getting all chat commands: ${err}`);
+    logger.error(`Error occured while getting chat command by alias: ${err}`);
     handleAppError(err);
   }
 };
