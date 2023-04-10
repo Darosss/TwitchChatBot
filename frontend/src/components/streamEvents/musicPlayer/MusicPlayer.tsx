@@ -4,12 +4,16 @@ import { convertSecondsToMS } from "@utils/convertSecondsToMS";
 
 import React, { useContext, useEffect, useState } from "react";
 import UploadMp3Form from "./UploadMp3Form";
+import AudioFoldersList from "./AudioFoldersList";
+
+type AvailableTabs = "information" | "upload" | "files";
+
 export default function MusicPlayer() {
   const socket = useContext(SocketContext);
 
-  const [showUpload, setShowUpload] = useState(false);
+  const [activeTab, setActiveTab] = useState<AvailableTabs>("information");
 
-  const [playing, setPlaying] = useState(true);
+  const [playing, setPlaying] = useState(false);
   const [audioData, setAudioData] = useState<AudioStreamDataInfo>();
   const [currentTime, setCurrentTime] = useState(0);
 
@@ -56,6 +60,7 @@ export default function MusicPlayer() {
       setAudioData(data);
       clearInterval(timer);
       let currTime = data.currentTime;
+      console.log(currTime);
       timer = setInterval(() => {
         currTime++;
         countSongTime(currTime, data.duration);
@@ -68,6 +73,37 @@ export default function MusicPlayer() {
       socket.off("getAudioInfo");
     };
   }, []);
+
+  const audioDataDOM = () => {
+    if (!audioData) return <></>;
+    return (
+      <>
+        <div className="audio-data-wrapper">
+          <div>{audioData.name}</div>
+          <div> {showCurrentSongProgress()} </div>
+          <div className="audio-playlist">
+            <ul>
+              {audioData.songsInQue.map((song, index) => {
+                return <li key={index}>{song}</li>;
+              })}
+            </ul>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  const generateMusicPlayerContext = () => {
+    switch (activeTab) {
+      case "information":
+        return audioDataDOM();
+      case "upload":
+        return <UploadMp3Form />;
+      case "files":
+        return <AudioFoldersList />;
+    }
+  };
+
   return (
     <div className="music-player-widget">
       <div className="widget-header"> Music player </div>
@@ -83,29 +119,28 @@ export default function MusicPlayer() {
         <button className="common-button primary-button" onClick={emitNextSong}>
           NEXT &#8594;
         </button>
+      </div>
+      <div className="music-player-tabs-wrapper">
         <button
           className="primary-button common-button upload-button-show-hide"
-          onClick={() => setShowUpload(!showUpload)}
+          onClick={() => setActiveTab("information")}
         >
-          {showUpload ? "Hide upload" : "Show upload"}
+          Information
+        </button>
+        <button
+          className="primary-button common-button upload-button-show-hide"
+          onClick={() => setActiveTab("upload")}
+        >
+          Upload
+        </button>
+        <button
+          className="primary-button common-button upload-button-show-hide"
+          onClick={() => setActiveTab("files")}
+        >
+          Files
         </button>
       </div>
-
-      {showUpload ? <UploadMp3Form /> : null}
-
-      {audioData ? (
-        <div className="audio-data-wrapper">
-          <div>{audioData.name}</div>
-          <div> {showCurrentSongProgress()} </div>
-          <div className="audio-playlist">
-            <ul>
-              {audioData.songsInQue.map((song, index) => {
-                return <li key={index}>{song}</li>;
-              })}
-            </ul>
-          </div>
-        </div>
-      ) : null}
+      {generateMusicPlayerContext()}
     </div>
   );
 }

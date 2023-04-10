@@ -1,9 +1,8 @@
 .music-player-widget {
   font-size: 1.5vmin;
+  border-bottom: 0.2rem solid $primary-color;
   text-align: center;
-
   height: 100%;
-  overflow-y: auto;
 
   button {
     border-radius: 1rem;
@@ -25,7 +24,6 @@
   margin-top: 0.3rem;
   display: flex;
   flex-direction: column;
-  border-bottom: 0.2rem solid $primary-color;
   height: 80%;
   & > div {
     font-size: 1.5vmin;
@@ -55,5 +53,46 @@
   .upload-files-list {
     height: 100%;
     overflow-x: hidden;
+  }
+}
+
+.audio-files-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 80%;
+  overflow-x: hidden;
+  .audio-folders-list-wrapper {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background-color: var(--background-color);
+    border-bottom: 0.1rem solid $primary-color;
+    padding: 0.2rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    & > div {
+      flex: 0 1 25%;
+      button {
+        width: 100%;
+      }
+    }
+
+    button.load-folder-btn {
+      width: 99%;
+    }
+  }
+
+  .mp3-files-wrapper {
+    text-align: left;
+
+    .mp3-file {
+      display: flex;
+      border-bottom: 0.1rem solid $primary-color;
+
+      & > div:first-child {
+        flex: 0 0 15%;
+      }
+    }
   }
 }
