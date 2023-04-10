@@ -97,12 +97,7 @@
     text-align: left;
 
     .mp3-file {
-      display: flex;
       border-bottom: 0.1rem solid $primary-color;
-
-      & > div:first-child {
-        flex: 0 0 15%;
-      }
     }
   }
 }
@@ -123,18 +118,18 @@
   }
 
   .folder-file {
-    display: flex;
     border-bottom: 0.1rem solid $primary-color;
 
     div {
       align-self: center;
     }
+  }
+}
 
-    & > div :first-child {
-      display: flex;
-      button {
-        width: 20vw;
-      }
-    }
+div.list-with-x-buttons {
+  display: flex;
+  & > div:first-child {
+    display: flex;
+    flex: 0 0 15%;
   }
 }

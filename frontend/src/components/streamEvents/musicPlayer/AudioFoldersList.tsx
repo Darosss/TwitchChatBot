@@ -107,7 +107,7 @@ export default function AudioFoldersList() {
       <div className="mp3-files-wrapper">
         {mp3Data?.data.map((mp3, index) => {
           return (
-            <div key={index} className="mp3-file">
+            <div key={index} className="mp3-file list-with-x-buttons">
               <div>
                 <button
                   onClick={() => setFileNameToDelete(mp3)}
