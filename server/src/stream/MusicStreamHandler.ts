@@ -91,7 +91,6 @@ class MusicStreamHandler {
       this.sayInAuthorizedChannel(
         `There are not songs in ${path.basename(this.currentFolder)}`
       );
-
       return;
     }
     if (this.musicQue.size > 0) this.musicQue.clear();
@@ -395,7 +394,7 @@ class MusicStreamHandler {
   }
 
   public async resumePlayer(sayInfo = false) {
-    if (this.isPlaying) return;
+    if (this.isPlaying || this.songList.length <= 0) return;
     this.currentSongStart = new Date();
     this.startPlay(0, false, this.config.info);
 
