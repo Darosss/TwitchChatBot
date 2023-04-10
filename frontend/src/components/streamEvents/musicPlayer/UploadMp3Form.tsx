@@ -2,10 +2,19 @@ import React, { useEffect, useState } from "react";
 import useFileUpload from "@hooks/useFileUpload";
 import { addNotification } from "@utils/getNotificationValues";
 import ProgressBar from "@ramonak/react-progress-bar";
+import { getFoldersList } from "@services/FilesService";
 export default function UploadMp3Form() {
   const [fileList, setFileList] = useState<FileList | null>(null);
+  const [folderName, setFolderName] = useState("");
+
+  const {
+    data: foldersData,
+    loading: foldersLoad,
+    error: foldersError,
+  } = getFoldersList();
+
   const { uploadProgress, handleFileUpload, error, success } = useFileUpload(
-    "files/upload/audio-mp3"
+    `files/upload/audio-mp3/${folderName}`
   );
 
   useEffect(() => {
@@ -16,18 +25,39 @@ export default function UploadMp3Form() {
     if (error) addNotification("Danger", error, "danger");
   }, [error]);
 
+  if (!foldersData) return <> No folders to upload </>;
+
+  const { data: folders } = foldersData;
+
   return (
     <>
       <div className="upload-mp3-form-wrapper">
-        <input
-          type="file"
-          name="file"
-          onChange={(e) => {
-            setFileList(e.target.files);
-            handleFileUpload(e);
-          }}
-          multiple
-        />
+        <div>
+          {folders.map((folder, index) => {
+            return (
+              <button
+                className={`common-button ${
+                  folderName === folder ? "primary-button" : "danger-button"
+                }`}
+                key={index}
+                onClick={() => setFolderName(folder)}
+              >
+                {folder}
+              </button>
+            );
+          })}
+        </div>
+        {folderName ? (
+          <input
+            type="file"
+            name="file"
+            onChange={(e) => {
+              setFileList(e.target.files);
+              handleFileUpload(e);
+            }}
+            multiple
+          />
+        ) : null}
         <div className="upload-mp3-progrees-bar">
           <ProgressBar completed={uploadProgress} labelAlignment="center" />
         </div>

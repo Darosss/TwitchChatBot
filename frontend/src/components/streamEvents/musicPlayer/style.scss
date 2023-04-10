@@ -44,7 +44,13 @@
 .upload-mp3-form-wrapper {
   width: 100%;
   display: flex;
+  margin-top: 0.2rem;
   flex-direction: column;
+
+  div,
+  button {
+    margin-top: 0.1rem;
+  }
 
   .upload-mp3-progrees-bar {
     margin-top: 0.2rem;
