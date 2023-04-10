@@ -18,19 +18,6 @@ const clientTmi = (params: ClientTmiParams) => {
       username: process.env.username,
     },
     channels: [userToListen],
-    logger: {
-      info(message) {
-        console.log(
-          `${new Date().toISOString().split("T")[1].split(".")[0]} ${message}`
-        );
-      },
-      warn(message) {
-        console.log("WARN", message);
-      },
-      error(message) {
-        console.log("ERROR", message);
-      },
-    },
   });
 
   return client;
