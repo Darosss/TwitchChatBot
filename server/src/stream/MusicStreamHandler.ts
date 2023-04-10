@@ -55,9 +55,7 @@ class MusicStreamHandler {
   }
 
   public async init() {
-    this.loadSongsFromMusicPath().then(async () => {
-      await this.prepareInitialQue();
-    });
+    await this.loadSongsFromMusicPath();
   }
 
   private async loadSongsFromMusicPath(shuffle = true) {
@@ -89,6 +87,13 @@ class MusicStreamHandler {
   }
 
   private async prepareInitialQue() {
+    if (this.songList.length <= 0) {
+      this.sayInAuthorizedChannel(
+        `There are not songs in ${path.basename(this.currentFolder)}`
+      );
+
+      return;
+    }
     if (this.musicQue.size > 0) this.musicQue.clear();
 
     for (let i = 0; i <= this.maxBufferedQue; i++) {
@@ -234,11 +239,11 @@ class MusicStreamHandler {
     this.currentFolder = loadedFolder;
     this.loadSongsFromMusicPath(shuffle)
       .then(async () => {
-        await this.prepareInitialQue();
         this.sayInChannel(
           sayInfo,
           `Loaded new songs from ${folderName}. Number of songs: ${this.songList.length}`
         );
+        await this.prepareInitialQue();
         this.sendAudioInfo();
       })
       .catch(() => {
