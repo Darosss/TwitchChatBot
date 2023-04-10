@@ -17,7 +17,8 @@ if (!fs.existsSync(musicPath)) {
 
 const storageMp3 = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, musicPath);
+    const { folder } = req.params;
+    cb(null, path.join(musicPath, folder));
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
