@@ -45,6 +45,11 @@ export default function MusicPlayer() {
     socket.emit("musicNext");
   };
 
+  const handleOnSetActiveTab = (tab: AvailableTabs) => {
+    setActiveTab(tab);
+    socket.emit("getAudioInfo");
+  };
+
   useEffect(() => {
     let timer: NodeJS.Timer | undefined;
 
@@ -62,7 +67,6 @@ export default function MusicPlayer() {
       setAudioData(data);
       clearInterval(timer);
       let currTime = data.currentTime;
-      console.log(currTime);
       timer = setInterval(() => {
         currTime++;
         countSongTime(currTime, data.duration);
@@ -111,7 +115,7 @@ export default function MusicPlayer() {
         className={`${
           activeTab === tab ? "primary-button" : "danger-button"
         } common-button upload-button-show-hide`}
-        onClick={() => setActiveTab(tab)}
+        onClick={() => handleOnSetActiveTab(tab)}
       >
         {tab.toUpperCase()}
       </button>

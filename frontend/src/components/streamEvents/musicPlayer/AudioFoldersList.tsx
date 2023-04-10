@@ -56,19 +56,11 @@ export default function AudioFoldersList() {
   }, [folderName]);
 
   useEffect(() => {
-    console.log(mp3Data);
-  }, [mp3Data]);
-
-  useEffect(() => {
     socket.on("getAudioInfo", (data) => {
-      console.log("test");
       setFolderName(data.currentFolder);
     });
 
     socket.emit("getAudioInfo");
-    return () => {
-      socket.off("getAudioInfo");
-    };
   }, []);
 
   if (!foldersData) return <> No folders.</>;
