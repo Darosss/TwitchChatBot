@@ -18,7 +18,7 @@ export interface AudioStreamDataInfo {
   name: string;
   duration: number;
   currentTime: number;
-  songsInQue: string[];
+  songsInQue: [string, string][];
   isPlaying: boolean;
   currentFolder: string;
 }
