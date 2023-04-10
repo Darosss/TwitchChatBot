@@ -287,6 +287,9 @@ class StreamHandler {
     socket.on("musicPlay", () => {
       this.musicHandler.resumePlayer(true);
     });
+    socket.on("loadSongs", (folderName) => {
+      this.musicHandler.loadNewSongs(folderName, true);
+    });
 
     socket.on("musicNext", () => {
       this.musicHandler.nextSong(true);
