@@ -12,6 +12,7 @@ import {
 import moment from "moment";
 import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";
 import { musicPath } from "@configs/globalPaths";
+import path from "path";
 
 class MusicStreamHandler {
   private songList: string[] = [];
@@ -22,6 +23,7 @@ class MusicStreamHandler {
   private readonly maxBufferedQue = 3;
   private readonly secondsBetweenAudio = 1;
   private readonly delayBetweenServer = 2;
+  private currentFolder = musicPath;
   private currentSong: AudioStreamData | undefined;
   private previousSong: string = "";
   private currentDelay: number = 0;
@@ -53,13 +55,24 @@ class MusicStreamHandler {
   }
 
   public async init() {
-    this.songList = fs
-      .readdirSync(musicPath, { withFileTypes: true })
-      .filter((file) => file.name.endsWith(this.formatFile))
-      .map((file) => file.name.replace(this.formatFile, ""));
+    this.loadSongsFromMusicPath().then(async () => {
+      await this.prepareInitialQue();
+    });
+  }
 
-    await this.prepareInitialQue();
-    await this.startPlay(0, false, true);
+  private async loadSongsFromMusicPath(shuffle = true) {
+    try {
+      this.songList = fs
+        .readdirSync(this.currentFolder, { withFileTypes: true })
+        .filter((file) => file.name.endsWith(this.formatFile))
+        .map((file) => file.name.replace(this.formatFile, ""));
+
+      if (shuffle) this.shuffleSongs();
+
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   private shuffleSongs() {
@@ -75,8 +88,9 @@ class MusicStreamHandler {
     return firstElement;
   }
 
-  private async prepareInitialQue(shuffle = true) {
-    if (shuffle) this.shuffleSongs();
+  private async prepareInitialQue() {
+    if (this.musicQue.size > 0) this.musicQue.clear();
+
     for (let i = 0; i <= this.maxBufferedQue; i++) {
       await this.addNextItemToQueAndPushToEnd();
     }
@@ -95,8 +109,8 @@ class MusicStreamHandler {
 
   private async addSongToQue(audioName: string, requester = "") {
     try {
-      // const mp3FilePath = `${musicPath}\\${this.encodedPrefix}${audioName}${this.formatFile}`; // before
-      const mp3FilePath = `${musicPath}\\${audioName}${this.formatFile}`;
+      const mp3FilePath =
+        path.join(this.currentFolder, audioName) + this.formatFile;
       const duration = await this.getAudioDuration(mp3FilePath);
       const mp3FileBuffer = fs.readFileSync(mp3FilePath);
 
@@ -108,7 +122,9 @@ class MusicStreamHandler {
         requester: requester,
       });
     } catch (err) {
-      console.error("Probably mp3 isn't correct encoded. Skip song.");
+      console.error(
+        "Probably mp3 isn't correct encoded or bad file path. Skip song."
+      );
 
       this.addNextItemToQueAndPushToEnd();
     }
@@ -177,7 +193,39 @@ class MusicStreamHandler {
   }
 
   private shouldPrepareQue() {
-    if (this.musicQue.size < this.maxBufferedQue) return true;
+    if (this.musicQue.size <= this.maxBufferedQue) return true;
+  }
+
+  private isADirectory(directoryPath: string, sayInfo = false) {
+    try {
+      const isDirectory = fs.statSync(directoryPath).isDirectory();
+      if (!isDirectory) {
+        this.sayInChannel(sayInfo, "Provided folder does not exist32.");
+        return;
+      }
+
+      return true;
+    } catch (err) {
+      this.sayInChannel(sayInfo, "Provided folder does not exist.");
+    }
+  }
+
+  public loadNewSongs(folderName: string, sayInfo = false, shuffle = true) {
+    const loadedFolder = path.join(musicPath, folderName);
+    if (!this.isADirectory(loadedFolder, sayInfo)) return;
+    this.currentFolder = loadedFolder;
+    this.loadSongsFromMusicPath(shuffle)
+      .then(async () => {
+        this.sayInChannel(sayInfo, `Loaded new songs`);
+        await this.prepareInitialQue();
+        this.sendAudioInfo();
+      })
+      .catch(() => {
+        this.sayInChannel(
+          sayInfo,
+          `Couldn't load new songs. Probably folder does not exist.`
+        );
+      });
   }
 
   private async startPlay(delay = 0, newSong = false, sayInfo = false) {
