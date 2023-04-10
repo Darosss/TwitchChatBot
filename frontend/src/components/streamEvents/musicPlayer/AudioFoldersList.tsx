@@ -59,6 +59,18 @@ export default function AudioFoldersList() {
     console.log(mp3Data);
   }, [mp3Data]);
 
+  useEffect(() => {
+    socket.on("getAudioInfo", (data) => {
+      console.log("test");
+      setFolderName(data.currentFolder);
+    });
+
+    socket.emit("getAudioInfo");
+    return () => {
+      socket.off("getAudioInfo");
+    };
+  }, []);
+
   if (!foldersData) return <> No folders.</>;
 
   const { data: folders } = foldersData;
@@ -71,21 +83,25 @@ export default function AudioFoldersList() {
             <div key={index}>
               <button
                 onClick={() => handleOnClickChangeFolder(folder)}
-                className="common-button primary-button"
+                className={`common-button ${
+                  folder === folderName ? "primary-button" : "danger-button"
+                }`}
               >
                 {folder}
               </button>
             </div>
           );
         })}
-        <button
-          onClick={() => {
-            emitLoadSongs();
-          }}
-          className="load-folder-btn common-button danger-button"
-        >
-          Load {folderName}
-        </button>
+        {folderName ? (
+          <button
+            onClick={() => {
+              emitLoadSongs();
+            }}
+            className="load-folder-btn common-button danger-button"
+          >
+            Load {folderName}
+          </button>
+        ) : null}
       </div>
 
       <div className="mp3-files-wrapper">

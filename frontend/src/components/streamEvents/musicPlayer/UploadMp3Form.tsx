@@ -49,19 +49,22 @@ export default function UploadMp3Form() {
           })}
         </div>
         {folderName ? (
-          <input
-            type="file"
-            name="file"
-            onChange={(e) => {
-              setFileList(e.target.files);
-              handleFileUpload(e);
-            }}
-            multiple
-          />
+          <>
+            <input
+              type="file"
+              name="file"
+              onChange={(e) => {
+                setFileList(e.target.files);
+                handleFileUpload(e);
+              }}
+              multiple
+            />
+            <div className="upload-mp3-progrees-bar">
+              <ProgressBar completed={uploadProgress} labelAlignment="center" />
+            </div>
+          </>
         ) : null}
-        <div className="upload-mp3-progrees-bar">
-          <ProgressBar completed={uploadProgress} labelAlignment="center" />
-        </div>
+
         <div className="upload-files-list">
           {fileList ? (
             <ul>

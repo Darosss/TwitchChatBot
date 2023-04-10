@@ -58,6 +58,7 @@ export default function MusicPlayer() {
     };
 
     socket.on("getAudioInfo", (data) => {
+      setPlaying(data.isPlaying);
       setAudioData(data);
       clearInterval(timer);
       let currTime = data.currentTime;
@@ -68,10 +69,19 @@ export default function MusicPlayer() {
       }, 1000);
     });
 
+    socket.on("audioStop", () => {
+      setPlaying(false);
+    });
+
+    socket.on("audio", () => {
+      setPlaying(true);
+    });
+
     socket.emit("getAudioInfo");
 
     return () => {
       socket.off("getAudioInfo");
+      socket.off("audioStop");
     };
   }, []);
 
@@ -80,6 +90,7 @@ export default function MusicPlayer() {
     return (
       <>
         <div className="audio-data-wrapper">
+          <div>Current folder: {audioData.currentFolder}</div>
           <div>{audioData.name}</div>
           <div> {showCurrentSongProgress()} </div>
           <div className="audio-playlist">
