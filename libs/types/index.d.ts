@@ -29,7 +29,8 @@ export type AudioPlayerOptions =
   | "sr"
   | "when"
   | "previous"
-  | "next";
+  | "next"
+  | "load";
 
 export interface EventAndIUser extends Event, UserModel {}
 export interface ServerToClientEvents {
@@ -57,6 +58,7 @@ export interface ClientToServerEvents {
   musicNext: () => void;
   getAudioInfo: () => void;
   getAudioStreamData: () => void;
+  loadSongs: (folderName: string) => void;
 }
 
 export interface InterServerEvents {
