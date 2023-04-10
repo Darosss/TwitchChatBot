@@ -6,6 +6,7 @@ export interface Event {
 }
 
 export interface AudioStreamData {
+  id: string;
   audioBuffer: Buffer;
   name: string;
   duration: number;
