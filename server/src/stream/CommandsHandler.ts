@@ -26,6 +26,7 @@ const musicStreamDefaultsAliases: Map<AudioPlayerOptions, number> = new Map([
   ["play", 7],
   ["previous", 7],
   ["when", 7],
+  ["load", 7],
   ["sr", 0],
 ]);
 
@@ -89,7 +90,6 @@ class CommandsHandler {
     const commandAlias = this.commandsAliases.find((alias) =>
       message.toLowerCase().includes(alias)
     );
-    console.log(commandAlias, "alias");
     if (!commandAlias) return await this.notFoundCommand();
 
     return await this.findAndCheckCommandByAlias(user, commandAlias);
@@ -154,7 +154,11 @@ class CommandsHandler {
       case "when":
         this.musicHandler.sayWhenUserRequestedSong(username);
         return "";
-
+      case "load":
+        const loadCommand = `${this.configs.commandsPrefix}load`;
+        const loadOpt = message.replace(loadCommand, "").trim();
+        this.musicHandler.loadNewSongs(loadOpt, true, true);
+        return "";
       case "sr":
         const srCommand = `${this.configs.commandsPrefix}sr`;
         const songName = message.replace(srCommand, "").trim();
