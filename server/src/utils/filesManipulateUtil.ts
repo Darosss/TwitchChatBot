@@ -38,3 +38,33 @@ export const getListOfMp3InFolder = (
     }
   });
 };
+
+export const createDirectory = (
+  pathToDir: string,
+  callback: (message: string) => void,
+  errorCB: (errorMsg: string) => void
+) => {
+  fs.mkdir(pathToDir, { recursive: true }, (err) => {
+    if (err) {
+      console.error(err);
+      errorCB("Failed to create folder");
+    } else {
+      callback("Folder created successfully");
+    }
+  });
+};
+
+export const deleteDirectory = (
+  pathToDir: string,
+  callback: (message: string) => void,
+  errorCB: (errorMsg: string) => void
+) => {
+  fs.rmdir(pathToDir, { recursive: true }, (err) => {
+    if (err) {
+      console.error(err);
+      errorCB("Failed to delete folder");
+    } else {
+      callback("Folder deleted successfully");
+    }
+  });
+};
