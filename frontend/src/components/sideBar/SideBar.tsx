@@ -2,7 +2,7 @@ import React from "react";
 
 import { Link, LinkProps } from "react-router-dom";
 import resetWindowScroll from "@utils/resetScroll";
-import { getAuthorizeUrl } from "src/services/AuthService";
+import { getAuthorizeUrl } from "@services/AuthService";
 import DrawerBar from "@components/drawer";
 
 interface NavLinkProps extends LinkProps {
