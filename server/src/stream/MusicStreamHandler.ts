@@ -424,7 +424,11 @@ class MusicStreamHandler {
   }
 
   public sayNextSong() {
-    const nextSong = this.musicQue.values().next().value as AudioStreamData;
+    const nextSong = this.getNextSongFromQue();
+    if (!nextSong) {
+      this.sayInAuthorizedChannel("There is no next song");
+      return;
+    }
     const time = this.getRemainingTimeOfCurrentSong();
 
     const [minutes, seconds] = convertSecondsToMS(time);
