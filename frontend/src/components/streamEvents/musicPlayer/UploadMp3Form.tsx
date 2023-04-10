@@ -33,6 +33,7 @@ export default function UploadMp3Form() {
     <>
       <div className="upload-mp3-form-wrapper">
         <div>
+          <div>Upload to:</div>
           {folders.map((folder, index) => {
             return (
               <button
