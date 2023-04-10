@@ -40,8 +40,16 @@
     }
   }
 
-  .audio-playlist {
+  .audio-playlist-wrapper {
     height: 100%;
+
+    .audio-playlist-audio-list {
+      display: flex;
+      & > div:first-child {
+        border-right: 0.1rem solid $primary-color;
+        flex: 0 1 80%;
+      }
+    }
   }
 }
 

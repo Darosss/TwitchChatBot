@@ -16,6 +16,7 @@ export default function MusicPlayer() {
 
   const [playing, setPlaying] = useState(false);
   const [audioData, setAudioData] = useState<AudioStreamDataInfo>();
+
   const [currentTime, setCurrentTime] = useState(0);
 
   const showCurrentSongProgress = () => {
@@ -90,19 +91,23 @@ export default function MusicPlayer() {
   }, []);
 
   const audioDataDOM = () => {
-    if (!audioData) return <></>;
+    if (!audioData || !audioData.songsInQue) return <></>;
     return (
       <>
         <div className="audio-data-wrapper">
           <div>Current folder: {audioData.currentFolder}</div>
           <div>{audioData.name}</div>
           <div> {showCurrentSongProgress()} </div>
-          <div className="audio-playlist">
-            <ul>
-              {audioData.songsInQue.map((song, index) => {
-                return <li key={index}>{song}</li>;
-              })}
-            </ul>
+          <div className="audio-playlist-wrapper">
+            {[...audioData.songsInQue].map((song, index) => {
+              const [songName, requester] = song;
+              return (
+                <div key={index} className="audio-playlist-audio-list">
+                  <div>{songName}</div>
+                  <div>{`${requester ? `${requester}` : `default`}`}</div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </>
