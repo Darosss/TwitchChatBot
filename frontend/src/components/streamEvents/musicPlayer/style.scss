@@ -18,6 +18,10 @@
     display: flex;
     flex: 1 1 50%;
   }
+
+  .music-player-tabs-wrapper {
+    margin-top: 0.2rem;
+  }
 }
 
 .audio-data-wrapper {
@@ -98,6 +102,38 @@
 
       & > div:first-child {
         flex: 0 0 15%;
+      }
+    }
+  }
+}
+
+.folders-create-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  & > div {
+    display: flex;
+  }
+
+  .folders-create-list {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    font-size: 2vmin;
+  }
+
+  .folder-file {
+    display: flex;
+    border-bottom: 0.1rem solid $primary-color;
+
+    div {
+      align-self: center;
+    }
+
+    & > div :first-child {
+      display: flex;
+      button {
+        width: 20vw;
       }
     }
   }
