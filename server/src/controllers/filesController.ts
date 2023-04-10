@@ -6,6 +6,8 @@ import { logger } from "@utils/loggerUtil";
 import { musicPath } from "@configs/globalPaths";
 import path from "path";
 import {
+  createDirectory,
+  deleteDirectory,
   getListOfDirectoryNames,
   getListOfMp3InFolder,
 } from "@utils/filesManipulateUtil";
@@ -119,4 +121,44 @@ export const deleteMp3File = (
       res.status(200).send("File deleted");
     }
   });
+};
+
+export const createAudioFolder = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { folder } = req.params;
+
+  const folderPath = path.resolve(__dirname, `../public/music/${folder}`);
+
+  createDirectory(
+    folderPath,
+    (message) => {
+      return res.status(200).send({ message: message });
+    },
+    (errorMsg) => {
+      return res.status(400).send({ message: errorMsg });
+    }
+  );
+};
+
+export const deleteAudioFolder = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { folder } = req.params;
+
+  const folderPath = path.resolve(__dirname, `../public/music/${folder}`);
+
+  deleteDirectory(
+    folderPath,
+    (message) => {
+      return res.status(200).send({ message: message });
+    },
+    (errorMsg) => {
+      return res.status(400).send({ message: errorMsg });
+    }
+  );
 };
