@@ -4,6 +4,11 @@ import fs from "fs";
 import { AppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
 import { musicPath } from "@configs/globalPaths";
+import path from "path";
+import {
+  getListOfDirectoryNames,
+  getListOfMp3InFolder,
+} from "@utils/filesManipulateUtil";
 const maxFilesAtOnce = 30;
 
 if (!fs.existsSync(musicPath)) {
@@ -31,13 +36,13 @@ export const uploadMp3Multer = multer({
   fileFilter: filterMp3,
 }).array("uploaded_file", maxFilesAtOnce);
 
-export const uploadMp3File = async (
+export const uploadMp3File = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    uploadMp3Multer(req, res, async function (err) {
+    uploadMp3Multer(req, res, function (err) {
       if (err instanceof multer.MulterError) {
         if (err.code === "LIMIT_UNEXPECTED_FILE") {
           return res.status(400).send({
@@ -63,16 +68,54 @@ export const getFoldersList = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  getListOfDirectoryNames(
+    musicPath,
+    (folders) => {
+      return res.status(200).send({ data: folders });
+    },
+    (errorMsg) => {
+      return res.status(400).send({ message: errorMsg });
+    }
+  );
+};
 
 export const getFolderMp3Files = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const { folder } = req.params;
+  getListOfMp3InFolder(
+    path.join(musicPath, folder),
+    (folders) => {
+      return res.status(200).send({ data: folders });
+    },
+    (errorMsg) => {
+      return res.status(400).send({ message: errorMsg });
+    }
+  );
+};
 
 export const deleteMp3File = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  const { folder, fileName } = req.params;
+
+  const filePath = path.resolve(
+    __dirname,
+    `../public/music/${folder}/${fileName}`
+  );
+
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Error deleting file");
+    } else {
+      console.log(`Deleted file ${fileName}`);
+      res.status(200).send("File deleted");
+    }
+  });
+};
