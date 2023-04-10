@@ -5,8 +5,9 @@ import { convertSecondsToMS } from "@utils/convertSecondsToMS";
 import React, { useContext, useEffect, useState } from "react";
 import UploadMp3Form from "./UploadMp3Form";
 import AudioFoldersList from "./AudioFoldersList";
+import AudioFolderCreate from "./AudioFolderCreate";
 
-type AvailableTabs = "information" | "upload" | "files";
+type AvailableTabs = "information" | "upload" | "files" | "folders";
 
 export default function MusicPlayer() {
   const socket = useContext(SocketContext);
@@ -93,6 +94,19 @@ export default function MusicPlayer() {
     );
   };
 
+  const tabButton = (tab: AvailableTabs) => {
+    return (
+      <button
+        className={`${
+          activeTab === tab ? "primary-button" : "danger-button"
+        } common-button upload-button-show-hide`}
+        onClick={() => setActiveTab(tab)}
+      >
+        {tab.toUpperCase()}
+      </button>
+    );
+  };
+
   const generateMusicPlayerContext = () => {
     switch (activeTab) {
       case "information":
@@ -101,6 +115,8 @@ export default function MusicPlayer() {
         return <UploadMp3Form />;
       case "files":
         return <AudioFoldersList />;
+      case "folders":
+        return <AudioFolderCreate />;
     }
   };
 
@@ -121,24 +137,10 @@ export default function MusicPlayer() {
         </button>
       </div>
       <div className="music-player-tabs-wrapper">
-        <button
-          className="primary-button common-button upload-button-show-hide"
-          onClick={() => setActiveTab("information")}
-        >
-          Information
-        </button>
-        <button
-          className="primary-button common-button upload-button-show-hide"
-          onClick={() => setActiveTab("upload")}
-        >
-          Upload
-        </button>
-        <button
-          className="primary-button common-button upload-button-show-hide"
-          onClick={() => setActiveTab("files")}
-        >
-          Files
-        </button>
+        {tabButton("information")}
+        {tabButton("upload")}
+        {tabButton("files")}
+        {tabButton("folders")}
       </div>
       {generateMusicPlayerContext()}
     </div>
