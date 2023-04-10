@@ -20,3 +20,21 @@ export const deleteMp3File = (folderName: string, fileName: string) => {
     urlParams: false,
   });
 };
+
+export const createAudioFolder = (folderName: string) => {
+  return useAxiosCustom<ResponseData<string>>({
+    url: `/files/create/audio/${folderName}`,
+    method: "POST",
+    manual: true,
+    urlParams: false,
+  });
+};
+
+export const deleteAudioFolder = (folderName: string) => {
+  return useAxiosCustom<ResponseData<string>>({
+    url: `/files/delete/folder/audio/${folderName}`,
+    method: "DELETE",
+    manual: true,
+    urlParams: false,
+  });
+};
