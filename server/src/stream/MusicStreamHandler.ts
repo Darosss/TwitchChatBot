@@ -135,22 +135,29 @@ class MusicStreamHandler {
     return mp3DurationSec;
   }
 
-  private async setCurrentSongFromQue(newSong = true) {
-    if (this.musicQue.size <= 0) return;
-    if (newSong || !this.currentSong) {
-      this.previousSong = this.currentSong?.name || "";
-      this.musicQue.delete(this.currentSong?.duration.toString() || "");
+  private getNextSongFromQue() {
+    const musicPropsMapValue = this.musicQue.values().next().value;
+    if (!musicPropsMapValue) return;
+    const musicProps = musicPropsMapValue as AudioStreamData;
 
-      const [id, musicProps] = [...this.musicQue][0];
-      this.currentSongStart = new Date();
+    return musicProps;
+  }
 
-      this.currentSong = musicProps;
+  private async setCurrentSongFromQue() {
+    this.previousSong = this.currentSong?.name || "";
+    this.musicQue.delete(this.currentSong?.duration.toString() || "");
 
-      this.musicQue.delete(this.currentSong?.duration.toString() || "");
-      if (musicProps.requester)
-        this.clearUserRequestAfterPlay(musicProps.requester);
-      if (this.shouldPrepareQue()) await this.addNextItemToQueAndPushToEnd();
-    }
+    const musicProps = this.getNextSongFromQue();
+    if (!musicProps) return;
+
+    this.currentSongStart = new Date();
+    this.currentSong = musicProps;
+
+    this.musicQue.delete(this.currentSong?.duration.toString() || "");
+
+    this.clearUserRequestAfterPlay(musicProps.requester);
+
+    if (this.shouldPrepareQue()) await this.addNextItemToQueAndPushToEnd();
   }
 
   public getAudioInfo(): AudioStreamDataInfo | undefined {
@@ -163,6 +170,11 @@ class MusicStreamHandler {
       duration: this.currentSong.duration,
       currentTime: this.getCurrentTimeSong(),
       songsInQue: [...array.map((x) => x.name)],
+      isPlaying: this.isPlaying,
+      currentFolder:
+        this.currentFolder !== musicPath
+          ? path.basename(this.currentFolder)
+          : "",
     };
     return info;
   }
@@ -216,8 +228,11 @@ class MusicStreamHandler {
     this.currentFolder = loadedFolder;
     this.loadSongsFromMusicPath(shuffle)
       .then(async () => {
-        this.sayInChannel(sayInfo, `Loaded new songs`);
         await this.prepareInitialQue();
+        this.sayInChannel(
+          sayInfo,
+          `Loaded new songs from ${folderName}. Number of songs: ${this.songList.length}`
+        );
         this.sendAudioInfo();
       })
       .catch(() => {
@@ -231,7 +246,9 @@ class MusicStreamHandler {
   private async startPlay(delay = 0, newSong = false, sayInfo = false) {
     this.isPlaying = true;
     this.isPlayingTimeout = setTimeout(async () => {
-      this.setCurrentSongFromQue(newSong);
+      if (this.musicQue.size > 0 || newSong) {
+        await this.setCurrentSongFromQue();
+      }
 
       if (this.currentSong) {
         this.currentDelay = this.currentSong.duration;
@@ -338,8 +355,10 @@ class MusicStreamHandler {
     );
   }
 
-  private clearUserRequestAfterPlay(username: string) {
-    this.songRequestList.delete(username);
+  private clearUserRequestAfterPlay(username?: string) {
+    if (username) {
+      this.songRequestList.delete(username);
+    }
   }
 
   public pausePlayer(sayInfo = false) {
