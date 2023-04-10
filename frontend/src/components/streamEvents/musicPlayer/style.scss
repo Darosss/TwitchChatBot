@@ -45,9 +45,15 @@
 
     .audio-playlist-audio-list {
       display: flex;
+      border-bottom: 0.1rem solid $primary-color;
+      text-align: left;
       & > div:first-child {
         border-right: 0.1rem solid $primary-color;
         flex: 0 1 80%;
+      }
+
+      & > div {
+        padding-left: 0.1rem;
       }
     }
   }
