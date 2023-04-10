@@ -52,11 +52,6 @@ class MusicStreamHandler {
   ) {
     this.socketIO = socketIO;
     this.sayInAuthorizedChannel = sayInAuthorizedChannel;
-    setInterval(() => {
-      this.musicQue.forEach((value, key) => {
-        console.log([key, value.id, value.name]);
-      });
-    }, 2500);
   }
 
   public async init() {
@@ -170,13 +165,17 @@ class MusicStreamHandler {
   public getAudioInfo(): AudioStreamDataInfo | undefined {
     if (!this.currentSong) return;
 
-    const array = [...this.musicQue.values()];
+    const queArray = [...this.musicQue.values()];
+    const songsInQue: [string, string][] = [];
 
+    queArray.forEach((song) => {
+      songsInQue.push([song.name, song.requester || ""]);
+    });
     const info: AudioStreamDataInfo = {
       name: this.currentSong.name,
       duration: this.currentSong.duration,
       currentTime: this.getCurrentTimeSong(),
-      songsInQue: [...array.map((x) => x.name)],
+      songsInQue: songsInQue,
       isPlaying: this.isPlaying,
       currentFolder:
         this.currentFolder !== musicPath
