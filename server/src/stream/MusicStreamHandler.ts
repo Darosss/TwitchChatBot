@@ -52,6 +52,11 @@ class MusicStreamHandler {
   ) {
     this.socketIO = socketIO;
     this.sayInAuthorizedChannel = sayInAuthorizedChannel;
+    setInterval(() => {
+      this.musicQue.forEach((value, key) => {
+        console.log([key, value.id, value.name]);
+      });
+    }, 2500);
   }
 
   public async init() {
@@ -114,7 +119,9 @@ class MusicStreamHandler {
       const duration = await this.getAudioDuration(mp3FilePath);
       const mp3FileBuffer = fs.readFileSync(mp3FilePath);
 
-      this.musicQue.set(duration.toString(), {
+      const songId = duration.toString() + Date.now();
+      this.musicQue.set(songId, {
+        id: songId,
         name: audioName,
         audioBuffer: mp3FileBuffer,
         duration: duration,
@@ -145,7 +152,7 @@ class MusicStreamHandler {
 
   private async setCurrentSongFromQue() {
     this.previousSong = this.currentSong?.name || "";
-    this.musicQue.delete(this.currentSong?.duration.toString() || "");
+    this.musicQue.delete(this.currentSong?.id || "");
 
     const musicProps = this.getNextSongFromQue();
     if (!musicProps) return;
@@ -153,7 +160,7 @@ class MusicStreamHandler {
     this.currentSongStart = new Date();
     this.currentSong = musicProps;
 
-    this.musicQue.delete(this.currentSong?.duration.toString() || "");
+    this.musicQue.delete(this.currentSong.id);
 
     this.clearUserRequestAfterPlay(musicProps.requester);
 
