@@ -1,10 +1,10 @@
 export const getInitialCurrentBreakpoint = () => {
   const width = window.innerWidth;
-  if (width >= 1700) return "ulg";
-  else if (width >= 1200) return "lg";
-  else if (width >= 996) return "md";
-  else if (width >= 768) return "sm";
-  else if (width >= 480) return "xs";
+  if (width >= getDefaultBreakpoints.ulg) return "ulg";
+  else if (width >= getDefaultBreakpoints.lg) return "lg";
+  else if (width >= getDefaultBreakpoints.md) return "md";
+  else if (width >= getDefaultBreakpoints.sm) return "sm";
+  else if (width >= getDefaultBreakpoints.xxs) return "xs";
   else return "xxs";
 };
 
@@ -18,10 +18,10 @@ export const getDefaultBreakpoints = {
 };
 
 export const getDefaultCols = {
-  ulg: 16,
-  lg: 12,
-  md: 10,
-  sm: 6,
-  xs: 4,
-  xxs: 2,
+  ulg: 100,
+  lg: 100,
+  md: 80,
+  sm: 60,
+  xs: 40,
+  xxs: 20,
 };
