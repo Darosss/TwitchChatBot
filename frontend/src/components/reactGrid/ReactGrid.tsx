@@ -97,7 +97,7 @@ export default function ReactGrid<T = unknown>(props: {
       return (
         <div
           key={item.i}
-          className={`${!item.static ? "react-grid-item-edit" : ""}`}
+          className={`${item.isDraggable ? "react-grid-item-edit" : ""}`}
         >
           {isEdit ? (
             <div
@@ -204,20 +204,21 @@ function LayoutDrawerBar<T = unknown>(props: {
     editFn,
   } = props;
   const [isEdit, setIsEdit] = isEditState;
-  const toggleStaticMode = () => {
-    setStaticInLayout(isEdit);
+  const toggleEditMode = () => {
+    setEditableInLayout(isEdit);
 
     setIsEdit((prevState) => {
       return !prevState;
     });
   };
 
-  const setStaticInLayout = (isStatic: boolean) => {
+  const setEditableInLayout = (editable: boolean) => {
     setLayout((prevLayout) => ({
       ...prevLayout,
       [currentBreakpoint]: prevLayout[currentBreakpoint].map((item) => ({
         ...item,
-        static: isStatic,
+        isDraggable: !editable,
+        isResizable: !editable,
       })),
     }));
   };
@@ -258,7 +259,7 @@ function LayoutDrawerBar<T = unknown>(props: {
                 className={`common-button ${
                   isEdit ? "danger-button" : "primary-button"
                 }`}
-                onClick={toggleStaticMode}
+                onClick={toggleEditMode}
               >
                 Toggle Edit
               </button>
