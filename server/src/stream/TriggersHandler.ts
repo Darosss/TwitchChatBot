@@ -1,7 +1,8 @@
 import { TriggerModel, TriggerMode, TriggersConfigs } from "@models/types";
 import {
+  findCategoryAndUpdateMessageUse,
+  getLeastUsedMessageFromMessageCategory,
   getRandomCategoryMessage,
-  getRandomMessageFromCategory,
 } from "@services/messageCategories";
 import {
   getOneTrigger,
@@ -91,10 +92,26 @@ class TriggersHandler {
     try {
       const randomCategoryMessage = await getRandomCategoryMessage(true);
       if (!randomCategoryMessage) return;
-      return await getRandomMessageFromCategory(randomCategoryMessage);
+
+      const messageWord = await getLeastUsedMessageFromMessageCategory(
+        randomCategoryMessage._id
+      );
+
+      if (messageWord) {
+        await this.updateUsedMessageInCategory(
+          randomCategoryMessage._id,
+          messageWord
+        );
+      }
+
+      return messageWord;
     } catch (err) {
       triggerLogger.info(`Error occured while getting random category message`);
     }
+  }
+
+  async updateUsedMessageInCategory(id: string, word: string) {
+    const upd = findCategoryAndUpdateMessageUse(id, word);
   }
 
   async checkTriggersConditions(
