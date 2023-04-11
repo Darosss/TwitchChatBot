@@ -48,7 +48,9 @@ export default function MessagesWindow() {
   };
 
   const findMessagesCategoryByCurrCat = (id: string) => {
-    return msgCateg.find(({ _id }) => _id === id)?.messages;
+    return msgCateg
+      .find(({ _id }) => _id === id)
+      ?.messages.map((msg) => msg[0]);
   };
 
   const handleOnClickRandomMessage = (id: string) => {
@@ -80,7 +82,9 @@ export default function MessagesWindow() {
               <div key={index} className="message-section-btn-wrapper">
                 <div>
                   <button
-                    className="primary-button common-button"
+                    className={`${
+                      category.enabled ? "primary-button" : "danger-button"
+                    } common-button`}
                     onClick={() => {
                       handleOnClickRandomMessage(category._id);
                     }}
@@ -93,7 +97,9 @@ export default function MessagesWindow() {
                 </div>
                 <div>
                   <button
-                    className="primary-button common-button"
+                    className={`${
+                      category.enabled ? "primary-button" : "danger-button"
+                    } common-button`}
                     onClick={() => {
                       handleOnClickCategory(category._id);
                     }}
