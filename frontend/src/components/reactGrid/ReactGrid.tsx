@@ -131,15 +131,15 @@ export default function ReactGrid<T = unknown>(props: {
 
       <ResponsiveReactGridLayout
         onLayoutChange={onLayoutChange}
-        style={{ marginRight: "2rem" }}
+        style={{ marginRight: "1rem" }}
         compactType={null}
         layouts={layout}
         onBreakpointChange={onBreakpointChange}
         breakpoints={getDefaultBreakpoints}
-        preventCollision={false}
-        rowHeight={30}
+        rowHeight={5}
         cols={getDefaultCols}
-        autoSize={true}
+        preventCollision={true}
+        allowOverlap={true}
         containerPadding={{
           lg: [12, 12],
           md: [8, 8],
