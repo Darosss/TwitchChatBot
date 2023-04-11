@@ -4,6 +4,7 @@ import { SocketContext } from "@context/SocketContext";
 import { Link } from "react-router-dom";
 import { EventAndIUser } from "@libs/types";
 import { DateTooltip } from "@components/dateTooltip";
+import moment from "moment";
 
 export default function StreamNotifications() {
   const LIMIT_NOTIFICATIONS = 5;
@@ -55,82 +56,99 @@ export default function StreamNotifications() {
                 ? "new-user"
                 : "usual"
             } `}
-            key={notif._id + notif.eventDate + index}
+            key={index}
           >
-            <button
-              className="button-close danger-button"
-              onClick={(e) => {
-                removeParentElement(e);
-              }}
-            >
-              X
-            </button>
-            <div className="user-info-event">{notif.eventName}</div>
-            <div className="user-info-date">
-              <DateTooltip date={notif.eventDate} />
-            </div>
-            <div className="user-info-username">
-              <Link to={`../user/${notif._id}`} target="_blank">
-                {notif.username}
-              </Link>
-            </div>
-            <div className="user-info-messages">
-              <img
-                src="/icons/message.png"
-                alt="msg"
-                className="user-info-icon"
-              />
-              :<span>{notif.messageCount?.toLocaleString()}</span>
+            <div className="user-info-event-data-wrapper">
+              <div className="user-info-username">
+                <Link to={`/users/${notif._id}`} target="_blank">
+                  {notif.username}
+                </Link>
+              </div>
+              <div className="user-info-event">{notif.eventName}</div>
+              <div className="user-info-date">
+                {moment(notif.eventDate).fromNow()}
+              </div>
             </div>
 
-            <div className="user-info-points">
-              <img
-                src="/icons/finger.png"
-                alt="points"
-                className="user-info-icon"
-              />
-              : <span>{notif.points?.toLocaleString()}</span>
+            <div className="user-info-user-data-wrapper">
+              <div className="user-info-messages">
+                <div>
+                  <img
+                    src="/icons/message.png"
+                    alt="msg"
+                    className="user-info-icon"
+                  />
+                </div>
+                <div>{notif.messageCount?.toLocaleString()}</div>
+              </div>
+
+              <div className="user-info-points">
+                <div>
+                  <img
+                    src="/icons/finger.png"
+                    alt="points"
+                    className="user-info-icon"
+                  />
+                </div>
+                <div>{notif.points?.toLocaleString()}</div>
+              </div>
+
+              {/* <div className="user-info-subsriber">
+                <div>
+                  <img
+                    src="/icons/star.png"
+                    alt="sub"
+                    className="user-info-icon"
+                  />
+                </div>
+                <div> 2020-20-20</div>
+              </div> */}
             </div>
-            <div className="user-info-created-date">
-              <img
-                src="/icons/calendar.png"
-                alt="created"
-                className="user-info-icon"
-              />
-              :
-              <span>
-                <DateTooltip date={notif.createdAt} />
-              </span>
-            </div>
-            <div className="user-info-last-seen">
-              <img
-                src="/icons/eyes.png"
-                alt="seen"
-                className="user-info-icon"
-              />
-              :
-              <span>
-                {notif.lastSeen ? <DateTooltip date={notif.lastSeen} /> : null}
-              </span>
-            </div>
-            <div className="user-info-follower">
-              <img
-                src="/icons/heart.png"
-                alt="follow"
-                className="user-info-icon"
-              />
-              :
-              {notif.follower ? (
-                <span>
-                  <DateTooltip date={notif.follower} />
-                </span>
-              ) : (
-                <span>No</span>
-              )}
-            </div>
-            <div className="user-info-subsriber">
-              <img src="/icons/star.png" alt="sub" className="user-info-icon" />
-              <span> 2020-20-20</span>
+
+            <div className="user-info-user-dates-wrapper">
+              <div className="user-info-created-date">
+                <div>
+                  <img
+                    src="/icons/calendar.png"
+                    alt="created"
+                    className="user-info-icon"
+                  />
+                </div>
+                <div>
+                  <DateTooltip date={notif.createdAt} />
+                </div>
+              </div>
+              <div className="user-info-last-seen">
+                <div>
+                  <img
+                    src="/icons/eyes.png"
+                    alt="seen"
+                    className="user-info-icon"
+                  />
+                </div>
+
+                <div>
+                  {notif.lastSeen ? (
+                    <DateTooltip date={notif.lastSeen} />
+                  ) : null}
+                </div>
+              </div>
+              <div className="user-info-follower">
+                <div>
+                  <img
+                    src="/icons/heart.png"
+                    alt="follow"
+                    className="user-info-icon"
+                  />
+                </div>
+                {notif.follower ? (
+                  <div>
+                    <DateTooltip date={notif.follower} />
+                  </div>
+                ) : (
+                  <div>No</div>
+                )}
+              </div>
             </div>
           </div>
         );

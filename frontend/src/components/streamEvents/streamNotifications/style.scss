@@ -6,103 +6,98 @@
 .user-info {
   position: relative;
   background-color: $bg-color-popup;
-  font-size: 0.7rem;
-  margin: 0.5rem;
+  font-size: 1vmin;
   height: 12vh;
   max-height: 12vh;
-  overflow-y: auto;
   overflow-x: hidden;
-  padding-left: 1rem;
-  padding-top: 1rem;
-  display: grid;
-  grid-template-areas:
-    "event event event event date date"
-    "username username username username username username"
-    "messages messages messages points points points"
-    "created-date created-date created-date last-seen last-seen last-seen"
-    "follower follower follower subsriber subsriber subsriber";
-}
+  padding-left: 0.2rem;
+  padding-top: 0.3rem;
+  display: flex;
+  flex-direction: column;
 
-.user-info-icon {
-  width: 15px;
-  height: 15px;
-}
+  &.warn {
+    border: 0.1rem solid $color-user-warn;
+  }
 
-.user-info div:not(div > span) {
-  font-weight: 700;
-}
+  &.left-chat {
+    background-color: $color-user-danger;
+  }
 
-.user-info.warn {
-  border: 0.1rem solid $color-user-warn;
-}
+  &.new-user {
+    border: 0.2rem solid $color-user-new-user;
+  }
 
-.user-info.left-chat {
-  background-color: $color-user-danger;
-}
+  &.usual {
+    border: 0.1rem solid $color-user-usual;
+  }
 
-.user-info.new-user {
-  border: 0.2rem solid $color-user-new-user;
-}
+  &.blacklist {
+    border: 0.1rem solid $color-user-blacklist;
+  }
 
-.user-info.usual {
-  border: 0.1rem solid $color-user-usual;
-}
+  & > div {
+    display: flex;
+    border-top: 0.1rem solid $primary-color;
+    border-left: 0.1rem solid $primary-color;
+    border-right: 0.1rem solid $primary-color;
+    overflow-y: hidden;
+    padding-top: 0.5rem;
+    height: 100%;
 
-.user-info.blacklist {
-  border: 0.1rem solid $color-user-blacklist;
-}
+    &:not(div > span) {
+      font-weight: 700;
+    }
+  }
 
-.user-info span {
-  color: var(--info-bg-color);
-  margin-left: 0.5rem;
-  font-weight: 400;
-}
+  span {
+    color: var(--info-bg-color);
+    font-weight: 400;
+  }
 
-.user-info-created-date {
-  grid-area: created-date;
-}
+  .user-info-icon {
+    width: 15px;
+    height: 15px;
+  }
 
-.user-info-event {
-  color: var(--info-bg-color);
-  font-size: 1rem;
-  grid-area: event;
-}
+  .user-info-event-data-wrapper {
+    & > div {
+      flex: 1 1 49%;
+    }
 
-.user-info-date {
-  grid-area: date;
-  color: var(--info-bg-color);
-}
+    .user-info-event {
+      color: var(--info-bg-color);
+      font-size: 1rem;
+    }
 
-.user-info-last-seen {
-  grid-area: last-seen;
-}
+    .user-info-username {
+      font-weight: 700;
+      text-align: center;
+    }
+    .user-info-date {
+      color: var(--info-bg-color);
+    }
+  }
 
-.user-info-username {
-  grid-area: username;
-  font-weight: 700;
-  font-size: 1rem;
-  text-align: center;
-  margin-left: -3rem;
-}
+  .user-info-user-data-wrapper {
+    flex-wrap: wrap;
+    & > div {
+      flex: 1 0 25%;
+      overflow: hidden;
+      display: flex;
 
-.user-info-messages {
-  grid-area: messages;
-}
+      & > div {
+        flex: 1 0 49%;
+      }
+    }
+  }
 
-.user-info-points {
-  grid-area: points;
-}
+  .user-info-user-dates-wrapper {
+    flex-wrap: wrap;
+    overflow-y: scroll;
 
-.user-info-follower {
-  grid-area: follower;
-}
-
-.user-info-subsriber {
-  grid-area: subsriber;
-}
-
-.button-close {
-  position: absolute;
-  top: 0px;
-  right: 0px;
+    & > div {
+      flex: 1 0 33%;
+      display: flex;
+    }
+  }
 }
