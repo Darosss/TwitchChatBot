@@ -7,7 +7,7 @@ export interface MessageCategory {
   _id: string;
   name: string;
   enabled: boolean;
-  messages: string[];
+  messages: [string, number][];
   uses: number;
   personality: Personality;
   tag: Tag;
@@ -19,8 +19,16 @@ export interface MessageCategory {
 export interface MessageCategoryCreateData
   extends Omit<
     MessageCategory,
-    "_id" | "createdAt" | "updatedAt" | "uses" | "personality" | "tag" | "mood"
+    | "_id"
+    | "createdAt"
+    | "updatedAt"
+    | "uses"
+    | "personality"
+    | "tag"
+    | "mood"
+    | "messages"
   > {
+  messages: string[];
   personality: string;
   tag: string;
   mood: string;
