@@ -219,9 +219,10 @@ class StreamHandler {
 
       socket.on("changeModes", async () => await this.onChangeModes());
 
-      socket.on("messageClient", (message) =>
-        this.sayInAuthroizedChannel(message)
-      );
+      socket.on("messageClient", (message) => {
+        if (!message) return;
+        this.sayInAuthroizedChannel(message);
+      });
 
       this.onMusicHandlerEvents(socket);
     });
