@@ -172,7 +172,6 @@ export const updateMessageCategoryById = async (
   updateData: UpdateQuery<MessageCategoryCreateData>
 ) => {
   let updateMessages = updateData.messages as string[];
-
   try {
     const newMessages = await compareUpdateMessagesWithExisting(
       id,
@@ -181,7 +180,7 @@ export const updateMessageCategoryById = async (
 
     const updatedMessageCategory = await MessageCategory.findByIdAndUpdate(
       id,
-      { ...updateData, ...(newMessages && { messages: newMessages }) },
+      { ...updateData, ...(updateMessages && { messages: newMessages }) },
       { new: true }
     );
 
