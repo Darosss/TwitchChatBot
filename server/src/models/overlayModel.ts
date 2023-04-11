@@ -9,6 +9,8 @@ const layoutBreakpointSchema = new Schema({
   w: Number,
   h: Number,
   static: Boolean,
+  isDraggable: Boolean,
+  isResizable: Boolean,
 });
 
 const OverlaySchema: Schema<OverlayDocument> = new Schema(
