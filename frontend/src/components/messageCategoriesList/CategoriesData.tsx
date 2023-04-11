@@ -99,7 +99,11 @@ export default function CategoriesData(props: {
               <td>
                 <TableItemsListWrapper>
                   {category.messages.map((message, index) => {
-                    return <div key={index}>{message}</div>;
+                    return (
+                      <div key={index}>
+                        {message[0]} - uses: {message[1]}
+                      </div>
+                    );
                   })}
                 </TableItemsListWrapper>
               </td>

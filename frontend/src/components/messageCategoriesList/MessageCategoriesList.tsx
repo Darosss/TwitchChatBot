@@ -94,7 +94,7 @@ export default function MessageCategoriesList() {
       type: "SET_STATE",
       payload: {
         name: category.name,
-        messages: category.messages,
+        messages: category.messages.map((msg) => msg[0]),
         enabled: category.enabled,
         mood: category.mood._id,
         personality: category.personality._id,
