@@ -123,6 +123,20 @@ export const getMostUsedWord = async (
   }
 };
 
+export const getMessagesFromDateToDate = async (
+  startDate: Date,
+  endDate?: Date,
+  addidionalHours = 1
+) => {
+  const messagesFilter = dateRangeMessageFilter(
+    startDate,
+    endDate,
+    addidionalHours
+  );
+
+  return await getMessages(messagesFilter, {});
+};
+
 export const getMessagesCountByDate = async (
   startDate: Date,
   endDate?: Date
