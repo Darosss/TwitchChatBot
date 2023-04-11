@@ -19,3 +19,7 @@ export interface MessageCategoryData
     MessageCategoryModel,
     "_id" | "createdAt" | "updatedAt" | "uses"
   > {}
+
+export interface MessageCategoryCreateData extends MessageCategoryData {
+  messages: string[];
+}
