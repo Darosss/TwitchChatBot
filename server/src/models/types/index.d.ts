@@ -163,7 +163,7 @@ export type AuthDocument = AuthModel & Document;
 export interface MessageCategoryModel extends BaseModel {
   name: string;
   enabled: boolean;
-  messages: string[];
+  messages: Array<[string, number]>;
   uses: number;
   personality: string | PersonalityModel;
   mood: string | MoodModel;
