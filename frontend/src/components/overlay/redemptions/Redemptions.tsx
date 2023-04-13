@@ -8,6 +8,7 @@ export default function Redemptions() {
 
   const [redemptionInfo, setRedemptionInfo] = useState("");
   const [redemptionImg, setRedemptionImg] = useState("");
+  const [showRedemption, setShowRedemption] = useState(false);
 
   useEffect(() => {
     let source: AudioBufferSourceNode | null = null;
@@ -19,7 +20,7 @@ export default function Redemptions() {
 
       setRedemptionImg(rewardImage);
       setRedemptionInfo(`${userDisplayName} has redeemed - ${rewardTitle}`);
-      redemptionRef.current?.classList.remove("redemption-popup-hidden");
+      setShowRedemption(true);
 
       const audioCtx = new AudioContext();
       audioCtx.decodeAudioData(audioBuffer, (buffer) => {
@@ -39,6 +40,12 @@ export default function Redemptions() {
         gainNode.gain.value = 0.12;
 
         source.start();
+
+        if (source)
+          source.onended = function () {
+            console.log("ended");
+            setShowRedemption(false);
+          };
       });
     });
 
@@ -47,23 +54,29 @@ export default function Redemptions() {
     };
   }, []);
 
-  return (
-    <div ref={redemptionRef} className="redemption-wrapper">
-      <div>
-        {redemptionImg ? (
-          <img
-            alt="no"
-            src={redemptionImg}
-            style={{ width: (redemptionRef.current?.offsetWidth || 200) / 12 }}
-          />
-        ) : null}
+  if (showRedemption)
+    return (
+      <div ref={redemptionRef} className="redemption-wrapper">
+        <div>
+          {redemptionImg ? (
+            <img
+              alt="no"
+              src={redemptionImg}
+              style={{
+                width: (redemptionRef.current?.offsetWidth || 200) / 12,
+              }}
+            />
+          ) : null}
+        </div>
+        <div
+          className="redemption-popup"
+          style={{ fontSize: (redemptionRef.current?.offsetWidth || 200) / 24 }}
+        >
+          {redemptionInfo}
+        </div>
       </div>
-      <div
-        className="redemption-popup"
-        style={{ fontSize: (redemptionRef.current?.offsetWidth || 200) / 24 }}
-      >
-        {redemptionInfo}
-      </div>
-    </div>
-  );
+    );
+  else {
+    return <></>;
+  }
 }
