@@ -30,7 +30,7 @@ import { createUserIfNotExist } from "@services/users";
 import { UserCreateData } from "@services/users/types";
 import MusicStreamHandler from "./MusicStreamHandler";
 import { alertSoundPrefix } from "@configs/globalVariables";
-import EventSubHandler from "./EventSubHandlers";
+import EventSubHandler from "./EventSubHandler";
 interface StreamHandlerOptions {
   config: ConfigDocument;
   twitchApi: ApiClient;
