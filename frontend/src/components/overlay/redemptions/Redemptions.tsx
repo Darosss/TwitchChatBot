@@ -10,7 +10,9 @@ export default function Redemptions() {
   const [redemptionImg, setRedemptionImg] = useState("");
 
   useEffect(() => {
-    socket?.on("onRedemption", (data) => {
+    let source: AudioBufferSourceNode | null = null;
+
+    socket.on("onRedemption", (data, audioBuffer) => {
       const { rewardTitle, userDisplayName, rewardImage } = data;
 
       let redemptionAudio: HTMLAudioElement;
@@ -19,26 +21,31 @@ export default function Redemptions() {
       setRedemptionInfo(`${userDisplayName} has redeemed - ${rewardTitle}`);
       redemptionRef.current?.classList.remove("redemption-popup-hidden");
 
-      setTimeout(() => {
-        redemptionAudio?.pause();
-        redemptionRef.current?.classList.add("overlay-hidden");
-        setRedemptionImg("");
-        setRedemptionInfo("");
-      }, Number(import.meta.env.VITE_REDEMPTION_ALERT_MAX_TIME!) * 1000);
+      const audioCtx = new AudioContext();
+      audioCtx.decodeAudioData(audioBuffer, (buffer) => {
+        if (source) {
+          console.log("SOURCE ALREADY IS SO STOP ");
+          source.stop();
+        }
 
-      if (rewardTitle.includes(import.meta.env.VITE_PREFIX_ALERT_SOUND!)) {
-        const redemptionAudio = new Audio(
-          `/alertSounds/${rewardTitle.split(":")[1].trim()}.mp3`
-        );
-        redemptionAudio.volume = 0.03;
-        redemptionAudio.play();
-      }
+        console.log("Create new source ");
+        source = new AudioBufferSourceNode(audioCtx, {
+          buffer: buffer,
+        });
+
+        const gainNode = audioCtx.createGain();
+        source.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        gainNode.gain.value = 0.12;
+
+        source.start();
+      });
     });
 
     return () => {
       socket.off("onRedemption");
     };
-  }, [socket]);
+  }, []);
 
   return (
     <div ref={redemptionRef} className="redemption-wrapper">
