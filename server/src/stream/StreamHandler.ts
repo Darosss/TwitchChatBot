@@ -7,6 +7,8 @@ import {
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
+  CustomRewardCreateData,
+  CustomRewardData,
 } from "@libs/types";
 import { Server, Socket } from "socket.io";
 
@@ -27,7 +29,8 @@ import { ChatUserstate, Client } from "tmi.js";
 import { createUserIfNotExist } from "@services/users";
 import { UserCreateData } from "@services/users/types";
 import MusicStreamHandler from "./MusicStreamHandler";
-
+import { alertSoundPrefix } from "@configs/globalVariables";
+import EventSubHandler from "./EventSubHandlers";
 interface StreamHandlerOptions {
   config: ConfigDocument;
   twitchApi: ApiClient;
@@ -58,6 +61,7 @@ class StreamHandler {
   private loayaltyHandler: LoyaltyHandler;
   private timersHandler: TimersHandler;
   private musicHandler: MusicStreamHandler;
+  private eventSubHandler: EventSubHandler;
   private configs: ConfigDefaults;
 
   constructor(options: StreamHandlerOptions) {
@@ -94,11 +98,18 @@ class StreamHandler {
       clientTmi.say.bind(clientTmi)
     );
 
+    this.eventSubHandler = new EventSubHandler(
+      twitchApi,
+      this.authorizedUser.id,
+      socketIO
+    );
+
     this.init();
     this.initSocketEvents();
     this.initOnMessageEvents();
 
     this.musicHandler.init();
+    this.eventSubHandler.init();
   }
 
   private async init() {
@@ -219,6 +230,29 @@ class StreamHandler {
 
       socket.on("changeModes", async () => await this.onChangeModes());
 
+      socket.on("createCustomReward", async (data, cb) => {
+        const created = await this.onCreateCustomReward(data);
+
+        cb(created);
+      });
+
+      socket.on("deleteCustomReward", async (id, cb) => {
+        const deleted = await this.onDeleteCustomReward(id);
+        if (deleted) cb(true);
+        else cb(false);
+      });
+
+      socket.on("updateCustomReward", async (id, data, cb) => {
+        const updated = await this.onUpdateCustomReward(id, data);
+        if (updated) cb(true);
+        else cb(false);
+      });
+
+      socket.on(
+        "getCustomRewards",
+        async () => await this.onGetCustomRewards()
+      );
+
       socket.on("messageClient", (message) => {
         if (!message) return;
         this.sayInAuthroizedChannel(message);
@@ -226,6 +260,75 @@ class StreamHandler {
 
       this.onMusicHandlerEvents(socket);
     });
+  }
+
+  private async onCreateCustomReward(data: CustomRewardCreateData) {
+    if (!data.title || data.cost < 0) return false;
+    try {
+      await this.twitchApi.channelPoints.createCustomReward(
+        this.authorizedUser.id,
+        { ...data, title: alertSoundPrefix + data.title }
+      );
+      return true;
+    } catch (err) {
+      headLogger.error(`Error occured while creating custom reward: ${err}`);
+
+      return false;
+    }
+  }
+
+  private async onDeleteCustomReward(id: string) {
+    try {
+      await this.twitchApi.channelPoints.deleteCustomReward(
+        this.authorizedUser.id,
+        id
+      );
+      return true;
+    } catch (err) {
+      headLogger.error(`Error occured while deleting custom reward: ${err}`);
+
+      return false;
+    }
+  }
+  private async onUpdateCustomReward(id: string, data: CustomRewardCreateData) {
+    try {
+      let title = data.title;
+      if (!data.title.startsWith(alertSoundPrefix)) {
+        title = alertSoundPrefix + title;
+      }
+      await this.twitchApi.channelPoints.updateCustomReward(
+        this.authorizedUser.id,
+        id,
+        { ...data, title: title }
+      );
+      return true;
+    } catch (err) {
+      headLogger.error(`Error occured while updating custom reward: ${err}`);
+
+      return false;
+    }
+  }
+
+  private async onGetCustomRewards() {
+    const rewards = await this.twitchApi.channelPoints.getCustomRewards(
+      this.authorizedUser.id
+    );
+    const customRewardsData: CustomRewardData[] = rewards
+      .filter((reward) => reward.title.startsWith(alertSoundPrefix))
+      .map((reward) => {
+        return {
+          title: reward.title,
+          maxRedemptionsPerStream: reward.maxRedemptionsPerStream,
+          maxRedemptionsPerUserPerStream: reward.maxRedemptionsPerUserPerStream,
+          isInStock: reward.isInStock,
+          isEnabled: reward.isEnabled,
+          id: reward.id,
+          cost: reward.cost,
+          broadcasterId: reward.broadcasterId,
+          autoFulfill: reward.autoFulfill,
+        };
+      });
+    this.socketIO.emit("getCustomRewards", customRewardsData);
   }
 
   private async onSaveConfigs() {
