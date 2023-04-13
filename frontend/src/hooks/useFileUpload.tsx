@@ -7,17 +7,28 @@ const useFileUpload = (url: string) => {
   const [success, setSuccess] = useState<any>();
 
   const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    props: {
+      event?: React.ChangeEvent<HTMLInputElement>;
+      fileList?: FileList | null;
+      bodySingleFileName?: { bodyName: string; value: string };
+    },
+    formInputName: string
   ) => {
+    const { event, fileList, bodySingleFileName } = props;
+
     const formData = new FormData();
-    const files = event.target.files;
+    const files = event?.target.files || fileList;
     if (!files) {
       setError("No files found");
       return;
     }
 
+    if (bodySingleFileName) {
+      formData.append(bodySingleFileName.bodyName, bodySingleFileName.value);
+    }
+
     [...files].forEach((file) => {
-      formData.append("uploaded_file", file, file.name);
+      formData.append(formInputName, file, file.name);
     });
 
     try {
