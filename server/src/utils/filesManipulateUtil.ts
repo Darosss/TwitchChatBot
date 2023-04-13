@@ -1,4 +1,5 @@
 import fs from "fs";
+import getAudioDurationInSeconds from "get-audio-duration";
 import path from "path";
 export const getListOfDirectoryNames = (
   pathToFolders: string,
@@ -67,4 +68,9 @@ export const deleteDirectory = (
       callback("Folder deleted successfully");
     }
   });
+};
+
+export const getMp3AudioDuration = async (path: string) => {
+  const mp3DurationSec = await getAudioDurationInSeconds(path);
+  return mp3DurationSec;
 };
