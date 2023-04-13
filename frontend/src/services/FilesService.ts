@@ -5,6 +5,7 @@ export const getFoldersList = () => {
     url: `/files/folder-list`,
   });
 };
+
 export const getFolderMp3Files = (folderName: string) => {
   return useAxiosCustom<ResponseData<string[]>>({
     url: `/files/audio/${folderName}`,
@@ -33,6 +34,21 @@ export const createAudioFolder = (folderName: string) => {
 export const deleteAudioFolder = (folderName: string) => {
   return useAxiosCustom<ResponseData<string>>({
     url: `/files/delete/folder/audio/${folderName}`,
+    method: "DELETE",
+    manual: true,
+    urlParams: false,
+  });
+};
+
+export const getAlertSoundsMp3Names = () => {
+  return useAxiosCustom<ResponseData<string[]>>({
+    url: `/files/audio/alertSounds`,
+  });
+};
+
+export const deleteAlertSound = (fileName: string) => {
+  return useAxiosCustom<ResponseData<string>>({
+    url: `/files/delete/alertSounds/${fileName}`,
     method: "DELETE",
     manual: true,
     urlParams: false,
