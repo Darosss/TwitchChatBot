@@ -1,5 +1,4 @@
 import { RefreshingAuthProvider } from "@twurple/auth";
-import eventSub from "./eventsub";
 import { ApiClient } from "@twurple/api";
 import * as ClientTmi from "./twitchClientTmi";
 import StreamHandler from "../StreamHandler";
@@ -66,8 +65,6 @@ const initTwitchOnAuth = async (
   });
 
   twitchTmi.connect();
-
-  eventSub(twitchApi, authorizedUser.id, socketIO);
 };
 
 export default initTwitchOnAuth;
