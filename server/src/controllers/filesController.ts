@@ -3,7 +3,7 @@ import multer from "multer";
 import fs from "fs";
 import { AppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
-import { musicPath } from "@configs/globalPaths";
+import { alertSoundsPath, musicPath } from "@configs/globalPaths";
 import path from "path";
 import {
   createDirectory,
@@ -11,10 +11,14 @@ import {
   getListOfDirectoryNames,
   getListOfMp3InFolder,
 } from "@utils/filesManipulateUtil";
+import { alertSoundPrefix } from "@configs/globalVariables";
 const maxFilesAtOnce = 30;
 
 if (!fs.existsSync(musicPath)) {
   fs.mkdirSync(musicPath, { recursive: true });
+}
+if (!fs.existsSync(alertSoundsPath)) {
+  fs.mkdirSync(alertSoundsPath, { recursive: true });
 }
 
 const storageMp3 = multer.diskStorage({
@@ -34,7 +38,7 @@ const filterMp3: multer.Options["fileFilter"] = (req, file, cb) => {
   }
 };
 
-export const uploadMp3Multer = multer({
+const uploadMp3Multer = multer({
   storage: storageMp3,
   fileFilter: filterMp3,
 }).array("uploaded_file", maxFilesAtOnce);
@@ -107,10 +111,7 @@ export const deleteMp3File = (
 ) => {
   const { folder, fileName } = req.params;
 
-  const filePath = path.resolve(
-    __dirname,
-    `../public/music/${folder}/${fileName}`
-  );
+  const filePath = path.join(musicPath, folder, fileName);
 
   fs.unlink(filePath, (err) => {
     if (err) {
@@ -130,8 +131,7 @@ export const createAudioFolder = (
 ) => {
   const { folder } = req.params;
 
-  const folderPath = path.resolve(__dirname, `../public/music/${folder}`);
-
+  const folderPath = path.join(musicPath, folder);
   createDirectory(
     folderPath,
     (message) => {
@@ -150,8 +150,7 @@ export const deleteAudioFolder = (
 ) => {
   const { folder } = req.params;
 
-  const folderPath = path.resolve(__dirname, `../public/music/${folder}`);
-
+  const folderPath = path.join(musicPath, folder);
   deleteDirectory(
     folderPath,
     (message) => {
@@ -161,4 +160,77 @@ export const deleteAudioFolder = (
       return res.status(400).send({ message: errorMsg });
     }
   );
+};
+
+const storageAlertSound = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, alertSoundsPath);
+  },
+  filename: function (req, file, cb) {
+    const { title } = req.body;
+    const fileName = alertSoundPrefix + title + ".mp3";
+    cb(null, fileName);
+  },
+});
+
+const uploadAlertSoundMulter = multer({
+  storage: storageAlertSound,
+  fileFilter: filterMp3,
+}).single("alertSound");
+
+export const uploadAlertSound = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    uploadAlertSoundMulter(req, res, function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      return res
+        .status(200)
+        .send({ message: "Alert sound uploaded successfully" });
+    });
+  } catch (err) {
+    logger.error(`Error when trying to upload alert sound ${err}`);
+    next(err);
+  }
+};
+
+export const getAlertSoundsList = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  getListOfMp3InFolder(
+    alertSoundsPath,
+    (sounds) => {
+      return res.status(200).send({ data: sounds });
+    },
+    (errorMsg) => {
+      return res.status(400).send({ message: errorMsg });
+    }
+  );
+};
+
+export const deleteAlertSound = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { fileName } = req.params;
+
+  const filePath = path.join(alertSoundsPath, fileName) + ".mp3";
+
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send("Error deleting file");
+    } else {
+      console.log(`Deleted file ${fileName}`);
+      res.status(200).send("File deleted");
+    }
+  });
 };
