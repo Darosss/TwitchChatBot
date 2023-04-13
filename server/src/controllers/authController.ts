@@ -44,6 +44,7 @@ export const getTwitchAuthorizeUrl = (req: Request, res: Response) => {
     "channel:manage:polls",
     "channel:read:polls",
     "channel:read:redemptions",
+    "channel:manage:redemptions",
     "channel:read:vips",
     "moderation:read",
     "moderator:read:chatters",
