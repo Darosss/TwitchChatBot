@@ -1,0 +1,25 @@
+.custom-rewards-window {
+  font-size: 1vmin;
+
+  & > div {
+    display: flex;
+
+    & > div {
+      flex: 1 1 49%;
+      padding: 0.1rem;
+      border-left: 0.1rem solid $primary-color;
+    }
+  }
+}
+
+.alert-sound-reward-modal {
+  display: flex;
+  flex-direction: column;
+
+  & > div {
+    display: flex;
+    & > div {
+      flex: 1 1 49%;
+    }
+  }
+}
