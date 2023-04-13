@@ -55,7 +55,7 @@ export default function UploadMp3Form() {
               name="file"
               onChange={(e) => {
                 setFileList(e.target.files);
-                handleFileUpload(e);
+                handleFileUpload({ event: e }, "uploaded_file");
               }}
               multiple
             />
