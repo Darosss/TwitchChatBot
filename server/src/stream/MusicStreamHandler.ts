@@ -1,5 +1,4 @@
 import fs from "fs";
-import { getAudioDurationInSeconds } from "get-audio-duration";
 import { Server } from "socket.io";
 import {
   ClientToServerEvents,
@@ -13,6 +12,7 @@ import moment from "moment";
 import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";
 import { musicPath } from "@configs/globalPaths";
 import path from "path";
+import { getMp3AudioDuration } from "@utils/filesManipulateUtil";
 
 class MusicStreamHandler {
   private songList: string[] = [];
@@ -115,7 +115,7 @@ class MusicStreamHandler {
     try {
       const mp3FilePath =
         path.join(this.currentFolder, audioName) + this.formatFile;
-      const duration = await this.getAudioDuration(mp3FilePath);
+      const duration = await getMp3AudioDuration(mp3FilePath);
       const mp3FileBuffer = fs.readFileSync(mp3FilePath);
 
       const songId = duration.toString() + Date.now();
@@ -134,11 +134,6 @@ class MusicStreamHandler {
 
       this.addNextItemToQueAndPushToEnd();
     }
-  }
-
-  private async getAudioDuration(audioPath: string) {
-    const mp3DurationSec = await getAudioDurationInSeconds(audioPath);
-    return mp3DurationSec;
   }
 
   private getNextSongFromQue() {
