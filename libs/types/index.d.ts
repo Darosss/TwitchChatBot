@@ -23,6 +23,40 @@ export interface AudioStreamDataInfo {
   currentFolder: string;
 }
 
+export interface CustomRewardCreateData {
+  autoFulfill?: boolean;
+  backgroundColor?: string;
+  cost: number;
+  globalCooldown?: number | null;
+  isEnabled?: boolean;
+  maxRedemptionsPerStream?: number | null;
+  maxRedemptionsPerUserPerStream?: number | null;
+  prompt?: string;
+  title: string;
+  userInputRequired?: boolean;
+}
+
+export interface CustomRewardData {
+  autoFulfill: boolean;
+  // backgroundColor: string;
+  // broadcasterDisplayName: string;
+  broadcasterId: string;
+  // broadcasterName: string;
+  // cooldownExpiryDate: Date | null;
+  cost: number;
+  // globalCooldown: number | null;
+  id: string;
+  isEnabled: boolean;
+  isInStock: boolean;
+  // isPaused: boolean;
+  maxRedemptionsPerStream: number | null;
+  maxRedemptionsPerUserPerStream: number | null;
+  // prompt: string;
+  // redemptionsThisStream: number | null;
+  title: string;
+  // userInputRequired: boolean;
+}
+
 export type AudioPlayerOptions =
   | "play"
   | "stop"
@@ -36,16 +70,29 @@ export type AudioPlayerOptions =
   | "load";
 
 export interface EventAndIUser extends Event, UserModel {}
+
+export interface RewardData {
+  rewardId: string;
+  userId: string;
+  userName: string;
+  userDisplayName: string;
+  redemptionDate: Date;
+  rewardTitle: string;
+  rewardCost: number;
+  rewardImage: string;
+}
+
 export interface ServerToClientEvents {
   noArg: () => void;
   withAck: (callback: (e: number) => void) => void;
   messageServer: (date: Date, username: string, message: string) => void;
   userJoinTwitchChat: (eventDate: Event, user: UserModel) => void;
-  onRedemption: (data: SoundData) => void;
+  onRedemption: (data: RewardData, alertSound: Buffer) => void;
   audio: (data: AudioStreamData) => void;
   audioStop: () => void;
   getAudioInfo: (data: AudioStreamDataInfo) => void;
   forceReconnect: () => void;
+  getCustomRewards: (data: CustomRewardData[]) => void;
 }
 
 export interface ClientToServerEvents {
@@ -62,22 +109,22 @@ export interface ClientToServerEvents {
   getAudioInfo: () => void;
   getAudioStreamData: () => void;
   loadSongs: (folderName: string) => void;
+  createCustomReward: (
+    data: CustomRewardCreateData,
+    cb: (success: boolean) => void
+  ) => void;
+  deleteCustomReward: (id: string, cb: (success: boolean) => void) => void;
+  updateCustomReward: (
+    id: string,
+    data: CustomRewardCreateData,
+    cb: (success: boolean) => void
+  ) => void;
+  getCustomRewards: () => void;
 }
 
 export interface InterServerEvents {
   ping: () => void;
   musicOnChatCommand: (option: AudioPlayerOptions) => void;
-}
-
-export interface SoundData {
-  rewardId: string;
-  userId: string;
-  userName: string;
-  userDisplayName: string;
-  redemptionDate: Date;
-  rewardTitle: string;
-  rewardCost: number;
-  rewardImage: string;
 }
 
 export interface SocketData {}
