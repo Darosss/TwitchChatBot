@@ -113,11 +113,13 @@ export const getRandomMessageFromCategory = async (
   return messages[randomWithMax(messages.length)];
 };
 
-export const getLeastUsedMessageFromMessageCategory = async (
-  id: string
-): Promise<string> => {
+export const getLeastUsedMessagesFromMessageCategory = async (
+  id: string,
+  maxWordsCount = 1
+): Promise<string[]> => {
+  if (maxWordsCount < 1) maxWordsCount = 1;
   const categorySortedMsgs = await MessageCategory.aggregate<{
-    leastUsedMessage: string;
+    leastUsedMessages: string[];
   }>([
     {
       $match: { _id: new mongoose.Types.ObjectId(id) },
@@ -128,21 +130,26 @@ export const getLeastUsedMessageFromMessageCategory = async (
     {
       $project: {
         _id: 1,
-        leastUsedMessage: { $arrayElemAt: ["$messages", 0] },
+        leastUsedMessages: { $slice: ["$messages", maxWordsCount] },
       },
     },
     {
       $project: {
         _id: 0,
-        leastUsedMessage: { $arrayElemAt: ["$leastUsedMessage", 0] },
+        leastUsedMessages: {
+          $map: {
+            input: "$leastUsedMessages",
+            as: "tuple",
+            in: { $arrayElemAt: ["$$tuple", 0] },
+          },
+        },
       },
     },
   ]);
-
   if (categorySortedMsgs.length > 0) {
-    return categorySortedMsgs[0].leastUsedMessage;
+    return categorySortedMsgs[0].leastUsedMessages;
   } else {
-    return "";
+    return [""];
   }
 };
 
