@@ -37,6 +37,15 @@ export const checkIfAuthValid = async () => {
   }
 };
 
+export const removeAuthToken = async () => {
+  try {
+    const deletedAuthToken = await AuthToken.findOneAndRemove();
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to remove auth token");
+  }
+};
+
 export const createOrGetIfAuthValid = async (createData: AuthCreateData) => {
   if (!(await checkIfAuthValid())) {
     return await createNewAuth(createData);
