@@ -11,7 +11,6 @@ export const SocketContext = React.createContext<
 >({} as Socket<ServerToClientEvents, ClientToServerEvents>);
 
 socketConn.on("forceReconnect", () => {
-  console.log("force reconnect");
   socketConn.disconnect();
 
   socketConn.connect();
