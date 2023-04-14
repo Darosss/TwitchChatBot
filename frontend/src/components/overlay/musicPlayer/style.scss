@@ -1,5 +1,4 @@
 .music-player-wrapper {
-  padding-left: 0.4rem;
   padding-right: 0.4rem;
   font-weight: 500;
   background-color: rgba(0, 0, 0, 0.2);
@@ -9,6 +8,7 @@
   display: flex;
   flex-direction: column;
   color: lightblue;
+  overflow: hidden;
   span {
     padding-left: 0.3rem;
     font-weight: 700;
@@ -16,15 +16,19 @@
   }
 
   & > div {
-    flex: 0 1 30%;
+    flex: 1 1 30%;
     align-items: center;
+    overflow: hidden;
   }
 
   .music-player-song-name {
     width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
+    border-radius: 1rem;
+
     color: white;
+    display: inline-block; /* make the text inline */
+    white-space: nowrap; /* prevent the text from wrapping */
+    animation: scrollHorizontaly 5s linear infinite; /* set the animation */
   }
   .music-player-song-duration {
     display: flex;
@@ -33,5 +37,44 @@
       flex: 1 1 30%;
       align-self: center;
     }
+  }
+
+  .music-player-playlist {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    color: white;
+
+    & > div:first-child {
+      text-align: center;
+      z-index: 3;
+    }
+
+    .music-player-playlist-songs {
+      font-size: 80%;
+      display: inline-block; /* make the text inline */
+      animation: scrollVertically 5s linear infinite,
+        scrollHorizontaly 5s linear infinite; /* set the animation */
+      white-space: nowrap; /* prevent the text from wrapping */
+      height: 80%;
+    }
+  }
+}
+
+@keyframes scrollHorizontally {
+  0% {
+    transform: translateX(120%);
+  }
+  100% {
+    transform: translateX(-120%);
+  }
+}
+
+@keyframes scrollVertically {
+  0% {
+    transform: translateY(120%);
+  }
+  100% {
+    transform: translateY(-150%);
   }
 }

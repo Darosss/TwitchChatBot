@@ -3,11 +3,14 @@ import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "@context/SocketContext";
 import { convertSecondsToMS } from "@utils/convertSecondsToMS";
 import ProgressBar from "@ramonak/react-progress-bar";
+import { AudioStreamDataInfo } from "@libs/types";
 export default function MusicPlayer() {
   const socket = useContext(SocketContext);
   const [songName, setSongName] = useState("");
   const [songDuration, setSongDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [showPlaylist, setShowPlaylist] = useState(false);
+  const [audioData, setAudioData] = useState<AudioStreamDataInfo>();
 
   const showCurrentSongProgress = () => {
     const [maxMinutes, maxSeconds] = convertSecondsToMS(songDuration);
@@ -20,8 +23,9 @@ export default function MusicPlayer() {
           maxCompleted={songDuration}
           customLabel={` ${currMinutes}:${currSeconds} / ${maxMinutes}:${maxSeconds}`}
           labelAlignment="outside"
-          labelSize="20px"
-          width={"60%"}
+          labelSize="100%"
+          width={"70%"}
+          height="1rem"
           bgColor={"lightblue"}
         />
       </>
@@ -53,7 +57,6 @@ export default function MusicPlayer() {
 
       clearInterval(timer);
       let currTime = data.currentTime;
-      console.log(currTime, "Piosenka teraz gra od ");
       timer = setInterval(() => {
         currTime++;
         countSongTime(currTime, data.duration);
@@ -61,11 +64,9 @@ export default function MusicPlayer() {
       const audioCtx = new AudioContext();
       audioCtx.decodeAudioData(data.audioBuffer, (buffer) => {
         if (source) {
-          console.log("SOURCE ALREADY IS SO STOP ");
           source.stop();
         }
 
-        console.log("Create new source ");
         source = new AudioBufferSourceNode(audioCtx, {
           buffer: buffer,
         });
@@ -82,23 +83,55 @@ export default function MusicPlayer() {
     socket.on("audioStop", () => musicStop());
 
     socket.emit("getAudioStreamData");
+    const intervalContentId = setInterval(() => {
+      setShowPlaylist((prevShow) => !prevShow);
+    }, 20000);
+
+    socket.on("getAudioInfo", (data) => {
+      setAudioData(data);
+    });
+    socket.emit("getAudioInfo");
 
     return () => {
       socket.off("audio");
       socket.off("audioStop");
+      socket.off("getAudioInfo");
+
+      clearInterval(intervalContentId);
       musicStop();
     };
   }, []);
 
+  useEffect(() => {
+    console.log(showPlaylist);
+  }, [showPlaylist]);
+
   return (
     <div className="music-player-wrapper">
-      <div>
-        Name:<div className="music-player-song-name">{songName}</div>
-      </div>
-      <div className="music-player-song-duration">
-        Duration:
-        {showCurrentSongProgress()}
-      </div>
+      {!showPlaylist ? (
+        <>
+          <div>
+            <div className="music-player-song-name">{songName}</div>
+          </div>
+          <div className="music-player-song-duration">
+            {showCurrentSongProgress()}
+          </div>
+        </>
+      ) : (
+        <div>
+          <div className="music-player-playlist">
+            <div className="music-player-playlist-songs">
+              <ol>
+                {audioData
+                  ? audioData.songsInQue.map((song, index) => {
+                      return <li key={index}>{song[0]}</li>;
+                    })
+                  : null}
+              </ol>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
