@@ -54,6 +54,9 @@ const authorizationTwitch = async (
       socketIO: req.io,
       clientTmi: clientTmi,
     });
+
+    req.io.emit("forceReconnect");
+
     return next();
   } catch (err) {
     await removeAuthToken();
