@@ -28,7 +28,7 @@
     color: white;
     display: inline-block; /* make the text inline */
     white-space: nowrap; /* prevent the text from wrapping */
-    animation: scrollHorizontally 10s linear infinite; /* set the animation */
+    animation: scrollHorizontally 6s alternate infinite; /* set the animation */
   }
   .music-player-song-duration {
     display: flex;
@@ -53,7 +53,7 @@
     .music-player-playlist-songs {
       font-size: 80%;
       display: inline-block; /* make the text inline */
-      animation: scrollVertically 10s linear infinite; /* set the animation */
+      animation: scrollVertically 10s alternate infinite; /* set the animation */
       white-space: nowrap; /* prevent the text from wrapping */
       height: 80%;
     }
@@ -62,18 +62,18 @@
 
 @keyframes scrollHorizontally {
   0% {
-    transform: translateX(120%);
+    transform: translateX(50%);
   }
   100% {
-    transform: translateX(-120%);
+    transform: translateX(-50%);
   }
 }
 
 @keyframes scrollVertically {
   0% {
-    transform: translateY(120%);
+    transform: translateY(0%);
   }
   100% {
-    transform: translateY(-150%);
+    transform: translateY(-100%);
   }
 }
