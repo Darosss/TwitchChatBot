@@ -20,7 +20,7 @@ import { timerLogger } from "@utils/loggerUtil";
 
 class TimersHandler extends HeadHandler {
   private configs: TimersConfigs;
-  private clientSay: (channel: string, message: string) => Promise<[string]>;
+  private clientSay: (message: string) => void;
   private timers: TimerModel[] = [];
   private timersTimeouts: Map<string, NodeJS.Timeout> = new Map();
 
@@ -34,7 +34,7 @@ class TimersHandler extends HeadHandler {
     >,
     authorizedUser: HelixPrivilegedUser,
     configs: TimersConfigs,
-    clientSay: (channel: string, message: string) => Promise<[string]>
+    clientSay: (message: string) => void
   ) {
     super(socketIO, twitchApi, authorizedUser);
     this.configs = configs;
@@ -83,7 +83,7 @@ class TimersHandler extends HeadHandler {
         timerLogger.info(
           `Timer ${name} with message: ${timerMessage} - delay finished`
         );
-        this.clientSay(this.authorizedUser.name, timerMessage);
+        this.clientSay(timerMessage);
         await this.updateTimerAfterUsage(id);
         this.setTimerTimeout(id, name, delay);
       }, delay * 1000)
@@ -110,7 +110,7 @@ class TimersHandler extends HeadHandler {
           `Timer ${name} with message: ${timerMessage} - points >= requiredPoints`
         );
 
-        this.clientSay(this.authorizedUser.name, timerMessage);
+        this.clientSay(timerMessage);
 
         await this.updateTimerAfterUsage(_id);
       }, index * 2000);

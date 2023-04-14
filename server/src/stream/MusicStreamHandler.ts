@@ -18,7 +18,7 @@ class MusicStreamHandler {
   private songList: string[] = [];
   private songRequestList = new Map<string, string>();
   private isPlayingTimeout: NodeJS.Timeout | undefined;
-  private readonly sayInAuthorizedChannel: (message: string) => void;
+  private readonly clientSay: (message: string) => void;
   private readonly formatFile: string = "mp3";
   private readonly maxBufferedQue = 3;
   private readonly secondsBetweenAudio = 1;
@@ -51,7 +51,7 @@ class MusicStreamHandler {
     sayInAuthorizedChannel: (message: string) => void
   ) {
     this.socketIO = socketIO;
-    this.sayInAuthorizedChannel = sayInAuthorizedChannel;
+    this.clientSay = sayInAuthorizedChannel;
   }
 
   public async init() {
@@ -88,7 +88,7 @@ class MusicStreamHandler {
 
   private async prepareInitialQue() {
     if (this.songList.length <= 0) {
-      this.sayInAuthorizedChannel(
+      this.clientSay(
         `There are not songs in ${path.basename(this.currentFolder)}`
       );
       return;
@@ -108,7 +108,7 @@ class MusicStreamHandler {
   }
 
   private sayInChannel(say = false, message: string) {
-    if (say) this.sayInAuthorizedChannel(message);
+    if (say) this.clientSay(message);
   }
 
   private async addSongToQue(audioName: string, requester = "") {
@@ -431,14 +431,14 @@ class MusicStreamHandler {
   public sayNextSong() {
     const nextSong = this.getNextSongFromQue();
     if (!nextSong) {
-      this.sayInAuthorizedChannel("There is no next song");
+      this.clientSay("There is no next song");
       return;
     }
     const time = this.getRemainingTimeOfCurrentSong();
 
     const [minutes, seconds] = convertSecondsToMS(time);
 
-    this.sayInAuthorizedChannel(
+    this.clientSay(
       `Next song: ${nextSong.name} in ~${minutes}:${seconds} min. 
       ${nextSong.requester ? `Requested by ${nextSong.requester}` : ""} 
       `
@@ -446,25 +446,21 @@ class MusicStreamHandler {
   }
   public sayPreviousSong() {
     try {
-      this.sayInAuthorizedChannel(`Previous song: ${this.previousSong}`);
+      this.clientSay(`Previous song: ${this.previousSong}`);
     } catch {
-      this.sayInAuthorizedChannel(`Not enought songs to do that uga buga`);
+      this.clientSay(`Not enought songs to do that uga buga`);
     }
   }
   public sayWhenUserRequestedSong(username: string) {
     if (!this.isAddedSongByUser(username)) {
-      this.sayInAuthorizedChannel(
-        `@username, you did not add any song to que (: `
-      );
+      this.clientSay(`@username, you did not add any song to que (: `);
 
       return;
     }
 
     const remainingTime = this.getRemainingTimeToRequestedSong(username);
 
-    this.sayInAuthorizedChannel(
-      `@${username}, your song will be in ~${remainingTime}`
-    );
+    this.clientSay(`@${username}, your song will be in ~${remainingTime}`);
   }
 
   private getRemainingTimeToRequestedSong(username: string) {
