@@ -1,5 +1,8 @@
 import Express, { Router } from "express";
-import { overlay, getTwitchAuthorizeUrl } from "@controllers/authController";
+import {
+  afterTwitchAuthorization,
+  getTwitchAuthorizeUrl,
+} from "@controllers/authController";
 import authorizationTwitch from "@middlewares/authorizationTwitchMiddleware";
 import twitchHandlersMiddleware from "@middlewares/twitchHandlersMiddleware";
 
@@ -9,7 +12,7 @@ auth.get(
   "/twitch/callback",
   authorizationTwitch,
   twitchHandlersMiddleware,
-  overlay
+  afterTwitchAuthorization
 );
 auth.get("/authorize-url", getTwitchAuthorizeUrl);
 
