@@ -6,25 +6,6 @@ interface ClientTmiOptions {
   username: string;
 }
 
-// const clientTmi = (params: ClientTmiParams) => {
-//   const { userToListen } = params;
-
-//   const client = new tmi.Client({
-//     options: { debug: false },
-//     connection: {
-//       secure: true,
-//       reconnect: true,
-//     },
-//     identity: {
-//       password: process.env.bot_password,
-//       username: process.env.bot_username,
-//     },
-//     channels: [userToListen],
-//   });
-
-//   return client;
-// };
-
 class ClientTmiHandler {
   private static instance: ClientTmiHandler;
   private userToListen: string;
