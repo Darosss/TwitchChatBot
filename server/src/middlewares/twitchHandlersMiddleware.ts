@@ -13,7 +13,6 @@ const authorizationTwitch = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(";hgehehehe");
   const clientId = process.env.CLIENT_ID!;
   const clientSecret = process.env.CLIENT_SECRET!;
 
