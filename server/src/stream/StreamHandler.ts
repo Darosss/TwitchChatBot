@@ -31,6 +31,7 @@ import { UserCreateData } from "@services/users/types";
 import MusicStreamHandler from "./MusicStreamHandler";
 import { alertSoundPrefix } from "@configs/globalVariables";
 import EventSubHandler from "./EventSubHandler";
+import ClientTmiHandler from "./TwitchTmiHandler";
 interface StreamHandlerOptions {
   config: ConfigDocument;
   twitchApi: ApiClient;
@@ -41,10 +42,11 @@ interface StreamHandlerOptions {
     SocketData
   >;
   authorizedUser: HelixPrivilegedUser;
-  clientTmi: Client;
+  clientTmi: ClientTmiHandler;
 }
 
 class StreamHandler {
+  private static instance: StreamHandler;
   private twitchApi: ApiClient;
   private authorizedUser: HelixPrivilegedUser;
   private socketIO: Server<
@@ -53,7 +55,7 @@ class StreamHandler {
     InterServerEvents,
     SocketData
   >;
-  private readonly clientTmi: Client;
+  private clientTmi: ClientTmiHandler;
 
   private commandsHandler: CommandsHandler;
   private triggersHandler: TriggersHandler;
@@ -74,7 +76,7 @@ class StreamHandler {
     this.configs = { ...configDefaults };
     this.musicHandler = new MusicStreamHandler(
       socketIO,
-      this.sayInAuthroizedChannel.bind(this)
+      clientTmi.say.bind(clientTmi)
     );
     this.commandsHandler = new CommandsHandler(
       socketIO,
@@ -121,8 +123,25 @@ class StreamHandler {
     }, this.configs.headConfigs.intervalCheckViewersPeek * 1000);
   }
 
+  public static getInstance(options: StreamHandlerOptions): StreamHandler {
+    if (!StreamHandler.instance) {
+      StreamHandler.instance = new StreamHandler(options);
+    } else {
+      StreamHandler.instance.updateOptions(options);
+    }
+    return StreamHandler.instance;
+  }
+
+  public updateOptions(options: StreamHandlerOptions): void {
+    const { twitchApi, socketIO, authorizedUser, clientTmi } = options;
+    this.twitchApi = twitchApi;
+    this.socketIO = socketIO;
+    this.clientTmi = clientTmi;
+    this.authorizedUser = authorizedUser;
+  }
+
   private async initOnMessageEvents() {
-    this.clientTmi.on("message", async (channel, userstate, message, self) => {
+    this.clientTmi.onMessageEvent(async (channel, userstate, message, self) => {
       const userData = this.getUserStateInfo(userstate, self);
 
       messageLogger.info(`${userData.username}: ${message}`);
@@ -159,12 +178,12 @@ class StreamHandler {
       ).filter((x) => x) as string[];
 
       console.log(messagesQueue, "lol");
-      this.sendMessagesFromQueue(channel, messagesQueue);
+      this.sendMessagesFromQueue(messagesQueue);
     });
   }
 
-  private sendMessagesFromQueue(channel: string, messages: string[]) {
-    messages.forEach((msgInQue) => this.clientTmi.say(channel, msgInQue));
+  private sendMessagesFromQueue(messages: string[]) {
+    messages.forEach((msgInQue) => this.clientTmi.say(msgInQue));
   }
   // private async debugFollows() {
   //   const follows = await this.twitchApi.users.getFollows({
@@ -255,7 +274,7 @@ class StreamHandler {
 
       socket.on("messageClient", (message) => {
         if (!message) return;
-        this.sayInAuthroizedChannel(message);
+        this.clientTmi.say(message);
       });
 
       this.onMusicHandlerEvents(socket);
@@ -363,10 +382,6 @@ class StreamHandler {
   private async onRefreshTimers() {
     headLogger.info("Client created/updated/deleted timer - refreshing timers");
     await this.timersHandler.refreshTimers();
-  }
-
-  private sayInAuthroizedChannel(message: string) {
-    this.clientTmi.say(this.authorizedUser.name, message);
   }
 
   private onMusicHandlerEvents(
