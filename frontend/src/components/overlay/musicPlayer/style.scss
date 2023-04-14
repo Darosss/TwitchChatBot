@@ -28,7 +28,7 @@
     color: white;
     display: inline-block; /* make the text inline */
     white-space: nowrap; /* prevent the text from wrapping */
-    animation: scrollHorizontaly 5s linear infinite; /* set the animation */
+    animation: scrollHorizontally 10s linear infinite; /* set the animation */
   }
   .music-player-song-duration {
     display: flex;
@@ -53,8 +53,7 @@
     .music-player-playlist-songs {
       font-size: 80%;
       display: inline-block; /* make the text inline */
-      animation: scrollVertically 5s linear infinite,
-        scrollHorizontaly 5s linear infinite; /* set the animation */
+      animation: scrollVertically 10s linear infinite; /* set the animation */
       white-space: nowrap; /* prevent the text from wrapping */
       height: 80%;
     }
