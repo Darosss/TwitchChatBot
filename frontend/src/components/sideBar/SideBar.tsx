@@ -39,6 +39,8 @@ export default function SideBar(props: {
           <a
             className="connect-twitch"
             href={authData ? authData.data : "_blank"}
+            target="_blank"
+            rel="noreferrer"
           >
             {error ? "URL Error" : "Connect with twitch"}
           </a>
