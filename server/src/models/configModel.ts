@@ -8,6 +8,7 @@ const {
   pointsConfigs,
   loyaltyConfigs,
   chatGamesConfigs,
+  musicConfigs,
   headConfigs,
 } = configDefaults;
 
@@ -85,6 +86,13 @@ const ConfigSchema: Schema<ConfigDocument> = new Schema(
         type: Number,
         required: true,
         default: chatGamesConfigs.minActiveUsersThreshold,
+      },
+    },
+    musicConfigs: {
+      songRequest: {
+        type: Boolean,
+        required: true,
+        default: musicConfigs.songRequest,
       },
     },
     headConfigs: {
