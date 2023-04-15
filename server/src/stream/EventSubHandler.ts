@@ -49,7 +49,7 @@ class EventSubHandler {
     this.socketIO = socketIO;
   }
 
-  async subscribeToStreamOfflineEvents() {
+  private async subscribeToStreamOfflineEvents() {
     await this.listener.subscribeToStreamOfflineEvents(
       this.userId,
       async (e) => {
@@ -59,7 +59,7 @@ class EventSubHandler {
     );
   }
 
-  async subscribeToChannelUpdateEvents() {
+  private async subscribeToChannelUpdateEvents() {
     await this.listener.subscribeToChannelUpdateEvents(
       this.userId,
       async (e) => {
@@ -79,7 +79,7 @@ class EventSubHandler {
     );
   }
 
-  async createStreamSessionHelper(
+  private async createStreamSessionHelper(
     startDate: Date,
     title: string,
     category: string
@@ -95,7 +95,7 @@ class EventSubHandler {
     return newSession;
   }
 
-  async subscribeToStreamOnlineEvents() {
+  private async subscribeToStreamOnlineEvents() {
     await this.listener.subscribeToStreamOnlineEvents(
       this.userId,
       async (e) => {
@@ -111,7 +111,7 @@ class EventSubHandler {
     );
   }
 
-  async subscribeToChannelRedemptionAddEvents() {
+  private async subscribeToChannelRedemptionAddEvents() {
     await this.listener.subscribeToChannelRedemptionAddEvents(
       this.userId,
       async (e) => {
@@ -179,7 +179,7 @@ class EventSubHandler {
     );
   }
 
-  addSoundToAlertQue(
+  private addSoundToAlertQue(
     rewardData: RewardData,
     soundBuffer: Buffer,
     soundDuration: number
@@ -190,7 +190,7 @@ class EventSubHandler {
     ]);
   }
 
-  startAlertSounds(delay = 0) {
+  private startAlertSounds(delay = 0) {
     if (this.isAlertPlaying) return;
 
     setTimeout(() => {
@@ -213,26 +213,26 @@ class EventSubHandler {
     }, delay);
   }
 
-  getFirstFromAlertQue() {
+  private getFirstFromAlertQue() {
     const firstQueItem = this.redemptionQue.shift();
 
     return firstQueItem;
   }
 
-  async start() {
+  public async start() {
     await this.listener.start();
   }
 
-  async stop() {
+  public async stop() {
     await this.listener.stop();
   }
 
-  async init() {
+  public async init() {
     await this.start();
     await this.initEvents();
   }
 
-  async initEvents() {
+  private async initEvents() {
     await this.subscribeToChannelUpdateEvents();
     await this.subscribeToStreamOfflineEvents();
     await this.subscribeToChannelRedemptionAddEvents();
