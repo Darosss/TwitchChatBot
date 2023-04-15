@@ -94,6 +94,16 @@ const ConfigSchema: Schema<ConfigDocument> = new Schema(
         required: true,
         default: musicConfigs.songRequest,
       },
+      maxAutoQueSize: {
+        type: Number,
+        required: true,
+        default: musicConfigs.maxAutoQueSize,
+      },
+      maxSongRequestByUser: {
+        type: Number,
+        required: true,
+        default: musicConfigs.maxSongRequestByUser,
+      },
     },
     headConfigs: {
       permissionLevels: {
