@@ -28,6 +28,7 @@ export const editConfigs = async (
     triggersConfigs,
     pointsConfigs,
     loyaltyConfigs,
+    musicConfigs,
     headConfigs,
   } = req.body;
 
@@ -38,6 +39,7 @@ export const editConfigs = async (
       chatGamesConfigs: chatGamesConfigs,
       triggersConfigs: triggersConfigs,
       pointsConfigs: pointsConfigs,
+      musicConfigs: musicConfigs,
       loyaltyConfigs: loyaltyConfigs,
       headConfigs: headConfigs,
     });
