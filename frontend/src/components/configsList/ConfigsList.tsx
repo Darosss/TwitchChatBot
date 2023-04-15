@@ -341,6 +341,34 @@ export default function ConfigsList() {
             </button>,
             musicCfg.songRequest.toString()
           )}
+          {generateConfigInput(
+            "Max auto que size",
+            <input
+              type="number"
+              value={musicCfg.maxAutoQueSize}
+              onChange={(e) =>
+                setMusicCfg((prevState) => ({
+                  ...prevState,
+                  maxAutoQueSize: e.target.valueAsNumber,
+                }))
+              }
+            />,
+            musicCfg.maxAutoQueSize
+          )}
+          {generateConfigInput(
+            "Max song request by user",
+            <input
+              type="number"
+              value={musicCfg.maxSongRequestByUser}
+              onChange={(e) =>
+                setMusicCfg((prevState) => ({
+                  ...prevState,
+                  maxSongRequestByUser: e.target.valueAsNumber,
+                }))
+              }
+            />,
+            musicCfg.maxSongRequestByUser
+          )}
         </div>
         <div className="configs-section-wrapper">
           <div className="configs-section-header">Head configs</div>
