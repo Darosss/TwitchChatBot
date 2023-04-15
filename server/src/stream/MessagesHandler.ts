@@ -28,13 +28,13 @@ class MessagesHandler {
 
     await this.updateUserStatistics(userId);
   }
-  async saveMessageToDatabase(messageCreateData: MessageCreateData) {
+  private async saveMessageToDatabase(messageCreateData: MessageCreateData) {
     try {
       const newMessage = await createMessage(messageCreateData);
     } catch (err) {}
   }
 
-  async updateUserStatistics(userId: string) {
+  private async updateUserStatistics(userId: string) {
     const updateData = {
       $inc: { points: this.configs.pointsIncrement.message, messageCount: 1 },
       // add points by message,       count messages
