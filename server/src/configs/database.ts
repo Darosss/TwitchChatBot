@@ -4,6 +4,19 @@ import {
   createChatCommand,
   getChatCommandsCount,
 } from "@services/chatCommands";
+import { getDefaultChatCommands } from "@defaults/commandsDefaults";
+import { createTag, getOneTag, getTagsCount } from "@services/tags";
+import {
+  getDefaultMood,
+  getDefaultPersonality,
+  getDefaultTag,
+} from "@defaults/modesDefaults";
+import { createMood, getMoodsCount, getOneMood } from "@services/moods";
+import {
+  createPersonality,
+  getOnePersonality,
+  getPersonalitiesCount,
+} from "@services/personalities";
 
 const initMongoDataBase = async () => {
   mongoose.set("strictQuery", false);
@@ -19,6 +32,13 @@ const initMongoDataBase = async () => {
   }
 
   await createDefaultConfigs();
+
+  const modesPromise = await Promise.all([
+    createDefaultTag(),
+    createDefaultMood(),
+    createDefaultPersonality(),
+  ]);
+
   await createDefaultCommands();
 };
 
@@ -28,30 +48,45 @@ const createDefaultConfigs = async () => {
 
 const createDefaultCommands = async () => {
   if ((await getChatCommandsCount()) === 0) {
-    const defaultCommands = [
-      {
-        name: "messages",
-        messages: ["@$user{username}, your messages: $user{messageCount}"],
-        aliases: ["messages", "msgs", "msg"],
-        description: "Send information about user's message count",
-      },
-      {
-        name: "points",
-        messages: ["@$user{username}, your points: $user{points}"],
-        aliases: ["pts", "points"],
-        description: "Send information about user's points",
-      },
-      {
-        name: "example",
-        messages: [
-          "This is example command message 1",
-          "This is example command message 2",
-        ],
-        aliases: ["example", "exampleCommand"],
-        description: "Example command description",
-      },
-    ];
-    await createChatCommand(defaultCommands);
+    const modes = await Promise.all([
+      getOneTag({}),
+      getOneMood({}),
+      getOnePersonality({}),
+    ]);
+
+    const [tag, mood, personality] = modes;
+    if (tag && mood && personality) {
+      const chatCommands = getDefaultChatCommands();
+      const chatCommandsWithModes = chatCommands.map((command) => {
+        return {
+          ...command,
+          tag: tag.id,
+          mood: mood.id,
+          personality: personality.id,
+        };
+      });
+      await createChatCommand(chatCommandsWithModes);
+    }
+  }
+};
+const createDefaultTag = async () => {
+  if ((await getTagsCount()) === 0) {
+    const tags = getDefaultTag();
+    await createTag(tags);
+  }
+};
+
+const createDefaultMood = async () => {
+  if ((await getMoodsCount()) === 0) {
+    const moods = getDefaultMood();
+    await createMood(moods);
+  }
+};
+
+const createDefaultPersonality = async () => {
+  if ((await getPersonalitiesCount()) === 0) {
+    const personalities = getDefaultPersonality();
+    await createPersonality(personalities);
   }
 };
 
