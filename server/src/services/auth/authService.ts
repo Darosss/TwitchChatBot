@@ -1,5 +1,8 @@
 import { AuthToken } from "@models/authModel";
 import { AuthCreateData } from "./types";
+import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
+import { logger } from "@utils/loggerUtil";
+import { checkExistResource } from "@utils/checkExistResourceUtil";
 
 export const getAuthToken = async () => {
   try {
@@ -13,10 +16,14 @@ export const getAuthToken = async () => {
 export const createNewAuth = async (createData: AuthCreateData) => {
   try {
     const newAuth = await AuthToken.create(createData);
+
+    if (!newAuth) {
+      throw new AppError(400, "Couldn't create chat commands");
+    }
     return newAuth;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to create new auth");
+    logger.error(`Failed to create new auth:  ${err}`);
+    handleAppError(err);
   }
 };
 
@@ -32,17 +39,24 @@ export const checkIfAuthValid = async () => {
     if (expiresIn > currentSeconds) return true;
     return false;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to check if auth is valid");
+    logger.error(`Failed to check if auth is valid:  ${err}`);
+    handleAppError(err);
   }
 };
 
 export const removeAuthToken = async () => {
   try {
     const deletedAuthToken = await AuthToken.findOneAndRemove();
+
+    const authToken = checkExistResource(
+      deletedAuthToken,
+      `Auth token not found`
+    );
+
+    return authToken;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to remove auth token");
+    logger.error("Failed to remove auth token");
+    handleAppError(err);
   }
 };
 
