@@ -27,6 +27,9 @@ export const configDefaults: ConfigDefaults = {
   loyaltyConfigs: {
     intervalCheckChatters: 300,
   },
+  musicConfigs: {
+    songRequest: false,
+  },
   headConfigs: {
     intervalCheckViewersPeek: 600,
     permissionLevels: {
