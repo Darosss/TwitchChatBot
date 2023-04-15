@@ -17,7 +17,7 @@ import { MusicConfigs } from "@models/types";
 
 class MusicStreamHandler {
   private songList: string[] = [];
-  private songRequestList = new Map<string, string>();
+  private songRequestList: [string, string][] = [];
   private isPlayingTimeout: NodeJS.Timeout | undefined;
   private readonly clientSay: (message: string) => void;
   private readonly formatFile: string = "mp3";
@@ -30,7 +30,7 @@ class MusicStreamHandler {
   private currentDelay: number = 0;
   private currentSongStart: Date = new Date();
   private isPlaying: boolean = false;
-  private musicQue = new Map<string, AudioStreamData>();
+  private musicQue: [string, AudioStreamData][] = [];
 
   private readonly socketIO: Server<
     ClientToServerEvents,
@@ -98,7 +98,7 @@ class MusicStreamHandler {
       );
       return;
     }
-    if (this.musicQue.size > 0) this.musicQue.clear();
+    if (this.musicQue.length > 0) this.musicQue.splice(0, this.musicQue.length);
 
     for (let i = 0; i <= this.maxBufferedQue; i++) {
       await this.addNextItemToQueAndPushToEnd();
@@ -124,14 +124,17 @@ class MusicStreamHandler {
       const mp3FileBuffer = fs.readFileSync(mp3FilePath);
 
       const songId = duration.toString() + Date.now();
-      this.musicQue.set(songId, {
-        id: songId,
-        name: audioName,
-        audioBuffer: mp3FileBuffer,
-        duration: duration,
-        currentTime: 0,
-        requester: requester,
-      });
+      this.musicQue.push([
+        songId,
+        {
+          id: songId,
+          name: audioName,
+          audioBuffer: mp3FileBuffer,
+          duration: duration,
+          currentTime: 0,
+          requester: requester,
+        },
+      ]);
     } catch (err) {
       console.error(
         "Probably mp3 isn't correct encoded or bad file path. Skip song."
@@ -142,16 +145,36 @@ class MusicStreamHandler {
   }
 
   private getNextSongFromQue() {
-    const musicPropsMapValue = this.musicQue.values().next().value;
-    if (!musicPropsMapValue) return;
-    const musicProps = musicPropsMapValue as AudioStreamData;
+    if (this.musicQue.length <= 0) return;
 
-    return musicProps;
+    const nextMusicProps = this.musicQue[0][1];
+    return nextMusicProps;
+  }
+
+  private removeFromQue(name: string) {
+    let index = this.musicQue.findIndex(([id]) => id === name);
+
+    if (index !== -1) {
+      this.musicQue.splice(index, 1);
+
+      this.musicQue.forEach((song) => {
+        console.log(song[1].name.slice(0, 10));
+      });
+    }
+  }
+
+  private removeFromRequestedQue(username: string) {
+    let index = this.songRequestList.findIndex(
+      ([username]) => username === username
+    );
+
+    if (index !== -1) this.songRequestList.splice(index, 1);
   }
 
   private async setCurrentSongFromQue() {
     this.previousSong = this.currentSong?.name || "";
-    this.musicQue.delete(this.currentSong?.id || "");
+    // this.musicQue.delete(this.currentSong?.id || "");
+    this.removeFromQue(this.currentSong?.id || "");
 
     const musicProps = this.getNextSongFromQue();
     if (!musicProps) return;
@@ -159,7 +182,8 @@ class MusicStreamHandler {
     this.currentSongStart = new Date();
     this.currentSong = musicProps;
 
-    this.musicQue.delete(this.currentSong.id);
+    // this.musicQue.delete(this.currentSong.id);
+    this.removeFromQue(this.currentSong?.id);
 
     this.clearUserRequestAfterPlay(musicProps.requester);
 
@@ -169,11 +193,10 @@ class MusicStreamHandler {
   public getAudioInfo(): AudioStreamDataInfo | undefined {
     if (!this.currentSong) return;
 
-    const queArray = [...this.musicQue.values()];
     const songsInQue: [string, string][] = [];
 
-    queArray.forEach((song) => {
-      songsInQue.push([song.name, song.requester || ""]);
+    this.musicQue.forEach(([id, audioProps]) => {
+      songsInQue.push([audioProps.name, audioProps.requester || ""]);
     });
     const info: AudioStreamDataInfo = {
       name: this.currentSong.name,
@@ -215,7 +238,7 @@ class MusicStreamHandler {
   }
 
   private shouldPrepareQue() {
-    if (this.musicQue.size <= this.maxBufferedQue) return true;
+    if (this.musicQue.length <= this.maxBufferedQue) return true;
   }
 
   private isADirectory(directoryPath: string, sayInfo = false) {
@@ -256,7 +279,7 @@ class MusicStreamHandler {
   private async startPlay(delay = 0, newSong = false, sayInfo = false) {
     this.isPlaying = true;
     this.isPlayingTimeout = setTimeout(async () => {
-      if (this.musicQue.size > 0 || newSong) {
+      if (this.musicQue.length > 0 || newSong) {
         await this.setCurrentSongFromQue();
       }
 
@@ -321,7 +344,7 @@ class MusicStreamHandler {
 
   private async addRequestedSongToPlayer(username: string, songName: string) {
     if (!this.isAlreadySongInQue(songName)) {
-      this.songRequestList.set(username, songName);
+      this.songRequestList.push([username, songName]);
       await this.addSongToQue(songName, username);
 
       return true;
@@ -329,8 +352,8 @@ class MusicStreamHandler {
   }
 
   private isAlreadySongInQue(songName: string) {
-    const isAdded = [...this.musicQue.values()].some(
-      (song) => song.name === songName
+    const isAdded = this.musicQue.some(
+      ([id, audioProps]) => audioProps.name === songName
     );
 
     return isAdded;
@@ -349,7 +372,7 @@ class MusicStreamHandler {
   }
 
   private isAddedSongByUser(username: string, sayInfo = false) {
-    if (this.songRequestList.has(username)) {
+    if (this.songRequestList.some(([username]) => username === username)) {
       this.sayInChannel(
         sayInfo,
         `@${username}, you have already added song. 
@@ -367,7 +390,8 @@ class MusicStreamHandler {
 
   private clearUserRequestAfterPlay(username?: string) {
     if (username) {
-      this.songRequestList.delete(username);
+      // this.songRequestList.delete(username);
+      this.removeFromRequestedQue(username);
     }
   }
 
@@ -472,9 +496,9 @@ class MusicStreamHandler {
     let totalDuration = 0;
 
     totalDuration += this.getRemainingTimeOfCurrentSong();
-    [...this.musicQue.values()].every((song) => {
-      if (song.requester !== username) {
-        totalDuration += song.duration;
+    this.musicQue.every(([id, audioProps]) => {
+      if (audioProps.requester !== username) {
+        totalDuration += audioProps.duration;
         return true;
       }
     });
