@@ -27,11 +27,11 @@ class TriggersHandler {
     Promise.all([this.refreshTriggers(), this.setEveryTriggerDelayOff()]);
   }
 
-  async refreshTriggers() {
+  public async refreshTriggers() {
     this.triggersWords = (await getTriggersWords(true)) || [];
   }
 
-  async refreshConfigs(configs: TriggersConfigs) {
+  public async refreshConfigs(configs: TriggersConfigs) {
     this.configs = configs;
   }
 
@@ -39,7 +39,7 @@ class TriggersHandler {
     await updateTriggers({}, { onDelay: false });
   }
 
-  async getTriggerWordAndTrigger(message: string) {
+  private async getTriggerWordAndTrigger(message: string) {
     let wordInMessage = "";
     const triggerWord = this.triggersWords.find((word) => {
       if (message.toLowerCase().includes(word)) {
@@ -55,7 +55,7 @@ class TriggersHandler {
     return { triggerWord, wordInMessage };
   }
 
-  async checkMessageForTrigger(message: string) {
+  public async checkMessageForTrigger(message: string) {
     const { triggerWord, wordInMessage } = await this.getTriggerWordAndTrigger(
       message
     );
@@ -83,12 +83,12 @@ class TriggersHandler {
     }
   }
 
-  canSendRandomMessage() {
+  private canSendRandomMessage() {
     if (percentChance(this.configs.randomMessageChance)) return true;
     return false;
   }
 
-  async getRandomMessage() {
+  private async getRandomMessage() {
     try {
       const randomCategoryMessage = await getRandomCategoryMessage(true);
       if (!randomCategoryMessage) return;
@@ -114,11 +114,11 @@ class TriggersHandler {
     }
   }
 
-  async updateUsedMessageInCategory(id: string, word: string) {
+  private async updateUsedMessageInCategory(id: string, word: string) {
     const upd = findCategoryAndUpdateMessageUse(id, word);
   }
 
-  async checkTriggersConditions(
+  private async checkTriggersConditions(
     trigger: TriggerModel,
     triggerWord: string,
     wordInMessage: string
@@ -134,7 +134,7 @@ class TriggersHandler {
     return false;
   }
 
-  async getMessageAndUpdateTriggerLogic(trigger: TriggerModel) {
+  private async getMessageAndUpdateTriggerLogic(trigger: TriggerModel) {
     const { _id, messages, name, delay } = trigger;
     const triggerMessage = await this.getTriggerMessage(messages);
     await this.updateTrigerAfterUsage(_id);
@@ -145,7 +145,7 @@ class TriggersHandler {
     return triggerMessage;
   }
 
-  async checkIfCanSendTrigger(
+  private async checkIfCanSendTrigger(
     mode: TriggerMode,
     wholeWord: string,
     triggerWord: string
@@ -172,7 +172,7 @@ class TriggersHandler {
     return true;
   }
 
-  async isTriggerOnDelay(name: string, onDelay: boolean) {
+  private async isTriggerOnDelay(name: string, onDelay: boolean) {
     if (onDelay || this.triggersOnDelay.has(name)) {
       triggerLogger.info(`Trigger ${name} on delay - do nothing`);
       return true;
@@ -181,11 +181,11 @@ class TriggersHandler {
     return false;
   }
 
-  async getTriggerMessage(messages: string[]) {
+  private async getTriggerMessage(messages: string[]) {
     return messages[randomWithMax(messages.length)];
   }
 
-  async getTriggerByTriggerWord(triggerWord: string) {
+  private async getTriggerByTriggerWord(triggerWord: string) {
     try {
       const foundedTrigger = await getOneTrigger({
         words: { $regex: new RegExp(`\\b${triggerWord}\\b`, "i") },
@@ -194,14 +194,18 @@ class TriggersHandler {
     } catch (err) {}
   }
 
-  async updateTrigerAfterUsage(id: string) {
+  private async updateTrigerAfterUsage(id: string) {
     const updatedTrigger = await updateTriggerById(id, {
       onDelay: true,
       $inc: { uses: 1 },
     });
   }
 
-  async setTimeoutRefreshTriggerDelay(id: string, name: string, delay: number) {
+  private async setTimeoutRefreshTriggerDelay(
+    id: string,
+    name: string,
+    delay: number
+  ) {
     this.triggersOnDelay.set(
       name,
       setTimeout(async () => {
