@@ -1,3 +1,5 @@
+import HeadHandler from "./HeadHandler";
+import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
 import { AudioPlayerOptions } from "@libs/types";
 import { ChatCommandModel, CommandsConfigs, UserModel } from "@models/types";
 import {
@@ -30,30 +32,27 @@ const musicStreamDefaultsAliases: Map<AudioPlayerOptions, number> = new Map([
   ["sr", 0],
 ]);
 
-class CommandsHandler {
+class CommandsHandler extends HeadHandler {
   private commandsAliases: string[] = [];
   private defaultsMusicAliases: Map<AudioPlayerOptions, number> =
     musicStreamDefaultsAliases;
   private configs: CommandsConfigs;
   private readonly musicHandler: MusicStreamHandler;
-  private readonly socketIO: Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
-  >;
+
   constructor(
+    twitchApi: ApiClient,
     socketIO: Server<
       ClientToServerEvents,
       ServerToClientEvents,
       InterServerEvents,
       SocketData
     >,
+    authorizedUser: HelixPrivilegedUser,
     musicHandler: MusicStreamHandler,
     configs: CommandsConfigs
   ) {
+    super(socketIO, twitchApi, authorizedUser);
     this.configs = configs;
-    this.socketIO = socketIO;
     this.musicHandler = musicHandler;
     this.init();
   }

@@ -79,7 +79,9 @@ class StreamHandler {
       clientTmi.say.bind(clientTmi)
     );
     this.commandsHandler = new CommandsHandler(
+      twitchApi,
       socketIO,
+      authorizedUser,
       this.musicHandler,
       this.configs.commandsConfigs
     );
@@ -88,22 +90,22 @@ class StreamHandler {
     this.loayaltyHandler = new LoyaltyHandler(
       twitchApi,
       socketIO,
-      this.authorizedUser,
+      authorizedUser,
       { ...this.configs.loyaltyConfigs, ...this.configs.pointsConfigs }
     );
 
     this.timersHandler = new TimersHandler(
       twitchApi,
       socketIO,
-      this.authorizedUser,
+      authorizedUser,
       this.configs.timersConfigs,
       clientTmi.say.bind(clientTmi)
     );
 
     this.eventSubHandler = new EventSubHandler(
       twitchApi,
-      this.authorizedUser.id,
-      socketIO
+      socketIO,
+      authorizedUser
     );
 
     this.init();
@@ -111,6 +113,7 @@ class StreamHandler {
     this.initOnMessageEvents();
 
     this.musicHandler.init();
+    this.triggersHandler;
     this.eventSubHandler.init();
   }
 

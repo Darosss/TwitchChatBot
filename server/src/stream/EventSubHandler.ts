@@ -1,4 +1,5 @@
-import { ApiClient } from "@twurple/api";
+import HeadHandler from "./HeadHandler";
+import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
 import { EventSubWsListener } from "@twurple/eventsub-ws";
 import { Server } from "socket.io";
 import {
@@ -20,15 +21,9 @@ import fs from "fs";
 import { alertSoundsPath } from "@configs/globalPaths";
 import path from "path";
 import { getMp3AudioDuration } from "@utils/filesManipulateUtil";
-class EventSubHandler {
+
+class EventSubHandler extends HeadHandler {
   private readonly listener: EventSubWsListener;
-  private userId: string;
-  private readonly socketIO: Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
-  >;
   private redemptionQue: [
     RewardData,
     { audioBuffer: Buffer; duration: number }
@@ -36,22 +31,21 @@ class EventSubHandler {
   private isAlertPlaying = false;
   constructor(
     apiClient: ApiClient,
-    userId: string,
     socketIO: Server<
       ClientToServerEvents,
       ServerToClientEvents,
       InterServerEvents,
       SocketData
-    >
+    >,
+    authorizedUser: HelixPrivilegedUser
   ) {
+    super(socketIO, apiClient, authorizedUser);
     this.listener = new EventSubWsListener({ apiClient });
-    this.userId = userId;
-    this.socketIO = socketIO;
   }
 
   private async subscribeToStreamOfflineEvents() {
     await this.listener.subscribeToStreamOfflineEvents(
-      this.userId,
+      this.authorizedUser.id,
       async (e) => {
         eventsubLogger.info(`${e.broadcasterDisplayName} just went offline`);
         await updateCurrentStreamSession({ sessionEnd: new Date() });
@@ -61,7 +55,7 @@ class EventSubHandler {
 
   private async subscribeToChannelUpdateEvents() {
     await this.listener.subscribeToChannelUpdateEvents(
-      this.userId,
+      this.authorizedUser.id,
       async (e) => {
         eventsubLogger.info(`Stream details has been updated`);
         const timestamp = Date.now();
@@ -97,7 +91,7 @@ class EventSubHandler {
 
   private async subscribeToStreamOnlineEvents() {
     await this.listener.subscribeToStreamOnlineEvents(
-      this.userId,
+      this.authorizedUser.id,
       async (e) => {
         eventsubLogger.info(`${e.broadcasterDisplayName} just went live!`);
         const stream = await retryWithCatch(() => e.getStream());
@@ -113,7 +107,7 @@ class EventSubHandler {
 
   private async subscribeToChannelRedemptionAddEvents() {
     await this.listener.subscribeToChannelRedemptionAddEvents(
-      this.userId,
+      this.authorizedUser.id,
       async (e) => {
         const {
           rewardId,

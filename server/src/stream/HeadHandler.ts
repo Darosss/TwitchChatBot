@@ -15,7 +15,7 @@ class HeadHandler {
     SocketData
   >;
   protected twitchApi: ApiClient;
-  authorizedUser: HelixPrivilegedUser;
+  protected authorizedUser: HelixPrivilegedUser;
 
   constructor(
     socket: Server<
