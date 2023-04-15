@@ -44,7 +44,7 @@ class LoyaltyHandler extends HeadHandler {
     this.init();
   }
 
-  async init() {
+  private async init() {
     this.checkChattersTimeout = setInterval(async () => {
       await this.checkChatters(/* id */);
     }, this.configs.intervalCheckChatters * 1000);
@@ -56,7 +56,7 @@ class LoyaltyHandler extends HeadHandler {
     this.init();
   }
 
-  async getStreamChatters() {
+  private async getStreamChatters() {
     const listOfChatters = await retryWithCatch(() =>
       this.twitchApi.chat.getChatters(
         this.authorizedUser.id,
@@ -67,7 +67,7 @@ class LoyaltyHandler extends HeadHandler {
     return listOfChatters;
   }
 
-  async checkWatchersLogic(userId: string, userName: string) {
+  private async checkWatchersLogic(userId: string, userName: string) {
     const { watch: watchIncr, watchMultipler: watchMult } =
       this.configs.pointsIncrement;
 
@@ -99,7 +99,7 @@ class LoyaltyHandler extends HeadHandler {
     await this.updateWatcherStatistics(userId, pointsWithMultip);
   }
 
-  async checkUserFollow(user: HelixChatChatter) {
+  private async checkUserFollow(user: HelixChatChatter) {
     const twitchUser = await retryWithCatch(() => user.getUser());
 
     const follow = await retryWithCatch(() =>
@@ -109,14 +109,14 @@ class LoyaltyHandler extends HeadHandler {
     return follow?.followDate;
   }
 
-  async updateFollowerStatus(users: HelixChatChatter[]) {
+  private async updateFollowerStatus(users: HelixChatChatter[]) {
     for (const user of users) {
       const userFollow = await this.checkUserFollow(user);
       await updateUser({ twitchName: user.userName }, { follower: userFollow });
     }
   }
 
-  async handleActiveUsers(chatters: HelixChatChatter[]) {
+  private async handleActiveUsers(chatters: HelixChatChatter[]) {
     const usersNow = new Set<string>();
     for await (const user of chatters) {
       const { userName, userDisplayName, userId } = user;
@@ -152,7 +152,7 @@ class LoyaltyHandler extends HeadHandler {
     return usersNow;
   }
 
-  async handleLeftUsers() {
+  private async handleLeftUsers() {
     for await (const userLeft of this.usersBefore) {
       const userDB = await isUserInDB({ twitchName: userLeft });
       // const userDB = await this.isUserInDB(userLeft);
@@ -166,7 +166,7 @@ class LoyaltyHandler extends HeadHandler {
     }
   }
 
-  async checkChatters(/* broadcasterId: string */) {
+  private async checkChatters(/* broadcasterId: string */) {
     const listOfChatters = await this.getStreamChatters();
 
     const { data: chatters } = listOfChatters;
@@ -183,7 +183,7 @@ class LoyaltyHandler extends HeadHandler {
     usersNow.clear();
   }
 
-  async updateWatcherStatistics(userId: string, value: number) {
+  private async updateWatcherStatistics(userId: string, value: number) {
     const updateData = {
       $inc: { points: value, watchTime: this.configs.intervalCheckChatters },
       // add points by message,       count messages
