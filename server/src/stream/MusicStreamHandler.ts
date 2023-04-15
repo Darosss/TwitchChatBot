@@ -13,6 +13,7 @@ import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";
 import { musicPath } from "@configs/globalPaths";
 import path from "path";
 import { getMp3AudioDuration } from "@utils/filesManipulateUtil";
+import { MusicConfigs } from "@models/types";
 
 class MusicStreamHandler {
   private songList: string[] = [];
@@ -30,17 +31,15 @@ class MusicStreamHandler {
   private currentSongStart: Date = new Date();
   private isPlaying: boolean = false;
   private musicQue = new Map<string, AudioStreamData>();
-  private currentTime: number = 0;
-  private config: { info: boolean; songRequest: boolean } = {
-    info: true,
-    songRequest: true,
-  }; //TODO: add from config later
+
   private readonly socketIO: Server<
     ClientToServerEvents,
     ServerToClientEvents,
     InterServerEvents,
     SocketData
   >;
+  private configs: MusicConfigs;
+
   constructor(
     socketIO: Server<
       ClientToServerEvents,
@@ -48,14 +47,20 @@ class MusicStreamHandler {
       InterServerEvents,
       SocketData
     >,
-    sayInAuthorizedChannel: (message: string) => void
+    sayInAuthorizedChannel: (message: string) => void,
+    configs: MusicConfigs
   ) {
     this.socketIO = socketIO;
     this.clientSay = sayInAuthorizedChannel;
+    this.configs = configs;
   }
 
   public async init() {
     await this.loadSongsFromMusicPath();
+  }
+
+  public async refreshConfigs(configs: MusicConfigs) {
+    this.configs = configs;
   }
 
   private async loadSongsFromMusicPath(shuffle = true) {
@@ -267,7 +272,7 @@ class MusicStreamHandler {
         this.sendAudioInfo();
 
         const delayNextSong = this.currentDelay - this.currentSong.currentTime;
-        this.startPlay(delayNextSong, true, this.config.info);
+        this.startPlay(delayNextSong, true, true);
       }
     }, delay * 1000 + this.secondsBetweenAudio * 1000);
   }
@@ -282,7 +287,7 @@ class MusicStreamHandler {
     songName: string,
     sayInfo = false
   ) {
-    if (!this.config.songRequest) {
+    if (!this.configs.songRequest) {
       this.sayInChannel(sayInfo, `@${username}, song request is turned off.`);
       return;
     } else if (this.isAddedSongByUser(username, sayInfo)) {
@@ -391,7 +396,7 @@ class MusicStreamHandler {
   public async resumePlayer(sayInfo = false) {
     if (this.isPlaying || this.songList.length <= 0) return;
     this.currentSongStart = new Date();
-    this.startPlay(0, false, this.config.info);
+    this.startPlay(0, false, true);
 
     this.sayInChannel(sayInfo, `Music player resumed!`);
   }
