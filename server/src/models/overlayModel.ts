@@ -1,17 +1,7 @@
 import { Model, model, Schema } from "mongoose";
 import { OverlayDocument } from "./types";
 import { nameField } from "@utils/commonSchemaFieldsUtil";
-
-const layoutBreakpointSchema = new Schema({
-  i: String,
-  x: Number,
-  y: Number,
-  w: Number,
-  h: Number,
-  static: Boolean,
-  isDraggable: Boolean,
-  isResizable: Boolean,
-});
+import { layoutBreakpointSchema } from "./layoutBreakpointModel";
 
 const OverlaySchema: Schema<OverlayDocument> = new Schema(
   {
