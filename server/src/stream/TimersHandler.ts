@@ -49,32 +49,32 @@ class TimersHandler extends HeadHandler {
     }, this.configs.timersIntervalDelay * 1000);
   }
 
-  async refreshConfigs(refreshedConfigs: TimersConfigs) {
+  public async refreshConfigs(refreshedConfigs: TimersConfigs) {
     this.configs = refreshedConfigs;
   }
 
-  async refreshTimers() {
+  public async refreshTimers() {
     this.timers = (await getTimersDataWithModesEnabled()) || [];
 
     this.clearTimersTimeouts();
     this.setTimersTimeouts();
   }
 
-  clearTimersTimeouts() {
+  private clearTimersTimeouts() {
     for (const timeout of this.timersTimeouts.values()) {
       clearTimeout(timeout);
     }
     this.timersTimeouts.clear();
   }
 
-  async setTimersTimeouts() {
+  private async setTimersTimeouts() {
     this.timers.map((timer) => {
       const { _id, name, delay } = timer;
       this.setTimerTimeout(_id, name, delay);
     });
   }
 
-  setTimerTimeout(id: string, name: string, delay: number) {
+  private setTimerTimeout(id: string, name: string, delay: number) {
     this.timersTimeouts.set(
       id,
       setTimeout(async () => {
@@ -90,13 +90,13 @@ class TimersHandler extends HeadHandler {
     );
   }
 
-  async getTimerMessage(id: string) {
+  private async getTimerMessage(id: string) {
     const timer = await getTimerById(id);
     if (!timer) return "";
     return timer.messages[randomWithMax(timer.messages.length)];
   }
 
-  async checkTimersByPoints() {
+  private async checkTimersByPoints() {
     const timers = await getTimers(
       { $expr: { $gte: ["$points", "$reqPoints"] } },
       {}
@@ -117,13 +117,11 @@ class TimersHandler extends HeadHandler {
     });
   }
 
-  async setTimersByDelay() {}
-
-  async checkMessageForTimer(user: UserModel) {
+  public async checkMessageForTimer(user: UserModel) {
     await this.updateTimersAfterMessages(user.follower ? true : false);
   }
 
-  async updateTimersAfterMessages(follower: boolean) {
+  private async updateTimersAfterMessages(follower: boolean) {
     const arrayPromises = [];
     if (!follower) arrayPromises.push(this.updateNonFollowsTimers());
     //TODO: if(!sub) // add later
@@ -133,7 +131,7 @@ class TimersHandler extends HeadHandler {
     Promise.all(arrayPromises);
   }
 
-  async updateNonFollowsTimers() {
+  private async updateNonFollowsTimers() {
     const updatedTimers = await updateEnabledTimersAndEnabledModes(
       this.configs.nonFollowTimerPoints,
       { nonFollowMulti: false }
@@ -142,20 +140,21 @@ class TimersHandler extends HeadHandler {
     return updatedTimers;
   }
 
-  async updateNonSubsTimers() {
+  private async updateNonSubsTimers() {
+    //TODO: add usage in future
     const updatedTimers = await updateEnabledTimersAndEnabledModes(
       this.configs.nonSubTimerPoints,
       { nonSubMulti: false }
     );
   }
 
-  async updateDefaultsTimers() {
+  private async updateDefaultsTimers() {
     const updatedTimers = await updateEnabledTimersAndEnabledModes(1, {});
 
     return updatedTimers;
   }
 
-  async updateTimerAfterUsage(id: string) {
+  private async updateTimerAfterUsage(id: string) {
     const updatedTrigger = await updateTimerById(id, {
       $inc: { uses: 1 },
       points: 0,
