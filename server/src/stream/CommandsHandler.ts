@@ -62,12 +62,12 @@ class CommandsHandler {
     await this.refreshCommands();
   }
 
-  async refreshCommands() {
+  public async refreshCommands() {
     this.commandsAliases = (await getChatCommandsAliases(true)) || [];
     commandLogger.debug(`Commands words [${this.commandsAliases}]`);
   }
 
-  async refreshConfigs(configs: CommandsConfigs) {
+  public async refreshConfigs(configs: CommandsConfigs) {
     this.configs = configs;
   }
 
@@ -172,7 +172,7 @@ class CommandsHandler {
     if (message.startsWith(this.configs.commandsPrefix)) return true;
   }
 
-  async findAndCheckCommandByAlias(user: UserModel, alias: string) {
+  private async findAndCheckCommandByAlias(user: UserModel, alias: string) {
     const foundCommand = await this.getCommandByAlias(alias);
     if (!foundCommand) return;
 
@@ -199,13 +199,13 @@ class CommandsHandler {
     }
   }
 
-  canUserUseCommand(userPrivilege: number, commandPrivilege: number) {
+  private canUserUseCommand(userPrivilege: number, commandPrivilege: number) {
     if (userPrivilege >= commandPrivilege) return true;
 
     return false;
   }
 
-  async getCommandByAlias(alias: string) {
+  private async getCommandByAlias(alias: string) {
     const foundCommand = await getOneChatCommand({
       aliases: { $elemMatch: { $regex: alias, $options: "i" } },
     });
@@ -213,13 +213,13 @@ class CommandsHandler {
     return foundCommand;
   }
 
-  async updateUsesCommand(id: string) {
+  private async updateUsesCommand(id: string) {
     const updatedCommand = await updateChatCommandById(id, {
       $inc: { uses: 1 },
     });
   }
 
-  formatCommandMessageUserData(user: UserModel, message?: string) {
+  private formatCommandMessageUserData(user: UserModel, message?: string) {
     let formatMsg = message || "";
     const regExp = /\$user\{(.*?)\}/;
 
@@ -237,7 +237,7 @@ class CommandsHandler {
     return formatMsg;
   }
 
-  formatCommandMessageCommandData(
+  private formatCommandMessageCommandData(
     chatCommand: ChatCommandModel,
     message?: string
   ) {
@@ -259,7 +259,7 @@ class CommandsHandler {
     return formatMsg;
   }
 
-  formatModelDetail(detail: any) {
+  private formatModelDetail(detail: any) {
     //FIXME: ++1 detail for uses, it doesnt change a thing for points or messages so just for now.
     if (typeof detail === "number") return Math.round(++detail);
     else if (detail instanceof Date) return detail.toLocaleString();
@@ -267,7 +267,7 @@ class CommandsHandler {
     return detail;
   }
 
-  async notFoundCommand() {
+  private async notFoundCommand() {
     //Hard codded
     let notFoundCommandMessage = "Not found command. Most used commands are:";
 
