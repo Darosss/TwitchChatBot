@@ -115,6 +115,18 @@ const ConfigSchema: Schema<ConfigDocument> = new Schema(
         required: true,
         default: headConfigs.intervalCheckViewersPeek,
       },
+      delayBetweenMessages: {
+        min: {
+          type: Number,
+          requried: true,
+          default: headConfigs.delayBetweenMessages.min,
+        },
+        max: {
+          type: Number,
+          requried: true,
+          default: headConfigs.delayBetweenMessages.max,
+        },
+      },
     },
   },
   {
