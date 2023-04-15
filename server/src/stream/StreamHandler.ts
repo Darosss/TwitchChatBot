@@ -173,9 +173,8 @@ class StreamHandler {
 
       const messagesQueue = (
         await Promise.all([
-          this.triggersHandler.checkMessageForTrigger(message),
           this.commandsHandler.checkMessageForCommand(user, message),
-
+          this.triggersHandler.checkMessageForTrigger(message),
           this.timersHandler.checkMessageForTimer(user),
         ])
       ).filter((x) => x) as string[];
@@ -186,7 +185,16 @@ class StreamHandler {
   }
 
   private sendMessagesFromQueue(messages: string[]) {
-    messages.forEach((msgInQue) => this.clientTmi.say(msgInQue));
+    const { min, max } = this.configs.headConfigs.delayBetweenMessages;
+    messages.forEach((msgInQue, index) => {
+      const delay =
+        (index + 1) * Math.floor(Math.random() * (max - min + 1) + min);
+
+      headLogger.info(`Send message ${msgInQue} in ${delay}ms`);
+      setTimeout(() => {
+        this.clientTmi.say(msgInQue);
+      }, delay);
+    });
   }
   // private async debugFollows() {
   //   const follows = await this.twitchApi.users.getFollows({
