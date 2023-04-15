@@ -21,8 +21,7 @@ class MusicStreamHandler {
   private isPlayingTimeout: NodeJS.Timeout | undefined;
   private readonly clientSay: (message: string) => void;
   private readonly formatFile: string = "mp3";
-  private readonly maxBufferedQue = 3;
-  private readonly secondsBetweenAudio = 1;
+  private readonly secondsBetweenAudio = 2;
   private readonly delayBetweenServer = 2;
   private currentFolder = musicPath;
   private currentSong: AudioStreamData | undefined;
@@ -100,7 +99,7 @@ class MusicStreamHandler {
     }
     if (this.musicQue.length > 0) this.musicQue.splice(0, this.musicQue.length);
 
-    for (let i = 0; i <= this.maxBufferedQue; i++) {
+    for (let i = 0; i <= this.configs.maxAutoQueSize; i++) {
       await this.addNextItemToQueAndPushToEnd();
     }
   }
@@ -156,10 +155,6 @@ class MusicStreamHandler {
 
     if (index !== -1) {
       this.musicQue.splice(index, 1);
-
-      this.musicQue.forEach((song) => {
-        console.log(song[1].name.slice(0, 10));
-      });
     }
   }
 
@@ -238,7 +233,7 @@ class MusicStreamHandler {
   }
 
   private shouldPrepareQue() {
-    if (this.musicQue.length <= this.maxBufferedQue) return true;
+    if (this.musicQue.length <= this.configs.maxAutoQueSize) return true;
   }
 
   private isADirectory(directoryPath: string, sayInfo = false) {
@@ -313,7 +308,7 @@ class MusicStreamHandler {
     if (!this.configs.songRequest) {
       this.sayInChannel(sayInfo, `@${username}, song request is turned off.`);
       return;
-    } else if (this.isAddedSongByUser(username, sayInfo)) {
+    } else if (this.doesUserHaveAvailableRequest(username, sayInfo)) {
       return;
     } else if (!this.isEnoughRequestSongInfo(username, songName, sayInfo)) {
       return;
@@ -371,12 +366,43 @@ class MusicStreamHandler {
     );
   }
 
-  private isAddedSongByUser(username: string, sayInfo = false) {
-    if (this.songRequestList.some(([username]) => username === username)) {
+  private haveUserMoreSongsThanRequestLimit(username: string) {
+    let count: { [key: string]: number } = this.songRequestList.reduce(
+      (acc: { [key: string]: number }, [username, songName]) => {
+        acc[username] = (acc[username] || 0) + 1;
+        return acc;
+      },
+      {}
+    );
+
+    // Check the count of the first string of each tuple
+    return count[username] >= this.configs.maxSongRequestByUser;
+  }
+
+  private checkIfUserHasAnySongInRequest(user: string) {
+    const atLeastOne = this.songRequestList.some(
+      ([username]) => username === user
+    );
+    return atLeastOne;
+  }
+
+  private getNextUserSong(user: string) {
+    const foundedRequest = this.songRequestList.find(
+      ([username]) => username === user
+    );
+    if (foundedRequest) return foundedRequest[1];
+
+    return "No next song, something went wrong Kappa";
+  }
+
+  private doesUserHaveAvailableRequest(username: string, sayInfo = false) {
+    if (this.haveUserMoreSongsThanRequestLimit(username)) {
       this.sayInChannel(
         sayInfo,
-        `@${username}, you have already added song. 
-        Your song will be in ~${this.getRemainingTimeToRequestedSong(username)}`
+        `@${username}, you have already reached song request limit. Wait for them to finish.
+        Your song (${this.getNextUserSong(
+          username
+        )})will be in ~${this.getRemainingTimeToRequestedSong(username)}`
       );
       return true;
     }
@@ -481,7 +507,7 @@ class MusicStreamHandler {
     }
   }
   public sayWhenUserRequestedSong(username: string) {
-    if (!this.isAddedSongByUser(username)) {
+    if (!this.checkIfUserHasAnySongInRequest(username)) {
       this.clientSay(`@username, you did not add any song to que (: `);
 
       return;
@@ -489,7 +515,11 @@ class MusicStreamHandler {
 
     const remainingTime = this.getRemainingTimeToRequestedSong(username);
 
-    this.clientSay(`@${username}, your song will be in ~${remainingTime}`);
+    this.clientSay(
+      `@${username}, your song (${this.getNextUserSong(
+        username
+      )}) will be in ~${remainingTime}`
+    );
   }
 
   private getRemainingTimeToRequestedSong(username: string) {
