@@ -128,6 +128,8 @@ export interface HeadConfigs {
 
 export interface MusicConfigs {
   songRequest: boolean;
+  maxAutoQueSize: number;
+  maxSongRequestByUser: number;
 }
 
 export interface ConfigModel extends BaseModel {
