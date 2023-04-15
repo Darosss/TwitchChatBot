@@ -35,5 +35,9 @@ export const configDefaults: ConfigDefaults = {
       vip: 4,
       all: 0,
     },
+    delayBetweenMessages: {
+      min: 1000,
+      max: 2000,
+    },
   },
 };
