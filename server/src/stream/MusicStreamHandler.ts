@@ -396,7 +396,7 @@ class MusicStreamHandler {
     this.sayInChannel(sayInfo, `Music player resumed!`);
   }
 
-  public clearTimeout() {
+  private clearTimeout() {
     if (!this.isPlayingTimeout) return false;
     clearTimeout(this.isPlayingTimeout);
     return true;
