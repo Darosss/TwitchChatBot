@@ -19,6 +19,9 @@ export interface ChatGamesConfigs {
 export interface TriggersConfigs {
   randomMessageChance: number;
 }
+export interface MusicConfigs {
+  songRequest: boolean;
+}
 
 export interface PointsConfigs {
   pointsIncrement: {
@@ -40,6 +43,10 @@ export interface HeadConfigs {
     all: number;
   };
   intervalCheckViewersPeek: number;
+  delayBetweenMessages: {
+    min: number;
+    max: number;
+  };
 }
 
 export interface Config {
@@ -50,6 +57,7 @@ export interface Config {
   triggersConfigs: TriggersConfigs;
   pointsConfigs: PointsConfigs;
   loyaltyConfigs: LoyaltyConfigs;
+  musicConfigs: MusicConfigs;
   headConfigs: HeadConfigs;
   createdAt: Date;
   updatedAt: Date;
