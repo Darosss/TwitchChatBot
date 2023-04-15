@@ -9,8 +9,8 @@ export const getAuthToken = async () => {
     const auth = await AuthToken.findOne({});
     return auth;
   } catch (err) {
-    console.error(err);
-    throw new Error("Failed to find any auth");
+    logger.error(`Error occured while getting auth token. ${err}`);
+    handleAppError(err);
   }
 };
 export const createNewAuth = async (createData: AuthCreateData) => {
@@ -39,7 +39,7 @@ export const checkIfAuthValid = async () => {
     if (expiresIn > currentSeconds) return true;
     return false;
   } catch (err) {
-    logger.error(`Failed to check if auth is valid:  ${err}`);
+    logger.error(`Error occured while checking if auth is valid:  ${err}`);
     handleAppError(err);
   }
 };
@@ -55,7 +55,7 @@ export const removeAuthToken = async () => {
 
     return authToken;
   } catch (err) {
-    logger.error("Failed to remove auth token");
+    logger.error(`Error occured while trying to remove auth token. ${err}`);
     handleAppError(err);
   }
 };
