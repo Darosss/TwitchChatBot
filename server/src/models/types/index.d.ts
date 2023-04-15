@@ -126,6 +126,10 @@ export interface HeadConfigs {
   };
 }
 
+export interface MusicConfigs {
+  songRequest: boolean;
+}
+
 export interface ConfigModel extends BaseModel {
   commandsConfigs: CommandsConfigs;
   timersConfigs: TimersConfigs;
@@ -133,6 +137,7 @@ export interface ConfigModel extends BaseModel {
   triggersConfigs: TriggersConfigs;
   pointsConfigs: PointsConfigs;
   loyaltyConfigs: LoyaltyConfigs;
+  musicConfigs: MusicConfigs;
   headConfigs: HeadConfigs;
 }
 
