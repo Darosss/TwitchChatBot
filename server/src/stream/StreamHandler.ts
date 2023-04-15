@@ -76,7 +76,8 @@ class StreamHandler {
     this.configs = { ...configDefaults };
     this.musicHandler = new MusicStreamHandler(
       socketIO,
-      clientTmi.say.bind(clientTmi)
+      clientTmi.say.bind(clientTmi),
+      this.configs.musicConfigs
     );
     this.commandsHandler = new CommandsHandler(
       twitchApi,
@@ -214,6 +215,7 @@ class StreamHandler {
         loyaltyConfigs,
         triggersConfigs,
         timersConfigs,
+        musicConfigs,
       } = this.configs;
 
       this.messagesHandler.refreshConfigs(pointsConfigs);
@@ -227,6 +229,8 @@ class StreamHandler {
       this.commandsHandler.refreshConfigs(commandsConfigs);
 
       this.timersHandler.refreshConfigs(timersConfigs);
+
+      this.musicHandler.refreshConfigs(musicConfigs);
     }
   }
 
