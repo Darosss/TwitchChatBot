@@ -120,6 +120,10 @@ export interface HeadConfigs {
     all: number;
   };
   intervalCheckViewersPeek: number;
+  delayBetweenMessages: {
+    min: number;
+    max: number;
+  };
 }
 
 export interface ConfigModel extends BaseModel {
