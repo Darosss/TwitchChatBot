@@ -21,6 +21,8 @@ export interface TriggersConfigs {
 }
 export interface MusicConfigs {
   songRequest: boolean;
+  maxAutoQueSize: number;
+  maxSongRequestByUser: number;
 }
 
 export interface PointsConfigs {
