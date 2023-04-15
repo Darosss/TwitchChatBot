@@ -11,6 +11,7 @@ import {
   PointsConfigs,
   LoyaltyConfigs,
   HeadConfigs,
+  MusicConfigs,
 } from "@services/ConfigService";
 import { SocketContext } from "@context/SocketContext";
 import { addNotification } from "@utils/getNotificationValues";
@@ -38,6 +39,9 @@ export default function ConfigsList() {
   const [loyaltyCfg, setLoyaltyCfg] = useState<LoyaltyConfigs>(
     configDefaults.loyaltyConfigs
   );
+  const [musicCfg, setMusicCfg] = useState<MusicConfigs>(
+    configDefaults.musicConfigs
+  );
   const [headCfg, setHeadCfg] = useState<HeadConfigs>(
     configDefaults.headConfigs
   );
@@ -51,6 +55,7 @@ export default function ConfigsList() {
     triggersConfigs: triggersCfg!,
     pointsConfigs: pointsCfg!,
     loyaltyConfigs: loyaltyCfg!,
+    musicConfigs: musicCfg!,
     headConfigs: headCfg!,
   });
 
@@ -63,6 +68,7 @@ export default function ConfigsList() {
       triggersConfigs,
       pointsConfigs,
       loyaltyConfigs,
+      musicConfigs,
       headConfigs,
     } = data;
     setCommandsCfg(commandsConfigs);
@@ -71,6 +77,7 @@ export default function ConfigsList() {
     setTriggersCfg(triggersConfigs);
     setPointsCfg(pointsConfigs);
     setLoyaltyCfg(loyaltyConfigs);
+    setMusicCfg(musicConfigs);
     setHeadCfg(headConfigs);
   }, [data]);
 
@@ -319,6 +326,23 @@ export default function ConfigsList() {
           )}
         </div>
         <div className="configs-section-wrapper">
+          <div className="configs-section-header">Music configs</div>
+          {generateConfigInput(
+            "Song request",
+            <button
+              onClick={(e) =>
+                setMusicCfg((prevState) => ({
+                  ...prevState,
+                  songRequest: !prevState.songRequest,
+                }))
+              }
+            >
+              {musicCfg.songRequest.toString()}
+            </button>,
+            musicCfg.songRequest.toString()
+          )}
+        </div>
+        <div className="configs-section-wrapper">
           <div className="configs-section-header">Head configs</div>
           {generateConfigInput(
             "Interval check viewers peek delay",
@@ -334,6 +358,45 @@ export default function ConfigsList() {
             />,
             headCfg?.intervalCheckViewersPeek
           )}
+
+          <div className="configs-section-inner-header">
+            Delay between messages in ms
+          </div>
+          {generateConfigInput(
+            "Min",
+            <input
+              type="number"
+              value={headCfg?.delayBetweenMessages.min}
+              onChange={(e) =>
+                setHeadCfg((prevState) => ({
+                  ...prevState,
+                  delayBetweenMessages: {
+                    ...prevState.delayBetweenMessages,
+                    min: e.target.valueAsNumber,
+                  },
+                }))
+              }
+            />,
+            headCfg?.delayBetweenMessages.min
+          )}
+          {generateConfigInput(
+            "Max",
+            <input
+              type="number"
+              value={headCfg?.delayBetweenMessages.max}
+              onChange={(e) =>
+                setHeadCfg((prevState) => ({
+                  ...prevState,
+                  delayBetweenMessages: {
+                    ...prevState.delayBetweenMessages,
+                    max: e.target.valueAsNumber,
+                  },
+                }))
+              }
+            />,
+            headCfg?.delayBetweenMessages.max
+          )}
+
           <div className="configs-section-inner-header">Permissions levels</div>
           {generateConfigInput(
             "Broadcaster",
