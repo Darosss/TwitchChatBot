@@ -29,6 +29,8 @@ export const configDefaults: ConfigDefaults = {
   },
   musicConfigs: {
     songRequest: false,
+    maxAutoQueSize: 3,
+    maxSongRequestByUser: 1,
   },
   headConfigs: {
     intervalCheckViewersPeek: 600,
