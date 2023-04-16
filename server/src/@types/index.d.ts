@@ -14,6 +14,21 @@ import {
 } from "@models/types";
 
 declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      HOST_FRONTEND_URL: string;
+      LOCAL_FRONTEND_URL: string;
+      BACKEND_PORT: string;
+      CLIENT_ID: string;
+      CLIENT_SECRET: string;
+      REDIRECT_URL: string;
+      DATABASE_CONNECT_URL: string;
+      BOT_USERNAME: string;
+      BOT_PASSWORD: string;
+      BOT_ID: string;
+      NODE_ENV: "development" | "production";
+    }
+  }
   namespace Express {
     interface Request {
       io: Server<
