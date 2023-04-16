@@ -41,7 +41,7 @@ const authorizationTwitch = async (
       throw Error("Something went wrong, try login again");
     }
 
-    const clientTmi = ClientTmiHandler.getInstance({
+    const clientTmi = await ClientTmiHandler.getInstance({
       userToListen: authorizedUser.name,
       username: process.env.bot_username!,
       password: process.env.bot_password!,
