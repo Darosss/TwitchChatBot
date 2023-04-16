@@ -31,7 +31,7 @@ class CommandsHandler extends HeadHandler {
   private commandsAliases: string[] = [];
   private defaultsMusicAliases = new Map<AudioPlayerOptions, number>();
   private musicCommandsPermission: number;
-  private musicSRPermission: number;
+  private musicCommandCommonPermission: number;
   private configs: CommandsHandlerConfigs;
   private readonly musicHandler: MusicStreamHandler;
 
@@ -51,7 +51,7 @@ class CommandsHandler extends HeadHandler {
     this.configs = configs;
     this.musicHandler = musicHandler;
     this.musicCommandsPermission = this.configs.permissionLevels.mod;
-    this.musicSRPermission = this.configs.permissionLevels.all;
+    this.musicCommandCommonPermission = this.configs.permissionLevels.all;
     this.prepareMusicDefaultAliases();
     this.init();
   }
@@ -68,22 +68,22 @@ class CommandsHandler extends HeadHandler {
   public async refreshConfigs(configs: CommandsHandlerConfigs) {
     this.configs = configs;
     this.musicCommandsPermission = this.configs.permissionLevels.mod;
-    this.musicSRPermission = this.configs.permissionLevels.all;
+    this.musicCommandCommonPermission = this.configs.permissionLevels.all;
     this.prepareMusicDefaultAliases();
   }
 
   private prepareMusicDefaultAliases() {
     this.defaultsMusicAliases = new Map([
-      ["next", this.musicCommandsPermission],
       ["skip", this.musicCommandsPermission],
       ["pause", this.musicCommandsPermission],
       ["resume", this.musicCommandsPermission],
       ["stop", this.musicCommandsPermission],
       ["play", this.musicCommandsPermission],
-      ["previous", this.musicCommandsPermission],
-      ["when", this.musicCommandsPermission],
       ["load", this.musicCommandsPermission],
-      ["sr", this.musicSRPermission],
+      ["next", this.musicCommandCommonPermission],
+      ["previous", this.musicCommandCommonPermission],
+      ["when", this.musicCommandCommonPermission],
+      ["sr", this.musicCommandCommonPermission],
     ]);
   }
 
@@ -135,6 +135,12 @@ class CommandsHandler extends HeadHandler {
     message: string
   ) {
     const commandPrivilege = this.defaultsMusicAliases.get(musicCommand);
+    console.log(
+      commandPrivilege && commandPrivilege > privilege,
+      "xD",
+      commandPrivilege,
+      privilege
+    );
     if (commandPrivilege && commandPrivilege > privilege) {
       console.log(commandPrivilege, privilege);
       commandLogger.info(
