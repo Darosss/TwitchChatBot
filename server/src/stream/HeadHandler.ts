@@ -31,6 +31,14 @@ class HeadHandler {
     this.twitchApi = twitchApi;
     this.authorizedUser = authorizedUser;
   }
+
+  public updateProperties(
+    twitchApi: ApiClient,
+    authorizedUser: HelixPrivilegedUser
+  ) {
+    this.twitchApi = twitchApi;
+    this.authorizedUser = authorizedUser;
+  }
 }
 
 export default HeadHandler;
