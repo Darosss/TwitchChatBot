@@ -2,7 +2,7 @@ import { RequestQuery } from "@types";
 import retryWithCatch from "@utils/retryWithCatchUtil";
 import { NextFunction, Request, Response } from "express";
 import { AuthorizationTwitch } from "@types";
-import { createOrGetIfAuthValid } from "@services/auth";
+import { createNewAuth } from "@services/auth";
 
 const authorizationTwitch = async (
   req: Request<{}, {}, {}, RequestQuery>,
@@ -33,8 +33,7 @@ const authorizationTwitch = async (
 
   if (authRes) {
     const authTwitchJson = (await authRes.json()) as AuthorizationTwitch;
-
-    const newAuthToken = await createOrGetIfAuthValid({
+    const newAuthToken = await createNewAuth({
       accessToken: authTwitchJson.access_token,
       refreshToken: authTwitchJson.refresh_token,
       expiresIn: authTwitchJson.expires_in,
