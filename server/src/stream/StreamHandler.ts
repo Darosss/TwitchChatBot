@@ -84,7 +84,10 @@ class StreamHandler {
       socketIO,
       authorizedUser,
       this.musicHandler,
-      this.configs.commandsConfigs
+      {
+        ...this.configs.commandsConfigs,
+        permissionLevels: this.configs.headConfigs.permissionLevels,
+      }
     );
     this.messagesHandler = new MessagesHandler(this.configs.pointsConfigs);
     this.triggersHandler = new TriggersHandler(this.configs.triggersConfigs);
@@ -226,7 +229,10 @@ class StreamHandler {
 
       this.triggersHandler.refreshConfigs(triggersConfigs);
 
-      this.commandsHandler.refreshConfigs(commandsConfigs);
+      this.commandsHandler.refreshConfigs({
+        ...this.configs.commandsConfigs,
+        permissionLevels: this.configs.headConfigs.permissionLevels,
+      });
 
       this.timersHandler.refreshConfigs(timersConfigs);
 
