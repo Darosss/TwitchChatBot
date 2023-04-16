@@ -55,8 +55,8 @@ class StreamHandler {
     InterServerEvents,
     SocketData
   >;
-  private clientTmi: ClientTmiHandler;
 
+  private clientTmi: ClientTmiHandler;
   private commandsHandler: CommandsHandler;
   private triggersHandler: TriggersHandler;
   private messagesHandler: MessagesHandler;
@@ -66,6 +66,7 @@ class StreamHandler {
   private eventSubHandler: EventSubHandler;
   private configs: ConfigDefaults;
 
+  private checkViewersInterval: NodeJS.Timer | undefined;
   constructor(options: StreamHandlerOptions) {
     const { twitchApi, socketIO, authorizedUser, clientTmi } = options;
     this.twitchApi = twitchApi;
@@ -124,8 +125,8 @@ class StreamHandler {
   private async init() {
     const { id } = this.authorizedUser;
     await this.refreshConfigs();
-
-    setInterval(async () => {
+    clearInterval(this.checkViewersInterval);
+    this.checkViewersInterval = setInterval(async () => {
       await this.checkCountOfViewers(id);
     }, this.configs.headConfigs.intervalCheckViewersPeek * 1000);
   }
@@ -145,6 +146,13 @@ class StreamHandler {
     this.socketIO = socketIO;
     this.clientTmi = clientTmi;
     this.authorizedUser = authorizedUser;
+    this.init();
+    this.initOnMessageEvents();
+
+    this.commandsHandler.updateProperties(twitchApi, authorizedUser);
+    this.eventSubHandler.updateProperties(twitchApi, authorizedUser);
+    this.loayaltyHandler.updateProperties(twitchApi, authorizedUser);
+    this.timersHandler.updateProperties(twitchApi, authorizedUser);
   }
 
   private async initOnMessageEvents() {
@@ -183,7 +191,7 @@ class StreamHandler {
         ])
       ).filter((x) => x) as string[];
 
-      console.log(messagesQueue, "lol");
+      headLogger.info(`messages to send ${messagesQueue}`);
       this.sendMessagesFromQueue(messagesQueue);
     });
   }
