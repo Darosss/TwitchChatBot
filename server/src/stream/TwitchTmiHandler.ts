@@ -14,15 +14,9 @@ class ClientTmiHandler {
   constructor(options: ClientTmiOptions) {
     this.userToListen = options.userToListen;
     this.clientTmi = new tmi.Client({
-      options: { debug: false },
-      connection: {
-        secure: true,
-        reconnect: true,
-      },
-      identity: {
-        password: options.password,
-        username: options.username,
-      },
+      options: { debug: true },
+      connection: { secure: true, reconnect: true },
+      identity: { password: options.password, username: options.username },
       channels: [options.userToListen],
     });
     this.connect();
@@ -30,26 +24,37 @@ class ClientTmiHandler {
     console.log(readyState);
   }
 
-  public static getInstance(options: ClientTmiOptions): ClientTmiHandler {
+  public static async getInstance(
+    options: ClientTmiOptions
+  ): Promise<ClientTmiHandler> {
     if (!ClientTmiHandler.instance) {
-      console.log("TMI - No class so new");
       ClientTmiHandler.instance = new ClientTmiHandler(options);
     } else {
-      // console.log("update options");
-      // ClientTmiHandler.instance.updateOptions(options);
+      await ClientTmiHandler.instance.updateOptions(options);
     }
-    console.log("TMI - Class is so just return existing");
     return ClientTmiHandler.instance;
   }
 
-  public connect() {
-    this.clientTmi.connect();
+  public async updateOptions(options: ClientTmiOptions): Promise<void> {
+    const { userToListen, password, username } = options;
+    this.userToListen = userToListen;
+    const readyState = this.clientTmi.readyState();
+    if (readyState === "CONNECTING" || readyState === "OPEN") {
+      await this.clientTmi.disconnect();
+    }
+
+    this.clientTmi = new tmi.Client({
+      options: { debug: true },
+      connection: { secure: true, reconnect: true },
+      identity: { password: password, username: username },
+      channels: [options.userToListen],
+    });
+    await this.connect();
   }
 
-  // public updateOptions(options: ClientTmiHandler): void {
-
-  //   // additional logic to update the instance with the new options
-  // }
+  public async connect() {
+    await this.clientTmi.connect();
+  }
 
   public say(message: string) {
     this.clientTmi.say(this.userToListen, message);
