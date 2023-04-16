@@ -1,7 +1,12 @@
 import HeadHandler from "./HeadHandler";
 import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
 import { AudioPlayerOptions } from "@libs/types";
-import { ChatCommandModel, CommandsConfigs, UserModel } from "@models/types";
+import {
+  ChatCommandModel,
+  CommandsConfigs,
+  HeadConfigs,
+  UserModel,
+} from "@models/types";
 import {
   getChatCommands,
   getChatCommandsAliases,
@@ -19,24 +24,15 @@ import {
 import { Server } from "socket.io";
 import MusicStreamHandler from "./MusicStreamHandler";
 
-const musicStreamDefaultsAliases: Map<AudioPlayerOptions, number> = new Map([
-  ["next", 7],
-  ["skip", 7],
-  ["pause", 7],
-  ["resume", 7],
-  ["stop", 7],
-  ["play", 7],
-  ["previous", 7],
-  ["when", 7],
-  ["load", 7],
-  ["sr", 0],
-]);
+type CommandsHandlerConfigs = CommandsConfigs &
+  Pick<HeadConfigs, "permissionLevels">;
 
 class CommandsHandler extends HeadHandler {
   private commandsAliases: string[] = [];
-  private defaultsMusicAliases: Map<AudioPlayerOptions, number> =
-    musicStreamDefaultsAliases;
-  private configs: CommandsConfigs;
+  private defaultsMusicAliases = new Map<AudioPlayerOptions, number>();
+  private musicCommandsPermission: number;
+  private musicSRPermission: number;
+  private configs: CommandsHandlerConfigs;
   private readonly musicHandler: MusicStreamHandler;
 
   constructor(
@@ -49,11 +45,14 @@ class CommandsHandler extends HeadHandler {
     >,
     authorizedUser: HelixPrivilegedUser,
     musicHandler: MusicStreamHandler,
-    configs: CommandsConfigs
+    configs: CommandsHandlerConfigs
   ) {
     super(socketIO, twitchApi, authorizedUser);
     this.configs = configs;
     this.musicHandler = musicHandler;
+    this.musicCommandsPermission = this.configs.permissionLevels.mod;
+    this.musicSRPermission = this.configs.permissionLevels.all;
+    this.prepareMusicDefaultAliases();
     this.init();
   }
 
@@ -66,8 +65,26 @@ class CommandsHandler extends HeadHandler {
     commandLogger.debug(`Commands words [${this.commandsAliases}]`);
   }
 
-  public async refreshConfigs(configs: CommandsConfigs) {
+  public async refreshConfigs(configs: CommandsHandlerConfigs) {
     this.configs = configs;
+    this.musicCommandsPermission = this.configs.permissionLevels.mod;
+    this.musicSRPermission = this.configs.permissionLevels.all;
+    this.prepareMusicDefaultAliases();
+  }
+
+  private prepareMusicDefaultAliases() {
+    this.defaultsMusicAliases = new Map([
+      ["next", this.musicCommandsPermission],
+      ["skip", this.musicCommandsPermission],
+      ["pause", this.musicCommandsPermission],
+      ["resume", this.musicCommandsPermission],
+      ["stop", this.musicCommandsPermission],
+      ["play", this.musicCommandsPermission],
+      ["previous", this.musicCommandsPermission],
+      ["when", this.musicCommandsPermission],
+      ["load", this.musicCommandsPermission],
+      ["sr", this.musicSRPermission],
+    ]);
   }
 
   public async checkMessageForCommand(user: UserModel, message: string) {
