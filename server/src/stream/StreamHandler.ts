@@ -32,6 +32,7 @@ import MusicStreamHandler from "./MusicStreamHandler";
 import { alertSoundPrefix } from "@configs/globalVariables";
 import EventSubHandler from "./EventSubHandler";
 import ClientTmiHandler from "./TwitchTmiHandler";
+import { botId } from "@configs/envVariables";
 interface StreamHandlerOptions {
   config: ConfigDocument;
   twitchApi: ApiClient;
@@ -158,7 +159,6 @@ class StreamHandler {
   private async initOnMessageEvents() {
     this.clientTmi.onMessageEvent(async (channel, userstate, message, self) => {
       const userData = this.getUserStateInfo(userstate, self);
-
       messageLogger.info(`${userData.username}: ${message}`);
       this.socketIO.emit(
         "messageServer",
@@ -253,9 +253,7 @@ class StreamHandler {
     self: boolean
   ): UserCreateData {
     const twitchId =
-      (self && process.env.botid!) ||
-      userstate["user-id"] ||
-      "undefinedTwitchId";
+      (self && botId) || userstate["user-id"] || "undefinedTwitchId";
     const userData = {
       username: userstate["display-name"] || "undefinedUsername",
       twitchName: userstate.username || "undefinedTwitchName",

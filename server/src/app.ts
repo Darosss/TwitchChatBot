@@ -13,6 +13,7 @@ import {
   invalidPathHandler,
 } from "@middlewares/errorHandlersMiddleware";
 import twitchHandlersMiddleware from "@middlewares/twitchHandlersMiddleware";
+import { hostFrontendURL, localFrontendURL } from "@configs/envVariables";
 
 const expressApp = () => {
   const app = express();
@@ -22,7 +23,7 @@ const expressApp = () => {
   app.set("json spaces", 2);
   app.use(
     cors({
-      origin: [process.env.HOST_FRONTEND_URL!, process.env.LOCAL_FRONTEND_URL!],
+      origin: [hostFrontendURL, localFrontendURL],
       methods: ["POST", "GET", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization", "Accept"],
       credentials: true,

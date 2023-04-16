@@ -7,15 +7,18 @@ import ClientTmiHandler from "../stream/TwitchTmiHandler";
 import StreamHandler from "../stream/StreamHandler";
 import { getTwitchAuthUrl } from "../auth/auth";
 import { logger } from "@utils/loggerUtil";
+import {
+  botPassword,
+  botUsername,
+  clientId,
+  clientSecret,
+} from "@configs/envVariables";
 
 const authorizationTwitch = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const clientId = process.env.CLIENT_ID!;
-  const clientSecret = process.env.CLIENT_SECRET!;
-
   const tokenDB = await getAuthToken();
   if (!tokenDB) {
     const authUrl = getTwitchAuthUrl();
@@ -43,8 +46,8 @@ const authorizationTwitch = async (
 
     const clientTmi = await ClientTmiHandler.getInstance({
       userToListen: authorizedUser.name,
-      username: process.env.bot_username!,
-      password: process.env.bot_password!,
+      username: botUsername,
+      password: botPassword,
     });
 
     const streamHandler = StreamHandler.getInstance({

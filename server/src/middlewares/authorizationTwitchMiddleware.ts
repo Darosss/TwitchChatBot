@@ -3,13 +3,13 @@ import retryWithCatch from "@utils/retryWithCatchUtil";
 import { NextFunction, Request, Response } from "express";
 import { AuthorizationTwitch } from "@types";
 import { createNewAuth } from "@services/auth";
+import { clientId, clientSecret, redirectUrl } from "@configs/envVariables";
 
 const authorizationTwitch = async (
   req: Request<{}, {}, {}, RequestQuery>,
   res: Response,
   next: NextFunction
 ) => {
-  const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } = process.env;
   const { code, scope, state } = req.query as unknown as {
     code: string;
     scope: string;
@@ -22,11 +22,11 @@ const authorizationTwitch = async (
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
       },
       body: new URLSearchParams({
-        client_id: CLIENT_ID!,
-        client_secret: CLIENT_SECRET!,
+        client_id: clientId,
+        client_secret: clientSecret,
         code: code,
         grant_type: "authorization_code",
-        redirect_uri: REDIRECT_URI!,
+        redirect_uri: redirectUrl,
       }).toString(),
     })
   );

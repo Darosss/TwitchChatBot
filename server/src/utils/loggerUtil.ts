@@ -1,7 +1,8 @@
 import winston, { format } from "winston";
 import path from "path";
 import DailyRotateFile from "winston-daily-rotate-file";
-const isProduction = process.env.NODE_ENV === "production";
+import { nodeEnv } from "@configs/envVariables";
+const isProduction = nodeEnv === "production";
 const { combine, timestamp, printf } = format;
 
 const loggerFormat = printf(({ level, message, timestamp }) => {

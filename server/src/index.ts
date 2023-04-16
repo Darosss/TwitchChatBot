@@ -1,20 +1,20 @@
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 import "module-alias/register";
+import { envFilePath } from "@configs/globalPaths";
+dotenv.config({ path: envFilePath });
 
 import initMongoDataBase from "@configs/database";
 import expressApp from "./app";
 import { logger } from "@utils/loggerUtil";
-import { envFilePath } from "@configs/globalPaths";
-
-dotenv.config({ path: envFilePath });
+import { backendPort } from "@configs/envVariables";
 
 const startServer = async () => {
   await initMongoDataBase();
 
   const server = expressApp();
 
-  server.listen(process.env.BACKEND_PORT, async () => {
-    console.log("listening on *:", process.env.BACKEND_PORT);
+  server.listen(backendPort, async () => {
+    console.log("listening on *:", backendPort);
   });
 };
 

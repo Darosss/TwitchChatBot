@@ -17,15 +17,14 @@ import {
   getOnePersonality,
   getPersonalitiesCount,
 } from "@services/personalities";
-
+import { databaseConnectURL } from "./envVariables";
 const initMongoDataBase = async () => {
   mongoose.set("strictQuery", false);
 
   try {
-    await mongoose.connect(
-      process.env.DB_CONN_STRING as string,
-      { useNewUrlParser: true } as ConnectOptions
-    );
+    await mongoose.connect(databaseConnectURL, {
+      useNewUrlParser: true,
+    } as ConnectOptions);
   } catch (error) {
     console.error("Failed to connect to database:", error);
     process.exit(1);

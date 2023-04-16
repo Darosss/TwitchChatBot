@@ -1,3 +1,5 @@
+import { clientId, redirectUrl } from "@configs/envVariables";
+
 export const getTwitchAuthUrl = () => {
   const scopes = [
     "channel:manage:polls",
@@ -13,8 +15,8 @@ export const getTwitchAuthUrl = () => {
 
   const authUrl = new URL(`https://id.twitch.tv/oauth2/authorize`);
   authUrl.searchParams.append("response_type", response_type);
-  authUrl.searchParams.append("client_id", process.env.CLIENT_ID!);
-  authUrl.searchParams.append("redirect_uri", process.env.REDIRECT_URI!);
+  authUrl.searchParams.append("client_id", clientId);
+  authUrl.searchParams.append("redirect_uri", redirectUrl);
   authUrl.searchParams.append("scope", scopes.join(" "));
   authUrl.searchParams.append("state", state);
 
