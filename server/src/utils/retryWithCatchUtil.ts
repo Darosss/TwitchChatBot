@@ -9,7 +9,7 @@ interface RetryWitchCatchOptions {
 const retryWithCatch = async <T = unknown>(
   apiCall: () => Promise<T>,
   options: RetryWitchCatchOptions = {
-    retryLimit: 3,
+    retryLimit: 5,
     retryInterval: 1000,
   }
 ): Promise<T> => {
