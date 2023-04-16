@@ -108,7 +108,9 @@ export default function MusicPlayer() {
 
   return (
     <div className="music-player-wrapper">
-      {!showPlaylist ? (
+      {showPlaylist && audioData ? (
+        <SongsPlaylist songs={audioData.songsInQue} />
+      ) : (
         <>
           <div>
             <div className="music-player-song-name">{songName}</div>
@@ -117,21 +119,29 @@ export default function MusicPlayer() {
             {showCurrentSongProgress()}
           </div>
         </>
-      ) : (
-        <div>
-          <div className="music-player-playlist">
-            <div className="music-player-playlist-songs">
-              <ol>
-                {audioData
-                  ? audioData.songsInQue.map((song, index) => {
-                      return <li key={index}>{song[0]}</li>;
-                    })
-                  : null}
-              </ol>
-            </div>
-          </div>
-        </div>
       )}
+    </div>
+  );
+}
+
+function SongsPlaylist(props: { songs: [string, string][] }) {
+  const { songs } = props;
+  return (
+    <div className="music-player-playlist prevent-select">
+      <div className="music-player-playlist-songs">
+        {songs.map((song, index) => {
+          const [songName, requester] = song;
+          return (
+            <div key={index} className="music-player-playlist-song-wrapper">
+              <div className="music-player-playlist-index">{index + 1}. </div>
+              <div className="music-player-playlist-song-name">{songName} </div>
+              <div className="music-player-playlist-requester">
+                {requester || "default"}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
