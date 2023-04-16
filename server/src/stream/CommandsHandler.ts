@@ -302,9 +302,13 @@ class CommandsHandler extends HeadHandler {
       notFoundCommandMessage += ` ${this.configs.commandsPrefix}${command.aliases[0]} `;
     });
 
-    [...this.defaultsMusicAliases.keys()].forEach((defaultMusicCmd) => {
-      notFoundCommandMessage += ` ${this.configs.commandsPrefix}${defaultMusicCmd}`;
-    });
+    [...this.defaultsMusicAliases.entries()].forEach(
+      ([command, permission]) => {
+        if (permission > this.musicCommandCommonPermission) return;
+
+        notFoundCommandMessage += ` ${this.configs.commandsPrefix}${command}`;
+      }
+    );
 
     return notFoundCommandMessage;
   }
