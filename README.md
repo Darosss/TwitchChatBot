@@ -1,5 +1,34 @@
 # Twitch ChatBot
 
+<a name="readme-top"></a>
+
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">Twitch ChatBot</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#configuration">Configuration</a></li>
+    <li><a href="#how-to-start">How to start</a></li>
+      </ul>
+    </li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
+<br>
+
 Twitch chat bot designed to be deployed on localhost and home LAN only.
 It **SHOULD NOT** be on online hosting.
 
@@ -14,20 +43,24 @@ It **SHOULD NOT** be on online hosting.
 - tmi.js
 - winston
 - multer
+- React grid layout
 
 ## Getting started
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
+To use this you need to have:
 
+- MongoDB(`v6.0.4^`) Community Server installed and running on your local machine - https://www.mongodb.com/try/download/community
+
+- NodeJS(`v18.14.0^`)
 - npm
 
+```sh
+  npm install npm@latest -g
 ```
-npm install npm@latest -g
-```
-
-- MongoDB Community Server installed and running on your local machine - https://www.mongodb.com/try/download/community
 
 ### Installation
 
@@ -96,7 +129,7 @@ VITE_BACKEND_URL=http://192.168.0.100:5000
 `BOT_ID` - can be obtained from twitch api or any external site
 </sub>
 
-### Start
+### How to start
 
 #### Start server
 
@@ -138,4 +171,94 @@ VITE_BACKEND_URL=http://192.168.0.100:5000
 
 ## Usage
 
-Once the app is started, it will listen for incoming twitch chat messages on your local machine and respond accordingly depends on triggers / commands / messages / timers created earlier by you.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+Once the app is started, it will listen for incoming twitch chat messages on your local machine and respond accordingly.
+
+## Features
+
+#### The chatbot includes the following features:
+
+- Modes:
+
+  - Available modes are: Tags / Moods / Personalities
+  - Create modes and assign them to timers / triggers / commands / message categories
+  - By default global modes are created
+  - Depends on which modes are currently turned on, bot sends other messages(_of course if you added any_)
+
+- Timers:
+
+  - Schedule messages to be sent at regular intervals
+  - And/or depends on points per message.
+  - Two options per timers when non sub(_option is visible but not yet implemented_) or non follow write on chat it adds points depends on values in config
+  - <details>
+      <summary>Show images</summary>
+      <img src="./images/timers1.png" alt="Create timer">
+      </details>
+
+- Triggers:
+
+  - Messages that triggers depends on context that user says
+  - Each trigger canhave mode between: ALL / WHOLE-WORD / STARTS-WITH
+
+    - STARTS-WITH: trigger only fire when any word/message starts with word
+    - WHOLE-WORD: trigger only fire when whole word occurs
+    - ALL: trigger fire wherever word occurs
+
+  - triggers can have chance(_depends on % in configs_) when no trigger is found, that bot will send any random message from enabled message category
+
+  - <details>
+      <summary>Show images</summary>
+      <img src="./images/triggers1.png" alt="Create trigger">
+      </details>
+
+- Message categories:
+
+  - These are used in message box and random messages when no triggers found
+  - Simply they contain name of category and messages list
+
+- Event subscriptions:
+
+  - Subscribe to event on Twitch, such as when a user receive rewards and starts stream session when you start streaming.
+
+- Chat commands:
+
+  - Define custom commands that users can trigger in chat.
+  - Static commands for music player and song request
+  - There are default created chat commands
+
+- Chat logging:
+
+  - Log all messages from the chat to database.
+
+- Overlay:
+
+  - Channel points reward popup
+  - Music player current song progress and current que
+
+- Widgets / events which contain:
+
+  All of widgets can be shown, hidden, resized and saved depending on requirements
+
+  - Stream chat: Where you see messages and can send your custom messages as bot account
+  - Last chatters: Show last active users on chat
+  - Prepared messages window: Here are messages from Message categories list.
+  - Modes: Here you can turn on/off modes (_modes are described above_)
+  - Stream notification: Check whether someone joined or left the chat
+  - Music player control: Control music from overlay in one window, upload and delete music/folders(_all music will be uploaded to `directory/dist/public` folder_)
+  - Last or active stream session statistics
+  - List of alert sounds as custom rewards
+  - <details>
+      <summary>Show images</summary>
+      <img src="./images/widgets1.png" alt="Widgets window">
+      <img src="./images/musicWidget1.png" alt="Widgets window">
+      </details>
+
+- Most options are configurable
+
+  - <details>
+      <summary>Show images</summary>
+      <img src="./images/configs1.png" alt="Configs list">
+      </details>
+
+- Widgets / events and overlay rely on react grid layout, so you can adjust windows on your needs
