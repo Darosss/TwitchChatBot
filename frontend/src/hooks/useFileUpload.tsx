@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
+import { viteBackendUrl } from "src/configs/envVariables";
 
 const useFileUpload = (url: string) => {
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -32,23 +33,19 @@ const useFileUpload = (url: string) => {
     });
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/${url}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const percentage = Math.round(
-                (progressEvent.loaded * 100) / progressEvent.total
-              );
-              setUploadProgress(percentage);
-            }
-          },
-        }
-      );
+      const response = await axios.post(`${viteBackendUrl}/${url}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percentage = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percentage);
+          }
+        },
+      });
       setSuccess(response.data.message);
     } catch (error) {
       if (error instanceof AxiosError) {

@@ -1,6 +1,7 @@
 import useAxios, { configure } from "axios-hooks";
 import Axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { useSearchParams } from "react-router-dom";
+import { viteBackendUrl } from "src/configs/envVariables";
 
 export interface ResponseData<T> {
   data: T;
@@ -29,7 +30,7 @@ export interface AxiosCustomReturn<T> {
 }
 
 const axios = Axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
+  baseURL: viteBackendUrl,
   headers: {
     "Content-Type": "application/json",
   },
