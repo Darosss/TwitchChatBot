@@ -201,9 +201,9 @@ Once the app is started, it will listen for incoming twitch chat messages on you
   - Messages that triggers depends on context that user says
   - Each trigger canhave mode between: ALL / WHOLE-WORD / STARTS-WITH
 
-    - STARTS-WITH: trigger only fire when any word/message starts with word
-    - WHOLE-WORD: trigger only fire when whole word occurs
-    - ALL: trigger fire wherever word occurs
+    - **STARTS-WITH**: trigger only fire when any word/message starts with word
+    - **WHOLE-WORD**: trigger only fire when whole word occurs
+    - **ALL**: trigger fire wherever word occurs
 
   - triggers can have chance(_depends on % in configs_) when no trigger is found, that bot will send any random message from enabled message category
 
@@ -226,6 +226,10 @@ Once the app is started, it will listen for incoming twitch chat messages on you
   - Define custom commands that users can trigger in chat.
   - Static commands for music player and song request
   - There are default created chat commands
+  - Chat commands can contain user data who triggered command with `$user{<user field>}` fe.
+    - `@$user{username}`, your messages: `$user{messageCount}`
+  - And this command data with `$command{<command field>}` fe.
+    - I'm command and my name is: `$command{name}`
 
 - Chat logging:
 
@@ -251,7 +255,6 @@ Once the app is started, it will listen for incoming twitch chat messages on you
   - <details>
       <summary>Show images</summary>
       <img src="./images/widgets1.png" alt="Widgets window">
-      <img src="./images/musicWidget1.png" alt="Widgets window">
       </details>
 
 - Most options are configurable
