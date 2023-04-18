@@ -32,24 +32,26 @@ export default function UploadMp3Form() {
   return (
     <>
       <div className="upload-mp3-form-wrapper">
-        <div>
+        <div className="upload-folder-buttons-wrapper">
           <div>Upload to:</div>
-          {folders.map((folder, index) => {
-            return (
-              <button
-                className={`common-button ${
-                  folderName === folder ? "primary-button" : "danger-button"
-                }`}
-                key={index}
-                onClick={() => setFolderName(folder)}
-              >
-                {folder}
-              </button>
-            );
-          })}
+          <div className="upload-folder-buttons">
+            {folders.map((folder, index) => {
+              return (
+                <button
+                  className={`common-button ${
+                    folderName === folder ? "primary-button" : "danger-button"
+                  }`}
+                  key={index}
+                  onClick={() => setFolderName(folder)}
+                >
+                  {folder}
+                </button>
+              );
+            })}
+          </div>
         </div>
         {folderName ? (
-          <>
+          <div className="upload-input-file">
             <input
               type="file"
               name="file"
@@ -62,7 +64,7 @@ export default function UploadMp3Form() {
             <div className="upload-mp3-progrees-bar">
               <ProgressBar completed={uploadProgress} labelAlignment="center" />
             </div>
-          </>
+          </div>
         ) : null}
 
         <div className="upload-files-list">
