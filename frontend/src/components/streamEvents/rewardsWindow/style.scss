@@ -1,6 +1,8 @@
 .custom-rewards-window {
   font-size: 1vmin;
   text-align: center;
+  height: 80%;
+  overflow-x: hidden;
 
   & > div {
     display: flex;
