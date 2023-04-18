@@ -213,6 +213,7 @@ export default function MessagesWindow() {
 
   return (
     <>
+      <div className="widget-header"> Stream alert sounds </div>
       <div className="custom-rewards-window">
         <div>
           <button

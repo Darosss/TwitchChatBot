@@ -82,6 +82,7 @@ export default function StreamModes() {
   return (
     <>
       <div className="stream-modes-wrapper">
+        <div className="widget-header"> Stream modes </div>
         <div className="stream-modes-section-wrapper">
           <div className="stream-modes-section">
             <div className="stream-modes-section-name">Tags</div>

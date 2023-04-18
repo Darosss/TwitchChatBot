@@ -42,7 +42,8 @@ export default function StreamNotifications() {
     };
   }, [socket]);
   return (
-    <div id="stream-notifications" className={`stream-notifications`}>
+    <div id="stream-notifications" className="stream-notifications">
+      <div className="widget-header"> Stream notifications </div>
       {userNotif.map((notif, index) => {
         return (
           <div
