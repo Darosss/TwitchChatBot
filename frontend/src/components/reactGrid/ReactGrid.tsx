@@ -95,17 +95,18 @@ export default function ReactGrid<T = unknown>(props: {
       const MapComponent = componentsMap.get(item.i);
       if (!MapComponent) return null;
       return (
-        <div
-          key={item.i}
-          className={`${item.isDraggable ? "react-grid-item-edit" : ""}`}
-        >
+        <div key={item.i} className={`${isEdit ? "react-grid-item-edit" : ""}`}>
           {isEdit ? (
-            <div
-              className="grid-hide-button common-button"
-              onClick={() => onPutItem(item)}
-            >
-              &times;
-            </div>
+            <>
+              <div
+                className="grid-hide-button common-button"
+                onClick={() => onPutItem(item)}
+              >
+                &times;
+              </div>
+
+              <div className="grid-name-div"> {item.i} </div>
+            </>
           ) : null}
           <span>
             <MapComponent />

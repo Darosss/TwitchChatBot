@@ -19,6 +19,14 @@
     cursor: pointer;
     background-color: rgba(28, 28, 15, 1);
   }
+
+  .grid-name-div {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    background-color: rgba(28, 28, 15, 0.645);
+  }
 }
 
 .grid-menu-drawer {
