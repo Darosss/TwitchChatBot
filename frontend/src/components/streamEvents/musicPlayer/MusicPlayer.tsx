@@ -162,7 +162,7 @@ export default function MusicPlayer() {
         {tabButton("files")}
         {tabButton("folders")}
       </div>
-      {generateMusicPlayerContext()}
+      <div className="tab-containter">{generateMusicPlayerContext()}</div>
     </div>
   );
 }
