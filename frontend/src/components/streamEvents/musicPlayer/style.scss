@@ -2,6 +2,7 @@
   font-size: 1.5vmin;
   text-align: center;
   height: 100%;
+  overflow-x: hidden;
 
   button {
     border-radius: 1rem;
@@ -20,6 +21,11 @@
 
   .music-player-tabs-wrapper {
     margin-top: 0.2rem;
+  }
+
+  .tab-containter {
+    overflow: hidden;
+    height: 70%;
   }
 }
 
@@ -74,8 +80,8 @@
   }
 
   & > div {
-    flex: 1 1 10%;
-    max-height: 33%;
+    flex: 1 1 40%;
+    max-height: 40%;
     margin-top: 0.1rem;
 
     &.upload-input-file {
@@ -131,16 +137,16 @@
 .folders-create-wrapper {
   display: flex;
   flex-direction: column;
-
-  & > div {
-    display: flex;
-  }
+  width: 100%;
+  font-size: 2vmin;
+  overflow-x: hidden;
+  height: 100%;
 
   .folders-create-list {
     display: flex;
     flex-direction: column;
     text-align: left;
-    font-size: 2vmin;
+    overflow-x: hidden;
   }
 
   .folder-file {
