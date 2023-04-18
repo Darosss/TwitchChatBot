@@ -1,6 +1,5 @@
 .music-player-widget {
   font-size: 1.5vmin;
-  border-bottom: 0.2rem solid $primary-color;
   text-align: center;
   height: 100%;
 
@@ -64,10 +63,24 @@
   display: flex;
   margin-top: 0.2rem;
   flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 
-  div,
-  button {
+  .upload-folder-buttons-wrapper {
+    .upload-folder-buttons {
+      height: 100%;
+      overflow-y: auto;
+    }
+  }
+
+  & > div {
+    flex: 1 1 10%;
+    max-height: 33%;
     margin-top: 0.1rem;
+
+    &.upload-input-file {
+      flex: 0 0 15%;
+    }
   }
 
   .upload-mp3-progrees-bar {
@@ -75,7 +88,6 @@
   }
 
   .upload-files-list {
-    height: 100%;
     overflow-x: hidden;
   }
 }
