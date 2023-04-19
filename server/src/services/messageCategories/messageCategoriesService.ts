@@ -12,6 +12,7 @@ import {
   MessageCategoryFindOptions,
 } from "./types";
 import { randomWithMax } from "@utils/randomNumbersUtil";
+import { getLeastMessagePipeline } from "@aggregations/messageCategoriesPipeline";
 
 export const getMessageCategories = async (
   filter: FilterQuery<MessageCategoryModel> = {},
@@ -123,25 +124,7 @@ export const getLeastUsedMessagesFromMessageCategory = async (
     {
       $match: { _id: new mongoose.Types.ObjectId(id) },
     },
-    { $unwind: "$messages" },
-    { $sort: { "messages.1": 1 } },
-    { $group: { _id: "$_id", messages: { $push: "$messages" } } },
-    {
-      $project: {
-        _id: 1,
-
-        leastUsedMessages: {
-          $let: {
-            vars: {
-              sizeOfMessages: {
-                $round: { $divide: [{ $size: "$messages" }, divideMessagesBy] },
-              },
-            },
-            in: { $slice: ["$messages", "$$sizeOfMessages"] },
-          },
-        },
-      },
-    },
+    ...getLeastMessagePipeline(divideMessagesBy),
     {
       $project: {
         _id: 0,
@@ -156,11 +139,56 @@ export const getLeastUsedMessagesFromMessageCategory = async (
     },
   ]);
 
-  console.log(categorySortedMsgs);
   if (categorySortedMsgs.length > 0) {
     return categorySortedMsgs[0].leastUsedMessages;
   } else {
     return [""];
+  }
+};
+
+export const getLeastMessagesFromEnabledCategories = async (
+  modesEnabled: boolean = false,
+  divideMessagesBy = 3
+): Promise<[string, string][]> => {
+  const pipeline: PipelineStage[] = [
+    { $match: { enabled: true } },
+    ...getLeastMessagePipeline(divideMessagesBy),
+    {
+      $project: {
+        _id: 0,
+        leastUsedMessages: {
+          $map: {
+            input: "$leastUsedMessages",
+            as: "tuple",
+            in: [{ $arrayElemAt: ["$$tuple", 0] }, "$_id"],
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        leastUsedMessages: { $push: "$leastUsedMessages" },
+      },
+    },
+    {
+      $project: {
+        leastUsedMessages: { $concatArrays: "$leastUsedMessages" },
+      },
+    },
+  ];
+
+  if (modesEnabled) {
+    pipeline.unshift(...modesPipeline);
+  }
+
+  const categorySortedMsgs = await MessageCategory.aggregate<{
+    leastUsedMessages: [string, string][][];
+  }>(pipeline);
+  if (categorySortedMsgs.length > 0) {
+    return categorySortedMsgs[0].leastUsedMessages.flat(1);
+  } else {
+    return [["", ""]];
   }
 };
 
