@@ -2,6 +2,8 @@
 
 <a name="readme-top"></a>
 
+**⚠️ Note: This repository is currently under development and is not yet production-ready. Use at your own risk.**
+
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -53,7 +55,7 @@ It **SHOULD NOT** be on online hosting.
 
 To use this you need to have:
 
-- MongoDB(`v6.0.4^`) Community Server installed and running on your local machine - https://www.mongodb.com/try/download/community
+- MongoDB(`v6.0.4^`) Community Server installed and running on your local machine - `<https://www.mongodb.com/try/download/community>
 
 - NodeJS(`v18.14.0^`)
 - npm
@@ -73,8 +75,8 @@ git clone https://github.com/Darosss/TwitchChatBot.git
 2. From root folder navigate to `server` folder and install npm packages
 
 ```sh
-cd server
-npm install
+  cd server
+  npm install
 ```
 
 3. From root folder navigate to `frontend` folder and install npm packages
@@ -86,7 +88,7 @@ npm install
 
 ### Configuration
 
-The app requires several environment variables to be set in the `.env `file. You can use the `.env.example` _(should be in root directory)_ file as a template:<br>
+The app requires several environment variables to be set in the `.env `file. You can use the `.env.example` _(should be in root directory)_ file as a template:  
 _⚠️ Important Note: Please keep your environment variables secure and private! Do not commit them to version control, and do not share them publicly. Be sure to add your environment variables to a .env file in the root directory of your project, and add that file to your .gitignore file. If you are unsure about how to do this, please refer to the .env.example file in the root directory of this project._
 
 ```sh
@@ -121,7 +123,7 @@ BOT_ID=123456789
 VITE_BACKEND_URL=http://192.168.0.100:5000
 ```
 
-<sub> `CLIENT_ID` and `CLIENT_SECRET` - both can be obtained from twitch apllication: Read it here: https://dev.twitch.tv/docs/authentication/register-app/ <br>
+<sub> `CLIENT_ID` and `CLIENT_SECRET` - both can be obtained from twitch apllication: Read it here: <https://dev.twitch.tv/docs/authentication/register-app/> <br>
 `OAuth Redirect URLs` - in twitch app should have \<backend localhost with port>/auth/twitch/callback
 <br>
 `REDIRECT_URL` - must be same as **OAuth Redirect URLs** from app registered above <br>
@@ -224,8 +226,29 @@ Once the app is started, it will listen for incoming twitch chat messages on you
 - Chat commands:
 
   - Define custom commands that users can trigger in chat.
-  - Static commands for music player and song request
-  - There are default created chat commands
+  - Static commands for music player and song request:
+
+    - <details>
+      <summary>Show commands for <b>mod</b> permission</summary>
+
+      - skip
+      - pause
+      - resume / play
+      - stop
+      - load `<folder name>` - loads music from folder
+
+      </details>
+
+    - <details>
+      <summary>Show commands for <b>all</b> permission</summary>
+
+      - next - say next song
+      - previous - say previous song
+      - when - say when requested song will be played
+      - sr `<song name>` - request song
+
+      </details>
+
   - Chat commands can contain user data who triggered command with `$user{<user field>}` fe.
     - `@$user{username}`, your messages: `$user{messageCount}`
   - And this command data with `$command{<command field>}` fe.
@@ -234,6 +257,13 @@ Once the app is started, it will listen for incoming twitch chat messages on you
 - Chat logging:
 
   - Log all messages from the chat to database.
+
+- Loyalty system:
+
+  - Count watch time depends on visible chatters
+  - Points system with multipler
+  - Points per message
+  - Points per watch session x multipler
 
 - Overlay:
 
