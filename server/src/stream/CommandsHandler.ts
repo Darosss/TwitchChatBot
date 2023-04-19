@@ -80,6 +80,7 @@ class CommandsHandler extends HeadHandler {
       ["stop", this.musicCommandsPermission],
       ["play", this.musicCommandsPermission],
       ["load", this.musicCommandsPermission],
+      ["volume", this.musicCommandsPermission],
       ["next", this.musicCommandCommonPermission],
       ["previous", this.musicCommandCommonPermission],
       ["when", this.musicCommandCommonPermission],
@@ -186,6 +187,12 @@ class CommandsHandler extends HeadHandler {
         const songName = message.replace(srCommand, "").trim();
 
         await this.musicHandler.requestSong(username, songName, true);
+        return "";
+      case "volume":
+        const volumeCommand = `${this.configs.commandsPrefix}volume`;
+        const volume = Number(message.replace(volumeCommand, "").trim());
+
+        this.musicHandler.changeVolume(volume, true);
         return "";
     }
   }
