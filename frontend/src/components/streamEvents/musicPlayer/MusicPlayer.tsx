@@ -19,6 +19,8 @@ export default function MusicPlayer() {
 
   const [currentTime, setCurrentTime] = useState(0);
 
+  const [volume, setVolume] = useState<number>(20);
+
   const showCurrentSongProgress = () => {
     const [maxMinutes, maxSeconds] = convertSecondsToMS(
       audioData?.duration || 0
@@ -44,6 +46,10 @@ export default function MusicPlayer() {
 
   const emitNextSong = () => {
     socket.emit("musicNext");
+  };
+
+  const emitChangeVolume = (e: number) => {
+    socket.emit("changeVolume", e);
   };
 
   const handleOnSetActiveTab = (tab: AvailableTabs) => {
@@ -95,6 +101,18 @@ export default function MusicPlayer() {
     return (
       <>
         <div className="audio-data-wrapper">
+          <div>
+            Volume:
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={volume}
+              onChange={(e) => setVolume(e.target.valueAsNumber)}
+              onMouseUp={(e) => emitChangeVolume(e.currentTarget.valueAsNumber)}
+            />
+            {volume}
+          </div>
           <div>Current folder: {audioData.currentFolder}</div>
           <div>{audioData.name}</div>
           <div> {showCurrentSongProgress()} </div>
