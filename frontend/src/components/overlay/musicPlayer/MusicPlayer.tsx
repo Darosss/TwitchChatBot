@@ -33,8 +33,9 @@ export default function MusicPlayer() {
   };
   useEffect(() => {
     let source: AudioBufferSourceNode | null = null;
+    let gain: GainNode | null = null;
     let timer: NodeJS.Timer | undefined;
-
+    let globalVolume: number | null;
     const musicStop = () => {
       clearInterval(timer);
       if (source) {
@@ -66,21 +67,35 @@ export default function MusicPlayer() {
         if (source) {
           source.stop();
         }
+        if (gain) {
+          gain.disconnect();
+        }
 
         source = new AudioBufferSourceNode(audioCtx, {
           buffer: buffer,
         });
 
-        const gainNode = audioCtx.createGain();
-        source.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        gainNode.gain.value = 0.12;
+        gain = audioCtx.createGain();
+        source.connect(gain);
+        gain.connect(audioCtx.destination);
+        gain.gain.value = globalVolume || 0.1;
 
         source.start(0, data.currentTime);
       });
     });
 
     socket.on("audioStop", () => musicStop());
+
+    socket.on("changeVolume", (volume) => {
+      if (!gain) return;
+      let volumeToSet = volume;
+      if (volume > 100) volumeToSet = 100;
+      else if (volume < 0) volumeToSet = 0;
+
+      gain.gain.value = volumeToSet / 100;
+
+      globalVolume = volumeToSet / 100;
+    });
 
     socket.emit("getAudioStreamData");
     const intervalContentId = setInterval(() => {
@@ -96,15 +111,12 @@ export default function MusicPlayer() {
       socket.off("audio");
       socket.off("audioStop");
       socket.off("getAudioInfo");
+      socket.off("changeVolume");
 
       clearInterval(intervalContentId);
       musicStop();
     };
   }, []);
-
-  useEffect(() => {
-    console.log(showPlaylist);
-  }, [showPlaylist]);
 
   return (
     <div className="music-player-wrapper">
