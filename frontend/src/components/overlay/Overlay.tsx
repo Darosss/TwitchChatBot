@@ -13,6 +13,7 @@ import { getInitialCurrentBreakpoint } from "@utils/layoutBreakpoints";
 import ReactGrid from "@components/reactGrid";
 import { editOverlayById, getOverlayById } from "@services/OverlayService";
 import MusicPlayer from "./musicPlayer";
+import { HelmetTitle } from "@components/componentWithTitle";
 
 const components = new Map([
   ["overlay-redemptions", Redemptions],
@@ -49,6 +50,7 @@ export default function Overlay(params: { editor?: boolean }) {
   if (error) return <>There is an error. {error.response?.data.message}</>;
   return (
     <div>
+      <HelmetTitle title={"Overlay " + data?.data.name || "Overlay"} />
       <ReactGrid
         layoutName={data?.data.name || ""}
         layoutState={[layoutOverlay, setLayoutOverlay]}

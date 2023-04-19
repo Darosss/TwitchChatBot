@@ -20,6 +20,7 @@ import { getInitialCurrentBreakpoint } from "@utils/layoutBreakpoints";
 import ReactGrid from "@components/reactGrid";
 import MusicPlayer from "./musicPlayer";
 import RewardsWindow from "./rewardsWindow";
+import { HelmetTitle } from "@components/componentWithTitle";
 
 const components = new Map([
   ["stream-chat", StreamChat],
@@ -63,6 +64,7 @@ export default function StreamEvents(params: { editor?: boolean }) {
 
   return (
     <div>
+      <HelmetTitle title={"Events " + data.data.name} />
       <ReactGrid
         layoutName={data.data.name}
         layoutState={[layoutWidgets, setLayoutWidgets]}

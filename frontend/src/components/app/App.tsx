@@ -17,6 +17,8 @@ import { MessageCategoriesRoute } from "@routes/MessageCategoriesRoute";
 import { ReactNotifications } from "react-notifications-component";
 import { TimersRoute } from "@routes/TimersRoute";
 import { ModesRoutes } from "@routes/ModeRoute";
+import { HelmetProvider } from "react-helmet-async";
+import { HelmetTitle } from "@components/componentWithTitle";
 
 function App() {
   const [theme, setTheme] = useState("light");
@@ -40,39 +42,48 @@ function App() {
 
   return (
     <SocketContext.Provider value={socketConn}>
-      <BrowserRouter>
-        <div className="main">
-          <ReactNotifications />
-          <SideBar theme={theme} handleThemeChange={handleThemeChange} />
-          <Routes>
-            <Route element={<OverlayLayout />}>
-              <Route path="/overlay/*" element={<OverlayRoutes />} />
-            </Route>
+      <HelmetProvider>
+        <BrowserRouter>
+          <div className="main">
+            <ReactNotifications />
+            <SideBar theme={theme} handleThemeChange={handleThemeChange} />
+            <Routes>
+              <Route element={<OverlayLayout />}>
+                <Route path="/overlay/*" element={<OverlayRoutes />} />
+              </Route>
 
-            <Route element={<DefaultRouteLayout />}>
-              <Route path="/" element={<>HOME </>} />
-              <Route path="/users/*" element={<UserRoutes />} />
-              <Route path="/messages/*" element={<MessageRoutes />} />
-              <Route
-                path="/message-categories/*"
-                element={<MessageCategoriesRoute />}
-              />
-              <Route path="/commands/*" element={<CommandRoutes />} />
-              <Route path="/events/*" element={<EventRoutes />} />
-              <Route path="/modes/*" element={<ModesRoutes />} />
-              <Route path="/redemptions/*" element={<RedemptionRoutes />} />
-              <Route
-                path="/stream-sessions/*"
-                element={<StreamSessionRoutes />}
-              />
-              <Route path="/timers/*" element={<TimersRoute />} />
-              <Route path="/triggers/*" element={<TriggerRoutes />} />
-              <Route path="/configs/*" element={<ConfigRoutes />} />
-              <Route path="/*" element={<>Not found</>} />
-            </Route>
-          </Routes>
-        </div>
-      </BrowserRouter>
+              <Route element={<DefaultRouteLayout />}>
+                <Route
+                  path="/"
+                  element={
+                    <>
+                      <HelmetTitle title="Home" /> HOME{" "}
+                    </>
+                  }
+                />
+                <Route path="/users/*" element={<UserRoutes />} />
+                <Route path="/messages/*" element={<MessageRoutes />} />
+                <Route
+                  path="/message-categories/*"
+                  element={<MessageCategoriesRoute />}
+                />
+                <Route path="/commands/*" element={<CommandRoutes />} />
+                <Route path="/events/*" element={<EventRoutes />} />
+                <Route path="/modes/*" element={<ModesRoutes />} />
+                <Route path="/redemptions/*" element={<RedemptionRoutes />} />
+                <Route
+                  path="/stream-sessions/*"
+                  element={<StreamSessionRoutes />}
+                />
+                <Route path="/timers/*" element={<TimersRoute />} />
+                <Route path="/triggers/*" element={<TriggerRoutes />} />
+                <Route path="/configs/*" element={<ConfigRoutes />} />
+                <Route path="/*" element={<>Not found</>} />
+              </Route>
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </HelmetProvider>
     </SocketContext.Provider>
   );
 }

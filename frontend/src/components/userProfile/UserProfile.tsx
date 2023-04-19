@@ -6,6 +6,7 @@ import PreviousPage from "@components/previousPage";
 import { editUser, getLatestEldestMsgs, getUser } from "@services/UserService";
 import { addNotification } from "@utils/getNotificationValues";
 import { DateTooltip } from "@components/dateTooltip";
+import { HelmetTitle } from "@components/componentWithTitle";
 
 export default function UserProfile() {
   const { userId } = useParams();
@@ -54,6 +55,7 @@ export default function UserProfile() {
   const { data } = userData;
   return (
     <>
+      <HelmetTitle title={data.username + " profile" || "User profile"} />
       <PreviousPage />
       <div className="profile-details-wrapper">
         <div className="detail-section-wrapper">
