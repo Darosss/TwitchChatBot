@@ -441,6 +441,10 @@ class StreamHandler {
       this.musicHandler.nextSong(true);
     });
 
+    socket.on("changeVolume", (volume) => {
+      this.musicHandler.changeVolume(volume, true);
+    });
+
     socket.on("getAudioInfo", () => {
       const audioInfo = this.musicHandler.getAudioInfo();
       if (!audioInfo) return;
