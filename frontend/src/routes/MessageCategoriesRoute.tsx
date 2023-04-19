@@ -1,11 +1,20 @@
 import { Routes, Route } from "react-router-dom";
 import MessageCategoriesList from "@components/messageCategoriesList";
+import ComponentWithTitle from "@components/componentWithTitle";
 
 export function MessageCategoriesRoute() {
   return (
     <Routes>
       <Route>
-        <Route index element={<MessageCategoriesList />} />
+        <Route
+          index
+          element={
+            <ComponentWithTitle
+              title="Message categories"
+              Component={<MessageCategoriesList />}
+            />
+          }
+        />
         <Route path="*" element={<>Not found</>} />
       </Route>
     </Routes>

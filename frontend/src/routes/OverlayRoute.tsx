@@ -1,12 +1,18 @@
 import { Routes, Route } from "react-router-dom";
 import Overlay from "@components/overlay";
 import OverlaysList from "@components/overlay/overlaysList";
+import ComponentWithTitle from "@components/componentWithTitle";
 
 export function OverlayRoutes() {
   return (
     <Routes>
       <Route>
-        <Route index element={<OverlaysList />} />
+        <Route
+          index
+          element={
+            <ComponentWithTitle title="Overlays" Component={<OverlaysList />} />
+          }
+        />
         <Route path=":overlayId" element={<Overlay editor={false} />} />
         <Route path=":overlayId/editor" element={<Overlay editor={true} />} />
 

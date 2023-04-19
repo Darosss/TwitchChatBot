@@ -1,12 +1,21 @@
 import { Routes, Route } from "react-router-dom";
 import StreamEvents from "@components/streamEvents";
 import StreamEventsLayouts from "@components/streamEvents/streamEventsLayouts";
+import ComponentWithTitle from "@components/componentWithTitle";
 
 export function EventRoutes() {
   return (
     <Routes>
       <Route>
-        <Route index element={<StreamEventsLayouts />} />
+        <Route
+          index
+          element={
+            <ComponentWithTitle
+              title="Events"
+              Component={<StreamEventsLayouts />}
+            />
+          }
+        />
         <Route path=":eventsId" element={<StreamEvents editor={false} />} />
         <Route
           path=":eventsId/editor"
