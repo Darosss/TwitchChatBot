@@ -337,6 +337,17 @@ class MusicStreamHandler {
     );
   }
 
+  public changeVolume(volume: number, sayInfo = false) {
+    if (isNaN(volume))
+      return this.sayInChannel(sayInfo, "Volume must be a number");
+    let valueToSet = volume;
+    if (volume > 100) valueToSet = 100;
+    else if (volume < 0) valueToSet = 0;
+
+    this.sayInChannel(sayInfo, `Volume changed to ${valueToSet}%`);
+    this.socketIO.emit("changeVolume", valueToSet);
+  }
+
   private async addRequestedSongToPlayer(username: string, songName: string) {
     if (!this.isAlreadySongInQue(songName)) {
       this.songRequestList.push([username, songName]);
