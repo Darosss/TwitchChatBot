@@ -67,7 +67,8 @@ export type AudioPlayerOptions =
   | "when"
   | "previous"
   | "next"
-  | "load";
+  | "load"
+  | "volume";
 
 export interface EventAndIUser extends Event, UserModel {}
 
@@ -91,6 +92,7 @@ export interface ServerToClientEvents {
   audio: (data: AudioStreamData) => void;
   audioStop: () => void;
   getAudioInfo: (data: AudioStreamDataInfo) => void;
+  changeVolume: (volume: number) => void;
   forceReconnect: () => void;
   getCustomRewards: (data: CustomRewardData[]) => void;
 }
@@ -106,6 +108,7 @@ export interface ClientToServerEvents {
   musicStop: () => void;
   musicPlay: () => void;
   musicNext: () => void;
+  changeVolume: (volume: number) => void;
   getAudioInfo: () => void;
   getAudioStreamData: () => void;
   loadSongs: (folderName: string) => void;
