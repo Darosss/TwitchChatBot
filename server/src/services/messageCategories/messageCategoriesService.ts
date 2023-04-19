@@ -115,9 +115,8 @@ export const getRandomMessageFromCategory = async (
 
 export const getLeastUsedMessagesFromMessageCategory = async (
   id: string,
-  maxWordsCount = 1
+  divideMessagesBy = 3
 ): Promise<string[]> => {
-  if (maxWordsCount < 1) maxWordsCount = 1;
   const categorySortedMsgs = await MessageCategory.aggregate<{
     leastUsedMessages: string[];
   }>([
@@ -130,7 +129,17 @@ export const getLeastUsedMessagesFromMessageCategory = async (
     {
       $project: {
         _id: 1,
-        leastUsedMessages: { $slice: ["$messages", maxWordsCount] },
+
+        leastUsedMessages: {
+          $let: {
+            vars: {
+              sizeOfMessages: {
+                $round: { $divide: [{ $size: "$messages" }, divideMessagesBy] },
+              },
+            },
+            in: { $slice: ["$messages", "$$sizeOfMessages"] },
+          },
+        },
       },
     },
     {
@@ -146,6 +155,8 @@ export const getLeastUsedMessagesFromMessageCategory = async (
       },
     },
   ]);
+
+  console.log(categorySortedMsgs);
   if (categorySortedMsgs.length > 0) {
     return categorySortedMsgs[0].leastUsedMessages;
   } else {
