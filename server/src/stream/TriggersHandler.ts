@@ -95,7 +95,7 @@ class TriggersHandler {
 
       const messagesWord = await getLeastUsedMessagesFromMessageCategory(
         randomCategoryMessage._id,
-        15
+        3
       );
 
       const choosenRandomMessage =
