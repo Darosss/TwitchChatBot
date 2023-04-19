@@ -80,6 +80,10 @@ export default function MusicPlayer() {
       }, 1000);
     });
 
+    socket.on("changeVolume", (volume) => {
+      setVolume(volume);
+    });
+
     socket.on("audioStop", () => {
       setPlaying(false);
     });
