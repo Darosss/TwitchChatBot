@@ -1,5 +1,18 @@
 import { Schema } from "mongoose";
 
+export const prefixesField = {
+  prefixes: {
+    type: [String],
+    default: [""],
+  },
+};
+export const sufixesField = {
+  sufixes: {
+    type: [String],
+    default: [""],
+  },
+};
+
 export const nameField = {
   name: {
     type: String,
