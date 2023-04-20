@@ -50,7 +50,11 @@ export default function DrawerBar(props: {
 
   return (
     <div className="btn-drawer-wrapper" style={wrapperStyle}>
-      <button className="btn-drawer" style={btnStyle} onClick={toggleDrawer}>
+      <button
+        className="common-button primary-button btn-drawer"
+        style={btnStyle}
+        onClick={toggleDrawer}
+      >
         {btnText}
       </button>
       <Drawer
@@ -69,7 +73,7 @@ export default function DrawerBar(props: {
       >
         <div className="drawer-children-wrapper">
           <button
-            className="btn-drawer-close"
+            className="btn-drawer-close common-button danger-button"
             style={btnStyle}
             onClick={toggleDrawer}
           >

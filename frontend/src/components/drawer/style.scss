@@ -7,6 +7,7 @@
   button {
     &.btn-drawer {
       height: 100%;
+      opacity: 0.8;
 
       margin: 0;
       padding: 0;
@@ -15,6 +16,11 @@
     &.btn-drawer-close {
       position: sticky;
       top: 0;
+    }
+
+    &:hover {
+      transform: rotate(0);
+      opacity: 0.3;
     }
   }
 }
