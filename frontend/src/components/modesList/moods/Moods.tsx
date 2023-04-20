@@ -24,13 +24,21 @@ export default function Moods() {
 
   const [name, setName] = useState("");
   const [createName, setCreateName] = useState("");
+  const [prefixes, setPrefixes] = useState([""]);
+  const [sufixes, setSufixes] = useState([""]);
 
   const { data: moodsData, loading, error, refetchData } = getMoods();
 
-  const { refetchData: fetchEditMood } = editMood(editingMood, { name: name });
+  const { refetchData: fetchEditMood } = editMood(editingMood, {
+    name: name,
+    sufixes: sufixes,
+    prefixes: prefixes,
+  });
 
   const { refetchData: fetchCreateMood } = createMood({
     name: createName,
+    prefixes: prefixes,
+    sufixes: sufixes,
   });
 
   const { refetchData: fetchDeleteMood } = deleteMood(
@@ -92,6 +100,8 @@ export default function Moods() {
   const handleOnEdit = (mood: Mood) => {
     setEditingMood(mood._id);
     setName(mood.name);
+    setPrefixes(mood.prefixes);
+    setSufixes(mood.sufixes);
     setShowModal(true);
   };
 
@@ -161,6 +171,28 @@ export default function Moods() {
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
+                changeColorOnChange(e);
+              }}
+            />
+          </div>
+          <div>Prefixes</div>
+          <div>
+            <textarea
+              className="triggers-list-input"
+              value={prefixes.join("\n")}
+              onChange={(e) => {
+                setPrefixes(e.target.value.split("\n"));
+                changeColorOnChange(e);
+              }}
+            />
+          </div>
+          <div>Sufixes</div>
+          <div>
+            <textarea
+              className="triggers-list-input"
+              value={sufixes.join("\n")}
+              onChange={(e) => {
+                setSufixes(e.target.value.split("\n"));
                 changeColorOnChange(e);
               }}
             />
