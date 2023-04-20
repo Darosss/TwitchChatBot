@@ -1,0 +1,88 @@
+.home-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  .home-nav {
+    height: 10vh;
+    text-align: center;
+    border-bottom: 0.1rem solid var(--background-color-darker);
+  }
+
+  .home-content {
+    height: 85vh;
+    position: relative;
+    overflow-x: hidden;
+
+    .home-content-tiles {
+      position: relative;
+      opacity: 0.7;
+      z-index: 100;
+      display: flex;
+      flex-wrap: wrap;
+      width: 99vw;
+
+      & > div {
+        flex: 1 0 30%;
+        height: 15vh;
+        margin: 0.1rem;
+        a {
+          height: 100%;
+          width: 100%;
+          display: flex;
+          border-radius: 1rem;
+          border: 0.1rem solid $secondary-color;
+
+          &:hover {
+            opacity: 0.7;
+            font-size: 3vmin;
+            z-index: 100;
+          }
+        }
+      }
+    }
+
+    .home-chat-bg {
+      background-color: var(--background-color);
+      opacity: 0.2;
+      height: 100%;
+      position: absolute;
+      width: 100%;
+      overflow: hidden;
+      top: 0;
+      z-index: 0;
+      //   width: 50%;
+
+      .typewriter {
+        overflow: hidden; /* Hide the text until the animation starts */
+        width: 0;
+        font-family: monospace;
+        border-right: 0.15em solid #666; /* Add a blinking cursor effect */
+        white-space: nowrap; /* Prevent the text from wrapping */
+        animation: typing 4s steps(120) 1s forwards;
+      }
+
+      * {
+        font-size: 2vmin;
+        letter-spacing: 0.5vw;
+        word-spacing: 0.3vw;
+      }
+    }
+  }
+  .home-footer {
+    height: 5vh;
+    display: flex;
+    & > div {
+      flex: 1 1 32%;
+      text-align: center;
+    }
+  }
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  } /* Start with 0 width */
+  to {
+    width: 100%;
+  } /* End with full width */
+}
