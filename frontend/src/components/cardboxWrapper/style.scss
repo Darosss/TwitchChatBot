@@ -47,6 +47,11 @@
     text-align: center;
     color: black;
     background-color: var(--info-bg-color);
+    background: linear-gradient(
+      2deg,
+      var(--info-bg-color),
+      var(--background-color)
+    );
     font-size: 3vmin;
   }
 }
@@ -57,7 +62,14 @@
   height: 60%;
   text-align: center;
   align-items: end;
-  background-color: var(--background-color-lighter);
+  background: linear-gradient(
+    45deg,
+    var(--background-color-lighter),
+    var(--background-color)
+  );
+
+  border-bottom-left-radius: 0.4rem;
+  border-bottom-right-radius: 0.4rem;
   & > a {
     flex: 1 1 49%;
     height: 5vh;
