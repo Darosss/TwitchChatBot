@@ -160,23 +160,67 @@ table {
 
 /* BUTTONS */
 
-.common-button {
-  transition: transform 1s;
-  font-size: calc(0.5rem + 1vmin);
-  overflow: hidden;
-  border-radius: 0.2rem;
-  align-items: center;
-  justify-content: center;
-}
-
 button,
 a {
+  &.common-button {
+    transition: transform 1s;
+    font-size: calc(0.5rem + 1vmin);
+    overflow: hidden;
+    border-radius: 0.2rem;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      transform: rotate(2deg);
+    }
+  }
+
   &:active {
     opacity: 0.7;
   }
 
   &.primary-button {
     background: linear-gradient(40deg, $primary-color 0, $secondary-color 100%);
+
+    &:hover {
+      background: linear-gradient(
+        125deg,
+        $secondary-color 0,
+        $primary-color 100%
+      );
+    }
+  }
+
+  &.secondary-button {
+    background: linear-gradient(
+      40deg,
+      $secondary-color 0,
+      var(--background-color-darker) 100%
+    );
+
+    &:hover {
+      background: linear-gradient(
+        40deg,
+        var(--background-color-darker) 0,
+        $secondary-color 100%
+      );
+    }
+  }
+
+  &.tertiary-button {
+    background: linear-gradient(
+      40deg,
+      $tertiary-color 0,
+      $secondary-color 100%
+    );
+
+    &:hover {
+      background: linear-gradient(
+        125deg,
+        $secondary-color 0,
+        $tertiary-color 100%
+      );
+    }
   }
 
   &.danger-button {
@@ -185,30 +229,14 @@ a {
       $danger-color 30%,
       $secondary-color 100%
     );
-  }
 
-  &.common-button:hover {
-    transform: rotate(2deg);
-  }
-
-  &.primary-button:hover {
-    background: linear-gradient(
-      125deg,
-      $secondary-color 0,
-      $primary-color 100%
-    );
-  }
-
-  &.secondary-button:hover {
-    background-color: rgba(130, 130, 134, 0.4);
-  }
-
-  &.secondary-button:active {
-    background-color: rgb(96, 96, 96);
-  }
-
-  &.danger-button:hover {
-    background: linear-gradient(125deg, $secondary-color 0, $danger-color 100%);
+    &:hover {
+      background: linear-gradient(
+        125deg,
+        $secondary-color 0,
+        $danger-color 100%
+      );
+    }
   }
 }
 
