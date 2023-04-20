@@ -1,14 +1,19 @@
-.connect-twitch {
-  font-size: 2vw;
-  border: 0.1rem solid black;
-  background-color: purple;
-}
-
 .sidebar-ul {
   list-style: none;
   font-size: 1.7vw;
   margin: 0;
   padding: 1vw;
+
+  li {
+    margin: 0.1rem;
+    height: 5vh;
+    a {
+      display: flex;
+      width: 100%;
+      text-align: center;
+      height: 100%;
+    }
+  }
 }
 
 @media screen and (max-width: $screen-md) {

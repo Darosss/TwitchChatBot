@@ -28,7 +28,7 @@ export default function SideBar() {
 
         <li>
           <a
-            className="connect-twitch"
+            className="common-button tertiary-button"
             href={authData ? authData.data : "_blank"}
             target="_blank"
             rel="noreferrer"
@@ -48,7 +48,11 @@ const NavLink = ({ label, ...restProps }: NavLinkProps) => {
 
   return (
     <li>
-      <Link {...restProps} onClick={handleClick}>
+      <Link
+        {...restProps}
+        className="common-button primary-button"
+        onClick={handleClick}
+      >
         {label}
       </Link>
     </li>
