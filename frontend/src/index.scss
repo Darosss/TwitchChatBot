@@ -50,8 +50,7 @@ a {
   color: $link-color;
 
   &:hover {
-    color: var(--revert-background-color);
-    background-color: rgba(175, 162, 65, 0.4);
+    color: var(--revert-background-color) !important;
   }
 
   &:visited {
