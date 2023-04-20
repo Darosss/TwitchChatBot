@@ -1,0 +1,15 @@
+export const routes = [
+  { path: "/", label: "Home" },
+  { path: "/overlay", label: "Overlay" },
+  { path: "/messages", label: "Messages" },
+  { path: "/message-categories", label: "Message categories" },
+  { path: "/users", label: "Users" },
+  { path: "/events", label: "Events" },
+  { path: "/modes", label: "Modes" },
+  { path: "/stream-sessions", label: "Sessions" },
+  { path: "/redemptions", label: "Redemptions" },
+  { path: "/commands", label: "Commands" },
+  { path: "/triggers", label: "Triggers" },
+  { path: "/timers", label: "Timers" },
+  { path: "/configs", label: "Configs" },
+];
