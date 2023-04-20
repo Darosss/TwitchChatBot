@@ -159,8 +159,8 @@ class TriggersHandler {
     const prefixFlat = prefixes.flat(1);
 
     return {
-      prefix: prefixFlat[randomWithMax(sufixFlat.length)],
-      sufix: sufixFlat[randomWithMax(prefixFlat.length)],
+      prefix: prefixFlat[randomWithMax(prefixFlat.length)],
+      sufix: sufixFlat[randomWithMax(sufixFlat.length)],
     };
   }
 
