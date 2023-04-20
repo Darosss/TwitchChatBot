@@ -160,7 +160,8 @@ table {
 /* BUTTONS */
 
 button,
-a {
+a,
+select {
   &.common-button {
     transition: transform 1s;
     font-size: calc(0.5rem + 1vmin);
