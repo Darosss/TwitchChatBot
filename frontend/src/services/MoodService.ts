@@ -4,11 +4,13 @@ export interface Mood {
   _id: string;
   name: string;
   enabled: boolean;
+  prefixes: string[];
+  sufixes: string[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface MoodCreateData extends Pick<Mood, "name"> {}
+interface MoodCreateData extends Pick<Mood, "name" | "prefixes" | "sufixes"> {}
 
 interface MoodUpdateData extends Partial<MoodCreateData> {
   enabled?: boolean;
