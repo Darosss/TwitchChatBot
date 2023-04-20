@@ -2,7 +2,7 @@ import { TriggerModel, TriggerMode, TriggersConfigs } from "@models/types";
 import {
   findCategoryAndUpdateMessageUse,
   getLeastMessagesFromEnabledCategories,
-  getRandomCategoryMessage,
+  getSufixesAndPrefixesFromCategoryMood,
 } from "@services/messageCategories";
 import {
   getOneTrigger,
@@ -90,19 +90,78 @@ class TriggersHandler {
 
   private async getRandomMessage() {
     try {
+      let prefix = "";
+      let sufix = "";
       const messagesWord = await getLeastMessagesFromEnabledCategories(true, 3);
 
       const [randomMessage, categoryId] =
         messagesWord[randomWithMax(messagesWord.length)];
 
+      if (this.shouldGetPrefixSufix()) {
+        [prefix, sufix] = await this.getPrefixSufix(categoryId);
+        triggerLogger.info(
+          `Getting prefix[${prefix}], sufix[${sufix}] for random message`
+        );
+      }
+
       if (categoryId) {
         await this.updateUsedMessageInCategory(categoryId, randomMessage);
       }
 
-      return randomMessage;
+      return `${prefix} ${randomMessage} ${sufix}`;
     } catch (err) {
       triggerLogger.info(`Error occured while getting random category message`);
     }
+  }
+
+  private shouldGetPrefixSufix() {
+    if (percentChance(30)) {
+      return true;
+    }
+  }
+
+  private async getPrefixSufix(categoryId: string): Promise<[string, string]> {
+    const { prefix, sufix } = await this.getPrefixSufixFromCategory(categoryId);
+    let localSufix = "",
+      localPrefix = "";
+
+    const getPrefix = this.shouldGetPrefix();
+    const getSufix = this.shouldGetSufix();
+    if (!getPrefix) {
+      localSufix = sufix;
+    } else if (getSufix) {
+      localSufix = sufix;
+      localPrefix = prefix;
+    } else {
+      localPrefix = prefix;
+    }
+
+    return [localPrefix || "", localSufix || ""];
+  }
+
+  private shouldGetPrefix() {
+    if (percentChance(30)) {
+      return true;
+    }
+  }
+  private shouldGetSufix() {
+    if (percentChance(70)) {
+      return true;
+    }
+  }
+  private async getPrefixSufixFromCategory(categoryId: string) {
+    const prefixesAndSufixes = await getSufixesAndPrefixesFromCategoryMood(
+      categoryId
+    );
+    const { sufixes, prefixes } = prefixesAndSufixes;
+
+    const sufixFlat = sufixes.flat(1);
+    const prefixFlat = prefixes.flat(1);
+
+    return {
+      prefix: prefixFlat[randomWithMax(sufixFlat.length)],
+      sufix: sufixFlat[randomWithMax(prefixFlat.length)],
+    };
   }
 
   private async updateUsedMessageInCategory(id: string, word: string) {
