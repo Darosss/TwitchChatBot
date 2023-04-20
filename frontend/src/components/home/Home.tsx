@@ -26,9 +26,9 @@ export default function Home() {
       </div>
       <div className="home-content">
         <div className="home-content-tiles">
-          {routes.map((route) => {
+          {routes.map((route, index) => {
             return (
-              <div>
+              <div key={index}>
                 <Link to={route.path} className="common-button primary-button">
                   {route.label}
                 </Link>
@@ -63,7 +63,6 @@ function ChatBackground() {
     };
 
     const getRandomFromChatMessages = () => {
-      console.log("test", Math.floor(Math.random() * chatMessages.length));
       return chatMessages[Math.floor(Math.random() * chatMessages.length)];
     };
 
