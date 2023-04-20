@@ -18,49 +18,24 @@ import { ReactNotifications } from "react-notifications-component";
 import { TimersRoute } from "@routes/TimersRoute";
 import { ModesRoutes } from "@routes/ModeRoute";
 import { HelmetProvider } from "react-helmet-async";
-import { HelmetTitle } from "@components/componentWithTitle";
+import Home from "@components/home";
 
 function App() {
-  const [theme, setTheme] = useState("light");
-
-  useEffect(() => {
-    const prefersDarkMode =
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if (prefersDarkMode) {
-      setTheme("dark");
-    }
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
-
-  const handleThemeChange = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
-
   return (
     <SocketContext.Provider value={socketConn}>
       <HelmetProvider>
         <BrowserRouter>
           <div className="main">
             <ReactNotifications />
-            <SideBar theme={theme} handleThemeChange={handleThemeChange} />
             <Routes>
               <Route element={<OverlayLayout />}>
                 <Route path="/overlay/*" element={<OverlayRoutes />} />
               </Route>
+              <Route element={<HomeLayout />}>
+                <Route path="/" element={<Home />} />
+              </Route>
 
               <Route element={<DefaultRouteLayout />}>
-                <Route
-                  path="/"
-                  element={
-                    <>
-                      <HelmetTitle title="Home" /> HOME{" "}
-                    </>
-                  }
-                />
                 <Route path="/users/*" element={<UserRoutes />} />
                 <Route path="/messages/*" element={<MessageRoutes />} />
                 <Route
@@ -91,10 +66,21 @@ function App() {
 const DefaultRouteLayout = () => {
   return (
     <div className="main-other">
+      <SideBar />
+
       <Outlet />
     </div>
   );
 };
+
+const HomeLayout = () => {
+  return (
+    <div className="main-other">
+      <Outlet />
+    </div>
+  );
+};
+
 const OverlayLayout = () => {
   return (
     <div className="main-overlay">
