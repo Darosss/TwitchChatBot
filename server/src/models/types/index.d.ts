@@ -228,6 +228,8 @@ export type TimerDocument = TimerModel & Document;
 export interface MoodModel extends BaseModel {
   name: string;
   enabled: boolean;
+  prefixes: string[];
+  sufixes: string[];
 }
 
 export type MoodDocument = MoodModel & Document;
