@@ -1,4 +1,7 @@
-.prev-page-btn:hover {
-  color: var(--revert-background-color);
-  background-color: var(--link-color);
+.previous-page-wrapper {
+  width: 15%;
+  a {
+    display: flex;
+    width: 100%;
+  }
 }
