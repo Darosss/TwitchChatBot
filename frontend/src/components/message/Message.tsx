@@ -3,12 +3,14 @@ import React from "react";
 import { DateTimeTooltip } from "@components/dateTooltip/DateTooltip";
 import moment from "moment";
 
-export default function Message(props: {
+export interface MessageProps {
   date: Date;
   username: string;
   message: string;
   tooltip?: boolean;
-}) {
+}
+
+export default function Message(props: MessageProps) {
   const { date, username, message, tooltip = true } = props;
 
   return (
