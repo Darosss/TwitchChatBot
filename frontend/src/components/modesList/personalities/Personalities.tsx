@@ -86,25 +86,11 @@ export default function Personalities() {
       addNotification("Success", "Personality edited successfully", "success");
       refetchData();
     });
-    resetOnChangeClasses();
     setShowModal(false);
   };
 
   const onCloseModal = () => {
     setShowModal(false);
-    resetOnChangeClasses();
-  };
-
-  const changeColorOnChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    e.target.classList.add("changed-field");
-  };
-
-  const resetOnChangeClasses = () => {
-    document.querySelectorAll(".changed-field").forEach((changed) => {
-      changed.classList.remove("changed-field");
-    });
   };
 
   const handleOnEdit = (personality: Personality) => {
@@ -179,7 +165,6 @@ export default function Personalities() {
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
-                changeColorOnChange(e);
               }}
             />
           </div>

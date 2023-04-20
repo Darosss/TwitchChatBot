@@ -76,25 +76,11 @@ export default function Moods() {
       addNotification("Success", "Mood edited successfully", "success");
       refetchData();
     });
-    resetOnChangeClasses();
     setShowModal(false);
   };
 
   const onCloseModal = () => {
     setShowModal(false);
-    resetOnChangeClasses();
-  };
-
-  const changeColorOnChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    e.target.classList.add("changed-field");
-  };
-
-  const resetOnChangeClasses = () => {
-    document.querySelectorAll(".changed-field").forEach((changed) => {
-      changed.classList.remove("changed-field");
-    });
   };
 
   const handleOnEdit = (mood: Mood) => {
@@ -171,7 +157,6 @@ export default function Moods() {
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
-                changeColorOnChange(e);
               }}
             />
           </div>
@@ -182,7 +167,6 @@ export default function Moods() {
               value={prefixes.join("\n")}
               onChange={(e) => {
                 setPrefixes(e.target.value.split("\n"));
-                changeColorOnChange(e);
               }}
             />
           </div>
@@ -193,7 +177,6 @@ export default function Moods() {
               value={sufixes.join("\n")}
               onChange={(e) => {
                 setSufixes(e.target.value.split("\n"));
-                changeColorOnChange(e);
               }}
             />
           </div>

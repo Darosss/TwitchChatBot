@@ -68,25 +68,11 @@ export default function Tags() {
       addNotification("Success", "Tag edited successfully", "success");
       refetchData();
     });
-    resetOnChangeClasses();
     setShowModal(false);
   };
 
   const onCloseModal = () => {
     setShowModal(false);
-    resetOnChangeClasses();
-  };
-
-  const changeColorOnChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    e.target.classList.add("changed-field");
-  };
-
-  const resetOnChangeClasses = () => {
-    document.querySelectorAll(".changed-field").forEach((changed) => {
-      changed.classList.remove("changed-field");
-    });
   };
 
   const handleOnEdit = (tag: Tag) => {
@@ -160,7 +146,6 @@ export default function Tags() {
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
-                changeColorOnChange(e);
               }}
             />
           </div>
