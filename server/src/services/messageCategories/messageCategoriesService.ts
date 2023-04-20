@@ -192,6 +192,33 @@ export const getLeastMessagesFromEnabledCategories = async (
   }
 };
 
+export const getSufixesAndPrefixesFromCategoryMood = async (
+  id: string
+): Promise<{ prefixes: string[]; sufixes: string[] }> => {
+  const categoryPrefixSufix = await MessageCategory.aggregate<{
+    prefixes: string[];
+    sufixes: string[];
+  }>([
+    ...modesPipeline,
+    {
+      $match: { _id: new mongoose.Types.ObjectId(id) },
+    },
+    {
+      $group: {
+        _id: 1,
+        prefixes: { $push: "$mood_info.prefixes" },
+        sufixes: { $push: "$mood_info.sufixes" },
+      },
+    },
+  ]);
+
+  if (categoryPrefixSufix.length > 0) {
+    return categoryPrefixSufix[0];
+  } else {
+    return { prefixes: [""], sufixes: [""] };
+  }
+};
+
 export const createMessageCategories = async (
   messageCategoryData: MessageCategoryCreateData
 ) => {
