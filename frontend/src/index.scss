@@ -41,6 +41,10 @@ body {
   }
 }
 
+h1 {
+  margin: 0;
+}
+
 a {
   text-decoration: none;
   color: $link-color;
@@ -157,25 +161,34 @@ table {
   justify-content: center;
 }
 
-.primary-button {
-  background-color: $primary-color;
-}
+button,
+a {
+  &:active {
+    opacity: 0.7;
+  }
 
-.danger-button {
-  background-color: $danger-color;
-}
+  &.primary-button {
+    background: linear-gradient(40deg, $primary-color 0, $secondary-color 100%);
+  }
 
-button {
+  &.danger-button {
+    background: linear-gradient(
+      40deg,
+      $danger-color 30%,
+      $secondary-color 100%
+    );
+  }
+
   &.common-button:hover {
     transform: rotate(2deg);
   }
 
   &.primary-button:hover {
-    background-color: rgba(47, 47, 181, 0.4);
-  }
-
-  &.primary-button:active {
-    background-color: rgb(47, 47, 181);
+    background: linear-gradient(
+      125deg,
+      $secondary-color 0,
+      $primary-color 100%
+    );
   }
 
   &.secondary-button:hover {
@@ -187,11 +200,7 @@ button {
   }
 
   &.danger-button:hover {
-    background-color: rgba(160, 16, 16, 0.4);
-  }
-
-  &.danger-button:active {
-    background-color: rgb(160, 16, 16);
+    background: linear-gradient(125deg, $secondary-color 0, $danger-color 100%);
   }
 }
 
