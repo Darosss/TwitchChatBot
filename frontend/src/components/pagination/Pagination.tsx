@@ -54,7 +54,7 @@ export default function Pagination(props: {
     return (
       <select
         name="page-size"
-        className="page-size"
+        className="page-size common-button primary-button"
         value={pageSizeT}
         onChange={(e) => {
           setSearchParams((prevState) => {

@@ -91,6 +91,9 @@ ul.pagination-container {
   &::-ms-expand {
     display: none; /* Hide the default arrow in Internet Explorer 10 and Internet Explorer 11 */
   }
+  option {
+    background-color: var(--background-color);
+  }
 }
 
 .page-size-single {
