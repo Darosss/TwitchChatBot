@@ -97,12 +97,7 @@ class TriggersHandler {
       const [randomMessage, categoryId] =
         messagesWord[randomWithMax(messagesWord.length)];
 
-      if (this.shouldGetPrefixSufix()) {
-        [prefix, sufix] = await this.getPrefixSufix(categoryId);
-        triggerLogger.info(
-          `Getting prefix[${prefix}], sufix[${sufix}] for random message`
-        );
-      }
+      [prefix, sufix] = await this.getPrefixSufix(categoryId);
 
       if (categoryId) {
         await this.updateUsedMessageInCategory(categoryId, randomMessage);
@@ -114,12 +109,6 @@ class TriggersHandler {
     }
   }
 
-  private shouldGetPrefixSufix() {
-    if (percentChance(30)) {
-      return true;
-    }
-  }
-
   private async getPrefixSufix(categoryId: string): Promise<[string, string]> {
     const { prefix, sufix } = await this.getPrefixSufixFromCategory(categoryId);
     let localSufix = "",
@@ -127,25 +116,19 @@ class TriggersHandler {
 
     const getPrefix = this.shouldGetPrefix();
     const getSufix = this.shouldGetSufix();
-    if (!getPrefix) {
-      localSufix = sufix;
-    } else if (getSufix) {
-      localSufix = sufix;
-      localPrefix = prefix;
-    } else {
-      localPrefix = prefix;
-    }
+    if (getPrefix) localPrefix = prefix || "";
+    if (getSufix) localSufix = sufix || "";
 
-    return [localPrefix || "", localSufix || ""];
+    return [localPrefix, localSufix];
   }
 
   private shouldGetPrefix() {
-    if (percentChance(30)) {
+    if (percentChance(this.configs.prefixChance)) {
       return true;
     }
   }
   private shouldGetSufix() {
-    if (percentChance(70)) {
+    if (percentChance(this.configs.sufixChance)) {
       return true;
     }
   }
