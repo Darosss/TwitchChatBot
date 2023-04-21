@@ -80,7 +80,12 @@ export interface TriggerModel extends BaseModel {
 
 export type TriggerDocument = TriggerModel & Document;
 
-export interface TimersConfigs {
+interface PrefixSufixChancesConfig {
+  sufixChance: number;
+  prefixChance: number;
+}
+
+export interface TimersConfigs extends PrefixSufixChancesConfig {
   timersIntervalDelay: number;
   nonFollowTimerPoints: number;
   nonSubTimerPoints: number;
@@ -96,7 +101,7 @@ export interface ChatGamesConfigs {
   minActiveUsersThreshold: number;
 }
 
-export interface TriggersConfigs {
+export interface TriggersConfigs extends PrefixSufixChancesConfig {
   randomMessageChance: number;
 }
 
