@@ -13,6 +13,19 @@ export const sufixesField = {
   },
 };
 
+export const sufixChanceField = {
+  sufixChance: {
+    type: Number,
+    default: 30,
+  },
+};
+export const prefixChanceField = {
+  prefixChance: {
+    type: Number,
+    default: 10,
+  },
+};
+
 export const nameField = {
   name: {
     type: String,
