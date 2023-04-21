@@ -1,6 +1,10 @@
 import { Model, model, Schema } from "mongoose";
 import { ConfigDocument } from "./types";
 import { configDefaults } from "../defaults/configsDefaults";
+import {
+  prefixChanceField,
+  sufixChanceField,
+} from "@utils/commonSchemaFieldsUtil";
 const {
   commandsConfigs,
   timersConfigs,
@@ -37,6 +41,8 @@ const ConfigSchema: Schema<ConfigDocument> = new Schema(
         required: true,
         default: timersConfigs.nonSubTimerPoints,
       },
+      ...prefixChanceField,
+      ...sufixChanceField,
     },
     triggersConfigs: {
       randomMessageChance: {
@@ -44,6 +50,8 @@ const ConfigSchema: Schema<ConfigDocument> = new Schema(
         required: true,
         default: triggersConfigs.randomMessageChance,
       },
+      ...prefixChanceField,
+      ...sufixChanceField,
     },
     pointsConfigs: {
       pointsIncrement: {
