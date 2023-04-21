@@ -8,6 +8,8 @@ export const configDefaults: ConfigDefaults = {
     timersIntervalDelay: 20,
     nonFollowTimerPoints: 10,
     nonSubTimerPoints: 10,
+    prefixChance: 10,
+    sufixChance: 30,
   },
   chatGamesConfigs: {
     activeUserTimeDelay: 150,
@@ -16,6 +18,8 @@ export const configDefaults: ConfigDefaults = {
   },
   triggersConfigs: {
     randomMessageChance: 10,
+    prefixChance: 30,
+    sufixChance: 70,
   },
   pointsConfigs: {
     pointsIncrement: {
