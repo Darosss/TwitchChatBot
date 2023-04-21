@@ -97,7 +97,11 @@ class TriggersHandler {
       const [randomMessage, categoryId] =
         messagesWord[randomWithMax(messagesWord.length)];
 
-      [prefix, sufix] = await this.getPrefixSufix(categoryId);
+      [prefix, sufix] = await this.getPrefixOrSuffixIfCan(categoryId);
+
+      triggerLogger.info(
+        `Add prefix - ${prefix} and sufix - ${sufix} to message`
+      );
 
       if (categoryId) {
         await this.updateUsedMessageInCategory(categoryId, randomMessage);
@@ -109,13 +113,22 @@ class TriggersHandler {
     }
   }
 
-  private async getPrefixSufix(categoryId: string): Promise<[string, string]> {
+  private getPrefixOrSuffixIfCan(categoryId: string) {
+    const getPrefix = this.shouldGetPrefix();
+    const getSufix = this.shouldGetSufix();
+
+    return this.getPrefixSufix(categoryId, getPrefix, getSufix);
+  }
+
+  private async getPrefixSufix(
+    categoryId: string,
+    getPrefix: boolean,
+    getSufix: boolean
+  ): Promise<[string, string]> {
     const { prefix, sufix } = await this.getPrefixSufixFromCategory(categoryId);
     let localSufix = "",
       localPrefix = "";
 
-    const getPrefix = this.shouldGetPrefix();
-    const getSufix = this.shouldGetSufix();
     if (getPrefix) localPrefix = prefix || "";
     if (getSufix) localSufix = sufix || "";
 
@@ -126,11 +139,13 @@ class TriggersHandler {
     if (percentChance(this.configs.prefixChance)) {
       return true;
     }
+    return false;
   }
   private shouldGetSufix() {
     if (percentChance(this.configs.sufixChance)) {
       return true;
     }
+    return false;
   }
   private async getPrefixSufixFromCategory(categoryId: string) {
     const prefixesAndSufixes = await getSufixesAndPrefixesFromCategoryMood(
@@ -138,12 +153,9 @@ class TriggersHandler {
     );
     const { sufixes, prefixes } = prefixesAndSufixes;
 
-    const sufixFlat = sufixes.flat(1);
-    const prefixFlat = prefixes.flat(1);
-
     return {
-      prefix: prefixFlat[randomWithMax(prefixFlat.length)],
-      sufix: sufixFlat[randomWithMax(sufixFlat.length)],
+      prefix: prefixes[randomWithMax(prefixes.length)],
+      sufix: sufixes[randomWithMax(sufixes.length)],
     };
   }
 
