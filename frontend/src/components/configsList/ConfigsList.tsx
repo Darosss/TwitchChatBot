@@ -190,6 +190,35 @@ export default function ConfigsList() {
             />,
             timersCfg?.nonSubTimerPoints
           )}
+          {generateConfigInput(
+            "Prefix chances",
+            <input
+              type="number"
+              value={timersCfg?.prefixChance}
+              onChange={(e) =>
+                setTimersCfg((prevState) => ({
+                  ...prevState,
+                  prefixChance: e.target.valueAsNumber,
+                }))
+              }
+            />,
+            timersCfg?.prefixChance
+          )}
+
+          {generateConfigInput(
+            "Sufix chances",
+            <input
+              type="number"
+              value={timersCfg?.sufixChance}
+              onChange={(e) =>
+                setTimersCfg((prevState) => ({
+                  ...prevState,
+                  sufixChance: e.target.valueAsNumber,
+                }))
+              }
+            />,
+            timersCfg?.sufixChance
+          )}
         </div>
         <div className="configs-section-wrapper">
           <div className="configs-section-header">Chat games configs</div>
@@ -251,6 +280,35 @@ export default function ConfigsList() {
               }
             />,
             triggersCfg?.randomMessageChance
+          )}
+          {generateConfigInput(
+            "Prefix chances",
+            <input
+              type="number"
+              value={triggersCfg?.prefixChance}
+              onChange={(e) =>
+                setTriggersCfg((prevState) => ({
+                  ...prevState,
+                  prefixChance: e.target.valueAsNumber,
+                }))
+              }
+            />,
+            triggersCfg?.prefixChance
+          )}
+
+          {generateConfigInput(
+            "Sufix chances",
+            <input
+              type="number"
+              value={triggersCfg?.sufixChance}
+              onChange={(e) =>
+                setTriggersCfg((prevState) => ({
+                  ...prevState,
+                  sufixChance: e.target.valueAsNumber,
+                }))
+              }
+            />,
+            triggersCfg?.sufixChance
           )}
         </div>
         <div className="configs-section-wrapper">
