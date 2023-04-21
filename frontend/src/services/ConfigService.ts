@@ -4,6 +4,8 @@ export interface TimersConfigs {
   timersIntervalDelay: number;
   nonFollowTimerPoints: number;
   nonSubTimerPoints: number;
+  sufixChance: number;
+  prefixChance: number;
 }
 
 export interface CommandsConfigs {
@@ -18,6 +20,8 @@ export interface ChatGamesConfigs {
 
 export interface TriggersConfigs {
   randomMessageChance: number;
+  sufixChance: number;
+  prefixChance: number;
 }
 export interface MusicConfigs {
   songRequest: boolean;
