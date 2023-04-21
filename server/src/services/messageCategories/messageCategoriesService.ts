@@ -1,6 +1,10 @@
 import { modesPipeline } from "@aggregations/modesPipeline";
 import { MessageCategory } from "@models/messageCategoryModel";
-import { MessageCategoryDocument, MessageCategoryModel } from "@models/types";
+import {
+  MessageCategoryDocument,
+  MessageCategoryModel,
+  MoodModel,
+} from "@models/types";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
@@ -51,9 +55,11 @@ export const getMessageCategoryById = async (
   id: string,
   categoryFindOptions: MessageCategoryFindOptions
 ) => {
-  const { select = { __v: 0 } } = categoryFindOptions;
+  const { select = { __v: 0 }, populateSelect } = categoryFindOptions;
   try {
-    const foundCategory = await MessageCategory.findById(id).select(select);
+    const foundCategory = await MessageCategory.findById(id)
+      .select(select)
+      .populate(populateSelect);
 
     return foundCategory;
   } catch (err) {
@@ -195,25 +201,14 @@ export const getLeastMessagesFromEnabledCategories = async (
 export const getSufixesAndPrefixesFromCategoryMood = async (
   id: string
 ): Promise<{ prefixes: string[]; sufixes: string[] }> => {
-  const categoryPrefixSufix = await MessageCategory.aggregate<{
-    prefixes: string[];
-    sufixes: string[];
-  }>([
-    ...modesPipeline,
-    {
-      $match: { _id: new mongoose.Types.ObjectId(id) },
-    },
-    {
-      $group: {
-        _id: 1,
-        prefixes: { $push: "$mood_info.prefixes" },
-        sufixes: { $push: "$mood_info.sufixes" },
-      },
-    },
-  ]);
+  const category = await getMessageCategoryById(id, {
+    populateSelect: "mood",
+  });
 
-  if (categoryPrefixSufix.length > 0) {
-    return categoryPrefixSufix[0];
+  if (category) {
+    const categoryMood = category.mood as MoodModel;
+
+    return { prefixes: categoryMood.prefixes, sufixes: categoryMood.sufixes };
   } else {
     return { prefixes: [""], sufixes: [""] };
   }
