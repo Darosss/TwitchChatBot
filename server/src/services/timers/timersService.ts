@@ -134,10 +134,14 @@ export const deleteTimerById = async (id: string) => {
 
 export const getTimerById = async (
   id: string,
-  filter: FilterQuery<TimerDocument> = {}
+  filter: FilterQuery<TimerDocument> = {},
+  timerFindOptions: TimerFindOptions
 ) => {
+  const { select = { __v: 0 }, populateSelect } = timerFindOptions;
   try {
-    const foundTimer = await Timer.findById(id, filter);
+    const foundTimer = await Timer.findById(id, filter)
+      .select(select)
+      .populate(populateSelect);
 
     const timer = checkExistResource(foundTimer, `Timer with id(${id})`);
 
