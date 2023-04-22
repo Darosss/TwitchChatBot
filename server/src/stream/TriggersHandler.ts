@@ -1,4 +1,9 @@
-import { TriggerModel, TriggerMode, TriggersConfigs } from "@models/types";
+import {
+  TriggerModel,
+  TriggerMode,
+  TriggersConfigs,
+  MoodModel,
+} from "@models/types";
 import {
   findCategoryAndUpdateMessageUse,
   getLeastMessagesFromEnabledCategories,
@@ -180,8 +185,11 @@ class TriggersHandler {
   }
 
   private async getMessageAndUpdateTriggerLogic(trigger: TriggerModel) {
-    const { _id, messages, name, delay } = trigger;
-    const triggerMessage = await this.getTriggerMessage(messages);
+    const { _id, name, mood, messages, delay } = trigger;
+    const triggerMessage = await this.getTriggerMessage(
+      mood as MoodModel,
+      messages
+    );
     await this.updateTrigerAfterUsage(_id);
 
     await this.setTimeoutRefreshTriggerDelay(_id, name, delay);
@@ -226,15 +234,33 @@ class TriggersHandler {
     return false;
   }
 
-  private async getTriggerMessage(messages: string[]) {
-    return messages[randomWithMax(messages.length)];
+  private async getTriggerMessage(mood: MoodModel, messages: string[]) {
+    const getPrefix = this.shouldGetPrefix();
+    const getSufix = this.shouldGetSufix();
+
+    const { prefixes, sufixes } = mood;
+
+    let prefix = "";
+    let sufix = "";
+
+    if (getPrefix) prefix = prefixes[randomWithMax(prefixes.length)];
+    if (getSufix) sufix = sufixes[randomWithMax(sufixes.length)];
+
+    triggerLogger.info(
+      `Add prefix - ${prefix} and sufix - ${sufix} to trigger message`
+    );
+
+    return `${prefix} ${messages[randomWithMax(messages.length)]} ${sufix}`;
   }
 
   private async getTriggerByTriggerWord(triggerWord: string) {
     try {
-      const foundedTrigger = await getOneTrigger({
-        words: { $regex: new RegExp(`\\b${triggerWord}\\b`, "i") },
-      });
+      const foundedTrigger = await getOneTrigger(
+        {
+          words: { $regex: new RegExp(`\\b${triggerWord}\\b`, "i") },
+        },
+        { populateSelect: "mood" }
+      );
       return foundedTrigger;
     } catch (err) {}
   }
