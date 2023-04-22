@@ -8,6 +8,7 @@ import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import {
   ManyTriggersFindOptions,
   TriggerCreateData,
+  TriggerFindOptions,
   TriggerUpdateData,
 } from "./types";
 
@@ -128,10 +129,14 @@ export const getTriggerById = async (
 };
 
 export const getOneTrigger = async (
-  filter: FilterQuery<TriggerDocument> = {}
+  filter: FilterQuery<TriggerDocument> = {},
+  triggerFindOptions: TriggerFindOptions
 ) => {
+  const { populateSelect, select = { __v: 0 } } = triggerFindOptions;
   try {
-    const foundTrigger = await Trigger.findOne(filter);
+    const foundTrigger = await Trigger.findOne(filter)
+      .select(select)
+      .populate(populateSelect);
 
     const trigger = checkExistResource(foundTrigger, "Trigger");
 
