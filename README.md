@@ -31,6 +31,8 @@
 </details>
 <br>
 
+<img src="./images/home.png" width=400px alt="Create trigger">
+
 Twitch chat bot designed to be deployed on localhost and home LAN only.
 It **SHOULD NOT** be on online hosting.
 
@@ -187,6 +189,7 @@ Once the app is started, it will listen for incoming twitch chat messages on you
   - Create modes and assign them to timers / triggers / commands / message categories
   - By default global modes are created
   - Depends on which modes are currently turned on, bot sends other messages(_of course if you added any_)
+  - Moods have their own sufixes and prefixes where they can be added to triggers, random messages or timers
 
 - Timers:
 
@@ -295,3 +298,16 @@ Once the app is started, it will listen for incoming twitch chat messages on you
       </details>
 
 - Widgets / events and overlay rely on react grid layout, so you can adjust windows on your needs
+
+## Roadmap
+
+- [] Add subscriptions to follows, subs, cheers and others
+- [] Add styles for overlay and events widgets
+- [] Add music from youtube to overlay
+- [] Add info about music to database
+- [] Add complete user edit
+- [] Add functionality to non sub timers
+- [] Refactor prefixes, sufixes to get from enabled modes
+- [] Add information in frontend when:
+  - [] Creating new triggers, chat commands, timers or message categories
+  - [] Editing configs to understand what each config option does
