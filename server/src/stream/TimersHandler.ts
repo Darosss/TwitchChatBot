@@ -14,8 +14,8 @@ import {
   updateEnabledTimersAndEnabledModes,
   updateTimerById,
 } from "@services/timers";
-import { randomWithMax } from "@utils/randomNumbersUtil";
-import { TimerModel, TimersConfigs, UserModel } from "@models/types";
+import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
+import { MoodModel, TimerModel, TimersConfigs, UserModel } from "@models/types";
 import { timerLogger } from "@utils/loggerUtil";
 
 class TimersHandler extends HeadHandler {
@@ -91,9 +91,40 @@ class TimersHandler extends HeadHandler {
   }
 
   private async getTimerMessage(id: string) {
-    const timer = await getTimerById(id);
+    const timer = await getTimerById(id, {}, { populateSelect: "mood" });
     if (!timer) return "";
-    return timer.messages[randomWithMax(timer.messages.length)];
+
+    const getPrefix = this.shouldGetPrefix();
+    const getSufix = this.shouldGetSufix();
+
+    const { prefixes, sufixes } = timer.mood as MoodModel;
+
+    let prefix = "";
+    let sufix = "";
+
+    if (getPrefix) prefix = prefixes[randomWithMax(prefixes.length)];
+    if (getSufix) sufix = sufixes[randomWithMax(sufixes.length)];
+
+    timerLogger.info(
+      `Add prefix - ${prefix} and sufix - ${sufix} to timer message`
+    );
+
+    return `${prefix} ${
+      timer.messages[randomWithMax(timer.messages.length)]
+    } ${sufix}`;
+  }
+
+  private shouldGetPrefix() {
+    if (percentChance(this.configs.prefixChance)) {
+      return true;
+    }
+    return false;
+  }
+  private shouldGetSufix() {
+    if (percentChance(this.configs.sufixChance)) {
+      return true;
+    }
+    return false;
   }
 
   private async checkTimersByPoints() {
