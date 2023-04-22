@@ -69,7 +69,7 @@ export interface Config {
   updatedAt: Date;
 }
 
-interface ConfigUpdateData
+export interface ConfigUpdateData
   extends Omit<Config, "_id" | "createdAt" | "updatedAt"> {}
 
 export const getConfigs = () => {
