@@ -31,7 +31,7 @@
 </details>
 <br>
 
-<img src="./images/home.png" width=400px alt="Create trigger">
+<img src="./images/home.png" width=500px alt="Create trigger">
 
 Twitch chat bot designed to be deployed on localhost and home LAN only.
 It **SHOULD NOT** be on online hosting.
@@ -311,3 +311,17 @@ Once the app is started, it will listen for incoming twitch chat messages on you
 - [] Add information in frontend when:
   - [] Creating new triggers, chat commands, timers or message categories
   - [] Editing configs to understand what each config option does
+
+## License
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+Distributed under the MIT License. See `LICENSE.md` for more information.
+
+## Contact
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+Darosss - daroinf12@gmail.com
+
+Project Link: [https://github.com/Darosss/TwitchChatBot](https://github.com/Darosss/ChatApplication)
