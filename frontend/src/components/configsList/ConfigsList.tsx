@@ -12,6 +12,7 @@ import {
   LoyaltyConfigs,
   HeadConfigs,
   MusicConfigs,
+  resetConfigs,
 } from "@services/ConfigService";
 import { SocketContext } from "@context/SocketContext";
 import { addNotification } from "@utils/getNotificationValues";
@@ -58,7 +59,15 @@ export default function ConfigsList() {
   const [musicCfg, setMusicCfg] = useState<MusicConfigs>(musicConfigsInitial);
   const [headCfg, setHeadCfg] = useState<HeadConfigs>(headConfigsInitial);
 
-  const { data, loading, error, refetchData } = getConfigs();
+  const {
+    data,
+    loading,
+    error,
+    refetchData: refetchConfigsData,
+  } = getConfigs();
+
+  const { data: resetCfgData, refetchData: resetConfigsToDefaults } =
+    resetConfigs();
 
   const { refetchData: fetchEditConfig } = editConfig({
     commandsConfigs: commandsCfg,
@@ -98,10 +107,19 @@ export default function ConfigsList() {
   const onClickEditConfig = () => {
     setShowEdit(false);
     fetchEditConfig().then(() => {
-      socket?.emit("saveConfigs");
-      refetchData();
+      socket.emit("saveConfigs");
+      refetchConfigsData();
       addNotification("Succes", "Configs edited succesfully", "success");
     });
+  };
+
+  const onClickResetConfigs = () => {
+    if (confirm("Are you sure you want reset configs to defaults?")) {
+      resetConfigsToDefaults().then(() => {
+        refetchConfigsData();
+        socket.emit("saveConfigs");
+      });
+    }
   };
 
   if (error) return <>There is an error.</>;
@@ -109,25 +127,35 @@ export default function ConfigsList() {
   return (
     <>
       <PreviousPage />
-      <button
-        className="common-button primary-button"
-        onClick={() => {
-          setConfigStates();
-          setShowEdit((prevState) => {
-            return !prevState;
-          });
-        }}
-      >
-        Edit
-      </button>
-      {showEdit ? (
+      <div>
         <button
-          className="common-button danger-button"
-          onClick={() => onClickEditConfig()}
+          className="common-button primary-button"
+          onClick={() => {
+            setConfigStates();
+            setShowEdit((prevState) => {
+              return !prevState;
+            });
+          }}
         >
-          Save
+          Edit
         </button>
-      ) : null}
+        {showEdit ? (
+          <>
+            <button
+              className="common-button danger-button"
+              onClick={() => onClickEditConfig()}
+            >
+              Save
+            </button>
+            <button
+              className="common-button danger-button"
+              onClick={() => onClickResetConfigs()}
+            >
+              Reset to defaults
+            </button>
+          </>
+        ) : null}
+      </div>
       <div className="configs-list-wrapper">
         <div className="configs-section-wrapper">
           <div className="configs-section-header">Commands options </div>
