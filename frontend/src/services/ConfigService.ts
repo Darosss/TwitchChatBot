@@ -86,3 +86,11 @@ export const editConfig = (data: ConfigUpdateData) => {
     manual: true,
   });
 };
+
+export const resetConfigs = () => {
+  return useAxiosCustom<Config>({
+    url: `/configs/defaults`,
+    method: "POST",
+    manual: true,
+  });
+};
