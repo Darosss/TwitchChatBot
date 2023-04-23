@@ -18,28 +18,11 @@ export const createNewAuth = async (createData: AuthCreateData) => {
     const newAuth = await AuthToken.create(createData);
 
     if (!newAuth) {
-      throw new AppError(400, "Couldn't create chat commands");
+      throw new AppError(400, "Couldn't create new auth");
     }
     return newAuth;
   } catch (err) {
     logger.error(`Failed to create new auth:  ${err}`);
-    handleAppError(err);
-  }
-};
-
-export const checkIfAuthValid = async () => {
-  try {
-    const auth = await getAuthToken();
-    if (!auth) return false;
-    const { expiresIn, obtainmentTimestamp } = auth;
-
-    const newDate = new Date().getTime();
-    const currentSeconds = (newDate - obtainmentTimestamp) / 1000;
-
-    if (expiresIn > currentSeconds) return true;
-    return false;
-  } catch (err) {
-    logger.error(`Error occured while checking if auth is valid:  ${err}`);
     handleAppError(err);
   }
 };
@@ -58,11 +41,4 @@ export const removeAuthToken = async () => {
     logger.error(`Error occured while trying to remove auth token. ${err}`);
     handleAppError(err);
   }
-};
-
-export const createOrGetIfAuthValid = async (createData: AuthCreateData) => {
-  if (!(await checkIfAuthValid())) {
-    return await createNewAuth(createData);
-  }
-  return (await getAuthToken())!;
 };
