@@ -1,6 +1,7 @@
 import Express, { NextFunction, Request, Response } from "express";
 import { getConfigs, updateConfigs } from "@services/configs";
 import { ConfigUpdateData } from "@services/configs/types";
+import { configDefaults } from "@defaults/configsDefaults";
 
 export const getConfigsList = async (
   req: Request,
@@ -44,6 +45,22 @@ export const editConfigs = async (
       headConfigs: headConfigs,
     });
     return res.status(200).send({ message: "Updated successfully" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const resetConfigsToDefaults = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const configs = await updateConfigs(configDefaults);
+
+    return res
+      .status(200)
+      .send({ message: "Configs reset to default successfully" });
   } catch (err) {
     next(err);
   }
