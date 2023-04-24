@@ -4,6 +4,7 @@ export const {
   BACKEND_PORT: backendPort,
   CLIENT_ID: clientId,
   CLIENT_SECRET: clientSecret,
+  ENCRYPTION_KEY: encryptionKey,
   REDIRECT_URL: redirectUrl,
   DATABASE_CONNECT_URL: databaseConnectURL,
   BOT_USERNAME: botUsername,
