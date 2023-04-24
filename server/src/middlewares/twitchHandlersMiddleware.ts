@@ -12,7 +12,9 @@ import {
   botUsername,
   clientId,
   clientSecret,
+  encryptionKey,
 } from "@configs/envVariables";
+import { decryptToken } from "@utils/tokenUtil";
 
 const authorizationTwitch = async (
   req: Request,
@@ -24,6 +26,17 @@ const authorizationTwitch = async (
     const authUrl = getTwitchAuthUrl();
     return res.redirect(authUrl.toString());
   }
+  const decryptedAccessToken = decryptToken(
+    tokenDB.accessToken,
+    tokenDB.ivAccessToken,
+    encryptionKey
+  );
+  const decryptedRefreshToken = decryptToken(
+    tokenDB.refreshToken,
+    tokenDB.ivRefreshToken,
+    encryptionKey
+  );
+
   const authProvider = new RefreshingAuthProvider(
     {
       clientId,
@@ -32,7 +45,11 @@ const authorizationTwitch = async (
         await createNewAuth(newTokenData);
       },
     },
-    tokenDB
+    {
+      ...tokenDB,
+      accessToken: decryptedAccessToken,
+      refreshToken: decryptedRefreshToken,
+    }
   );
 
   try {
@@ -62,7 +79,7 @@ const authorizationTwitch = async (
 
     return next();
   } catch (err) {
-    await removeAuthToken();
+    // await removeAuthToken();
     if (err instanceof Error) {
       res
         .status(400)
