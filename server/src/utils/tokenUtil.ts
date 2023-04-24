@@ -1,19 +1,22 @@
 import crypto from "crypto";
 
 const algorithm = "aes-256-cbc";
-const iv = crypto.randomBytes(16);
+const ivSize = 16;
 
-export const encryptToken = (token: string, encryptionKey: string): string => {
+export const encryptToken = (
+  token: string,
+  encryptionKey: string
+): { iv: Buffer; encrypted: string } => {
+  const iv = crypto.randomBytes(ivSize);
   const cipher = crypto.createCipheriv(
     algorithm,
     Buffer.from(encryptionKey),
     iv
   );
-  let encrypted = cipher.update(token, "utf8", "binary");
-  encrypted += cipher.final("binary");
-  return encrypted;
+  let encrypted = cipher.update(token, "utf8", "hex");
+  encrypted += cipher.final("hex");
+  return { iv: iv, encrypted: encrypted };
 };
-
 export const decryptToken = (
   encryptedToken: string,
   encryptionKey: string
