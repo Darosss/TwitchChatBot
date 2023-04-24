@@ -49,11 +49,6 @@ export const baseChatFeaturesFields = {
 };
 
 export const chatFeaturesModeFields = {
-  personality: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: "Personalities",
-  },
   tag: { type: Schema.Types.ObjectId, required: true, ref: "Tags" },
   mood: { type: Schema.Types.ObjectId, required: true, ref: "Moods" },
 };

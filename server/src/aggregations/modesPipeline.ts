@@ -13,19 +13,6 @@ const tagsPipeline: PipelineStage[] = [
   { $unwind: "$tag_info" },
 ];
 
-const personalitiesPipeline: PipelineStage[] = [
-  {
-    $lookup: {
-      from: "personalities",
-      localField: "personality",
-      foreignField: "_id",
-      as: "personality_info",
-    },
-  },
-  // Unwind the personality_info array to access the fields of the tag document
-  { $unwind: "$personality_info" },
-];
-
 const moodsPipeline: PipelineStage[] = [
   {
     $lookup: {
@@ -41,15 +28,10 @@ const moodsPipeline: PipelineStage[] = [
 
 export const modesPipeline: PipelineStage[] = [
   ...tagsPipeline,
-  ...personalitiesPipeline,
   ...moodsPipeline,
   {
     $match: {
-      $and: [
-        { "tag_info.enabled": true },
-        { "personality_info.enabled": true },
-        { "mood_info.enabled": true },
-      ],
+      $and: [{ "tag_info.enabled": true }, { "mood_info.enabled": true }],
     },
   },
 ];

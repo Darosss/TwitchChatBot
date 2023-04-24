@@ -1,9 +1,7 @@
-import { PersonalityModel } from "@models/types";
+import { AffixModel } from "@models/types";
 import { RequestSearch } from "@types";
 
-export const filterPersonalitiesByUrlParams = (
-  params: RequestSearch<PersonalityModel>
-) => {
+export const filterAffixesByUrlParams = (params: RequestSearch<AffixModel>) => {
   const { search_name } = params;
   const filterName = {
     ...(search_name && { name: { $regex: search_name, $options: "i" } }),

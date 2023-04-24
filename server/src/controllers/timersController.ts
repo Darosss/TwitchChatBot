@@ -28,7 +28,6 @@ export const getTimersList = async (
       limit: limit,
       skip: page,
       populateSelect: [
-        { path: "personality", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
       ],
@@ -61,7 +60,6 @@ export const addNewTimer = async (
     nonFollowMulti,
     tag,
     mood,
-    personality,
     nonSubMulti,
     reqPoints,
     description,
@@ -77,7 +75,6 @@ export const addNewTimer = async (
       delay: delay,
       tag: tag,
       mood: mood,
-      personality: personality,
       nonFollowMulti: nonFollowMulti,
       nonSubMulti: nonSubMulti,
     });
@@ -104,7 +101,6 @@ export const editTimerById = async (
     nonFollowMulti,
     tag,
     mood,
-    personality,
     nonSubMulti,
     reqPoints,
     description,
@@ -122,7 +118,6 @@ export const editTimerById = async (
       description: description,
       tag: tag,
       mood: mood,
-      personality: personality,
     });
 
     return res.status(200).send({

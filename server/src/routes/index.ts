@@ -13,7 +13,7 @@ import overlayRouter from "./overlayRoute";
 import widgetsRouter from "./widgetsRoute";
 import moodsRouter from "./moodsRoute";
 import tagsRouter from "./tagsRoute";
-import personalitiesRouter from "./personalitiesRoute";
+import affixesRouter from "./affixesRoute";
 import filesRouter from "./filesRoute";
 
 const initRoutes = (app: Express) => {
@@ -25,7 +25,7 @@ const initRoutes = (app: Express) => {
   app.use("/moods", moodsRouter);
   app.use("/overlays", overlayRouter);
   app.use("/users", usersRouter);
-  app.use("/personalities", personalitiesRouter);
+  app.use("/affixes", affixesRouter);
   app.use("/redemptions", redemptionsRouter);
   app.use("/stream-sessions", streamSessionsRouter);
   app.use("/tags", tagsRouter);

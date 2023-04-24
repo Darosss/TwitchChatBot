@@ -29,7 +29,6 @@ export const getMessageCategoriesList = async (
       limit: limit,
       skip: page,
       populateSelect: [
-        { path: "personality", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
       ],
@@ -55,7 +54,7 @@ export const editMessageCategoryById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, messages, tag, mood, personality, enabled } = req.body;
+  const { name, messages, tag, mood, enabled } = req.body;
 
   try {
     const updatedCategoryMessage = await updateMessageCategoryById(id, {
@@ -64,7 +63,6 @@ export const editMessageCategoryById = async (
       tag: tag,
       mood: mood,
       enabled: enabled,
-      personality: personality,
     });
 
     return res.status(200).send({
@@ -102,7 +100,7 @@ export const addNewCategory = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, messages, tag, mood, personality, enabled } = req.body;
+  const { name, messages, tag, mood, enabled } = req.body;
 
   try {
     const newMessageCategory = await createMessageCategories({
@@ -111,7 +109,6 @@ export const addNewCategory = async (
       enabled: enabled,
       tag: tag,
       mood: mood,
-      personality: personality,
     });
 
     return res.status(200).send({

@@ -6,17 +6,9 @@ import {
 } from "@services/chatCommands";
 import { getDefaultChatCommands } from "@defaults/commandsDefaults";
 import { createTag, getOneTag, getTagsCount } from "@services/tags";
-import {
-  getDefaultMood,
-  getDefaultPersonality,
-  getDefaultTag,
-} from "@defaults/modesDefaults";
+import { getDefaultMood, getDefaultTag } from "@defaults/modesDefaults";
 import { createMood, getMoodsCount, getOneMood } from "@services/moods";
-import {
-  createPersonality,
-  getOnePersonality,
-  getPersonalitiesCount,
-} from "@services/personalities";
+
 import { databaseConnectURL } from "./envVariables";
 const initMongoDataBase = async () => {
   mongoose.set("strictQuery", false);
@@ -35,7 +27,6 @@ const initMongoDataBase = async () => {
   const modesPromise = await Promise.all([
     createDefaultTag(),
     createDefaultMood(),
-    createDefaultPersonality(),
   ]);
 
   await createDefaultCommands();
@@ -47,21 +38,16 @@ const createDefaultConfigs = async () => {
 
 const createDefaultCommands = async () => {
   if ((await getChatCommandsCount()) === 0) {
-    const modes = await Promise.all([
-      getOneTag({}),
-      getOneMood({}),
-      getOnePersonality({}),
-    ]);
+    const modes = await Promise.all([getOneTag({}), getOneMood({})]);
 
-    const [tag, mood, personality] = modes;
-    if (tag && mood && personality) {
+    const [tag, mood] = modes;
+    if (tag && mood) {
       const chatCommands = getDefaultChatCommands();
       const chatCommandsWithModes = chatCommands.map((command) => {
         return {
           ...command,
           tag: tag.id,
           mood: mood.id,
-          personality: personality.id,
         };
       });
       await createChatCommand(chatCommandsWithModes);
@@ -79,13 +65,6 @@ const createDefaultMood = async () => {
   if ((await getMoodsCount()) === 0) {
     const moods = getDefaultMood();
     await createMood(moods);
-  }
-};
-
-const createDefaultPersonality = async () => {
-  if ((await getPersonalitiesCount()) === 0) {
-    const personalities = getDefaultPersonality();
-    await createPersonality(personalities);
   }
 };
 

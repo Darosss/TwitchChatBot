@@ -73,7 +73,6 @@ export interface TriggerModel extends BaseModel {
   words: string[];
   messages: string[];
   mode: TriggerMode;
-  personality: string | PersonalityModel;
   mood: string | MoodModel;
   tag: string | TagModel;
 }
@@ -158,7 +157,6 @@ export interface ChatCommandModel extends BaseModel {
   messages: string[];
   privilege: number;
   uses: number;
-  personality: string | PersonalityModel;
   mood: string | MoodModel;
   tag: string | TagModel;
 }
@@ -183,7 +181,6 @@ export interface MessageCategoryModel extends BaseModel {
   enabled: boolean;
   messages: Array<[string, number]>;
   uses: number;
-  personality: string | PersonalityModel;
   mood: string | MoodModel;
   tag: string | TagModel;
 }
@@ -225,7 +222,6 @@ export interface TimerModel extends BaseModel {
   uses: number;
   messages: string[];
   description: string;
-  personality: string | PersonalityModel;
   mood: string | MoodModel;
   tag: string | TagModel;
 }
@@ -241,12 +237,14 @@ export interface MoodModel extends BaseModel {
 
 export type MoodDocument = MoodModel & Document;
 
-export interface PersonalityModel extends BaseModel {
+export interface AffixModel extends BaseModel {
   name: string;
   enabled: boolean;
+  prefixes: string[];
+  sufixes: string[];
 }
 
-export type PersonalityDocument = PersonalityModel & Document;
+export type AffixDocument = AffixModel & Document;
 
 export interface TagModel extends BaseModel {
   name: string;
