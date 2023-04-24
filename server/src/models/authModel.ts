@@ -18,4 +18,31 @@ const AuthSchema: Schema<AuthDocument> = new Schema(
   }
 );
 
+AuthSchema.pre("save", async function (next) {
+  try {
+    // Encrypt access token
+    const accessToken = this.accessToken;
+    const { iv: ivAccessToken, encrypted: encryptedAccessToken } = encryptToken(
+      accessToken,
+      encryptionKey
+    );
+    this.accessToken = encryptedAccessToken;
+    this.ivAccessToken = ivAccessToken;
+
+    // Encrypt refresh token
+    const refreshToken = this.refreshToken;
+    const { iv: ivRefreshToken, encrypted: encryptedRefreshToken } =
+      encryptToken(refreshToken, encryptionKey);
+    this.refreshToken = encryptedRefreshToken;
+    this.ivRefreshToken = ivRefreshToken;
+
+    next();
+  } catch (err) {
+    if (err instanceof Error) {
+      return next(err);
+    }
+    return next();
+  }
+});
+
 export const AuthToken: Model<AuthDocument> = model("AuthTokens", AuthSchema);
