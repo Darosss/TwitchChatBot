@@ -105,6 +105,12 @@ DATABASE_CONNECT_URL=mongodb://127.0.0.1:27017/mychatbot
 # Read below for CLIENT_ID / CLIENT_SECRET / REDIRECT_URL
 CLIENT_ID=<twitch application client id>
 CLIENT_SECRET=<twitch application client secret>
+
+# ENCRYPTION_KEY - have to be 16 bytes string
+# I've used crypto libaray: crypto.randomBytes(16).toString('hex')
+ENCRYPTION_KEY=random_encryption_secret_stringkey
+
+
 # REDIRECT_URL=<backend localhost with port>/auth/twitch/callback
 REDIRECT_URL=http://localhost:5000/auth/twitch/callback
 
