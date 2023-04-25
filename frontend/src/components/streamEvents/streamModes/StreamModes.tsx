@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "@context/SocketContext";
 import { getAllModes } from "@utils/getListModes";
 import { editTag } from "@services/TagService";
-import { editPersonality } from "@services/PersonalityService";
+import { editAffix } from "@services/AffixService";
 import { editMood } from "@services/MoodService";
 
 export default function StreamModes() {
@@ -13,9 +13,10 @@ export default function StreamModes() {
     "",
     false,
   ]);
-  const [personalityToUpdate, setPersonalityToUpdate] = useState<
-    [string, boolean]
-  >(["", false]);
+  const [affixToUpdate, setAffixToUpdate] = useState<[string, boolean]>([
+    "",
+    false,
+  ]);
   const [moodToUpdate, setMoodToUpdate] = useState<[string, boolean]>([
     "",
     false,
@@ -25,12 +26,9 @@ export default function StreamModes() {
     enabled: tagToUpdate[1],
   });
 
-  const { refetchData: fetchPersonalityEdit } = editPersonality(
-    personalityToUpdate[0],
-    {
-      enabled: personalityToUpdate[1],
-    }
-  );
+  const { refetchData: fetchAffixEdit } = editAffix(affixToUpdate[0], {
+    enabled: affixToUpdate[1],
+  });
 
   const { refetchData: fetchMoodEdit } = editMood(moodToUpdate[0], {
     enabled: moodToUpdate[1],
@@ -49,14 +47,14 @@ export default function StreamModes() {
   }, [tagToUpdate]);
 
   useEffect(() => {
-    if (!personalityToUpdate[0]) return;
+    if (!affixToUpdate[0]) return;
 
-    fetchPersonalityEdit().then(() => {
-      refetchPersonalities();
+    fetchAffixEdit().then(() => {
+      refetchAffixes();
       socket.emit("changeModes");
-      setPersonalityToUpdate(["", false]);
+      setAffixToUpdate(["", false]);
     });
-  }, [personalityToUpdate]);
+  }, [affixToUpdate]);
 
   useEffect(() => {
     if (!moodToUpdate[0]) return;
@@ -70,14 +68,8 @@ export default function StreamModes() {
 
   if (!modes) return <> Loading...</>;
 
-  const {
-    tags,
-    personalities,
-    moods,
-    refetchTags,
-    refetchMoods,
-    refetchPersonalities,
-  } = modes;
+  const { tags, affixes, moods, refetchTags, refetchMoods, refetchAffixes } =
+    modes;
 
   return (
     <>
@@ -104,23 +96,20 @@ export default function StreamModes() {
             })}
           </div>
           <div className="stream-modes-section">
-            <div className="stream-modes-section-name">Personalities</div>
+            <div className="stream-modes-section-name">Affixes</div>
 
-            {personalities?.map((personality, index) => {
+            {affixes?.map((affix, index) => {
               return (
                 <div key={index}>
                   <button
                     className={`common-button ${
-                      personality.enabled ? "primary-button" : "danger-button"
+                      affix.enabled ? "primary-button" : "danger-button"
                     }`}
                     onClick={() => {
-                      setPersonalityToUpdate([
-                        personality._id,
-                        !personality.enabled,
-                      ]);
+                      setAffixToUpdate([affix._id, !affix.enabled]);
                     }}
                   >
-                    {personality.name}
+                    {affix.name}
                   </button>
                 </div>
               );
