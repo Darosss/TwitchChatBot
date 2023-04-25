@@ -13,11 +13,6 @@ export interface ManyMoodsFindOptions extends MoodFindOptions {
   limit?: number;
 }
 
-export interface MoodCreateData
-  extends Pick<MoodModel, "name">,
-    Partial<Pick<MoodModel, "prefixes" | "sufixes">> {}
-
+export interface MoodCreateData extends Pick<MoodModel, "name"> {}
 export interface MoodUpdateData
-  extends Partial<
-    Pick<MoodModel, "name" | "enabled" | "prefixes" | "sufixes">
-  > {}
+  extends Partial<Pick<MoodModel, "name" | "enabled">> {}
