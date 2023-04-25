@@ -6,15 +6,15 @@ export const prefixesField = {
     default: [""],
   },
 };
-export const sufixesField = {
-  sufixes: {
+export const suffixesField = {
+  suffixes: {
     type: [String],
     default: [""],
   },
 };
 
-export const sufixChanceField = {
-  sufixChance: {
+export const suffixChanceField = {
+  suffixChance: {
     type: Number,
     default: 30,
   },
