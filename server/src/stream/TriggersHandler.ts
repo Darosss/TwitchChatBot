@@ -5,9 +5,12 @@ import {
   MoodModel,
 } from "@models/types";
 import {
+  getAverageEnabledAffixesChances,
+  getEnabledSuffixesAndPrefixes,
+} from "@services/affixes";
+import {
   findCategoryAndUpdateMessageUse,
   getLeastMessagesFromEnabledCategories,
-  getSufixesAndPrefixesFromCategoryMood,
 } from "@services/messageCategories";
 import {
   getOneTrigger,
@@ -29,7 +32,11 @@ class TriggersHandler {
   }
 
   private async init() {
-    Promise.all([this.refreshTriggers(), this.setEveryTriggerDelayOff()]);
+    Promise.all([
+      this.refreshTriggers(),
+      this.setEveryTriggerDelayOff(),
+      this.updateAffixesChances(),
+    ]);
   }
 
   public async refreshTriggers() {
@@ -38,10 +45,20 @@ class TriggersHandler {
 
   public async refreshConfigs(configs: TriggersConfigs) {
     this.configs = configs;
+
+    await this.updateAffixesChances();
   }
 
   private async setEveryTriggerDelayOff() {
     await updateTriggers({}, { onDelay: false });
+  }
+
+  private async updateAffixesChances() {
+    const { prefixesChances, suffixesChances } =
+      await getAverageEnabledAffixesChances();
+
+    this.configs.suffixChance += suffixesChances;
+    this.configs.prefixChance += prefixesChances;
   }
 
   private async getTriggerWordAndTrigger(message: string) {
@@ -95,49 +112,21 @@ class TriggersHandler {
 
   private async getRandomMessage() {
     try {
-      let prefix = "";
-      let sufix = "";
       const messagesWord = await getLeastMessagesFromEnabledCategories(true, 3);
 
       const [randomMessage, categoryId] =
         messagesWord[randomWithMax(messagesWord.length)];
 
-      [prefix, sufix] = await this.getPrefixOrSuffixIfCan(categoryId);
-
-      triggerLogger.info(
-        `Add prefix - ${prefix} and sufix - ${sufix} to message`
-      );
+      const [prefix, suffix] = await this.getRandomEnabledAFfixes();
 
       if (categoryId) {
         await this.updateUsedMessageInCategory(categoryId, randomMessage);
       }
 
-      return `${prefix} ${randomMessage} ${sufix}`;
+      return `${prefix} ${randomMessage} ${suffix}`;
     } catch (err) {
       triggerLogger.info(`Error occured while getting random category message`);
     }
-  }
-
-  private getPrefixOrSuffixIfCan(categoryId: string) {
-    const getPrefix = this.shouldGetPrefix();
-    const getSufix = this.shouldGetSufix();
-
-    return this.getPrefixSufix(categoryId, getPrefix, getSufix);
-  }
-
-  private async getPrefixSufix(
-    categoryId: string,
-    getPrefix: boolean,
-    getSufix: boolean
-  ): Promise<[string, string]> {
-    const { prefix, sufix } = await this.getPrefixSufixFromCategory(categoryId);
-    let localSufix = "",
-      localPrefix = "";
-
-    if (getPrefix) localPrefix = prefix || "";
-    if (getSufix) localSufix = sufix || "";
-
-    return [localPrefix, localSufix];
   }
 
   private shouldGetPrefix() {
@@ -146,22 +135,11 @@ class TriggersHandler {
     }
     return false;
   }
-  private shouldGetSufix() {
-    if (percentChance(this.configs.sufixChance)) {
+  private shouldGetsuffix() {
+    if (percentChance(this.configs.suffixChance)) {
       return true;
     }
     return false;
-  }
-  private async getPrefixSufixFromCategory(categoryId: string) {
-    const prefixesAndSufixes = await getSufixesAndPrefixesFromCategoryMood(
-      categoryId
-    );
-    const { sufixes, prefixes } = prefixesAndSufixes;
-
-    return {
-      prefix: prefixes[randomWithMax(prefixes.length)],
-      sufix: sufixes[randomWithMax(sufixes.length)],
-    };
   }
 
   private async updateUsedMessageInCategory(id: string, word: string) {
@@ -235,22 +213,28 @@ class TriggersHandler {
   }
 
   private async getTriggerMessage(mood: MoodModel, messages: string[]) {
+    const [prefix, suffix] = await this.getRandomEnabledAFfixes();
+
+    return `${prefix} ${messages[randomWithMax(messages.length)]} ${suffix}`;
+  }
+
+  private async getRandomEnabledAFfixes() {
+    const { prefixes, suffixes } = await getEnabledSuffixesAndPrefixes();
+
     const getPrefix = this.shouldGetPrefix();
-    const getSufix = this.shouldGetSufix();
-
-    const { prefixes, sufixes } = mood;
-
+    const getsuffix = this.shouldGetsuffix();
     let prefix = "";
-    let sufix = "";
+    let suffix = "";
 
     if (getPrefix) prefix = prefixes[randomWithMax(prefixes.length)];
-    if (getSufix) sufix = sufixes[randomWithMax(sufixes.length)];
+    if (getsuffix) suffix = suffixes[randomWithMax(suffixes.length)];
 
+    console.log(suffixes, "test");
     triggerLogger.info(
-      `Add prefix - ${prefix} and sufix - ${sufix} to trigger message`
+      `Add prefix - ${prefix} and suffix - ${suffix} to message`
     );
 
-    return `${prefix} ${messages[randomWithMax(messages.length)]} ${sufix}`;
+    return [prefix, suffix];
   }
 
   private async getTriggerByTriggerWord(triggerWord: string) {

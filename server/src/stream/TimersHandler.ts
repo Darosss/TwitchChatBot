@@ -15,8 +15,12 @@ import {
   updateTimerById,
 } from "@services/timers";
 import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
-import { MoodModel, TimerModel, TimersConfigs, UserModel } from "@models/types";
+import { TimerModel, TimersConfigs, UserModel } from "@models/types";
 import { timerLogger } from "@utils/loggerUtil";
+import {
+  getAverageEnabledAffixesChances,
+  getEnabledSuffixesAndPrefixes,
+} from "@services/affixes";
 
 class TimersHandler extends HeadHandler {
   private configs: TimersConfigs;
@@ -44,6 +48,9 @@ class TimersHandler extends HeadHandler {
 
   private async init() {
     await this.refreshTimers();
+
+    await this.updateAffixesChances();
+
     setInterval(async () => {
       await this.checkTimersByPoints();
     }, this.configs.timersIntervalDelay * 1000);
@@ -51,6 +58,7 @@ class TimersHandler extends HeadHandler {
 
   public async refreshConfigs(refreshedConfigs: TimersConfigs) {
     this.configs = refreshedConfigs;
+    await this.updateAffixesChances();
   }
 
   public async refreshTimers() {
@@ -90,28 +98,41 @@ class TimersHandler extends HeadHandler {
     );
   }
 
+  private async updateAffixesChances() {
+    const { prefixesChances, suffixesChances } =
+      await getAverageEnabledAffixesChances();
+
+    this.configs.suffixChance += suffixesChances;
+    this.configs.prefixChance += prefixesChances;
+  }
+
   private async getTimerMessage(id: string) {
     const timer = await getTimerById(id, {}, { populateSelect: "mood" });
     if (!timer) return "";
 
-    const getPrefix = this.shouldGetPrefix();
-    const getSufix = this.shouldGetSufix();
-
-    const { prefixes, sufixes } = timer.mood as MoodModel;
-
-    let prefix = "";
-    let sufix = "";
-
-    if (getPrefix) prefix = prefixes[randomWithMax(prefixes.length)];
-    if (getSufix) sufix = sufixes[randomWithMax(sufixes.length)];
-
-    timerLogger.info(
-      `Add prefix - ${prefix} and sufix - ${sufix} to timer message`
-    );
+    const [prefix, suffix] = await this.getRandomEnabledAffixes();
 
     return `${prefix} ${
       timer.messages[randomWithMax(timer.messages.length)]
-    } ${sufix}`;
+    } ${suffix}`;
+  }
+
+  private async getRandomEnabledAffixes() {
+    const { prefixes, suffixes } = await getEnabledSuffixesAndPrefixes();
+
+    const getPrefix = this.shouldGetPrefix();
+    const getsuffix = this.shouldGetsuffix();
+    let prefix = "";
+    let suffix = "";
+
+    if (getPrefix) prefix = prefixes[randomWithMax(prefixes.length)];
+    if (getsuffix) suffix = suffixes[randomWithMax(suffixes.length)];
+
+    timerLogger.info(
+      `Add prefix - ${prefix} and suffix - ${suffix} to timer message`
+    );
+
+    return [prefix, suffix];
   }
 
   private shouldGetPrefix() {
@@ -120,8 +141,8 @@ class TimersHandler extends HeadHandler {
     }
     return false;
   }
-  private shouldGetSufix() {
-    if (percentChance(this.configs.sufixChance)) {
+  private shouldGetsuffix() {
+    if (percentChance(this.configs.suffixChance)) {
       return true;
     }
     return false;
