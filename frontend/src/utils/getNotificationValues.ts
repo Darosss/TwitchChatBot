@@ -24,12 +24,13 @@ const getNotification = (
 export const addNotification = (
   title: NotificationTitleMessage,
   message: NotificationTitleMessage,
-  type: NOTIFICATION_TYPE
+  type: NOTIFICATION_TYPE,
+  duration = 5000
 ) => {
   Store.addNotification({
     ...getNotification(title, message, type),
     dismiss: {
-      duration: 5000,
+      duration: duration,
       onScreen: true,
     },
   });
