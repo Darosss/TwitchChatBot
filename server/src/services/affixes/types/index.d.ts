@@ -1,4 +1,4 @@
-import { AffixM, AffixModelodel } from "@models/types";
+import { AffixM, AffixModel } from "@models/types";
 import { PopulateOption, PopulateOptions } from "mongoose";
 import { SortQuery, SelectQuery } from "@services/types";
 
@@ -16,4 +16,4 @@ export interface ManyAffixesFindOptions extends AffixFindOptions {
 export interface AffixCreateData extends Pick<AffixModel, "name"> {}
 
 export interface AffixUpdateData
-  extends Partial<Pick<AffixModel, "name" | "enabled">> {}
+  extends Partial<Omit<AffixModel, "_id" | "createdAt" | "updatedAt">> {}
