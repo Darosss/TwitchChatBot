@@ -64,12 +64,17 @@ export const editAffixById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, enabled } = req.body;
+  const { name, enabled, prefixes, suffixes, prefixChance, suffixChance } =
+    req.body;
 
   try {
     const updatedAffix = await updateAffixById(id, {
       name: name,
       enabled: enabled,
+      prefixes: prefixes,
+      suffixes: suffixes,
+      prefixChance: prefixChance,
+      suffixChance: suffixChance,
     });
 
     return res.status(200).send({
