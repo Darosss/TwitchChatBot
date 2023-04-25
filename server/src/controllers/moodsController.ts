@@ -44,13 +44,11 @@ export const addNewMood = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, prefixes, sufixes } = req.body;
+  const { name } = req.body;
 
   try {
     const newMood = await createMood({
       name: name,
-      prefixes: prefixes,
-      sufixes: sufixes,
     });
 
     return res
@@ -67,14 +65,12 @@ export const editMoodById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, enabled, prefixes, sufixes } = req.body;
+  const { name, enabled } = req.body;
 
   try {
     const updatedMood = await updateMoodById(id, {
       name: name,
       enabled: enabled,
-      prefixes: prefixes,
-      sufixes: sufixes,
     });
 
     return res.status(200).send({
