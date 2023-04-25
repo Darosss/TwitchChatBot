@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import ModesList from "@components/modesList";
 import Tags from "@components/modesList/tags";
 import Moods from "@components/modesList/moods";
-import Personalities from "@components/modesList/personalities";
+import Affixes from "@components/modesList/affixes";
 import ComponentWithTitle from "@components/componentWithTitle";
 
 export function ModesRoutes() {
@@ -20,12 +20,9 @@ export function ModesRoutes() {
           element={<ComponentWithTitle title="Moods" Component={<Moods />} />}
         />
         <Route
-          path="personalities"
+          path="affixes"
           element={
-            <ComponentWithTitle
-              title="Personalities"
-              Component={<Personalities />}
-            />
+            <ComponentWithTitle title="Affixes" Component={<Affixes />} />
           }
         />
         <Route
