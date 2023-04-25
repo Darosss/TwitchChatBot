@@ -9,6 +9,5 @@ export type DispatchAction =
   | { type: "SET_ALIASES"; payload: string[] }
   | { type: "SET_PRIVILEGE"; payload: number }
   | { type: "SET_TAG"; payload: string }
-  | { type: "SET_PERSONALITY"; payload: string }
   | { type: "SET_MOOD"; payload: string }
   | { type: "SET_STATE"; payload: ChatCommandCreateData };

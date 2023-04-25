@@ -1,5 +1,4 @@
 import { MoodCreateData } from "@services/moods/types";
-import { PersonalityCreateData } from "@services/personalities/types";
 import { TagCreateData } from "@services/tags/types";
 
 export const getDefaultTag = () => {
@@ -14,11 +13,4 @@ export const getDefaultMood = () => {
     name: "global",
   };
   return defaultMood;
-};
-
-export const getDefaultPersonality = () => {
-  const defaultPersonality: PersonalityCreateData = {
-    name: "global",
-  };
-  return defaultPersonality;
 };

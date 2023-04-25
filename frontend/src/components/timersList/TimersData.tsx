@@ -61,7 +61,7 @@ export default function TimersData(props: {
           </tr>
         }
         tbodyChildren={data.map((timer) => {
-          const { tag, personality, mood } = timer;
+          const { tag, mood } = timer;
           return (
             <tr key={timer._id}>
               <td>
@@ -113,11 +113,6 @@ export default function TimersData(props: {
                   <div>{timer.nonSubMulti.toString()}</div>
                   <div>Tag:</div>
                   {generateEnabledDisabledDiv(tag.enabled, tag.name)}
-                  <div>Personality:</div>
-                  {generateEnabledDisabledDiv(
-                    personality.enabled,
-                    personality.name
-                  )}
                   <div>Mood:</div>
                   {generateEnabledDisabledDiv(mood.enabled, mood.name)}
                   <div>Description:</div>

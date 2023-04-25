@@ -52,7 +52,7 @@ export default function CommandsData(props: {
           </tr>
         }
         tbodyChildren={data.map((command) => {
-          const { tag, personality, mood } = command;
+          const { tag, mood } = command;
           return (
             <tr key={command._id}>
               <td>
@@ -92,11 +92,6 @@ export default function CommandsData(props: {
                   <div>{command.privilege}</div>
                   <div>Tag:</div>
                   {generateEnabledDisabledDiv(tag.enabled, tag.name)}
-                  <div>Personality:</div>
-                  {generateEnabledDisabledDiv(
-                    personality.enabled,
-                    personality.name
-                  )}
                   <div>Mood:</div>
                   {generateEnabledDisabledDiv(mood.enabled, mood.name)}
                   <div>Created at: </div>

@@ -1,31 +1,30 @@
 import { PaginationData } from "@services/ApiService";
 import { getMoods, Mood } from "@services/MoodService";
-import { getPersonalities, Personality } from "@services/PersonalityService";
+import { getAffixes, Affix } from "@services/AffixService";
 import { getTags, Tag } from "@services/TagService";
 
 export interface AllModesReturn {
   tags: Tag[];
-  personalities: Personality[];
+  affixes: Affix[];
   moods: Mood[];
   refetchTags: () => Promise<PaginationData<Tag>>;
-  refetchPersonalities: () => Promise<PaginationData<Personality>>;
+  refetchAffixes: () => Promise<PaginationData<Affix>>;
   refetchMoods: () => Promise<PaginationData<Mood>>;
 }
 
 export const getAllModes = (): AllModesReturn | undefined => {
   const { data: tags, refetchData: refetchTags } = getTags(false);
-  const { data: personalities, refetchData: refetchPersonalities } =
-    getPersonalities(false);
+  const { data: affixes, refetchData: refetchAffixes } = getAffixes(false);
   const { data: moods, refetchData: refetchMoods } = getMoods(false);
 
-  if (!tags || !personalities || !moods) return;
+  if (!tags || !affixes || !moods) return;
 
   return {
     tags: tags.data,
-    personalities: personalities.data,
+    affixes: affixes.data,
     moods: moods.data,
     refetchTags: refetchTags,
-    refetchPersonalities: refetchPersonalities,
+    refetchAffixes: refetchAffixes,
     refetchMoods: refetchMoods,
   };
 };
@@ -33,7 +32,7 @@ export const getAllModes = (): AllModesReturn | undefined => {
 export const generateSelectModes = (
   value: string,
   onChangeSelect: (value: string) => void,
-  data?: Tag[] | Personality[] | Mood[]
+  data?: Tag[] | Affix[] | Mood[]
 ) => {
   return (
     <select value={value} onChange={(e) => onChangeSelect(e.target.value)}>

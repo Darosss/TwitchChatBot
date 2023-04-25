@@ -198,22 +198,6 @@ export const getLeastMessagesFromEnabledCategories = async (
   }
 };
 
-export const getSufixesAndPrefixesFromCategoryMood = async (
-  id: string
-): Promise<{ prefixes: string[]; sufixes: string[] }> => {
-  const category = await getMessageCategoryById(id, {
-    populateSelect: "mood",
-  });
-
-  if (category) {
-    const categoryMood = category.mood as MoodModel;
-
-    return { prefixes: categoryMood.prefixes, sufixes: categoryMood.sufixes };
-  } else {
-    return { prefixes: [""], sufixes: [""] };
-  }
-};
-
 export const createMessageCategories = async (
   messageCategoryData: MessageCategoryCreateData
 ) => {

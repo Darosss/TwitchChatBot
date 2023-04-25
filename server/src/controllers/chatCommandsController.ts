@@ -31,7 +31,6 @@ export const getChatCommandsList = async (
       limit: limit,
       skip: page,
       populateSelect: [
-        { path: "personality", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
       ],
@@ -64,7 +63,6 @@ export const addNewCommand = async (
     privilege,
     tag,
     mood,
-    personality,
   } = req.body;
 
   try {
@@ -75,7 +73,6 @@ export const addNewCommand = async (
       aliases: aliases,
       tag: tag,
       mood: mood,
-      personality: personality,
       messages: messages,
       privilege: privilege,
     });
@@ -103,7 +100,6 @@ export const editChatCommandById = async (
     privilege,
     tag,
     mood,
-    personality,
   } = req.body;
 
   try {
@@ -114,7 +110,6 @@ export const editChatCommandById = async (
       aliases: aliases,
       tag: tag,
       mood: mood,
-      personality: personality,
       messages: messages,
       privilege: privilege,
     });

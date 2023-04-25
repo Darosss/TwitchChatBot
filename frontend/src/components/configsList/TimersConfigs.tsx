@@ -65,7 +65,7 @@ export default function TimersConfigsWrapper(props: {
             sufixChance: e.target.valueAsNumber,
           }))
         }
-        value={timersConfigs.sufixChance}
+        value={timersConfigs.suffixChance}
         showEdit={showEdit}
       />
     </>

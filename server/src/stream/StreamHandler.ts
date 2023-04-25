@@ -384,7 +384,7 @@ class StreamHandler {
 
   private async onChangeModes() {
     headLogger.info(
-      "Client changed modes(tag, mood, personality) - refreshing triggers, commands, message categories and timers"
+      "Client changed modes(tag, mood, affix) - refreshing triggers, commands, message categories and timers"
     );
     await Promise.all([
       this.triggersHandler.refreshTriggers(),

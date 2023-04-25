@@ -1,6 +1,5 @@
 import useAxiosCustom, { PaginationData } from "./ApiService";
 import { Mood } from "./MoodService";
-import { Personality } from "./PersonalityService";
 import { Tag } from "./TagService";
 
 export type TriggerMode = "WHOLE-WORD" | "STARTS-WITH" | "ALL";
@@ -16,7 +15,6 @@ export interface Trigger {
   onDelay: boolean;
   words: string[];
   messages: string[];
-  personality: Personality;
   tag: Tag;
   mood: Mood;
   createdAt: Date;
@@ -26,16 +24,8 @@ export interface Trigger {
 export interface TriggerCreateData
   extends Omit<
     Trigger,
-    | "_id"
-    | "createdAt"
-    | "updatedAt"
-    | "onDelay"
-    | "uses"
-    | "personality"
-    | "tag"
-    | "mood"
+    "_id" | "createdAt" | "updatedAt" | "onDelay" | "uses" | "tag" | "mood"
   > {
-  personality: string;
   tag: string;
   mood: string;
 }

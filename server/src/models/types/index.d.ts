@@ -73,19 +73,18 @@ export interface TriggerModel extends BaseModel {
   words: string[];
   messages: string[];
   mode: TriggerMode;
-  personality: string | PersonalityModel;
   mood: string | MoodModel;
   tag: string | TagModel;
 }
 
 export type TriggerDocument = TriggerModel & Document;
 
-interface PrefixSufixChancesConfig {
-  sufixChance: number;
+interface PrefixSuffixChancesConfig {
+  suffixChance: number;
   prefixChance: number;
 }
 
-export interface TimersConfigs extends PrefixSufixChancesConfig {
+export interface TimersConfigs extends PrefixSuffixChancesConfig {
   timersIntervalDelay: number;
   nonFollowTimerPoints: number;
   nonSubTimerPoints: number;
@@ -101,7 +100,7 @@ export interface ChatGamesConfigs {
   minActiveUsersThreshold: number;
 }
 
-export interface TriggersConfigs extends PrefixSufixChancesConfig {
+export interface TriggersConfigs extends PrefixSuffixChancesConfig {
   randomMessageChance: number;
 }
 
@@ -158,7 +157,6 @@ export interface ChatCommandModel extends BaseModel {
   messages: string[];
   privilege: number;
   uses: number;
-  personality: string | PersonalityModel;
   mood: string | MoodModel;
   tag: string | TagModel;
 }
@@ -183,7 +181,6 @@ export interface MessageCategoryModel extends BaseModel {
   enabled: boolean;
   messages: Array<[string, number]>;
   uses: number;
-  personality: string | PersonalityModel;
   mood: string | MoodModel;
   tag: string | TagModel;
 }
@@ -225,7 +222,6 @@ export interface TimerModel extends BaseModel {
   uses: number;
   messages: string[];
   description: string;
-  personality: string | PersonalityModel;
   mood: string | MoodModel;
   tag: string | TagModel;
 }
@@ -235,18 +231,20 @@ export type TimerDocument = TimerModel & Document;
 export interface MoodModel extends BaseModel {
   name: string;
   enabled: boolean;
-  prefixes: string[];
-  sufixes: string[];
 }
 
 export type MoodDocument = MoodModel & Document;
 
-export interface PersonalityModel extends BaseModel {
+export interface AffixModel extends BaseModel, PrefixSuffixChancesConfig {
   name: string;
   enabled: boolean;
+  prefixes: string[];
+  suffixes: string[];
+  prefixChance: number;
+  suffixChance: number;
 }
 
-export type PersonalityDocument = PersonalityModel & Document;
+export type AffixDocument = AffixModel & Document;
 
 export interface TagModel extends BaseModel {
   name: string;

@@ -86,7 +86,7 @@ export const updateEnabledTimersAndEnabledModes = async (
       ...modesPipeline,
       { $match: { enabled: true, ...matchOption } },
       { $set: { points: { $add: ["$points", pointsInrement] } } },
-      { $unset: ["tag_info", "personality_info", "mood_info"] },
+      { $unset: ["tag_info", "mood_info"] },
       { $merge: { into: "timers", on: "_id", whenMatched: "replace" } },
     ];
 
@@ -178,7 +178,6 @@ export const getTimersDataWithModesEnabled = async (): Promise<
           createdAt: 0,
           updatedAt: 0,
           tag_info: 0,
-          personality_info: 0,
           mood_info: 0,
         },
       },

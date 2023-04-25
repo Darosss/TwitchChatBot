@@ -3,7 +3,7 @@ import { ConfigDocument } from "./types";
 import { configDefaults } from "../defaults/configsDefaults";
 import {
   prefixChanceField,
-  sufixChanceField,
+  suffixChanceField,
 } from "@utils/commonSchemaFieldsUtil";
 const {
   commandsConfigs,
@@ -42,7 +42,7 @@ const ConfigSchema: Schema<ConfigDocument> = new Schema(
         default: timersConfigs.nonSubTimerPoints,
       },
       ...prefixChanceField,
-      ...sufixChanceField,
+      ...suffixChanceField,
     },
     triggersConfigs: {
       randomMessageChance: {
@@ -51,7 +51,7 @@ const ConfigSchema: Schema<ConfigDocument> = new Schema(
         default: triggersConfigs.randomMessageChance,
       },
       ...prefixChanceField,
-      ...sufixChanceField,
+      ...suffixChanceField,
     },
     pointsConfigs: {
       pointsIncrement: {

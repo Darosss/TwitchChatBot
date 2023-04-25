@@ -1,16 +1,10 @@
-import {
-  baseChatFeaturesFields,
-  prefixesField,
-  sufixesField,
-} from "@utils/commonSchemaFieldsUtil";
+import { baseChatFeaturesFields } from "@utils/commonSchemaFieldsUtil";
 import { Model, model, Schema } from "mongoose";
 import { MoodDocument } from "./types";
 
 const MoodSchema: Schema<MoodDocument> = new Schema(
   {
     ...baseChatFeaturesFields,
-    ...prefixesField,
-    ...sufixesField,
   },
   { timestamps: true }
 );

@@ -88,7 +88,6 @@ export default function CommandsList() {
         messages: command.messages,
         privilege: command.privilege,
         tag: command.tag._id,
-        personality: command.personality._id,
         mood: command.mood._id,
       },
     });
@@ -155,7 +154,6 @@ const initialState: ChatCommandCreateData = {
   aliases: [""],
   messages: [""],
   privilege: 0,
-  personality: "",
   tag: "",
   mood: "",
 };
@@ -181,8 +179,6 @@ function reducer(
       return { ...state, description: action.payload };
     case "SET_TAG":
       return { ...state, tag: action.payload };
-    case "SET_PERSONALITY":
-      return { ...state, personality: action.payload };
     case "SET_MOOD":
       return { ...state, mood: action.payload };
     case "SET_STATE":

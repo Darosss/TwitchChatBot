@@ -45,7 +45,7 @@ export default function CategoriesData(props: {
           </tr>
         }
         tbodyChildren={data.map((category) => {
-          const { tag, personality, mood } = category;
+          const { tag, mood } = category;
           return (
             <tr key={category._id}>
               <td>
@@ -87,11 +87,6 @@ export default function CategoriesData(props: {
                   <div>{category.uses}</div>
                   <div>Tag:</div>
                   {generateEnabledDisabledDiv(tag.enabled, tag.name)}
-                  <div>Personality:</div>
-                  {generateEnabledDisabledDiv(
-                    personality.enabled,
-                    personality.name
-                  )}
                   <div>Mood:</div>
                   {generateEnabledDisabledDiv(mood.enabled, mood.name)}
                 </TableDataWrapper>
