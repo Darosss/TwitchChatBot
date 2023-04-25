@@ -11,7 +11,7 @@ export default function ModesList() {
           <Link to="moods">Moods</Link>
         </div>
         <div>
-          <Link to="personalities">Personalities</Link>
+          <Link to="affixes">Affixes</Link>
         </div>
         <div>
           <Link to="tags">Tags</Link>
