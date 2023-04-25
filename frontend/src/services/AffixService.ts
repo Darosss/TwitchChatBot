@@ -1,38 +1,43 @@
 import useAxiosCustom, { PaginationData } from "./ApiService";
 
-export interface Personality {
+export interface Affix {
   _id: string;
   name: string;
   enabled: boolean;
+  prefixChance: number;
+  suffixChance: number;
+  suffixes: string[];
+  prefixes: string[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-interface PersonalityCreateData extends Pick<Personality, "name"> {}
+interface AffixCreateData
+  extends Omit<Affix, "_id" | "enabled" | "updatedAt" | "createdAt"> {}
 
-interface PersonalityUpdateData extends Partial<PersonalityCreateData> {
+interface AffixUpdateData extends Partial<AffixCreateData> {
   enabled?: boolean;
 }
 
-export const getPersonalities = (urlParams = true) => {
-  return useAxiosCustom<PaginationData<Personality>>({
-    url: `/personalities`,
+export const getAffixes = (urlParams = true) => {
+  return useAxiosCustom<PaginationData<Affix>>({
+    url: `/affixes`,
     urlParams: urlParams,
   });
 };
 
-export const editPersonality = (id: string, data: PersonalityUpdateData) => {
-  return useAxiosCustom<Personality>({
-    url: `/personalities/${id}`,
+export const editAffix = (id: string, data: AffixUpdateData) => {
+  return useAxiosCustom<Affix>({
+    url: `/affixes/${id}`,
     method: "POST",
     bodyData: data,
     manual: true,
   });
 };
 
-export const createPersonality = (data: PersonalityCreateData) => {
-  return useAxiosCustom<Personality>({
-    url: `/personalities/create/`,
+export const createAffix = (data: AffixCreateData) => {
+  return useAxiosCustom<Affix>({
+    url: `/affixes/create/`,
     method: "POST",
     bodyData: data,
     manual: true,
@@ -40,9 +45,9 @@ export const createPersonality = (data: PersonalityCreateData) => {
   });
 };
 
-export const deletePersonality = (id: string) => {
-  return useAxiosCustom<Personality>({
-    url: `/personalities/delete/${id}`,
+export const deleteAffix = (id: string) => {
+  return useAxiosCustom<Affix>({
+    url: `/affixes/delete/${id}`,
     method: "DELETE",
     manual: true,
     urlParams: false,

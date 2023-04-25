@@ -1,6 +1,5 @@
 import useAxiosCustom, { PaginationData } from "./ApiService";
 import { Mood } from "./MoodService";
-import { Personality } from "./PersonalityService";
 import { Tag } from "./TagService";
 
 export interface Timer {
@@ -15,7 +14,6 @@ export interface Timer {
   nonSubMulti: boolean;
   reqPoints: number;
   points: number;
-  personality: Personality;
   tag: Tag;
   mood: Mood;
   createdAt: Date;
@@ -25,16 +23,8 @@ export interface Timer {
 export interface TimerCreateData
   extends Omit<
     Timer,
-    | "_id"
-    | "createdAt"
-    | "updatedAt"
-    | "points"
-    | "uses"
-    | "personality"
-    | "tag"
-    | "mood"
+    "_id" | "createdAt" | "updatedAt" | "points" | "uses" | "tag" | "mood"
   > {
-  personality: string;
   tag: string;
   mood: string;
 }

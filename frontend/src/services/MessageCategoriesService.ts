@@ -1,6 +1,5 @@
 import useAxiosCustom, { PaginationData } from "./ApiService";
 import { Mood } from "./MoodService";
-import { Personality } from "./PersonalityService";
 import { Tag } from "./TagService";
 
 export interface MessageCategory {
@@ -9,7 +8,6 @@ export interface MessageCategory {
   enabled: boolean;
   messages: [string, number][];
   uses: number;
-  personality: Personality;
   tag: Tag;
   mood: Mood;
   createdAt: Date;
@@ -19,17 +17,9 @@ export interface MessageCategory {
 export interface MessageCategoryCreateData
   extends Omit<
     MessageCategory,
-    | "_id"
-    | "createdAt"
-    | "updatedAt"
-    | "uses"
-    | "personality"
-    | "tag"
-    | "mood"
-    | "messages"
+    "_id" | "createdAt" | "updatedAt" | "uses" | "tag" | "mood" | "messages"
   > {
   messages: string[];
-  personality: string;
   tag: string;
   mood: string;
 }

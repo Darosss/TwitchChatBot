@@ -1,6 +1,5 @@
 import useAxiosCustom, { PaginationData } from "./ApiService";
 import { Mood } from "./MoodService";
-import { Personality } from "./PersonalityService";
 import { Tag } from "./TagService";
 
 export interface ChatCommand {
@@ -13,7 +12,6 @@ export interface ChatCommand {
   messages: string[];
   privilege: number;
   useCount: number;
-  personality: Personality;
   tag: Tag;
   mood: Mood;
   createdAt: Date;
@@ -23,16 +21,8 @@ export interface ChatCommand {
 export interface ChatCommandCreateData
   extends Omit<
     ChatCommand,
-    | "_id"
-    | "createdAt"
-    | "updatedAt"
-    | "useCount"
-    | "personality"
-    | "tag"
-    | "mood"
-    | "uses"
+    "_id" | "createdAt" | "updatedAt" | "useCount" | "tag" | "mood" | "uses"
   > {
-  personality: string;
   tag: string;
   mood: string;
 }
