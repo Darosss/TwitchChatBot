@@ -240,6 +240,8 @@ export interface AffixModel extends BaseModel, PrefixSuffixChancesConfig {
   enabled: boolean;
   prefixes: string[];
   suffixes: string[];
+  prefixChance: number;
+  suffixChance: number;
 }
 
 export type AffixDocument = AffixModel & Document;
