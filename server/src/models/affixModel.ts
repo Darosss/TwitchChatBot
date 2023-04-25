@@ -1,7 +1,9 @@
 import {
   baseChatFeaturesFields,
+  prefixChanceField,
   prefixesField,
-  sufixesField,
+  suffixChanceField,
+  suffixesField,
 } from "@utils/commonSchemaFieldsUtil";
 import { Model, model, Schema } from "mongoose";
 import { AffixDocument } from "./types";
@@ -9,8 +11,10 @@ import { AffixDocument } from "./types";
 const AffixSchema: Schema<AffixDocument> = new Schema(
   {
     ...baseChatFeaturesFields,
+    ...suffixChanceField,
+    ...prefixChanceField,
     ...prefixesField,
-    ...sufixesField,
+    ...suffixesField,
   },
   { timestamps: true }
 );
