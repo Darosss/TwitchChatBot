@@ -5,85 +5,74 @@ import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
 import {
-  getPersonalities,
-  editPersonality,
-  createPersonality,
-  deletePersonality,
-  Personality,
-} from "@services/PersonalityService";
+  getAffixes,
+  editAffix,
+  createAffix,
+  deleteAffix,
+  Affix,
+} from "@services/AffixService";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import FilterBarModes from "../filterBarModes";
 import ModalDataWrapper from "@components/modalDataWrapper";
 
-export default function Personalities() {
+export default function Affixes() {
   const [showModal, setShowModal] = useState(false);
 
-  const [editingPersonality, setEditingPersonality] = useState("");
-  const [personalityIdDelete, setPersonalityIdDelete] = useState<string | null>(
-    null
-  );
+  const [editingAffix, setEditingAffix] = useState("");
+  const [affixIdDelete, setAffixIdDelete] = useState<string | null>(null);
 
   const [name, setName] = useState("");
   const [createName, setCreateName] = useState("");
 
-  const {
-    data: personalitiesData,
-    loading,
-    error,
-    refetchData,
-  } = getPersonalities();
+  const { data: affixesData, loading, error, refetchData } = getAffixes();
 
-  const { refetchData: fetchEditPersonality } = editPersonality(
-    editingPersonality,
-    { name: name }
-  );
-
-  const { refetchData: fetchCreatePersonality } = createPersonality({
-    name: createName,
+  const { refetchData: fetchEditAffix } = editAffix(editingAffix, {
+    name: name,
   });
 
-  const { refetchData: fetchDeletePersonality } = deletePersonality(
-    personalityIdDelete ? personalityIdDelete : ""
+  const { refetchData: fetchCreateAffix } = createAffix({
+    name: createName,
+    prefixChance: 5,
+    suffixChance: 5,
+    prefixes: [""],
+    suffixes: [""],
+    //TODO:ADD states
+  });
+
+  const { refetchData: fetchDeleteAffix } = deleteAffix(
+    affixIdDelete ? affixIdDelete : ""
   );
 
   useEffect(() => {
-    handleActionOnChangeState(
-      personalityIdDelete,
-      setPersonalityIdDelete,
-      () => {
-        fetchDeletePersonality()
-          .then(() => {
-            refetchData();
-            addNotification(
-              "Deleted",
-              "Personality deleted successfully",
-              "danger"
-            );
-            setPersonalityIdDelete(null);
-          })
-          .catch((err) => {
-            addNotification("Warning", err.response.data.message, "warning");
-          });
-      }
-    );
-  }, [personalityIdDelete]);
+    handleActionOnChangeState(affixIdDelete, setAffixIdDelete, () => {
+      fetchDeleteAffix()
+        .then(() => {
+          refetchData();
+          addNotification("Deleted", "Affix deleted successfully", "danger");
+          setAffixIdDelete(null);
+        })
+        .catch((err) => {
+          addNotification("Warning", err.response.data.message, "warning");
+        });
+    });
+  }, [affixIdDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (loading || !personalitiesData) return <> Loading...</>;
+  if (loading || !affixesData) return <> Loading...</>;
 
-  const { data, count, currentPage } = personalitiesData;
+  const { data, count, currentPage } = affixesData;
 
-  const createNewPersonality = () => {
-    fetchCreatePersonality().then(() => {
-      addNotification("Success", "Personality created successfully", "success");
+  const createNewAffix = () => {
+    fetchCreateAffix().then(() => {
+      addNotification("Success", "Affix created successfully", "success");
       refetchData();
     });
   };
 
   const onSubmitEditModal = () => {
-    fetchEditPersonality().then(() => {
-      addNotification("Success", "Personality edited successfully", "success");
+    fetchEditAffix().then(() => {
+      addNotification("Success", "Affix edited successfully", "success");
       refetchData();
     });
     setShowModal(false);
@@ -93,9 +82,9 @@ export default function Personalities() {
     setShowModal(false);
   };
 
-  const handleOnEdit = (personality: Personality) => {
-    setEditingPersonality(personality._id);
-    setName(personality.name);
+  const handleOnEdit = (affix: Affix) => {
+    setEditingAffix(affix._id);
+    setName(affix.name);
     setShowModal(true);
   };
 
@@ -113,24 +102,24 @@ export default function Personalities() {
               onChange={(e) => setCreateName(e.target.value)}
             ></input>
             <button
-              onClick={createNewPersonality}
+              onClick={createNewAffix}
               className="common-button primary-button"
             >
               Create
             </button>
           </div>
         </div>
-        {data.map((personality, index) => {
+        {data.map((affix, index) => {
           return (
             <div key={index} className="mode-item">
               <button
-                onClick={() => handleOnEdit(personality)}
+                onClick={() => handleOnEdit(affix)}
                 className="common-button primary-button edit-mode-button"
               >
-                {personality.name}
+                {affix.name}
               </button>
               <button
-                onClick={() => setPersonalityIdDelete(personality._id)}
+                onClick={() => setAffixIdDelete(affix._id)}
                 className="common-button danger-button remove-mode-btn"
               >
                 X
@@ -142,14 +131,14 @@ export default function Personalities() {
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
-          localStorageName="personalitiesListPageSize"
+          localStorageName="affixesListPageSize"
           currentPage={currentPage}
           totalCount={count}
           siblingCount={1}
         />
       </div>
       <Modal
-        title="Edit personality"
+        title="Edit affix"
         onClose={() => onCloseModal()}
         onSubmit={() => {
           onSubmitEditModal();

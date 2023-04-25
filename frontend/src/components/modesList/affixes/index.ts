@@ -1,3 +1,3 @@
-import Personalities from "./Personalities";
+import Affixes from "./Affixes";
 
-export default Personalities;
+export default Affixes;
