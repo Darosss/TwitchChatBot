@@ -12,12 +12,13 @@ export interface Affix {
   updatedAt: Date;
 }
 
-interface AffixCreateData
-  extends Omit<Affix, "_id" | "enabled" | "updatedAt" | "createdAt"> {}
+interface AffixCreateData extends Pick<Affix, "name"> {}
 
-interface AffixUpdateData extends Partial<AffixCreateData> {
-  enabled?: boolean;
-}
+interface AffixUpdateData
+  extends Partial<AffixCreateData>,
+    Partial<
+      Pick<Affix, "prefixChance" | "suffixChance" | "prefixes" | "suffixes">
+    > {}
 
 export const getAffixes = (urlParams = true) => {
   return useAxiosCustom<PaginationData<Affix>>({
