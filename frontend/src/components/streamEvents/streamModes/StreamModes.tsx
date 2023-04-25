@@ -107,6 +107,7 @@ export default function StreamModes() {
                   let suffixes: string[] = [];
 
                   affixes.forEach((affix) => {
+                    if (!affix.enabled) return;
                     prefixes.push(affix.prefixes.join(" | "));
                     suffixes.push(affix.suffixes.join(" | "));
                   });
