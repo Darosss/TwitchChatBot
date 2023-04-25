@@ -5,6 +5,7 @@ import { getAllModes } from "@utils/getListModes";
 import { editTag } from "@services/TagService";
 import { editAffix } from "@services/AffixService";
 import { editMood } from "@services/MoodService";
+import { addNotification } from "@utils/getNotificationValues";
 
 export default function StreamModes() {
   const socket = useContext(SocketContext);
@@ -77,7 +78,9 @@ export default function StreamModes() {
         <div className="widget-header"> Stream modes </div>
         <div className="stream-modes-section-wrapper">
           <div className="stream-modes-section">
-            <div className="stream-modes-section-name">Tags</div>
+            <div className="stream-modes-section-name">
+              <button className="common-button secondary-button">Tags </button>
+            </div>
             {tags?.map((tag, index) => {
               return (
                 <div key={index}>
@@ -96,7 +99,35 @@ export default function StreamModes() {
             })}
           </div>
           <div className="stream-modes-section">
-            <div className="stream-modes-section-name">Affixes</div>
+            <div className="stream-modes-section-name">
+              <button
+                className="common-button secondary-button"
+                onClick={(e) => {
+                  let prefixes: string[] = [];
+                  let suffixes: string[] = [];
+
+                  affixes.forEach((affix) => {
+                    prefixes.push(affix.prefixes.join(" | "));
+                    suffixes.push(affix.suffixes.join(" | "));
+                  });
+                  console.log(prefixes, suffixes);
+                  addNotification(
+                    "Enabled prefixes",
+                    `${prefixes.join(" | ")}`,
+                    "info",
+                    25000
+                  );
+                  addNotification(
+                    "Enabled suffixes",
+                    `${suffixes.join(" | ")}`,
+                    "info",
+                    25000
+                  );
+                }}
+              >
+                Affixes
+              </button>
+            </div>
 
             {affixes?.map((affix, index) => {
               return (
@@ -116,7 +147,9 @@ export default function StreamModes() {
             })}
           </div>
           <div className="stream-modes-section">
-            <div className="stream-modes-section-name">Moods</div>
+            <div className="stream-modes-section-name">
+              <button className="common-button secondary-button">Moods</button>
+            </div>
 
             {moods?.map((mood, index) => {
               return (

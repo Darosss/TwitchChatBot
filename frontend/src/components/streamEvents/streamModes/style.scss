@@ -14,7 +14,10 @@
 
     .stream-modes-section {
       .stream-modes-section-name {
-        background-color: var(--info-bg-color);
+        // background-color: var(--info-bg-color);
+        button {
+          height: 50%;
+        }
       }
 
       & > div {
