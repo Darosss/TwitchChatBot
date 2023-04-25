@@ -149,3 +149,83 @@ export const getOneAffix = async (filter: FilterQuery<AffixDocument> = {}) => {
     handleAppError(err);
   }
 };
+
+export const getEnabledSuffixesAndPrefixes = async () => {
+  try {
+    const suffixesAndPrefixes = await Affix.aggregate<{
+      prefixes: string[];
+      suffixes: string[];
+    }>([
+      {
+        $match: {
+          enabled: true,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          prefixes: { $push: "$prefixes" },
+          suffixes: { $push: "$suffixes" },
+        },
+      },
+    ]);
+
+    if (suffixesAndPrefixes.length > 0) {
+      return {
+        prefixes: [...new Set(suffixesAndPrefixes[0].prefixes.flat())],
+        suffixes: [...new Set(suffixesAndPrefixes[0].suffixes.flat())],
+      };
+    }
+
+    return { prefixes: [""], suffixes: [""] };
+  } catch (err) {
+    logger.error(
+      `Error occured while aggregating affixes for sufxes and prefixes: ${err}`
+    );
+    handleAppError(err);
+
+    return { prefixes: [""], suffixes: [""] };
+  }
+};
+
+export const getAverageEnabledAffixesChances = async () => {
+  try {
+    const averagePercentChances = await Affix.aggregate<{
+      prefixesChances: number;
+      suffixesChances: number;
+    }>([
+      {
+        $match: {
+          enabled: true,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          prefixesChances: { $avg: "$prefixChance" },
+          suffixesChances: { $avg: "$suffixChance" },
+        },
+      },
+    ]);
+    if (averagePercentChances.length > 0) {
+      return {
+        prefixesChances: averagePercentChances[0].prefixesChances,
+        suffixesChances: averagePercentChances[0].suffixesChances,
+      };
+    } else {
+      return {
+        prefixesChances: 0,
+        suffixesChances: 0,
+      };
+    }
+  } catch (err) {
+    logger.error(
+      `Error occured while aggregating for average affixes chances: ${err}`
+    );
+    handleAppError(err);
+    return {
+      prefixesChances: 0,
+      suffixesChances: 0,
+    };
+  }
+};
