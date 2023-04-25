@@ -80,7 +80,6 @@ export default function TimersList() {
         nonSubMulti: timer.nonSubMulti,
         reqPoints: timer.reqPoints,
         messages: timer.messages,
-        personality: timer.personality._id,
         tag: timer.tag._id,
         mood: timer.mood._id,
       },
@@ -149,7 +148,6 @@ const initialState: TimerCreateData = {
   nonSubMulti: false,
   reqPoints: 10,
   messages: [""],
-  personality: "",
   tag: "",
   mood: "",
 };
@@ -180,8 +178,6 @@ function reducer(
       return { ...state, messages: action.payload };
     case "SET_TAG":
       return { ...state, tag: action.payload };
-    case "SET_PERSONALITY":
-      return { ...state, personality: action.payload };
     case "SET_MOOD":
       return { ...state, mood: action.payload };
     case "SET_STATE":

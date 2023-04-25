@@ -97,7 +97,6 @@ export default function MessageCategoriesList() {
         messages: category.messages.map((msg) => msg[0]),
         enabled: category.enabled,
         mood: category.mood._id,
-        personality: category.personality._id,
         tag: category.tag._id,
       },
     });
@@ -161,7 +160,6 @@ const initialState: MessageCategoryCreateData = {
   name: "",
   enabled: true,
   messages: [""],
-  personality: "",
   tag: "",
   mood: "",
 };
@@ -180,8 +178,7 @@ function reducer(
       return { ...state, messages: action.payload };
     case "SET_TAG":
       return { ...state, tag: action.payload };
-    case "SET_PERSONALITY":
-      return { ...state, personality: action.payload };
+
     case "SET_MOOD":
       return { ...state, mood: action.payload };
     case "SET_STATE":

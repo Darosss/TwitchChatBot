@@ -10,7 +10,7 @@ export default function TriggerModalData(props: {
   modes: AllModesReturn;
 }) {
   const { state, dispatch, modes } = props;
-  const { tags, personalities, moods } = modes;
+  const { tags, moods } = modes;
   return (
     <ModalDataWrapper>
       <div>Name</div>
@@ -78,16 +78,6 @@ export default function TriggerModalData(props: {
             dispatch({ type: "SET_TAG", payload: e });
           },
           tags
-        )}
-      </div>
-      <div>Personality</div>
-      <div>
-        {generateSelectModes(
-          state.personality,
-          (e) => {
-            dispatch({ type: "SET_PERSONALITY", payload: e });
-          },
-          personalities
         )}
       </div>
       <div>Mood</div>

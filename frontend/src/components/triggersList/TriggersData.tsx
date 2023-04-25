@@ -53,7 +53,7 @@ export default function TriggersData(props: {
           </tr>
         }
         tbodyChildren={data.map((trigger) => {
-          const { tag, personality, mood } = trigger;
+          const { tag, mood } = trigger;
           return (
             <tr key={trigger._id}>
               <td>
@@ -101,11 +101,6 @@ export default function TriggersData(props: {
                   <div>{trigger.mode}</div>
                   <div>Tag:</div>
                   {generateEnabledDisabledDiv(tag.enabled, tag.name)}
-                  <div>Personality:</div>
-                  {generateEnabledDisabledDiv(
-                    personality.enabled,
-                    personality.name
-                  )}
                   <div>Mood:</div>
                   {generateEnabledDisabledDiv(mood.enabled, mood.name)}
                   <div>Created at:</div>

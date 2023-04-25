@@ -81,7 +81,6 @@ export default function TriggersList() {
         messages: trigger.messages,
         mode: trigger.mode,
         mood: trigger.mood._id,
-        personality: trigger.personality._id,
         tag: trigger.tag._id,
         words: trigger.words,
       },
@@ -151,7 +150,6 @@ const initialState: TriggerCreateData = {
   words: [""],
   mode: "ALL",
   tag: "",
-  personality: "",
   mood: "",
 };
 
@@ -176,8 +174,6 @@ function reducer(
       return { ...state, mode: action.payload };
     case "SET_TAG":
       return { ...state, tag: action.payload };
-    case "SET_PERSONALITY":
-      return { ...state, personality: action.payload };
     case "SET_MOOD":
       return { ...state, mood: action.payload };
     case "SET_STATE":
