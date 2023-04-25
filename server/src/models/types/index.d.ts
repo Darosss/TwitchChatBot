@@ -79,12 +79,12 @@ export interface TriggerModel extends BaseModel {
 
 export type TriggerDocument = TriggerModel & Document;
 
-interface PrefixSufixChancesConfig {
-  sufixChance: number;
+interface PrefixSuffixChancesConfig {
+  suffixChance: number;
   prefixChance: number;
 }
 
-export interface TimersConfigs extends PrefixSufixChancesConfig {
+export interface TimersConfigs extends PrefixSuffixChancesConfig {
   timersIntervalDelay: number;
   nonFollowTimerPoints: number;
   nonSubTimerPoints: number;
@@ -100,7 +100,7 @@ export interface ChatGamesConfigs {
   minActiveUsersThreshold: number;
 }
 
-export interface TriggersConfigs extends PrefixSufixChancesConfig {
+export interface TriggersConfigs extends PrefixSuffixChancesConfig {
   randomMessageChance: number;
 }
 
@@ -231,17 +231,15 @@ export type TimerDocument = TimerModel & Document;
 export interface MoodModel extends BaseModel {
   name: string;
   enabled: boolean;
-  prefixes: string[];
-  sufixes: string[];
 }
 
 export type MoodDocument = MoodModel & Document;
 
-export interface AffixModel extends BaseModel {
+export interface AffixModel extends BaseModel, PrefixSuffixChancesConfig {
   name: string;
   enabled: boolean;
   prefixes: string[];
-  sufixes: string[];
+  suffixes: string[];
 }
 
 export type AffixDocument = AffixModel & Document;
