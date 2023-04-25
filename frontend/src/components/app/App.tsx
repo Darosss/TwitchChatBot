@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import { SocketContext, socketConn } from "@context/SocketContext";
 import SideBar from "@components/sideBar";
@@ -19,6 +19,8 @@ import { TimersRoute } from "@routes/TimersRoute";
 import { ModesRoutes } from "@routes/ModeRoute";
 import { HelmetProvider } from "react-helmet-async";
 import Home from "@components/home";
+import OverlayList from "@components/overlay/overlaysList";
+import ComponentWithTitle from "@components/componentWithTitle";
 
 function App() {
   return (
@@ -36,6 +38,16 @@ function App() {
               </Route>
 
               <Route element={<DefaultRouteLayout />}>
+                <Route
+                  path="/overlay"
+                  element={
+                    <ComponentWithTitle
+                      title="Overlays"
+                      Component={<OverlayList />}
+                    />
+                  }
+                />
+
                 <Route path="/users/*" element={<UserRoutes />} />
                 <Route path="/messages/*" element={<MessageRoutes />} />
                 <Route
