@@ -41,7 +41,7 @@ export default function TriggersConfigsWrapper(props: {
             sufixChance: e.target.valueAsNumber,
           }))
         }
-        value={triggersConfigs.sufixChance}
+        value={triggersConfigs.suffixChance}
         showEdit={showEdit}
       />
     </>
