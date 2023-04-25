@@ -17,7 +17,10 @@ interface AffixCreateData extends Pick<Affix, "name"> {}
 interface AffixUpdateData
   extends Partial<AffixCreateData>,
     Partial<
-      Pick<Affix, "prefixChance" | "suffixChance" | "prefixes" | "suffixes">
+      Pick<
+        Affix,
+        "prefixChance" | "suffixChance" | "prefixes" | "suffixes" | "enabled"
+      >
     > {}
 
 export const getAffixes = (urlParams = true) => {
