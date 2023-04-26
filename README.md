@@ -191,11 +191,11 @@ Once the app is started, it will listen for incoming twitch chat messages on you
 
 - Modes:
 
-  - Available modes are: Tags / Moods / Personalities
+  - Available modes are: Tags / Moods / Affixes
   - Create modes and assign them to timers / triggers / commands / message categories
   - By default global modes are created
-  - Depends on which modes are currently turned on, bot sends other messages(_of course if you added any_)
-  - Moods have their own sufixes and prefixes where they can be added to triggers, random messages or timers
+  - Depends on which Tags and/or Moods are currently turned on, bot sends other messages(_of course if you added any_)
+  - Affixes are a bit different, just because they works as affix to messages. Each of affixes have multipler(in %) that adjust global configs of affix chance
 
 - Timers:
 
@@ -314,9 +314,13 @@ Once the app is started, it will listen for incoming twitch chat messages on you
 - [] Add complete user edit
 - [] Add functionality to non sub timers
 - [] Refactor prefixes, sufixes to get from enabled modes
-- [] Add information in frontend when:
+- [] Add information about fields in frontend when:
   - [] Creating new triggers, chat commands, timers or message categories
   - [] Editing configs to understand what each config option does
+- [] Add rest of alert sounds options (fe. enabled, colors, prompts etc.)
+- [] Add more stream statistics and improve existing
+- [] Add variety chat games (fe. random numbers, jokes etc)
+- [] Add starting soon and ending screens as overlays
 
 ## License
 
