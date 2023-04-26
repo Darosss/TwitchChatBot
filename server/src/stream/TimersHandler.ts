@@ -18,7 +18,6 @@ import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
 import { TimerModel, TimersConfigs, UserModel } from "@models/types";
 import { timerLogger } from "@utils/loggerUtil";
 import {
-  getAverageEnabledAffixesChances,
   getEnabledSuffixesAndPrefixes,
   getMultiperEnabledAfixesChances,
 } from "@services/affixes";
