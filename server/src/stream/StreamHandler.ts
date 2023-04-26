@@ -25,7 +25,7 @@ import MessagesHandler from "./MessagesHandler";
 import { getConfigs } from "@services/configs";
 import { headLogger, messageLogger } from "@utils/loggerUtil";
 import TimersHandler from "./TimersHandler";
-import { ChatUserstate, Client } from "tmi.js";
+import { ChatUserstate } from "tmi.js";
 import { createUserIfNotExist } from "@services/users";
 import { UserCreateData } from "@services/users/types";
 import MusicStreamHandler from "./MusicStreamHandler";

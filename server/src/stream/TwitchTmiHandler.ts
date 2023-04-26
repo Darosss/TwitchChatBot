@@ -20,8 +20,6 @@ class ClientTmiHandler {
       channels: [options.userToListen],
     });
     this.connect();
-    const readyState = this.clientTmi.readyState();
-    console.log(readyState);
   }
 
   public static async getInstance(

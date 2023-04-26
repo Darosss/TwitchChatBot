@@ -236,7 +236,6 @@ class TriggersHandler {
     if (getPrefix) prefix = prefixes[randomWithMax(prefixes.length)];
     if (getsuffix) suffix = suffixes[randomWithMax(suffixes.length)];
 
-    console.log(suffixes, "test");
     triggerLogger.info(
       `Add prefix - ${prefix} and suffix - ${suffix} to message`
     );
