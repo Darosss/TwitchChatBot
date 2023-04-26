@@ -156,10 +156,20 @@ class EventSubHandler extends HeadHandler {
         );
 
         const alertSoundPath = path.join(alertSoundsPath, rewardTitle) + ".mp3";
-        const alertSoundFileBuffer = fs.readFileSync(
-          path.join(alertSoundsPath, rewardTitle) + ".mp3"
-        );
-        if (!alertSoundFileBuffer) return;
+        let alertSoundFileBuffer: Buffer;
+
+        try {
+          alertSoundFileBuffer = fs.readFileSync(
+            path.join(alertSoundsPath, rewardTitle) + ".mp3"
+          );
+        } catch (err) {
+          if (err instanceof Error) {
+            eventsubLogger.info(
+              `Error occured while trying to get mp3 file for redemptions. ${err.message}`
+            );
+          }
+          return;
+        }
 
         const alertSoundDurationSec = await getMp3AudioDuration(alertSoundPath);
 
