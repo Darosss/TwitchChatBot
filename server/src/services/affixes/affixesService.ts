@@ -188,6 +188,50 @@ export const getEnabledSuffixesAndPrefixes = async () => {
   }
 };
 
+export const getMultiperEnabledAfixesChances = async () => {
+  try {
+    const averagePercentChances = await Affix.aggregate<{
+      prefixesMultipler: number;
+      suffixesMultipler: number;
+    }>([
+      {
+        $match: {
+          enabled: true,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          prefixesMultipler: { $sum: "$prefixChance" },
+          suffixesMultipler: { $sum: "$suffixChance" },
+        },
+      },
+    ]);
+
+    if (averagePercentChances.length > 0) {
+      return {
+        prefixesMultipler: averagePercentChances[0].prefixesMultipler / 100,
+        suffixesMultipler: averagePercentChances[0].suffixesMultipler / 100,
+      };
+    } else {
+      return {
+        prefixesMultipler: 1,
+        suffixesMultipler: 1,
+      };
+    }
+  } catch (err) {
+    logger.error(
+      `Error occured while aggregating for enabled affixes multipler: ${err}`
+    );
+    handleAppError(err);
+    return {
+      prefixesMultipler: 1,
+      suffixesMultipler: 1,
+    };
+  }
+};
+
+//Not used, but left for future
 export const getAverageEnabledAffixesChances = async () => {
   try {
     const averagePercentChances = await Affix.aggregate<{
