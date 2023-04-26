@@ -5,7 +5,6 @@ import {
   MoodModel,
 } from "@models/types";
 import {
-  getAverageEnabledAffixesChances,
   getEnabledSuffixesAndPrefixes,
   getMultiperEnabledAfixesChances,
 } from "@services/affixes";
