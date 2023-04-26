@@ -1,10 +1,6 @@
 import { modesPipeline } from "@aggregations/modesPipeline";
 import { MessageCategory } from "@models/messageCategoryModel";
-import {
-  MessageCategoryDocument,
-  MessageCategoryModel,
-  MoodModel,
-} from "@models/types";
+import { MessageCategoryDocument, MessageCategoryModel } from "@models/types";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
@@ -213,11 +209,6 @@ export const createMessageCategories = async (
     handleAppError(err);
   }
 };
-
-export const updateMessageCategory = async (
-  filter: MessageCategoryFindOptions,
-  messageCategoryData: MessageCategoryData
-) => {};
 
 export const updateMessageCategoryById = async (
   id: string,

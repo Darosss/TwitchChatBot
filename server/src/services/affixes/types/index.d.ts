@@ -1,4 +1,4 @@
-import { AffixM, AffixModel } from "@models/types";
+import { AffixModel } from "@models/types";
 import { PopulateOption, PopulateOptions } from "mongoose";
 import { SortQuery, SelectQuery } from "@services/types";
 
