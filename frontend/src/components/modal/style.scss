@@ -24,7 +24,11 @@
 
   .modal-content {
     width: 50vw;
-    background-color: var(--background-color);
+    background: linear-gradient(
+      to bottom,
+      var(--background-color),
+      var(--background-color-darker)
+    );
     transform: translateY(-10vh);
     transition: all 0.1s ease-out;
   }
