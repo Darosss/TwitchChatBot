@@ -7,6 +7,7 @@ import {
 import {
   getAverageEnabledAffixesChances,
   getEnabledSuffixesAndPrefixes,
+  getMultiperEnabledAfixesChances,
 } from "@services/affixes";
 import {
   findCategoryAndUpdateMessageUse,
@@ -25,6 +26,7 @@ class TriggersHandler {
   private configs: TriggersConfigs;
   private triggersWords: string[] = [];
   private triggersOnDelay: Map<string, NodeJS.Timeout> = new Map();
+  private affixesMultipler = { prefixMult: 1, suffixMult: 1 };
 
   constructor(configs: TriggersConfigs) {
     this.configs = configs;
@@ -35,30 +37,32 @@ class TriggersHandler {
     Promise.all([
       this.refreshTriggers(),
       this.setEveryTriggerDelayOff(),
-      this.updateAffixesChances(),
+      this.updateAffixesMultiplers(),
     ]);
   }
 
   public async refreshTriggers() {
     this.triggersWords = (await getTriggersWords(true)) || [];
+
+    await this.updateAffixesMultiplers();
   }
 
   public async refreshConfigs(configs: TriggersConfigs) {
     this.configs = configs;
 
-    await this.updateAffixesChances();
+    await this.updateAffixesMultiplers();
   }
 
   private async setEveryTriggerDelayOff() {
     await updateTriggers({}, { onDelay: false });
   }
 
-  private async updateAffixesChances() {
-    const { prefixesChances, suffixesChances } =
-      await getAverageEnabledAffixesChances();
+  private async updateAffixesMultiplers() {
+    const { prefixesMultipler, suffixesMultipler } =
+      await getMultiperEnabledAfixesChances();
 
-    this.configs.suffixChance += suffixesChances;
-    this.configs.prefixChance += prefixesChances;
+    this.affixesMultipler.prefixMult = prefixesMultipler;
+    this.affixesMultipler.suffixMult = suffixesMultipler;
   }
 
   private async getTriggerWordAndTrigger(message: string) {
@@ -130,13 +134,17 @@ class TriggersHandler {
   }
 
   private shouldGetPrefix() {
-    if (percentChance(this.configs.prefixChance)) {
+    const prefixChance =
+      this.configs.prefixChance * this.affixesMultipler.prefixMult;
+    if (percentChance(prefixChance)) {
       return true;
     }
     return false;
   }
   private shouldGetsuffix() {
-    if (percentChance(this.configs.suffixChance)) {
+    const suffixChance =
+      this.configs.suffixChance * this.affixesMultipler.suffixMult;
+    if (percentChance(suffixChance)) {
       return true;
     }
     return false;

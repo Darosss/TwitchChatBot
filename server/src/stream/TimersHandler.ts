@@ -20,6 +20,7 @@ import { timerLogger } from "@utils/loggerUtil";
 import {
   getAverageEnabledAffixesChances,
   getEnabledSuffixesAndPrefixes,
+  getMultiperEnabledAfixesChances,
 } from "@services/affixes";
 
 class TimersHandler extends HeadHandler {
@@ -27,6 +28,7 @@ class TimersHandler extends HeadHandler {
   private clientSay: (message: string) => void;
   private timers: TimerModel[] = [];
   private timersTimeouts: Map<string, NodeJS.Timeout> = new Map();
+  private affixesMultipler = { prefixMult: 1, suffixMult: 1 };
 
   constructor(
     twitchApi: ApiClient,
@@ -49,7 +51,7 @@ class TimersHandler extends HeadHandler {
   private async init() {
     await this.refreshTimers();
 
-    await this.updateAffixesChances();
+    await this.updateAffixesMultiplers();
 
     setInterval(async () => {
       await this.checkTimersByPoints();
@@ -58,7 +60,7 @@ class TimersHandler extends HeadHandler {
 
   public async refreshConfigs(refreshedConfigs: TimersConfigs) {
     this.configs = refreshedConfigs;
-    await this.updateAffixesChances();
+    await this.updateAffixesMultiplers();
   }
 
   public async refreshTimers() {
@@ -66,6 +68,8 @@ class TimersHandler extends HeadHandler {
 
     this.clearTimersTimeouts();
     this.setTimersTimeouts();
+
+    await this.updateAffixesMultiplers();
   }
 
   private clearTimersTimeouts() {
@@ -98,12 +102,12 @@ class TimersHandler extends HeadHandler {
     );
   }
 
-  private async updateAffixesChances() {
-    const { prefixesChances, suffixesChances } =
-      await getAverageEnabledAffixesChances();
+  private async updateAffixesMultiplers() {
+    const { prefixesMultipler, suffixesMultipler } =
+      await getMultiperEnabledAfixesChances();
 
-    this.configs.suffixChance += suffixesChances;
-    this.configs.prefixChance += prefixesChances;
+    this.affixesMultipler.prefixMult = prefixesMultipler;
+    this.affixesMultipler.suffixMult = suffixesMultipler;
   }
 
   private async getTimerMessage(id: string) {
@@ -136,13 +140,17 @@ class TimersHandler extends HeadHandler {
   }
 
   private shouldGetPrefix() {
-    if (percentChance(this.configs.prefixChance)) {
+    const prefixChance =
+      this.configs.prefixChance * this.affixesMultipler.prefixMult;
+    if (percentChance(prefixChance)) {
       return true;
     }
     return false;
   }
   private shouldGetsuffix() {
-    if (percentChance(this.configs.suffixChance)) {
+    const suffixChance =
+      this.configs.suffixChance * this.affixesMultipler.suffixMult;
+    if (percentChance(suffixChance)) {
       return true;
     }
     return false;
