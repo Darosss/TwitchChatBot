@@ -1,6 +1,5 @@
 import Express, { NextFunction, Request, Response } from "express";
-import { getConfigs, updateConfigs } from "@services/configs";
-import { ConfigUpdateData } from "@services/configs/types";
+import { getConfigs, updateConfigs, ConfigUpdateData } from "@services/configs";
 import { configDefaults } from "@defaults/configsDefaults";
 
 export const getConfigsList = async (

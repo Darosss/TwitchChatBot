@@ -7,8 +7,9 @@ import {
   getTriggers,
   getTriggersCount,
   updateTriggerById,
+  TriggerCreateData,
+  TriggerUpdateData,
 } from "@services/triggers";
-import { TriggerCreateData, TriggerUpdateData } from "@services/triggers/types";
 
 export const getTriggersList = async (
   req: Request<{}, {}, {}, RequestTriggerQuery>,

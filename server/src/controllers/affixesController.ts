@@ -7,8 +7,9 @@ import {
   getAffixes,
   getAffixesCount,
   updateAffixById,
+  AffixCreateData,
+  AffixUpdateData,
 } from "@services/affixes";
-import { AffixCreateData, AffixUpdateData } from "@services/affixes/types";
 import { AffixModel } from "@models/types";
 
 export const getAffixesList = async (

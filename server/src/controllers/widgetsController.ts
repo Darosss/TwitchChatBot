@@ -6,9 +6,10 @@ import {
   getWidgets,
   getWidgetsCount,
   updateWidgetById,
+  WidgetCreateData,
+  WidgetUpdateData,
 } from "@services/widgets";
 import { RequestParams, RequestSearch } from "@types";
-import { WidgetCreateData, WidgetUpdateData } from "@services/widgets/types";
 import { WidgetsModel } from "@models/types";
 
 export const getWidgetsList = async (

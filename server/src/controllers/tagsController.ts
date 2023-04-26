@@ -7,8 +7,9 @@ import {
   getTags,
   getTagsCount,
   updateTagById,
+  TagCreateData,
+  TagUpdateData,
 } from "@services/tags";
-import { TagCreateData, TagUpdateData } from "@services/tags/types";
 import { TagModel } from "@models/types";
 
 export const getTagsList = async (

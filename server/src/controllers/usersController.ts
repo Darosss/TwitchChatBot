@@ -1,7 +1,6 @@
 import Express, { NextFunction, Request, Response } from "express";
 import {
   RequestParams,
-  RequestQuery,
   RequestQueryLatestEldestMsgs,
   RequestQueryMessage,
   RequestQueryUser,
@@ -13,6 +12,7 @@ import {
   getUserCount,
   getUsers,
   updateUserById,
+  UserUpdateData,
 } from "@services/users";
 
 import { filterMessagesByUrlParams } from "./filters/messagesFilter";
@@ -20,7 +20,6 @@ import { getMessages, getMessagesCount } from "@services/messages";
 
 import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
 import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
-import { UserUpdateData } from "@services/users/types";
 
 export const getUsersList = async (
   req: Request<{}, {}, {}, RequestQueryUser>,

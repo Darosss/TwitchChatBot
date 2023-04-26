@@ -7,8 +7,9 @@ import {
   getTimers,
   getTimersCount,
   updateTimerById,
+  TimerCreateData,
+  TimerUpdateData,
 } from "@services/timers";
-import { TimerCreateData, TimerUpdateData } from "@services/timers/types";
 
 export const getTimersList = async (
   req: Request<{}, {}, {}, RequestTimerQuery>,

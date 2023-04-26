@@ -5,10 +5,10 @@ import {
   updateMessageCategoryById,
   createMessageCategories,
   deleteMessageCategory,
+  MessageCategoryCreateData,
 } from "@services/messageCategories";
 import { RequestParams, RequestQueryMessageCategories } from "@types";
 import { filterMessageCategoriesByUrlParams } from "./filters/messageCategoriesFilter";
-import { MessageCategoryCreateData } from "@services/messageCategories/types";
 
 export const getMessageCategoriesList = async (
   req: Request<{}, {}, {}, RequestQueryMessageCategories>,

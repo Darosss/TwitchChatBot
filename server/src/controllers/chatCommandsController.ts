@@ -7,11 +7,9 @@ import {
   getChatCommands,
   getChatCommandsCount,
   updateChatCommandById,
-} from "@services/chatCommands";
-import {
   ChatCommandCreateData,
   ChatCommandUpdateData,
-} from "@services/chatCommands/types";
+} from "@services/chatCommands";
 
 export const getChatCommandsList = async (
   req: Request<{}, {}, {}, RequestCommandsQuery>,
