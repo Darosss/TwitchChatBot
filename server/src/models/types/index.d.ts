@@ -48,6 +48,11 @@ export interface RedemptionModel {
 
 export type RedemptionDocument = RedemptionModel & Document;
 
+export interface SessionEventModel extends BaseModel {
+  user: string | UserModel;
+  name: string;
+}
+
 export interface StreamSessionModel {
   _id: string;
   sessionStart: Date;
@@ -57,6 +62,7 @@ export interface StreamSessionModel {
   tags: Map<string, string>;
   viewers: Map<string, number>;
   watchers: Map<string, number>;
+  events: SessionEventModel[];
 }
 
 export type StreamSessionDocument = StreamSessionModel & Document;
