@@ -5,6 +5,7 @@ import PreviousPage from "@components/previousPage";
 import SlideShow from "@components/slideShow";
 import { getSessionById } from "@services/StreamSessionService";
 import { DateTooltip } from "@components/dateTooltip";
+import StreamSessionEvents from "@components/streamSessionEvents";
 
 export default function StreamSessionDetail() {
   const { sessionId } = useParams();
@@ -78,16 +79,21 @@ export default function StreamSessionDetail() {
 
         <div className="detail-section-wrapper-big max">
           <div>
-            <div>
-              <SlideShow styleWrapper={{ width: "37vmax" }}>
-                {data.viewers ? (
-                  <LineChart
-                    data={data.viewers}
-                    chartOptions={{ title: "Viewers peek", label: "viewers" }}
-                  />
-                ) : null}
-              </SlideShow>
-            </div>
+            <SlideShow styleWrapper={{ width: "37vmax" }}>
+              {data.viewers ? (
+                <LineChart
+                  data={data.viewers}
+                  chartOptions={{ title: "Viewers peek", label: "viewers" }}
+                />
+              ) : null}
+            </SlideShow>
+          </div>
+          <div>
+            {data.events ? (
+              <div>
+                <StreamSessionEvents sessionEvents={data.events} />
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
