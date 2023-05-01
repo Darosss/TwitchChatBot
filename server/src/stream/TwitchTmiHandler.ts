@@ -33,13 +33,18 @@ class ClientTmiHandler {
     return ClientTmiHandler.instance;
   }
 
-  public async updateOptions(options: ClientTmiOptions): Promise<void> {
-    const { userToListen, password, username } = options;
-    this.userToListen = userToListen;
+  public async disconnectTmi() {
     const readyState = this.clientTmi.readyState();
     if (readyState === "CONNECTING" || readyState === "OPEN") {
       await this.clientTmi.disconnect();
     }
+  }
+
+  public async updateOptions(options: ClientTmiOptions): Promise<void> {
+    const { userToListen, password, username } = options;
+    this.userToListen = userToListen;
+
+    await this.disconnectTmi();
 
     this.clientTmi = new tmi.Client({
       options: { debug: true },
