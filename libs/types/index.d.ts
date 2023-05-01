@@ -1,10 +1,5 @@
 import { UserModel } from "../../server/src/models/types";
 
-export interface Event {
-  eventDate: Date;
-  eventName: string;
-}
-
 export interface AudioStreamData {
   id: string;
   audioBuffer: Buffer;
@@ -70,8 +65,11 @@ export type AudioPlayerOptions =
   | "load"
   | "volume";
 
-export interface EventAndIUser extends Event, UserModel {}
-
+export interface EventAndUser {
+  eventDate: Date;
+  eventName: string;
+  user: UserModel;
+}
 export interface RewardData {
   rewardId: string;
   userId: string;
@@ -87,7 +85,7 @@ export interface ServerToClientEvents {
   noArg: () => void;
   withAck: (callback: (e: number) => void) => void;
   messageServer: (date: Date, username: string, message: string) => void;
-  userJoinTwitchChat: (eventDate: Event, user: UserModel) => void;
+  userJoinTwitchChat: (eventAndUser: EventAndUser) => void;
   onRedemption: (data: RewardData, alertSound: Buffer) => void;
   audio: (data: AudioStreamData) => void;
   audioStop: () => void;
