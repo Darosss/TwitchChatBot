@@ -1,6 +1,15 @@
 import useAxiosCustom, { PaginationData, ResponseData } from "./ApiService";
 import { Message } from "./MessageService";
 import { Redemption } from "./RedemptionService";
+import { User } from "./UserService";
+
+export interface SessionEvents {
+  _id: string;
+  user: User;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export interface StreamSession {
   _id: string;
@@ -10,6 +19,7 @@ export interface StreamSession {
   categories: Record<string, string>;
   tags: Record<string, string>;
   viewers: Map<string, number>;
+  events: SessionEvents[];
 }
 
 export interface TopMsgsUsers {
