@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { Link, LinkProps } from "react-router-dom";
 import resetWindowScroll from "@utils/resetScroll";
@@ -6,13 +6,28 @@ import { getAuthorizeUrl } from "@services/AuthService";
 import DrawerBar from "@components/drawer";
 import { routes } from "@routes/routesList";
 import ChangeTheme from "@components/changeTheme";
+import { SocketContext } from "@context/SocketContext";
 
 interface NavLinkProps extends LinkProps {
   label: string;
 }
 
 export default function SideBar() {
+  const socket = useContext(SocketContext);
   const { data: authData, error } = getAuthorizeUrl();
+
+  const [loggedUser, setLoggedUser] = useState<string>("");
+
+  const handleOnLogoutButton = () => {
+    socket.emit("logout");
+  };
+
+  useEffect(() => {
+    socket.on("sendLoggedUserInfo", (username) => setLoggedUser(username));
+    return () => {
+      socket.off("sendLoggedUserInfo");
+    };
+  }, []);
 
   return (
     <DrawerBar direction={"right"} size={"15vw"} overlay={true}>
@@ -36,6 +51,23 @@ export default function SideBar() {
             {error ? "URL Error" : "Connect with twitch"}
           </a>
         </li>
+        {loggedUser ? (
+          <>
+            <li>
+              <button
+                className="common-button danger-button"
+                onClick={() => handleOnLogoutButton()}
+              >
+                Logout
+              </button>
+            </li>
+            <li>
+              <button className="common-button logged-button">
+                Logged as: <span>{loggedUser}</span>
+              </button>
+            </li>
+          </>
+        ) : null}
       </ul>
     </DrawerBar>
   );

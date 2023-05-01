@@ -7,11 +7,19 @@
   li {
     margin: 0.1rem;
     height: 5vh;
-    a {
+    a,
+    button {
       display: flex;
       width: 100%;
       text-align: center;
       height: 100%;
+    }
+  }
+  .logged-button {
+    font-size: 1.3vmin;
+    letter-spacing: 0.1rem;
+    span {
+      color: $info-color;
     }
   }
 }
