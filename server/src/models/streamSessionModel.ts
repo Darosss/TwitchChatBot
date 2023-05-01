@@ -1,5 +1,13 @@
 import { Model, model, Schema } from "mongoose";
-import { StreamSessionDocument } from "./types";
+import { SessionEventModel, StreamSessionDocument } from "./types";
+
+const EventsSchema = new Schema<SessionEventModel>(
+  {
+    user: { type: Schema.Types.ObjectId, ref: "User" },
+    name: { type: String },
+  },
+  { timestamps: true }
+);
 
 const StreamSessionSchema: Schema<StreamSessionDocument> = new Schema({
   sessionStart: { type: Date, required: true, default: Date.now },
@@ -29,6 +37,7 @@ const StreamSessionSchema: Schema<StreamSessionDocument> = new Schema({
     of: Number,
     default: new Map(),
   },
+  events: [EventsSchema],
 });
 
 export const StreamSession: Model<StreamSessionDocument> = model(
