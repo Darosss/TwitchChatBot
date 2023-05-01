@@ -108,11 +108,11 @@ class StreamHandler {
       clientTmi.say.bind(clientTmi)
     );
 
-    this.eventSubHandler = new EventSubHandler(
-      twitchApi,
-      socketIO,
-      authorizedUser
-    );
+    this.eventSubHandler = EventSubHandler.getInstance({
+      apiClient: twitchApi,
+      socketIO: socketIO,
+      authorizedUser: authorizedUser,
+    });
 
     this.init();
     this.initSocketEvents();
@@ -154,6 +154,11 @@ class StreamHandler {
     this.eventSubHandler.updateProperties(twitchApi, authorizedUser);
     this.loayaltyHandler.updateProperties(twitchApi, authorizedUser);
     this.timersHandler.updateProperties(twitchApi, authorizedUser);
+    this.eventSubHandler = EventSubHandler.getInstance({
+      apiClient: twitchApi,
+      socketIO: socketIO,
+      authorizedUser: authorizedUser,
+    });
   }
 
   private async initOnMessageEvents() {
