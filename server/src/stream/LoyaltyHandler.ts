@@ -51,9 +51,13 @@ class LoyaltyHandler extends HeadHandler {
   }
 
   public async refreshConfigs(configs: LoyaltyConfigsHandler) {
-    clearInterval(this.checkChattersTimeout);
+    this.stopCheckChatters();
     this.configs = configs;
     this.init();
+  }
+
+  public stopCheckChatters() {
+    clearInterval(this.checkChattersTimeout);
   }
 
   private async getStreamChatters() {
