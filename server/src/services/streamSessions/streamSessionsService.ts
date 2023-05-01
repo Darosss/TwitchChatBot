@@ -131,7 +131,8 @@ export const getLatestStreamSession = async (
     const foundStreamSession = await StreamSession.findOne({})
       .sort({ sessionStart: -1 })
       .limit(1)
-      .select(select);
+      .select(select)
+      .populate("events.user");
 
     const streamSession = checkExistResource(
       foundStreamSession,
