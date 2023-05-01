@@ -22,25 +22,48 @@ import { alertSoundsPath } from "@configs/globalPaths";
 import path from "path";
 import { getMp3AudioDuration } from "@utils/filesManipulateUtil";
 
+interface EventSubHandlerOptions {
+  apiClient: ApiClient;
+  socketIO: Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >;
+  authorizedUser: HelixPrivilegedUser;
+}
+
 class EventSubHandler extends HeadHandler {
-  private readonly listener: EventSubWsListener;
+  private static instance: EventSubHandler;
+  private listener: EventSubWsListener;
   private redemptionQue: [
     RewardData,
     { audioBuffer: Buffer; duration: number }
   ][] = [];
   private isAlertPlaying = false;
-  constructor(
-    apiClient: ApiClient,
-    socketIO: Server<
-      ClientToServerEvents,
-      ServerToClientEvents,
-      InterServerEvents,
-      SocketData
-    >,
-    authorizedUser: HelixPrivilegedUser
-  ) {
-    super(socketIO, apiClient, authorizedUser);
-    this.listener = new EventSubWsListener({ apiClient });
+  private constructor(options: EventSubHandlerOptions) {
+    super(options.socketIO, options.apiClient, options.authorizedUser);
+    this.listener = new EventSubWsListener({ apiClient: options.apiClient });
+  }
+
+  public static getInstance(options: EventSubHandlerOptions): EventSubHandler {
+    if (!EventSubHandler.instance) {
+      console.log("nie ma instancji");
+      EventSubHandler.instance = new EventSubHandler(options);
+    } else {
+      console.log("jest instancja uypdate");
+      EventSubHandler.instance.updateOptions(options);
+    }
+    return EventSubHandler.instance;
+  }
+
+  public async updateOptions(options: EventSubHandlerOptions): Promise<void> {
+    this.stop();
+    const { apiClient, authorizedUser } = options;
+    this.updateProperties(apiClient, authorizedUser);
+    this.listener = new EventSubWsListener({ apiClient: options.apiClient });
+    console.log("***********UPDATE EVENT SUB", authorizedUser.name);
+    this.init();
   }
 
   private async subscribeToStreamOfflineEvents() {
