@@ -11,7 +11,7 @@ class ClientTmiHandler {
   private userToListen: string;
   private clientTmi: Client;
 
-  constructor(options: ClientTmiOptions) {
+  private constructor(options: ClientTmiOptions) {
     this.userToListen = options.userToListen;
     this.clientTmi = new tmi.Client({
       options: { debug: true },
