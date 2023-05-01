@@ -154,11 +154,11 @@ class LoyaltyHandler extends HeadHandler {
       if (!this.usersBefore.has(userName) && userDB) {
         await this.updateEventsInCurrentSession(userDB.id, "Join chat");
 
-        this.socketIO.emit(
-          "userJoinTwitchChat",
-          { eventDate: new Date(), eventName: "Join chat" },
-          userDB
-        );
+        this.socketIO.emit("userJoinTwitchChat", {
+          eventDate: new Date(),
+          eventName: "Join chat",
+          user: userDB,
+        });
       }
 
       this.usersBefore.add(userName);
@@ -174,11 +174,11 @@ class LoyaltyHandler extends HeadHandler {
       if (userDB) {
         await this.updateEventsInCurrentSession(userDB.id, "Left chat");
 
-        this.socketIO.emit(
-          "userJoinTwitchChat",
-          { eventDate: new Date(), eventName: "Left chat" },
-          userDB
-        );
+        this.socketIO.emit("userJoinTwitchChat", {
+          eventDate: new Date(),
+          eventName: "Left chat",
+          user: userDB,
+        });
       }
     }
   }
