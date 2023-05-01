@@ -33,6 +33,7 @@ import { alertSoundPrefix } from "@configs/globalVariables";
 import EventSubHandler from "./EventSubHandler";
 import ClientTmiHandler from "./TwitchTmiHandler";
 import { botId } from "@configs/envVariables";
+import { removeAuthToken } from "@services/auth";
 interface StreamHandlerOptions {
   config: ConfigDocument;
   twitchApi: ApiClient;
@@ -66,6 +67,7 @@ class StreamHandler {
   private musicHandler: MusicStreamHandler;
   private eventSubHandler: EventSubHandler;
   private configs: ConfigDefaults;
+  private loggedIn: boolean = true;
 
   private checkViewersInterval: NodeJS.Timer | undefined;
   private constructor(options: StreamHandlerOptions) {
@@ -115,8 +117,8 @@ class StreamHandler {
     });
 
     this.init();
-    this.initSocketEvents();
     this.initOnMessageEvents();
+    this.initSocketEvents();
 
     this.musicHandler.init();
     this.triggersHandler;
@@ -142,6 +144,7 @@ class StreamHandler {
   }
 
   public updateOptions(options: StreamHandlerOptions): void {
+    this.loggedIn = true;
     const { twitchApi, socketIO, authorizedUser, clientTmi } = options;
     this.twitchApi = twitchApi;
     this.socketIO = socketIO;
@@ -286,6 +289,17 @@ class StreamHandler {
   private initSocketEvents() {
     this.socketIO.on("connect", (socket) => {
       console.log("Connected - every function in bot should work now");
+
+      socket.emit(
+        "sendLoggedUserInfo",
+        this.loggedIn ? this.authorizedUser.name : ""
+      );
+
+      socket.on("logout", async () => {
+        await this.logoutUser();
+        socket.emit("sendLoggedUserInfo", "");
+      });
+
       socket.on("saveConfigs", async () => await this.onSaveConfigs());
 
       socket.on("refreshTriggers", async () => await this.onRefreshTriggers());
@@ -326,6 +340,16 @@ class StreamHandler {
 
       this.onMusicHandlerEvents(socket);
     });
+  }
+
+  private async logoutUser() {
+    await Promise.all([
+      removeAuthToken(),
+      this.eventSubHandler.stop(),
+      this.clientTmi.disconnectTmi(),
+    ]);
+    this.loayaltyHandler.stopCheckChatters();
+    this.loggedIn = false;
   }
 
   private async onCreateCustomReward(data: CustomRewardCreateData) {
