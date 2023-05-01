@@ -120,6 +120,15 @@ class LoyaltyHandler extends HeadHandler {
     }
   }
 
+  private async updateEventsInCurrentSession(userId: string, event: string) {
+    this.currentSession = await updateCurrentStreamSession({
+      $push: {
+        // events: [userId, event],
+        events: { user: userId, name: event },
+      },
+    });
+  }
+
   private async handleActiveUsers(chatters: HelixChatChatter[]) {
     const usersNow = new Set<string>();
     for await (const user of chatters) {
@@ -143,6 +152,8 @@ class LoyaltyHandler extends HeadHandler {
       }
 
       if (!this.usersBefore.has(userName) && userDB) {
+        await this.updateEventsInCurrentSession(userDB.id, "Join chat");
+
         this.socketIO.emit(
           "userJoinTwitchChat",
           { eventDate: new Date(), eventName: "Join chat" },
@@ -161,6 +172,8 @@ class LoyaltyHandler extends HeadHandler {
       const userDB = await isUserInDB({ twitchName: userLeft });
       // const userDB = await this.isUserInDB(userLeft);
       if (userDB) {
+        await this.updateEventsInCurrentSession(userDB.id, "Left chat");
+
         this.socketIO.emit(
           "userJoinTwitchChat",
           { eventDate: new Date(), eventName: "Left chat" },
