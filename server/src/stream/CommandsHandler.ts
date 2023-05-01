@@ -90,7 +90,7 @@ class CommandsHandler extends HeadHandler {
 
   public async checkMessageForCommand(user: UserModel, message: string) {
     const isCommand = this.messageStartsWithPrefix(message);
-    if (!isCommand) return;
+    if (!isCommand) return false;
 
     const answers = await Promise.all([
       this.checkMessageForDefaultMusicCommand(user, message),
@@ -155,45 +155,44 @@ class CommandsHandler extends HeadHandler {
     switch (musicCommand) {
       case "play":
         this.musicHandler.resumePlayer(true);
-        return "";
+        return true;
       case "stop":
         return "Stop player! (Not implemented yet)";
-        return "";
       case "resume":
         this.musicHandler.resumePlayer(true);
-        return "";
+        return true;
       case "pause":
         this.musicHandler.pausePlayer(true);
-        return "";
+        return true;
       case "skip":
         this.musicHandler.nextSong(true);
-        return "";
+        return true;
       case "next":
         this.musicHandler.sayNextSong();
-        return "";
+        return true;
       case "previous":
         this.musicHandler.sayPreviousSong();
-        return "";
+        return true;
       case "when":
         this.musicHandler.sayWhenUserRequestedSong(username);
-        return "";
+        return true;
       case "load":
         const loadCommand = `${this.configs.commandsPrefix}load`;
         const loadOpt = message.replace(loadCommand, "").trim();
         this.musicHandler.loadNewSongs(loadOpt, true, true);
-        return "";
+        return true;
       case "sr":
         const srCommand = `${this.configs.commandsPrefix}sr`;
         const songName = message.replace(srCommand, "").trim();
 
         await this.musicHandler.requestSong(username, songName, true);
-        return "";
+        return true;
       case "volume":
         const volumeCommand = `${this.configs.commandsPrefix}volume`;
         const volume = Number(message.replace(volumeCommand, "").trim());
 
         this.musicHandler.changeVolume(volume, true);
-        return "";
+        return true;
     }
   }
 
@@ -203,7 +202,7 @@ class CommandsHandler extends HeadHandler {
 
   private async findAndCheckCommandByAlias(user: UserModel, alias: string) {
     const foundCommand = await this.getCommandByAlias(alias);
-    if (!foundCommand) return;
+    if (!foundCommand) return "Something went wrong. Try again later.";
 
     if (this.canUserUseCommand(user.privileges, foundCommand.privilege)) {
       commandLogger.info(
