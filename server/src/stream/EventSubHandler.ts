@@ -21,6 +21,7 @@ import fs from "fs";
 import { alertSoundsPath } from "@configs/globalPaths";
 import path from "path";
 import { getMp3AudioDuration } from "@utils/filesManipulateUtil";
+import { alertSoundPrefix } from "@configs/globalVariables";
 
 interface EventSubHandlerOptions {
   apiClient: ApiClient;
@@ -180,6 +181,8 @@ class EventSubHandler extends HeadHandler {
 
         const alertSoundPath = path.join(alertSoundsPath, rewardTitle) + ".mp3";
         let alertSoundFileBuffer: Buffer;
+
+        if (!rewardTitle.startsWith(alertSoundPrefix)) return;
 
         try {
           alertSoundFileBuffer = fs.readFileSync(
