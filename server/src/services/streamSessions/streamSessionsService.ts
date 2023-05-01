@@ -51,7 +51,9 @@ export const getStreamSessionById = async (
   const { select = { __v: 0 } } = streamSessionFindOptions;
 
   try {
-    const foundStreamSession = await StreamSession.findById(id).select(select);
+    const foundStreamSession = await StreamSession.findById(id)
+      .select(select)
+      .populate("events.user");
 
     const streamSession = checkExistResource(
       foundStreamSession,
@@ -90,7 +92,8 @@ export const getCurrentStreamSession = async (
     const streamSession = await StreamSession.findOne(filter)
       .sort({ sessionStart: -1 })
       .limit(1)
-      .select(select);
+      .select(select)
+      .populate("events.user");
 
     return streamSession;
   } catch (err) {
