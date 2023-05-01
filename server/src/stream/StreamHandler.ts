@@ -1,5 +1,5 @@
 import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
-import { ConfigDocument } from "@models/types";
+import { ConfigDocument, UserModel } from "@models/types";
 import { ConfigDefaults } from "@defaults/types";
 import { configDefaults } from "@defaults/configsDefaults";
 import {
@@ -183,17 +183,32 @@ class StreamHandler {
 
       if (self) return;
 
-      const messagesQueue = (
-        await Promise.all([
-          this.commandsHandler.checkMessageForCommand(user, message),
-          this.triggersHandler.checkMessageForTrigger(message),
-          this.timersHandler.checkMessageForTimer(user),
-        ])
-      ).filter((x) => x) as string[];
-
-      headLogger.info(`messages to send ${messagesQueue}`);
-      this.sendMessagesFromQueue(messagesQueue);
+      await this.chceckAndSendAnswer(user, message);
     });
+  }
+
+  private async chceckAndSendAnswer(user: UserModel, message: string) {
+    const commandMessage = await this.commandsHandler.checkMessageForCommand(
+      user,
+      message
+    );
+    if (commandMessage) {
+      if (typeof commandMessage === "string") {
+        this.clientTmi.say(commandMessage);
+      }
+
+      return;
+    }
+
+    //either check for timer / trigger / random message
+    const messagesQueue = (
+      await Promise.all([
+        this.triggersHandler.checkMessageForTrigger(message),
+        this.timersHandler.checkMessageForTimer(user),
+      ])
+    ).filter((x) => x) as string[];
+
+    this.sendMessagesFromQueue(messagesQueue);
   }
 
   private sendMessagesFromQueue(messages: string[]) {
