@@ -95,6 +95,7 @@ export interface ServerToClientEvents {
   changeVolume: (volume: number) => void;
   forceReconnect: () => void;
   getCustomRewards: (data: CustomRewardData[]) => void;
+  sendLoggedUserInfo: (username: string) => void;
 }
 
 export interface ClientToServerEvents {
@@ -123,6 +124,7 @@ export interface ClientToServerEvents {
     cb: (success: boolean) => void
   ) => void;
   getCustomRewards: () => void;
+  logout: () => void;
 }
 
 export interface InterServerEvents {
