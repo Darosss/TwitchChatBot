@@ -35,7 +35,11 @@
 
     &.max {
       height: 40vh;
+      display: flex;
+
       & > div {
+        flex: 1 0 30%;
+        overflow: scroll;
         height: 40vh;
       }
     }
