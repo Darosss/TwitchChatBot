@@ -22,7 +22,7 @@ import {
   SocketData,
 } from "@libs/types";
 import { Server } from "socket.io";
-import MusicStreamHandler from "./MusicStreamHandler";
+import MusicYTHandler from "./MusicYTHandler";
 
 type CommandsHandlerConfigs = CommandsConfigs &
   Pick<HeadConfigs, "permissionLevels">;
@@ -33,7 +33,7 @@ class CommandsHandler extends HeadHandler {
   private musicCommandsPermission: number;
   private musicCommandCommonPermission: number;
   private configs: CommandsHandlerConfigs;
-  private readonly musicHandler: MusicStreamHandler;
+  private readonly musicHandler: MusicYTHandler;
 
   constructor(
     twitchApi: ApiClient,
@@ -44,7 +44,7 @@ class CommandsHandler extends HeadHandler {
       SocketData
     >,
     authorizedUser: HelixPrivilegedUser,
-    musicHandler: MusicStreamHandler,
+    musicHandler: MusicYTHandler,
     configs: CommandsHandlerConfigs
   ) {
     super(socketIO, twitchApi, authorizedUser);
@@ -154,18 +154,18 @@ class CommandsHandler extends HeadHandler {
     );
     switch (musicCommand) {
       case "play":
-        this.musicHandler.resumePlayer(true);
+        this.musicHandler.resumePlayer();
         return true;
       case "stop":
         return "Stop player! (Not implemented yet)";
       case "resume":
-        this.musicHandler.resumePlayer(true);
+        this.musicHandler.resumePlayer();
         return true;
       case "pause":
-        this.musicHandler.pausePlayer(true);
+        this.musicHandler.pausePlayer();
         return true;
       case "skip":
-        this.musicHandler.nextSong(true);
+        this.musicHandler.nextSong();
         return true;
       case "next":
         this.musicHandler.sayNextSong();
@@ -179,19 +179,19 @@ class CommandsHandler extends HeadHandler {
       case "load":
         const loadCommand = `${this.configs.commandsPrefix}load`;
         const loadOpt = message.replace(loadCommand, "").trim();
-        this.musicHandler.loadNewSongs(loadOpt, true, true);
+        this.musicHandler.loadNewSongs(loadOpt);
         return true;
       case "sr":
         const srCommand = `${this.configs.commandsPrefix}sr`;
         const songName = message.replace(srCommand, "").trim();
 
-        await this.musicHandler.requestSong(username, songName, true);
+        await this.musicHandler.requestSong(username, songName);
         return true;
       case "volume":
         const volumeCommand = `${this.configs.commandsPrefix}volume`;
         const volume = Number(message.replace(volumeCommand, "").trim());
 
-        this.musicHandler.changeVolume(volume, true);
+        this.musicHandler.changeVolume(volume);
         return true;
     }
   }
