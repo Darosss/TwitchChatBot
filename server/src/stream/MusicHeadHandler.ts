@@ -11,6 +11,7 @@ import {
 } from "@libs/types";
 import { MusicConfigs } from "@models/types";
 import moment from "moment";
+import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";
 
 type EmitAudioNames = "audio" | "audioYT";
 type EmitPauseMusic = "audioStop" | "musicYTPause";
@@ -19,7 +20,7 @@ type EmitChangeVolumeMusic = "changeVolume" | "changeYTVolume";
 abstract class MusicHeadHandler {
   protected emitName: EmitAudioNames;
   protected isPlaying = false;
-  protected songsList: [string, number][] = [];
+  protected songsList: [string, string, number][] = [];
   protected songRequestList: [string, string][] = [];
   protected musicQue: [string, AudioStreamData | AudioYTData][] = [];
   protected isPlayingTimeout: NodeJS.Timeout | undefined;
@@ -58,7 +59,7 @@ abstract class MusicHeadHandler {
   }
 
   protected abstract addSongToQue(
-    song: [string, number],
+    song: [string, string, number],
     requester?: string
   ): Promise<void>;
 
@@ -73,6 +74,16 @@ abstract class MusicHeadHandler {
 
   public async refreshConfigs(configs: MusicConfigs) {
     this.configs = configs;
+  }
+
+  public async resumePlayer() {
+    console.log("resume", this.isPlaying, this.songsList, "lol");
+    if (this.isPlaying || this.songsList.length <= 0) return;
+
+    this.currentSongStart = new Date();
+    this.startPlay(0, false);
+
+    // this.clientSay(`Music player resumed!`);
   }
 
   protected async startPlay(delay = 0, newSong = false) {
@@ -228,20 +239,10 @@ abstract class MusicHeadHandler {
   }
 
   protected sendAudioInfo() {
-    console.log("send audio info 33344444");
     const audioInfo = this.getAudioInfo();
     if (audioInfo) {
       this.socketIO.emit("getAudioYTInfo", audioInfo);
     }
-  }
-
-  public async resumePlayer() {
-    if (this.isPlaying || this.songsList.length <= 0) return;
-
-    this.currentSongStart = new Date();
-    this.startPlay(0, false);
-
-    // this.clientSay(`Music player resumed!`);
   }
 
   public changeVolume(volume: number, emitName: EmitChangeVolumeMusic) {
@@ -253,6 +254,39 @@ abstract class MusicHeadHandler {
     this.volume = valueToSet;
     this.clientSay(`Volume changed to ${valueToSet}%`);
     this.socketIO.emit(emitName, valueToSet);
+  }
+
+  private getRemainingTimeOfCurrentSong() {
+    if (!this.currentSong) return 0;
+    const time = Math.floor(
+      this.currentSong.duration - this.getCurrentTimeSong()
+    );
+
+    return time;
+  }
+  public sayNextSong() {
+    const nextSong = this.getNextSongFromQue();
+    if (!nextSong) {
+      this.clientSay("There is no next song");
+      return;
+    }
+    const time = this.getRemainingTimeOfCurrentSong();
+
+    const [minutes, seconds] = convertSecondsToMS(time);
+
+    this.clientSay(
+      `Next song: ${nextSong.name} in ~${minutes}:${seconds} min. 
+      ${nextSong.requester ? `Requested by ${nextSong.requester}` : ""} 
+      `
+    );
+  }
+
+  public sayPreviousSong() {
+    try {
+      this.clientSay(`Previous song: ${this.previousSongName}`);
+    } catch {
+      this.clientSay(`Not enought songs to do that uga buga`);
+    }
   }
 }
 
