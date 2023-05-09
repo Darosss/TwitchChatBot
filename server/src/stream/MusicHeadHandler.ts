@@ -72,6 +72,11 @@ abstract class MusicHeadHandler {
     | AudioYTDataInfo
     | undefined;
 
+  public abstract getAudioStreamData():
+    | AudioStreamData
+    | AudioYTData
+    | undefined;
+
   public async refreshConfigs(configs: MusicConfigs) {
     this.configs = configs;
   }
