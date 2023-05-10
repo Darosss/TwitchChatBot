@@ -276,6 +276,7 @@ class StreamHandler {
       this.timersHandler.refreshConfigs(timersConfigs);
 
       this.musicHandler.refreshConfigs(musicConfigs);
+      this.musicYTHandler.refreshConfigs(musicConfigs);
     }
   }
 
