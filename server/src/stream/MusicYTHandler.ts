@@ -276,11 +276,11 @@ class MusicYTHandler extends MusicHeadHandler {
     return videosIds;
   }
 
-  public pausePlayer() {
+  public override pausePlayer() {
     super.pausePlayer("musicYTPause");
   }
 
-  public changeVolume(volume: number) {
+  public override changeVolume(volume: number) {
     super.changeVolume(volume, "changeYTVolume");
   }
 
