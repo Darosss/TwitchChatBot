@@ -24,6 +24,7 @@ interface PlaylistDetails {
 
 class MusicYTHandler extends MusicHeadHandler {
   private youtube: youtube_v3.Youtube;
+  private maxSongDuration = 60 * 10; // 10min; TODO: add to configs
   private playlistDetails: PlaylistDetails = {
     id: "",
     name: "",
@@ -77,7 +78,6 @@ class MusicYTHandler extends MusicHeadHandler {
     for (let i = 0; i <= this.configs.maxAutoQueSize; i++) {
       await this.addNextItemToQueAndPushToEnd();
     }
-    //TODO: add requested songs from users
   }
 
   //TODO: add possibility to take more than 50 items of playlist
@@ -157,8 +157,6 @@ class MusicYTHandler extends MusicHeadHandler {
       };
     }
   }
-
-  public async init() {}
 
   private async getYoutubePlaylistItemsById(
     id: string,
@@ -345,10 +343,14 @@ class MusicYTHandler extends MusicHeadHandler {
     const foundSong = await this.searchForRequestedSong(songName);
 
     if (!foundSong) {
-      this.clientSay(`@${username}, couldn't find any similar songs`);
-      return;
+      return this.clientSay(`@${username}, couldn't find any similar songs`);
+    } else if (foundSong.duration > this.maxSongDuration) {
+      return this.clientSay(
+        `@${username}, your song is too long. It exceeds ${convertSecondsToMS(
+          this.maxSongDuration
+        )}`
+      );
     }
-
     const added = await this.addRequestedSongToPlayer(username, foundSong);
     if (added) {
       this.emitGetAudioInfo();
