@@ -110,6 +110,14 @@ class MusicYTHandler extends MusicHeadHandler {
     if (shuffle) this.songsList = shuffleArray(this.songsList);
 
     await this.prepareInitialQue();
+    this.emitGetAudioInfo();
+  }
+
+  protected emitGetAudioInfo(): void {
+    const audioInfo = this.getAudioInfo();
+    if (audioInfo) {
+      this.socketIO.emit("getAudioYTInfo", audioInfo);
+    }
   }
 
   private checkValidationOfUrlPlaylist(playlist: string) {
@@ -125,17 +133,14 @@ class MusicYTHandler extends MusicHeadHandler {
   }
 
   protected getAudioInfo(): AudioYTDataInfo | undefined {
-    console.log("get audio nfo 555");
-    if (!this.currentSong) return;
-
     const songsInQue: [string, string][] = [];
 
     this.musicQue.forEach(([id, audioProps]) => {
       songsInQue.push([audioProps.name, audioProps.requester || ""]);
     });
     const info: AudioYTDataInfo = {
-      name: this.currentSong.name,
-      duration: this.currentSong.duration,
+      name: this.currentSong?.name || "",
+      duration: this.currentSong?.duration || 0,
       currentTime: this.getCurrentTimeSong(),
       songsInQue: songsInQue,
       isPlaying: this.isPlaying,
@@ -346,7 +351,7 @@ class MusicYTHandler extends MusicHeadHandler {
 
     const added = await this.addRequestedSongToPlayer(username, foundSong);
     if (added) {
-      this.sendAudioInfo();
+      this.emitGetAudioInfo();
       this.clientSay(`@${username}, added ${foundSong.name} song to que`);
       return;
     }
