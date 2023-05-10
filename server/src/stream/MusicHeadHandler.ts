@@ -236,10 +236,18 @@ abstract class MusicHeadHandler {
 
   protected removeFromRequestedQue(username: string) {
     let index = this.songRequestList.findIndex(
-      ([username]) => username === username
+      ([requester]) => requester === username
     );
 
     if (index !== -1) this.songRequestList.splice(index, 1);
+  }
+
+  protected addSongRequestListIntoQue() {
+    if (this.songRequestList.length > 0) {
+      this.songRequestList.forEach(
+        async ([username, song]) => await this.addSongToQue(song, username)
+      );
+    }
   }
 
   public changeVolume(volume: number, emitName: EmitChangeVolumeMusic) {
