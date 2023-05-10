@@ -127,8 +127,6 @@ class StreamHandler {
     this.initOnMessageEvents();
     this.initSocketEvents();
 
-    this.musicHandler.init();
-    this.musicYTHandler.init();
     this.triggersHandler;
     this.eventSubHandler.init();
   }
