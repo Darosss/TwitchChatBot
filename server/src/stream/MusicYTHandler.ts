@@ -350,7 +350,7 @@ class MusicYTHandler extends MusicHeadHandler {
       return this.clientSay(
         `@${username}, your song is too long. It exceeds ${convertSecondsToMS(
           this.maxSongDuration
-        )}`
+        )} minutes`
       );
     }
     const added = await this.addRequestedSongToPlayer(username, foundSong);
