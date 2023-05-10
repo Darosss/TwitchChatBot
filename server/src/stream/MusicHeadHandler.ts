@@ -83,6 +83,8 @@ abstract class MusicHeadHandler {
     this.configs = configs;
   }
 
+  protected abstract emitGetAudioInfo(): void;
+
   public async resumePlayer() {
     if (this.isPlaying || this.musicQue.length <= 0) return;
 
@@ -109,7 +111,7 @@ abstract class MusicHeadHandler {
 
         this.clientSay("Current song: " + this.getNameOfCurrentSong());
 
-        this.sendAudioInfo();
+        this.emitGetAudioInfo();
 
         const delayNextSong = this.currentDelay - this.currentSong.currentTime;
         console.log("delaymextsong", delayNextSong * 1000, "testing");
@@ -238,13 +240,6 @@ abstract class MusicHeadHandler {
     );
 
     if (index !== -1) this.songRequestList.splice(index, 1);
-  }
-
-  protected sendAudioInfo() {
-    const audioInfo = this.getAudioInfo();
-    if (audioInfo) {
-      this.socketIO.emit("getAudioYTInfo", audioInfo);
-    }
   }
 
   public changeVolume(volume: number, emitName: EmitChangeVolumeMusic) {
