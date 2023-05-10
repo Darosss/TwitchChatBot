@@ -174,7 +174,7 @@ class CommandsHandler extends HeadHandler {
       case "load":
         const loadCommand = `${this.configs.commandsPrefix}load`;
         const loadOpt = message.replace(loadCommand, "").trim();
-        this.musicHandler.loadNewSongs(loadOpt);
+        this.musicHandler.loadNewSongs(loadOpt, true);
         return true;
       case "sr":
         const srCommand = `${this.configs.commandsPrefix}sr`;
