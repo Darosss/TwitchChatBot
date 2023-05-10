@@ -137,13 +137,13 @@ abstract class MusicHeadHandler {
 
       this.isPlaying = false;
 
-      // this.clientSay("Music player paused!");
+      this.clientSay("Music player paused!");
     }
   }
 
   public async nextSong() {
     this.clearTimeout();
-    // this.sayInChannel(sayInfo, "Skip song!");
+    this.clientSay("Skip song!");
     this.startPlay(0, true);
   }
 
@@ -162,7 +162,6 @@ abstract class MusicHeadHandler {
 
   protected async setCurrentSongFromQue() {
     this.previousSongName = this.currentSong?.name || "";
-    // this.musicQue.delete(this.currentSong?.id || "");
     this.removeFromQue(this.currentSong?.id || "");
 
     const musicProps = this.getNextSongFromQue();
@@ -171,7 +170,6 @@ abstract class MusicHeadHandler {
     this.currentSongStart = new Date();
     this.currentSong = musicProps;
 
-    // this.musicQue.delete(this.currentSong.id);
     this.removeFromQue(this.currentSong?.id);
 
     this.clearUserRequestAfterPlay(musicProps.requester);
@@ -229,11 +227,9 @@ abstract class MusicHeadHandler {
   }
 
   protected clearUserRequestAfterPlay(username?: string) {
-    if (username) {
-      console.log("USERNAME???");
-      // this.songRequestList.delete(username);
-      this.removeFromRequestedQue(username);
-    }
+    if (!username) return;
+
+    this.removeFromRequestedQue(username);
   }
 
   protected removeFromRequestedQue(username: string) {
