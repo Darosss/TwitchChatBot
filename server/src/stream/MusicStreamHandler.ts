@@ -32,7 +32,38 @@ class MusicStreamHandler extends MusicHeadHandler {
     super(socketIO, sayInAuthorizedChannel, configs, "audio");
   }
 
-  public async init() {}
+  public getAudioStreamData(): AudioStreamData | undefined {
+    if (this.currentSong) {
+      const currentTimeSong = this.getCurrentTimeSong();
+      return {
+        ...this.currentSong,
+        currentTime: currentTimeSong,
+      };
+    }
+  }
+
+  public async loadNewSongs(
+    idOrFolderName: string,
+    shuffle = true
+  ): Promise<void> {
+    const loadedFolder = path.join(musicPath, idOrFolderName);
+    if (!this.isADirectory(loadedFolder)) return;
+    this.currentFolder = loadedFolder;
+
+    try {
+      const loaded = await this.loadSongsFromMusicPath(shuffle);
+      if (!loaded) return;
+      this.clientSay(
+        `Loaded new songs from ${idOrFolderName}. Number of songs: ${this.songsList.length}`
+      );
+      await this.prepareInitialQue();
+      this.emitGetAudioInfo();
+    } catch (err) {
+      this.clientSay(
+        `Couldn't load new songs. Probably folder does not exist.`
+      );
+    }
+  }
 
   protected async addSongToQue(song: SongProperties, requester = "") {
     try {
@@ -60,31 +91,6 @@ class MusicStreamHandler extends MusicHeadHandler {
 
       this.addNextItemToQueAndPushToEnd();
     }
-  }
-
-  private async loadSongsFromMusicPath(shuffle = true) {
-    try {
-      this.songsList = fs
-        .readdirSync(this.currentFolder, { withFileTypes: true })
-        .filter((file) => file.name.endsWith(this.formatFile))
-        .map((file) => {
-          return {
-            id: file.name.replace(this.formatFile, ""),
-            name: file.name.replace(this.formatFile, ""),
-            duration: 150,
-          };
-        });
-
-      if (shuffle) this.shuffleSongs();
-
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  private shuffleSongs() {
-    this.songsList.sort((a, b) => 0.5 - Math.random());
   }
 
   protected async prepareInitialQue() {
@@ -121,14 +127,44 @@ class MusicStreamHandler extends MusicHeadHandler {
     return info;
   }
 
-  public getAudioStreamData(): AudioStreamData | undefined {
-    if (this.currentSong) {
-      const currentTimeSong = this.getCurrentTimeSong();
-      return {
-        ...this.currentSong,
-        currentTime: currentTimeSong,
-      };
+  protected override emitGetAudioInfo(): void {
+    const audioInfo = this.getAudioInfo();
+    if (audioInfo) {
+      this.socketIO.emit("getAudioInfo", audioInfo);
     }
+  }
+
+  public override changeVolume(volume: number) {
+    super.changeVolume(volume, "changeVolume");
+  }
+
+  public override pausePlayer() {
+    super.pausePlayer("audioStop");
+  }
+
+  private async loadSongsFromMusicPath(shuffle = true) {
+    try {
+      this.songsList = fs
+        .readdirSync(this.currentFolder, { withFileTypes: true })
+        .filter((file) => file.name.endsWith(this.formatFile))
+        .map((file) => {
+          return {
+            id: file.name.replace(this.formatFile, ""),
+            name: file.name.replace(this.formatFile, ""),
+            duration: 150,
+          };
+        });
+
+      if (shuffle) this.shuffleSongs();
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private shuffleSongs() {
+    this.songsList.sort((a, b) => 0.5 - Math.random());
   }
 
   private isADirectory(directoryPath: string) {
@@ -143,44 +179,6 @@ class MusicStreamHandler extends MusicHeadHandler {
     } catch (err) {
       this.clientSay("Provided folder does not exist.");
     }
-  }
-
-  public async loadNewSongs(
-    idOrFolderName: string,
-    shuffle = true
-  ): Promise<void> {
-    const loadedFolder = path.join(musicPath, idOrFolderName);
-    if (!this.isADirectory(loadedFolder)) return;
-    this.currentFolder = loadedFolder;
-
-    try {
-      const loaded = await this.loadSongsFromMusicPath(shuffle);
-      if (!loaded) return;
-      this.clientSay(
-        `Loaded new songs from ${idOrFolderName}. Number of songs: ${this.songsList.length}`
-      );
-      await this.prepareInitialQue();
-      this.emitGetAudioInfo();
-    } catch (err) {
-      this.clientSay(
-        `Couldn't load new songs. Probably folder does not exist.`
-      );
-    }
-  }
-
-  protected override emitGetAudioInfo(): void {
-    const audioInfo = this.getAudioInfo();
-    if (audioInfo) {
-      this.socketIO.emit("getAudioInfo", audioInfo);
-    }
-  }
-
-  public override changeVolume(volume: number) {
-    super.changeVolume(volume, "changeVolume");
-  }
-
-  public override pausePlayer() {
-    super.pausePlayer("audioStop");
   }
 }
 
