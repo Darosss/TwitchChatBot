@@ -117,7 +117,8 @@ class CommandsHandler extends HeadHandler {
     message: string
   ) {
     const defaultMusicAlias = [...this.defaultsMusicAliases.keys()].find(
-      (alias: string) => message.toLowerCase().includes(alias)
+      (alias: string) =>
+        message.toLowerCase().startsWith(this.configs.commandsPrefix + alias)
     );
     if (defaultMusicAlias) {
       return this.onMessageMusicCommand(
@@ -136,14 +137,8 @@ class CommandsHandler extends HeadHandler {
     message: string
   ) {
     const commandPrivilege = this.defaultsMusicAliases.get(musicCommand);
-    console.log(
-      commandPrivilege && commandPrivilege > privilege,
-      "xD",
-      commandPrivilege,
-      privilege
-    );
+
     if (commandPrivilege && commandPrivilege > privilege) {
-      console.log(commandPrivilege, privilege);
       commandLogger.info(
         `Music command: ${musicCommand} - was invoked, but privilege does not match`
       );
