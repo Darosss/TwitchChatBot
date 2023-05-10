@@ -1,20 +1,25 @@
 import { UserModel } from "../../server/src/models/types";
 
-export interface AudioStreamData {
+export interface AudioYTData {
   id: string;
-  audioBuffer: Buffer;
   name: string;
   duration: number;
   currentTime: number;
   requester?: string;
 }
 
-export interface AudioStreamDataInfo {
+export interface AudioStreamData extends AudioYTData {
+  audioBuffer: Buffer;
+}
+
+export interface AudioYTDataInfo {
   name: string;
   duration: number;
   currentTime: number;
   songsInQue: [string, string][];
   isPlaying: boolean;
+}
+export interface AudioStreamDataInfo extends AudioYTDataInfo {
   currentFolder: string;
 }
 
@@ -81,7 +86,7 @@ export interface RewardData {
   rewardImage: string;
 }
 
-export interface ServerToClientEvents {
+export interface ServerToClientEvents extends ServerToClientYoutubeEvents {
   noArg: () => void;
   withAck: (callback: (e: number) => void) => void;
   messageServer: (date: Date, username: string, message: string) => void;
@@ -90,13 +95,23 @@ export interface ServerToClientEvents {
   audio: (data: AudioStreamData) => void;
   audioStop: () => void;
   getAudioInfo: (data: AudioStreamDataInfo) => void;
+  getAudioYTInfo: (data: AudioYTDataInfo) => void;
   changeVolume: (volume: number) => void;
   forceReconnect: () => void;
   getCustomRewards: (data: CustomRewardData[]) => void;
   sendLoggedUserInfo: (username: string) => void;
 }
 
-export interface ClientToServerEvents {
+export interface ServerToClientYoutubeEvents {
+  changeYTVolume: (volume: number) => void;
+  musicYTNext: () => void;
+  musicYTPause: () => void;
+  musicYTStop: () => void;
+  musicYTPlay: () => void;
+  audioYT: (data: AudioYTData) => void;
+}
+
+export interface ClientToServerEvents extends ClientToServerYoutubeEvents {
   messageClient: (message: string) => void;
   saveConfigs: () => void;
   refreshTriggers: () => void;
@@ -123,6 +138,17 @@ export interface ClientToServerEvents {
   ) => void;
   getCustomRewards: () => void;
   logout: () => void;
+}
+
+export interface ClientToServerYoutubeEvents {
+  changeYTVolume: (volume: number) => void;
+  musicYTNext: () => void;
+  musicYTPause: () => void;
+  musicYTStop: () => void;
+  musicYTPlay: () => void;
+  loadYTPlaylist: (playlistId: string) => void;
+  getAudioYTData: (cb: (data: AudioYTData) => void) => void;
+  getAudioYTInfo: (cb: (data: AudioYTDataInfo) => void) => void;
 }
 
 export interface InterServerEvents {
