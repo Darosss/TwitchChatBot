@@ -480,24 +480,24 @@ class StreamHandler {
     });
 
     socket.on("musicPause", () => {
-      this.musicHandler.pausePlayer(true);
+      this.musicHandler.pausePlayer();
     });
 
     socket.on("musicStop", () => {});
 
     socket.on("musicPlay", () => {
-      this.musicHandler.resumePlayer(true);
+      this.musicHandler.resumePlayer();
     });
     socket.on("loadSongs", (folderName) => {
       this.musicHandler.loadNewSongs(folderName, true);
     });
 
     socket.on("musicNext", () => {
-      this.musicHandler.nextSong(true);
+      this.musicHandler.nextSong();
     });
 
     socket.on("changeVolume", (volume) => {
-      this.musicHandler.changeVolume(volume, true);
+      this.musicHandler.changeVolume(volume);
     });
 
     socket.on("getAudioInfo", () => {
