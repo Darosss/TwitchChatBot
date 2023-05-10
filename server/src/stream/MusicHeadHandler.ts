@@ -12,16 +12,18 @@ import {
 import { MusicConfigs } from "@models/types";
 import moment from "moment";
 import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";
-
-type EmitAudioNames = "audio" | "audioYT";
-type EmitPauseMusic = "audioStop" | "musicYTPause";
-type EmitChangeVolumeMusic = "changeVolume" | "changeYTVolume";
+import {
+  EmitAudioNames,
+  SongProperties,
+  EmitPauseMusic,
+  EmitChangeVolumeMusic,
+} from "./types";
 
 abstract class MusicHeadHandler {
   protected emitName: EmitAudioNames;
   protected isPlaying = false;
-  protected songsList: [string, string, number][] = [];
-  protected songRequestList: [string, string][] = [];
+  protected songsList: SongProperties[] = [];
+  protected songRequestList: [string, SongProperties][] = [];
   protected musicQue: [string, AudioStreamData | AudioYTData][] = [];
   protected isPlayingTimeout: NodeJS.Timeout | undefined;
   protected readonly clientSay: (message: string) => void;
@@ -59,7 +61,7 @@ abstract class MusicHeadHandler {
   }
 
   protected abstract addSongToQue(
-    song: [string, string, number],
+    song: SongProperties,
     requester?: string
   ): Promise<void>;
 
@@ -261,7 +263,7 @@ abstract class MusicHeadHandler {
     this.socketIO.emit(emitName, valueToSet);
   }
 
-  private getRemainingTimeOfCurrentSong() {
+  protected getRemainingTimeOfCurrentSong() {
     if (!this.currentSong) return 0;
     const time = Math.floor(
       this.currentSong.duration - this.getCurrentTimeSong()
