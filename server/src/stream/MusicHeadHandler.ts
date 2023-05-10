@@ -84,13 +84,12 @@ abstract class MusicHeadHandler {
   }
 
   public async resumePlayer() {
-    console.log("resume", this.isPlaying, this.songsList, "lol");
-    if (this.isPlaying || this.songsList.length <= 0) return;
+    if (this.isPlaying || this.musicQue.length <= 0) return;
 
     this.currentSongStart = new Date();
     this.startPlay(0, false);
 
-    // this.clientSay(`Music player resumed!`);
+    this.clientSay(`Music player resumed!`);
   }
 
   protected async startPlay(delay = 0, newSong = false) {
@@ -108,7 +107,7 @@ abstract class MusicHeadHandler {
         this.currentDelay = this.currentSong.duration;
         this.socketIO.emit(this.emitName, this.currentSong);
 
-        // this.clientSay("Current song: " + this.getNameOfCurrentSong());
+        this.clientSay("Current song: " + this.getNameOfCurrentSong());
 
         this.sendAudioInfo();
 
