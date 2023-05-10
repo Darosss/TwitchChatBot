@@ -324,12 +324,12 @@ class MusicYTHandler extends MusicHeadHandler {
     }
   }
 
-  private isAlreadySongInQue(songName: string) {
-    const isAdded = this.musicQue.some(
-      ([id, audioProps]) => audioProps.name === songName
-    );
+  private isAlreadySongInQue(songId: string) {
+    const isAdded = this.musicQue.some(([id]) => id === songId);
 
-    return isAdded;
+    if (isAdded || this.currentSong?.id === songId) {
+      return true;
+    }
   }
 
   public async requestSong(username: string, songName: string) {
