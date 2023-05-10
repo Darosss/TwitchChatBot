@@ -78,6 +78,8 @@ class MusicYTHandler extends MusicHeadHandler {
     for (let i = 0; i <= this.configs.maxAutoQueSize; i++) {
       await this.addNextItemToQueAndPushToEnd();
     }
+
+    this.addSongRequestListIntoQue();
   }
 
   //TODO: add possibility to take more than 50 items of playlist
