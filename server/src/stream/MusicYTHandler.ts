@@ -96,8 +96,6 @@ class MusicYTHandler extends MusicHeadHandler {
       );
       this.songsList = videosDetails;
     }
-
-    await this.prepareInitialQue();
   }
   public async loadNewSongs(
     idOrFolderName: string,
@@ -107,9 +105,11 @@ class MusicYTHandler extends MusicHeadHandler {
     if (!playlistId) return;
 
     await this.setCurrentPlaylistNameById(playlistId);
-    await this.addVideosFromCurrentPlaylistIntoSongsList();
 
+    await this.addVideosFromCurrentPlaylistIntoSongsList();
     if (shuffle) this.songsList = shuffleArray(this.songsList);
+
+    await this.prepareInitialQue();
   }
 
   private checkValidationOfUrlPlaylist(playlist: string) {
@@ -277,7 +277,6 @@ class MusicYTHandler extends MusicHeadHandler {
   }
 
   public pausePlayer() {
-    console.log("pause");
     super.pausePlayer("musicYTPause");
   }
 
