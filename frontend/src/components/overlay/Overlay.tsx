@@ -1,5 +1,3 @@
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
 import React, { useEffect, useState } from "react";
 import ReactGridLayout from "react-grid-layout";
 
@@ -13,11 +11,13 @@ import { getInitialCurrentBreakpoint } from "@utils/layoutBreakpoints";
 import ReactGrid from "@components/reactGrid";
 import { editOverlayById, getOverlayById } from "@services/OverlayService";
 import MusicPlayer from "./musicPlayer";
+import YoutubePlayerVideo from "./youtubePlayerVideo";
 import { HelmetTitle } from "@components/componentWithTitle";
 
 const components = new Map([
   ["overlay-redemptions", Redemptions],
   ["overlay-music-player", MusicPlayer],
+  ["overlay-youtube-music-player", YoutubePlayerVideo],
 ]);
 
 export default function Overlay(params: { editor?: boolean }) {
