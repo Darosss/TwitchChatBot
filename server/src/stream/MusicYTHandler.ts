@@ -134,7 +134,7 @@ class MusicYTHandler extends MusicHeadHandler {
     return id;
   }
 
-  protected getAudioInfo(): AudioYTDataInfo | undefined {
+  public getAudioInfo(): AudioYTDataInfo | undefined {
     const songsInQue: [string, string][] = [];
 
     this.musicQue.forEach(([id, audioProps]) => {
