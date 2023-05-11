@@ -1,6 +1,6 @@
 import React from "react";
 
-import { SocketContext, socketConn } from "@context/SocketContext";
+import { SocketContext, socketConn } from "@context/socket";
 import SideBar from "@components/sideBar";
 
 import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
