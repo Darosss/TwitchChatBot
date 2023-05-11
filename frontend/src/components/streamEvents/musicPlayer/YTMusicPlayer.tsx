@@ -27,6 +27,7 @@ export default function YTMusicPlayer() {
     isPlaying: false,
     songsInQue: [],
     currentTime: 0,
+    volume: 0,
   });
 
   useEffect(() => {
@@ -88,8 +89,9 @@ export default function YTMusicPlayer() {
     switch (activeTab) {
       case "information":
         return (
-          <AudioInformation
+          <AudioInformation<AudioYTDataInfo>
             audioData={audioData}
+            setAudioData={setAudioData}
             changeVolumeEmit="changeYTVolume"
           />
         );

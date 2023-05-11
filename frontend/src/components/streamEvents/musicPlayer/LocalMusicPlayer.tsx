@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo } from "react";
-import { convertSecondsToMS } from "@utils/convertSecondsToMS";
 import UploadMp3Form from "./UploadMp3Form";
 import AudioFoldersList from "./AudioFoldersList";
 import AudioFolderCreate from "./AudioFolderCreate";
@@ -30,6 +29,7 @@ export default function LocalMusicPlayer() {
     songsInQue: [],
     currentTime: 0,
     currentFolder: "",
+    volume: 0,
   });
 
   const [activeTab, setActiveTab] = useState<AvailableTabs>("information");
@@ -91,8 +91,9 @@ export default function LocalMusicPlayer() {
     switch (activeTab) {
       case "information":
         return (
-          <AudioInformation
+          <AudioInformation<AudioStreamDataInfo>
             audioData={audioData}
+            setAudioData={setAudioData}
             changeVolumeEmit="changeVolume"
           />
         );

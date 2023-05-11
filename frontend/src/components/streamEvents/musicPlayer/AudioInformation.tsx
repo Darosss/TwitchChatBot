@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   SocketContext,
   AudioStreamDataInfo,
@@ -6,21 +6,25 @@ import {
 } from "@context/socket";
 import { convertSecondsToMS } from "@utils/convertSecondsToMS";
 
-interface AudioInformationProps {
-  audioData: AudioStreamDataInfo | AudioYTDataInfo;
+interface AudioInformationProps<
+  T extends AudioYTDataInfo | AudioStreamDataInfo
+> {
+  audioData: T;
+  setAudioData: React.Dispatch<React.SetStateAction<T>>;
   changeVolumeEmit: ChangeVolumeEmitNames;
 }
 
 type ChangeVolumeEmitNames = "changeVolume" | "changeYTVolume";
 
-export default function AudioInformation(props: AudioInformationProps) {
+export default function AudioInformation<
+  T extends AudioYTDataInfo | AudioStreamDataInfo
+>(props: AudioInformationProps<T>) {
   const socket = useContext(SocketContext);
-  const { audioData, changeVolumeEmit } = props;
-  const [volume, setVolume] = useState<number>(20);
+  const { audioData, setAudioData, changeVolumeEmit } = props;
 
   useEffect(() => {
     socket.on(changeVolumeEmit, (volume) => {
-      setVolume(volume);
+      volume;
     });
   }, []);
 
@@ -53,13 +57,18 @@ export default function AudioInformation(props: AudioInformationProps) {
             type="range"
             min={0}
             max={100}
-            value={volume}
-            onChange={(e) => setVolume(e.target.valueAsNumber)}
+            value={audioData.volume}
+            onChange={(e) =>
+              setAudioData((prevState) => ({
+                ...prevState,
+                volume: e.target.valueAsNumber,
+              }))
+            }
             onMouseUp={(e) =>
               emitChangeLocalVolume(e.currentTarget.valueAsNumber)
             }
           />
-          {volume}
+          {audioData.volume}
         </div>
         {audioData && "currentFolder" in audioData ? (
           <div>Current folder: {audioData.currentFolder}</div>
