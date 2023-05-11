@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { SocketContext } from "@context/SocketContext";
+import { SocketContext } from "@context/socket";
 import { getAllModes } from "@utils/getListModes";
 import { editTag } from "@services/TagService";
 import { editAffix } from "@services/AffixService";

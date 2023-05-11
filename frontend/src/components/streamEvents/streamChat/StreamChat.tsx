@@ -8,7 +8,7 @@ import React, {
 
 import { Message as MessageType } from "@services/MessageService";
 import Message from "@components/message";
-import { SocketContext } from "@context/SocketContext";
+import { SocketContext } from "@context/socket";
 import { addNotification } from "@utils/getNotificationValues";
 import { getCurrentSessionMessages } from "@services/StreamSessionService";
 

@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useReducer, useState } from "react";
 
-import { SocketContext } from "@context/SocketContext";
+import { SocketContext, EventAndUser } from "@context/socket";
 import { Link } from "react-router-dom";
-import { EventAndUser } from "@libs/types";
 import { DateTooltip } from "@components/dateTooltip";
 import moment from "moment";
 import StreamSessionEvents from "@components/streamSessionEvents";
