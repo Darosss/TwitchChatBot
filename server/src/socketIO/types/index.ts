@@ -145,9 +145,9 @@ export interface ClientToServerMusicLocalEvents {
   musicPlay: () => void;
   musicNext: () => void;
   changeVolume: (volume: number) => void;
-  getAudioInfo: () => void;
   getAudioStreamData: () => void;
   loadSongs: (folderName: string) => void;
+  getAudioInfo: (cb: (data: AudioStreamDataInfo) => void) => void;
 }
 
 export interface ClientToServerYoutubeEvents {
