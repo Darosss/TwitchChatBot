@@ -519,6 +519,11 @@ class StreamHandler {
       if (!audioData) return;
       cb(audioData);
     });
+    socket.on("getAudioYTInfo", (cb) => {
+      const audioData = this.musicYTHandler.getAudioInfo();
+      if (!audioData) return;
+      cb(audioData);
+    });
 
     socket.on("musicYTPause", () => {
       this.musicYTHandler.pausePlayer();
