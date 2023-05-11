@@ -24,6 +24,14 @@ export const initialLayoutOverlays: ReactGridLayout.Layouts = {
       h: 5,
       ...defaultsLayoutOpts,
     },
+    {
+      i: "overlay-youtube-music-player",
+      x: 6,
+      y: 10,
+      w: 30,
+      h: 30,
+      ...defaultsLayoutOpts,
+    },
   ],
   lg: [
     {
@@ -40,6 +48,14 @@ export const initialLayoutOverlays: ReactGridLayout.Layouts = {
       y: 0,
       w: 25,
       h: 5,
+      ...defaultsLayoutOpts,
+    },
+    {
+      i: "overlay-youtube-music-player",
+      x: 6,
+      y: 10,
+      w: 25,
+      h: 25,
       ...defaultsLayoutOpts,
     },
   ],
@@ -60,6 +76,14 @@ export const initialLayoutOverlays: ReactGridLayout.Layouts = {
       h: 5,
       ...defaultsLayoutOpts,
     },
+    {
+      i: "overlay-youtube-music-player",
+      x: 6,
+      y: 10,
+      w: 15,
+      h: 15,
+      ...defaultsLayoutOpts,
+    },
   ],
   sm: [
     {
@@ -76,6 +100,14 @@ export const initialLayoutOverlays: ReactGridLayout.Layouts = {
       y: 0,
       w: 25,
       h: 5,
+      ...defaultsLayoutOpts,
+    },
+    {
+      i: "overlay-youtube-music-player",
+      x: 6,
+      y: 10,
+      w: 15,
+      h: 15,
       ...defaultsLayoutOpts,
     },
   ],
@@ -96,6 +128,14 @@ export const initialLayoutOverlays: ReactGridLayout.Layouts = {
       h: 5,
       ...defaultsLayoutOpts,
     },
+    {
+      i: "overlay-youtube-music-player",
+      x: 6,
+      y: 10,
+      w: 10,
+      h: 10,
+      ...defaultsLayoutOpts,
+    },
   ],
   xxs: [
     {
@@ -111,6 +151,14 @@ export const initialLayoutOverlays: ReactGridLayout.Layouts = {
       x: 0,
       y: 5,
       w: 15,
+      h: 5,
+      ...defaultsLayoutOpts,
+    },
+    {
+      i: "overlay-youtube-music-player",
+      x: 6,
+      y: 10,
+      w: 5,
       h: 5,
       ...defaultsLayoutOpts,
     },
