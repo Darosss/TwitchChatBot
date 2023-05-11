@@ -6,3 +6,16 @@ export interface SongProperties {
   name: string;
   duration: number;
 }
+
+export type MusicPlayerCommands =
+  | "play"
+  | "stop"
+  | "resume"
+  | "pause"
+  | "skip"
+  | "sr"
+  | "when"
+  | "previous"
+  | "next"
+  | "load"
+  | "volume";

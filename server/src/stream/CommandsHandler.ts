@@ -1,6 +1,5 @@
 import HeadHandler from "./HeadHandler";
 import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
-import { AudioPlayerOptions } from "@libs/types";
 import {
   ChatCommandModel,
   CommandsConfigs,
@@ -15,21 +14,22 @@ import {
 } from "@services/chatCommands";
 import { commandLogger } from "@utils/loggerUtil";
 import { randomWithMax } from "@utils/randomNumbersUtil";
-import {
+import type {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
-} from "@libs/types";
+} from "@socket";
 import { Server } from "socket.io";
 import MusicYTHandler from "./MusicYTHandler";
+import { MusicPlayerCommands } from "./types";
 
 type CommandsHandlerConfigs = CommandsConfigs &
   Pick<HeadConfigs, "permissionLevels">;
 
 class CommandsHandler extends HeadHandler {
   private commandsAliases: string[] = [];
-  private defaultsMusicAliases = new Map<AudioPlayerOptions, number>();
+  private defaultsMusicAliases = new Map<MusicPlayerCommands, number>();
   private musicCommandsPermission: number;
   private musicCommandCommonPermission: number;
   private configs: CommandsHandlerConfigs;
@@ -131,7 +131,7 @@ class CommandsHandler extends HeadHandler {
   }
 
   private async onMessageMusicCommand(
-    musicCommand: AudioPlayerOptions,
+    musicCommand: MusicPlayerCommands,
     privilege: number,
     username: string,
     message: string

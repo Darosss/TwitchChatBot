@@ -22,8 +22,8 @@ export const getAffixesList = async (
   const searchFilter = filterAffixesByUrlParams(req.query);
   try {
     const affixes = await getAffixes(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { createdAt: -1 },
     });
 
@@ -31,7 +31,7 @@ export const getAffixesList = async (
 
     return res.status(200).send({
       data: affixes,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });

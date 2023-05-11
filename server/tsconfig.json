@@ -8,10 +8,11 @@
       "@middlewares/*": ["middlewares/*"],
       "@models/*": ["models/*"],
       "@services/*": ["services/*"],
-      "@types/*": ["@types/*"],
+      "@customTypes/*": ["@types/*"],
       "@utils/*": ["utils/*"],
       "@aggregations/*": ["aggregations/*"],
-      "@defaults/*": ["defaults/*"]
+      "@defaults/*": ["defaults/*"],
+      "@socket": ["socketIO"]
     },
     "target": "es2017",
     "module": "commonjs",

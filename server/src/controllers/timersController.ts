@@ -26,8 +26,8 @@ export const getTimersList = async (
   const searchFilter = filterTimersByUrlParams(req.query);
   try {
     const timers = await getTimers(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       populateSelect: [
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
@@ -39,7 +39,7 @@ export const getTimersList = async (
 
     return res.status(200).send({
       data: timers,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });

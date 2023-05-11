@@ -1,12 +1,12 @@
 import { Server } from "socket.io";
-import {
+import type {
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
   AudioYTDataInfo,
   AudioYTData,
-} from "@libs/types";
+} from "@socket";
 import { MusicConfigs } from "@models/types";
 import { google, youtube_v3 } from "googleapis";
 import moment from "moment";

@@ -1,13 +1,13 @@
 import fs from "fs";
 import { Server } from "socket.io";
-import {
+import type {
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
   AudioStreamData,
   AudioStreamDataInfo,
-} from "@libs/types";
+} from "@socket";
 import { musicPath } from "@configs/globalPaths";
 import path from "path";
 import { getMp3AudioDuration } from "@utils/filesManipulateUtil";

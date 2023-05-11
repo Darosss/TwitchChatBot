@@ -11,7 +11,7 @@ const checkSearchParams = (
   let message = ``;
 
   if (
-    (page && limit && page > 0 && limit > 0) ||
+    (page && limit && Number(page) > 0 && Number(limit) > 0) ||
     (page === undefined && limit === undefined)
   )
     return next();

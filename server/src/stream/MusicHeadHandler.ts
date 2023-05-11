@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import {
+import type {
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
@@ -8,7 +8,7 @@ import {
   AudioStreamDataInfo,
   AudioYTData,
   AudioYTDataInfo,
-} from "@libs/types";
+} from "@socket";
 import { MusicConfigs } from "@models/types";
 import moment from "moment";
 import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";

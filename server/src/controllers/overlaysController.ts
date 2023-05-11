@@ -22,15 +22,15 @@ export const getOverlaysList = async (
   const searchFilter = {}; // filterCommandsByUrlParams(req.query);
   try {
     const overlays = await getOverlays(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { createdAt: -1 },
     });
 
     const count = await getOverlaysCount(searchFilter);
     return res.status(200).send({
       data: overlays,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });

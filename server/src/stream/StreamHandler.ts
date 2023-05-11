@@ -2,14 +2,14 @@ import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
 import { ConfigDocument, UserModel } from "@models/types";
 import { ConfigDefaults } from "@defaults/types";
 import { configDefaults } from "@defaults/configsDefaults";
-import {
+import type {
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
   CustomRewardCreateData,
   CustomRewardData,
-} from "@libs/types";
+} from "@socket";
 import { Server, Socket } from "socket.io";
 
 import {

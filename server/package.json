@@ -55,6 +55,6 @@
     "@services": "dist/services",
     "@defaults": "dist/defaults",
     "@aggregations": "dist/aggregations",
-    "@types": "@types"
+    "@socket": "dist/socketIO"
   }
 }

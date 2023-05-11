@@ -2,13 +2,13 @@ import HeadHandler from "./HeadHandler";
 import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
 import { EventSubWsListener } from "@twurple/eventsub-ws";
 import { Server } from "socket.io";
-import {
+import type {
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
   RewardData,
-} from "@libs/types";
+} from "@socket";
 import { eventsubLogger } from "@utils/loggerUtil";
 import {
   createStreamSession,

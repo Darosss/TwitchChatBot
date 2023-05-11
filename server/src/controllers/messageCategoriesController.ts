@@ -26,8 +26,8 @@ export const getMessageCategoriesList = async (
 
   try {
     const categories = await getMessageCategories(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       populateSelect: [
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
@@ -39,7 +39,7 @@ export const getMessageCategoriesList = async (
     const count = await getMessageCategoriesCount(searchFilter);
     return res.status(200).send({
       data: categories,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });

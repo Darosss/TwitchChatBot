@@ -22,8 +22,8 @@ export const getTagsList = async (
   const searchFilter = filterTagsByUrlParams(req.query);
   try {
     const tags = await getTags(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { createdAt: -1 },
     });
 
@@ -31,7 +31,7 @@ export const getTagsList = async (
 
     return res.status(200).send({
       data: tags,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });

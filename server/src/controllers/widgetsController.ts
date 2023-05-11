@@ -18,8 +18,8 @@ export const getWidgetsList = async (
   next: NextFunction
 ) => {
   const {
-    page = 1,
-    limit = 25,
+    page = "1",
+    limit = "25",
     sortBy = "createdAt",
     sortOrder = "desc",
   } = req.query;
@@ -27,15 +27,15 @@ export const getWidgetsList = async (
   const searchFilter = {};
   try {
     const widgets = await getWidgets(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
     });
 
     const count = await getWidgetsCount(searchFilter);
     return res.status(200).send({
       data: widgets,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });

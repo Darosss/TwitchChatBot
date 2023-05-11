@@ -26,8 +26,8 @@ export const getTriggersList = async (
   const searchFilter = filterTriggersByUrlParams(req.query);
   try {
     const triggers = await getTriggers(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       populateSelect: [
         { path: "tag", select: { _id: 1, name: 1, enabled: true } },
         { path: "mood", select: { _id: 1, name: 1, enabled: true } },
@@ -39,7 +39,7 @@ export const getTriggersList = async (
 
     return res.status(200).send({
       data: triggers,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });
