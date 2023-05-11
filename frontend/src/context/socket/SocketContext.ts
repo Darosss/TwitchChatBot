@@ -1,8 +1,7 @@
 import React from "react";
 import { io, Socket } from "socket.io-client";
-import { ClientToServerEvents, ServerToClientEvents } from "@libs/types";
+import { ServerToClientEvents, ClientToServerEvents } from "./types";
 import { viteBackendUrl } from "src/configs/envVariables";
-
 export const socketConn = io(viteBackendUrl) as Socket<
   ServerToClientEvents,
   ClientToServerEvents
