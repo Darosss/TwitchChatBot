@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { SocketContext } from "@context/SocketContext";
+import { SocketContext, AudioStreamDataInfo } from "@context/socket";
 import { convertSecondsToMS } from "@utils/convertSecondsToMS";
 import ProgressBar from "@ramonak/react-progress-bar";
-import { AudioStreamDataInfo } from "@libs/types";
 export default function MusicPlayer() {
   const socket = useContext(SocketContext);
   const [songName, setSongName] = useState("");
