@@ -6,6 +6,7 @@ export interface AudioYTData {
   duration: number;
   currentTime: number;
   requester?: string;
+  volume: number;
 }
 
 export interface AudioStreamData extends AudioYTData {
@@ -18,6 +19,7 @@ export interface AudioYTDataInfo {
   currentTime: number;
   songsInQue: [string, string][];
   isPlaying: boolean;
+  volume: number;
 }
 
 export interface AudioStreamDataInfo extends AudioYTDataInfo {
