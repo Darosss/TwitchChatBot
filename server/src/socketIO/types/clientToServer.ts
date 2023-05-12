@@ -3,6 +3,7 @@ import {
   AudioStreamDataInfo,
   AudioYTData,
   AudioYTDataInfo,
+  AudioStreamData,
 } from "./dataTypes";
 
 export interface ClientToServerEvents
@@ -38,7 +39,9 @@ export interface ClientToServerMusicLocalEvents {
   musicPlay: () => void;
   musicNext: () => void;
   changeVolume: (volume: number) => void;
-  getAudioStreamData: () => void;
+  getAudioStreamData: (
+    cb: (isPlaying: boolean, data: AudioStreamData) => void
+  ) => void;
   loadSongs: (folderName: string) => void;
   getAudioInfo: (cb: (data: AudioStreamDataInfo) => void) => void;
 }
@@ -50,6 +53,6 @@ export interface ClientToServerYoutubeEvents {
   musicYTStop: () => void;
   musicYTPlay: () => void;
   loadYTPlaylist: (playlistId: string) => void;
-  getAudioYTData: (cb: (data: AudioYTData) => void) => void;
+  getAudioYTData: (cb: (isPlaying: boolean, data: AudioYTData) => void) => void;
   getAudioYTInfo: (cb: (data: AudioYTDataInfo) => void) => void;
 }
