@@ -12,8 +12,11 @@ export default function MusicPlayer() {
   }, [player]);
 
   const handleYTResume = useCallback(
-    (name: string, time: number) => {
-      if (player) player.target.loadVideoById(name, time);
+    (name: string, time: number, volume: number) => {
+      if (!player) return;
+
+      player.target.loadVideoById(name, time);
+      player.target.setVolume(volume);
     },
     [player]
   );
@@ -35,7 +38,7 @@ export default function MusicPlayer() {
 
   useEffect(() => {
     socket.on("audioYT", (data) => {
-      handleYTResume(data.id, data.currentTime);
+      handleYTResume(data.id, data.currentTime, data.volume);
       setSongName(data.name);
     });
 
@@ -54,19 +57,14 @@ export default function MusicPlayer() {
     };
   }, [handleYTChangeVolume]);
 
-  useEffect(() => {
-    socket.emit("getAudioYTData", (cb) => {
-      player?.target.loadVideoById(cb.name, cb.currentTime);
-      setSongName(cb.name);
-    });
-  }, []);
-
   const onPlayerReady: YouTubeProps["onReady"] = (event) => {
     setPlayer(event);
 
-    socket.emit("getAudioYTData", (cb) => {
+    socket.emit("getAudioYTData", (isPlaying, cb) => {
+      if (!isPlaying) return;
       event.target.loadVideoById(cb.id, cb.currentTime);
-      event.target.playVideo();
+      event.target.setVolume(cb.volume);
+      setSongName(cb.name);
     });
   };
   const onPlayerEndSong: YouTubeProps["onEnd"] = (event) => {};
@@ -74,7 +72,7 @@ export default function MusicPlayer() {
     height: "100%",
     width: "100%",
     playerVars: {
-      autoplay: 1,
+      autoplay: 0,
       enablejsapi: 1,
       modestbranding: 1,
     },
@@ -83,7 +81,7 @@ export default function MusicPlayer() {
   return (
     <div className="youtube-player-wrapper">
       <div className="youtube-song-details">
-        <div className="youtube-current-song">{songName}</div>
+        <div className="youtube-current-song">{songName} </div>
         <div className="youtube-song-progress">progress soon </div>
       </div>
 

@@ -1,6 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { SocketContext, AudioStreamDataInfo } from "@context/socket";
+import {
+  SocketContext,
+  AudioStreamDataInfo,
+  AudioStreamData,
+} from "@context/socket";
 import { convertSecondsToMS } from "@utils/convertSecondsToMS";
 import ProgressBar from "@ramonak/react-progress-bar";
 export default function MusicPlayer() {
@@ -51,7 +55,18 @@ export default function MusicPlayer() {
       }
     };
 
-    socket.on("audio", (data) => {
+    const changeVolumeGain = (volume: number) => {
+      if (!gain) return;
+      let volumeToSet = volume;
+      if (volume > 100) volumeToSet = 100;
+      else if (volume < 0) volumeToSet = 0;
+
+      gain.gain.value = volumeToSet / 100;
+
+      globalVolume = volumeToSet / 100;
+    };
+
+    const onGetAudioSoundData = (data: AudioStreamData) => {
       setSongName(data.name);
       setSongDuration(data.duration);
 
@@ -77,26 +92,24 @@ export default function MusicPlayer() {
         gain = audioCtx.createGain();
         source.connect(gain);
         gain.connect(audioCtx.destination);
+        changeVolumeGain(data.volume);
+
         gain.gain.value = globalVolume || 0.1;
 
         source.start(0, data.currentTime);
       });
+    };
+
+    socket.on("audio", (data) => {
+      onGetAudioSoundData(data);
     });
 
     socket.on("audioStop", () => musicStop());
 
     socket.on("changeVolume", (volume) => {
-      if (!gain) return;
-      let volumeToSet = volume;
-      if (volume > 100) volumeToSet = 100;
-      else if (volume < 0) volumeToSet = 0;
-
-      gain.gain.value = volumeToSet / 100;
-
-      globalVolume = volumeToSet / 100;
+      changeVolumeGain(volume);
     });
 
-    socket.emit("getAudioStreamData");
     const intervalContentId = setInterval(() => {
       setShowPlaylist((prevShow) => !prevShow);
     }, 20000);
@@ -104,7 +117,16 @@ export default function MusicPlayer() {
     socket.on("getAudioInfo", (data) => {
       setAudioData(data);
     });
-    socket.emit("getAudioInfo");
+
+    socket.emit("getAudioInfo", (cb) => {
+      setAudioData(cb);
+    });
+
+    socket.emit("getAudioStreamData", (isPlaying, cb) => {
+      if (!isPlaying) return;
+
+      onGetAudioSoundData(cb);
+    });
 
     return () => {
       socket.off("audio");
