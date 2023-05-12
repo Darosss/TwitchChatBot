@@ -46,7 +46,6 @@ export default function YTMusicPlayer() {
       time++;
       if (time >= duration) {
         setAudioData((prevState) => ({ ...prevState, currentTime: 0 }));
-        clearInterval(SONG_COUNT_TIMER);
       }
     };
 
