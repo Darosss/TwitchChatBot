@@ -472,9 +472,11 @@ class StreamHandler {
       SocketData
     >
   ) {
-    socket.on("getAudioStreamData", () => {
+    socket.on("getAudioStreamData", (cb) => {
       const audioData = this.musicHandler.getAudioStreamData();
-      if (audioData) this.socketIO.to(socket.id).emit("audio", audioData);
+      const isPlaying = this.musicHandler.isMusicPlaying();
+      if (!audioData) return;
+      cb(isPlaying, audioData);
     });
 
     socket.on("musicPause", () => {
@@ -516,8 +518,9 @@ class StreamHandler {
   ) {
     socket.on("getAudioYTData", (cb) => {
       const audioData = this.musicYTHandler.getAudioStreamData();
+      const isPlaying = this.musicYTHandler.isMusicPlaying();
       if (!audioData) return;
-      cb(audioData);
+      cb(isPlaying, audioData);
     });
     socket.on("getAudioYTInfo", (cb) => {
       const audioData = this.musicYTHandler.getAudioInfo();
