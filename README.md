@@ -106,21 +106,19 @@ DATABASE_CONNECT_URL=mongodb://127.0.0.1:27017/mychatbot
 CLIENT_ID=<twitch application client id>
 CLIENT_SECRET=<twitch application client secret>
 
+# Read below for YOUTUBE_API_KEY_V3
+YOUTUBE_API_KEY_V3=keyapi
+
 # ENCRYPTION_KEY - have to be 16 bytes string
 # I've used crypto libaray: crypto.randomBytes(16).toString('hex')
 ENCRYPTION_KEY=random_encryption_secret_stringkey
 
-
 # REDIRECT_URL=<backend localhost with port>/auth/twitch/callback
 REDIRECT_URL=http://localhost:5000/auth/twitch/callback
-
-
 
 # This is for cors origin options
 LOCAL_FRONTEND_URL=http://localhost:5173
 HOST_FRONTEND_URL=http://192.168.0.100:5173
-
-
 
 # Read below for BOT_PASSWORD / BOT_USERNAME / BOT_ID
 BOT_PASSWORD=oauth:1234567890
@@ -132,6 +130,8 @@ VITE_BACKEND_URL=http://192.168.0.100:5000
 ```
 
 <sub> `CLIENT_ID` and `CLIENT_SECRET` - both can be obtained from twitch apllication: Read it here: <https://dev.twitch.tv/docs/authentication/register-app/> <br>
+`YOUTUBE_API_KEY_V3` - info: https://developers.google.com/youtube/v3/getting-started
+<br>
 `OAuth Redirect URLs` - in twitch app should have \<backend localhost with port>/auth/twitch/callback
 <br>
 `REDIRECT_URL` - must be same as **OAuth Redirect URLs** from app registered above <br>
