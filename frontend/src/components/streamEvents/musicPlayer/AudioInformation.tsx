@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import {
   SocketContext,
   AudioStreamDataInfo,
@@ -11,26 +11,14 @@ interface AudioInformationProps<
 > {
   audioData: T;
   setAudioData: React.Dispatch<React.SetStateAction<T>>;
-  changeVolumeEmit: ChangeVolumeEmitNames;
+  onChangeVolumeFn: (volume: number) => void;
 }
-
-type ChangeVolumeEmitNames = "changeVolume" | "changeYTVolume";
 
 export default function AudioInformation<
   T extends AudioYTDataInfo | AudioStreamDataInfo
 >(props: AudioInformationProps<T>) {
   const socket = useContext(SocketContext);
-  const { audioData, setAudioData, changeVolumeEmit } = props;
-
-  useEffect(() => {
-    socket.on(changeVolumeEmit, (volume) => {
-      volume;
-    });
-  }, []);
-
-  const emitChangeLocalVolume = (e: number) => {
-    socket.emit(changeVolumeEmit, e);
-  };
+  const { audioData, setAudioData, onChangeVolumeFn } = props;
 
   const showCurrentSongProgress = () => {
     const [maxMinutes, maxSeconds] = convertSecondsToMS(
@@ -64,9 +52,7 @@ export default function AudioInformation<
                 volume: e.target.valueAsNumber,
               }))
             }
-            onMouseUp={(e) =>
-              emitChangeLocalVolume(e.currentTarget.valueAsNumber)
-            }
+            onMouseUp={(e) => onChangeVolumeFn(e.currentTarget.valueAsNumber)}
           />
           {audioData.volume}
         </div>

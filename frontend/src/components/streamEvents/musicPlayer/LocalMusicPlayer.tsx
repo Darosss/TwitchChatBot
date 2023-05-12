@@ -74,6 +74,7 @@ export default function LocalMusicPlayer() {
   const toggleLocalPlayPause = () => {
     if (audioData.isPlaying) {
       socket.emit("musicPause");
+      clearInterval(SONG_COUNT_TIMER);
     } else {
       socket.emit("musicPlay");
     }
@@ -87,6 +88,10 @@ export default function LocalMusicPlayer() {
     socket.emit("musicNext");
   };
 
+  const emitChangeLocalVolume = (e: number) => {
+    socket.emit("changeVolume", e);
+  };
+
   const generateMusicPlayerContext = () => {
     switch (activeTab) {
       case "information":
@@ -94,7 +99,7 @@ export default function LocalMusicPlayer() {
           <AudioInformation<AudioStreamDataInfo>
             audioData={audioData}
             setAudioData={setAudioData}
-            changeVolumeEmit="changeVolume"
+            onChangeVolumeFn={emitChangeLocalVolume}
           />
         );
       case "upload":

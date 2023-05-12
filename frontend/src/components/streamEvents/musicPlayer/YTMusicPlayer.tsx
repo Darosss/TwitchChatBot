@@ -85,6 +85,10 @@ export default function YTMusicPlayer() {
     }));
   };
 
+  const emitChangeYTVolume = (e: number) => {
+    socket.emit("changeYTVolume", e);
+  };
+
   const generateMusicPlayerContext = () => {
     switch (activeTab) {
       case "information":
@@ -92,7 +96,7 @@ export default function YTMusicPlayer() {
           <AudioInformation<AudioYTDataInfo>
             audioData={audioData}
             setAudioData={setAudioData}
-            changeVolumeEmit="changeYTVolume"
+            onChangeVolumeFn={emitChangeYTVolume}
           />
         );
       case "playlists":
