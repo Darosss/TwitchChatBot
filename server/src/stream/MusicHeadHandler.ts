@@ -170,7 +170,7 @@ abstract class MusicHeadHandler {
     if (!musicProps) return;
 
     this.currentSongStart = new Date();
-    this.currentSong = musicProps;
+    this.currentSong = { ...musicProps, volume: this.volume };
 
     this.removeFromQue(this.currentSong?.id);
 
@@ -257,8 +257,15 @@ abstract class MusicHeadHandler {
     else if (volume < 0) valueToSet = 0;
 
     this.volume = valueToSet;
+    this.changeVolumeOfCurrentSong(valueToSet);
     this.clientSay(`Volume changed to ${valueToSet}%`);
     this.socketIO.emit(emitName, valueToSet);
+  }
+
+  private changeVolumeOfCurrentSong(volume: number) {
+    if (!this.currentSong) return;
+
+    this.currentSong = { ...this.currentSong, volume: volume };
   }
 
   protected getRemainingTimeOfCurrentSong() {
@@ -292,6 +299,10 @@ abstract class MusicHeadHandler {
     } catch {
       this.clientSay(`Not enought songs to do that uga buga`);
     }
+  }
+
+  public isMusicPlaying() {
+    return this.isPlaying;
   }
 }
 
