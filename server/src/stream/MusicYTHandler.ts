@@ -61,6 +61,7 @@ class MusicYTHandler extends MusicHeadHandler {
           duration: duration,
           currentTime: 0,
           requester: requester,
+          volume: this.volume,
         },
       ]);
     } catch (err) {
@@ -146,6 +147,7 @@ class MusicYTHandler extends MusicHeadHandler {
       currentTime: this.getCurrentTimeSong(),
       songsInQue: songsInQue,
       isPlaying: this.isPlaying,
+      volume: this.volume,
     };
     return info;
   }

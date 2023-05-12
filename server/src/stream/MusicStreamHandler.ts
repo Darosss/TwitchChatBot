@@ -82,6 +82,7 @@ class MusicStreamHandler extends MusicHeadHandler {
           duration: duration,
           currentTime: 0,
           requester: requester,
+          volume: this.volume,
         },
       ]);
     } catch (err) {
@@ -119,6 +120,7 @@ class MusicStreamHandler extends MusicHeadHandler {
       currentTime: this.getCurrentTimeSong(),
       songsInQue: songsInQue,
       isPlaying: this.isPlaying,
+      volume: this.volume,
       currentFolder:
         this.currentFolder !== musicPath
           ? path.basename(this.currentFolder)
