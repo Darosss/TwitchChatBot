@@ -5,4 +5,5 @@ export type {
   AudioYTDataInfo,
   EventAndUser,
   CustomRewardData,
+  AudioStreamData,
 } from "@socketTypes";
