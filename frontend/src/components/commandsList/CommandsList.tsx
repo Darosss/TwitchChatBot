@@ -3,10 +3,7 @@ import FilterBarCommands from "./filterBarCommands";
 import Modal from "@components/modal";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-import {
-  SocketContext,
-  socketEmitRefreshCommands,
-} from "@context/SocketContext";
+import { SocketContext, socketEmitRefreshCommands } from "@context/socket";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import {
   getCommands,

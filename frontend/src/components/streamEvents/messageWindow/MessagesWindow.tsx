@@ -6,7 +6,7 @@ import {
   incrementUsesCategoryById,
 } from "@services/MessageCategoriesService";
 import Modal from "@components/modal";
-import { SocketContext } from "@context/SocketContext";
+import { SocketContext } from "@context/socket";
 import { addNotification } from "@utils/getNotificationValues";
 
 export default function MessagesWindow() {

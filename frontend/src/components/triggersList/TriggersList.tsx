@@ -11,7 +11,7 @@ import {
   deleteTrigger,
   TriggerCreateData,
 } from "@services/TriggerService";
-import { socketEmitRefreshTriggers } from "@context/SocketContext";
+import { socketEmitRefreshTriggers } from "@context/socket";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import { getAllModes } from "@utils/getListModes";

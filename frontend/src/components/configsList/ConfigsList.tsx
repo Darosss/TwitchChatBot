@@ -14,7 +14,7 @@ import {
   MusicConfigs,
   resetConfigs,
 } from "@services/ConfigService";
-import { SocketContext } from "@context/SocketContext";
+import { SocketContext } from "@context/socket";
 import { addNotification } from "@utils/getNotificationValues";
 import {
   chatGamesConfigsInitial,

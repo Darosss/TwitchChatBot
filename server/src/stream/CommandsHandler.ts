@@ -1,6 +1,5 @@
 import HeadHandler from "./HeadHandler";
 import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
-import { AudioPlayerOptions } from "@libs/types";
 import {
   ChatCommandModel,
   CommandsConfigs,
@@ -15,25 +14,26 @@ import {
 } from "@services/chatCommands";
 import { commandLogger } from "@utils/loggerUtil";
 import { randomWithMax } from "@utils/randomNumbersUtil";
-import {
+import type {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
-} from "@libs/types";
+} from "@socket";
 import { Server } from "socket.io";
-import MusicStreamHandler from "./MusicStreamHandler";
+import MusicYTHandler from "./MusicYTHandler";
+import { MusicPlayerCommands } from "./types";
 
 type CommandsHandlerConfigs = CommandsConfigs &
   Pick<HeadConfigs, "permissionLevels">;
 
 class CommandsHandler extends HeadHandler {
   private commandsAliases: string[] = [];
-  private defaultsMusicAliases = new Map<AudioPlayerOptions, number>();
+  private defaultsMusicAliases = new Map<MusicPlayerCommands, number>();
   private musicCommandsPermission: number;
   private musicCommandCommonPermission: number;
   private configs: CommandsHandlerConfigs;
-  private readonly musicHandler: MusicStreamHandler;
+  private readonly musicHandler: MusicYTHandler;
 
   constructor(
     twitchApi: ApiClient,
@@ -44,7 +44,7 @@ class CommandsHandler extends HeadHandler {
       SocketData
     >,
     authorizedUser: HelixPrivilegedUser,
-    musicHandler: MusicStreamHandler,
+    musicHandler: MusicYTHandler,
     configs: CommandsHandlerConfigs
   ) {
     super(socketIO, twitchApi, authorizedUser);
@@ -117,7 +117,8 @@ class CommandsHandler extends HeadHandler {
     message: string
   ) {
     const defaultMusicAlias = [...this.defaultsMusicAliases.keys()].find(
-      (alias: string) => message.toLowerCase().includes(alias)
+      (alias: string) =>
+        message.toLowerCase().startsWith(this.configs.commandsPrefix + alias)
     );
     if (defaultMusicAlias) {
       return this.onMessageMusicCommand(
@@ -130,20 +131,14 @@ class CommandsHandler extends HeadHandler {
   }
 
   private async onMessageMusicCommand(
-    musicCommand: AudioPlayerOptions,
+    musicCommand: MusicPlayerCommands,
     privilege: number,
     username: string,
     message: string
   ) {
     const commandPrivilege = this.defaultsMusicAliases.get(musicCommand);
-    console.log(
-      commandPrivilege && commandPrivilege > privilege,
-      "xD",
-      commandPrivilege,
-      privilege
-    );
+
     if (commandPrivilege && commandPrivilege > privilege) {
-      console.log(commandPrivilege, privilege);
       commandLogger.info(
         `Music command: ${musicCommand} - was invoked, but privilege does not match`
       );
@@ -154,18 +149,18 @@ class CommandsHandler extends HeadHandler {
     );
     switch (musicCommand) {
       case "play":
-        this.musicHandler.resumePlayer(true);
+        this.musicHandler.resumePlayer();
         return true;
       case "stop":
         return "Stop player! (Not implemented yet)";
       case "resume":
-        this.musicHandler.resumePlayer(true);
+        this.musicHandler.resumePlayer();
         return true;
       case "pause":
-        this.musicHandler.pausePlayer(true);
+        this.musicHandler.pausePlayer();
         return true;
       case "skip":
-        this.musicHandler.nextSong(true);
+        this.musicHandler.nextSong();
         return true;
       case "next":
         this.musicHandler.sayNextSong();
@@ -179,19 +174,19 @@ class CommandsHandler extends HeadHandler {
       case "load":
         const loadCommand = `${this.configs.commandsPrefix}load`;
         const loadOpt = message.replace(loadCommand, "").trim();
-        this.musicHandler.loadNewSongs(loadOpt, true, true);
+        this.musicHandler.loadNewSongs(loadOpt, true);
         return true;
       case "sr":
         const srCommand = `${this.configs.commandsPrefix}sr`;
         const songName = message.replace(srCommand, "").trim();
 
-        await this.musicHandler.requestSong(username, songName, true);
+        await this.musicHandler.requestSong(username, songName);
         return true;
       case "volume":
         const volumeCommand = `${this.configs.commandsPrefix}volume`;
         const volume = Number(message.replace(volumeCommand, "").trim());
 
-        this.musicHandler.changeVolume(volume, true);
+        this.musicHandler.changeVolume(volume);
         return true;
     }
   }

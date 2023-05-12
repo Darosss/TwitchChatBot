@@ -34,8 +34,8 @@ export const getStreamSessionsList = async (
   const searchFilter = filterSessionByUrlParams(req.query);
   try {
     const streamSessions = await getStreamSessions(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
     });
 
@@ -43,8 +43,8 @@ export const getStreamSessionsList = async (
 
     res.status(200).send({
       data: streamSessions,
-      totalPages: Math.ceil(count / limit),
-      count: count,
+      totalPages: Math.ceil(count / Number(limit)),
+      count: Number(count),
       currentPage: Number(page),
     });
   } catch (err) {
@@ -137,8 +137,8 @@ export const getCurrentSessionMessages = async (
     );
 
     const messages = await getMessages(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { date: -1 },
       select: { __v: 0 },
     });
@@ -146,7 +146,7 @@ export const getCurrentSessionMessages = async (
     const count = await getMessagesCount(searchFilter);
     return res.status(200).send({
       data: messages,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });
@@ -178,8 +178,8 @@ export const getCurrentSessionRedemptions = async (
       filterRedemptionsByUrlParams(req.query)
     );
     const redemptions = await getRedemptions(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { redemptionDate: -1 },
     });
 
@@ -187,7 +187,7 @@ export const getCurrentSessionRedemptions = async (
 
     return res.status(200).send({
       data: redemptions,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });
@@ -242,8 +242,8 @@ export const getSessionMessages = async (
     );
 
     const messages = await getMessages(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { date: -1 },
       select: { __v: 0 },
     });
@@ -251,7 +251,7 @@ export const getSessionMessages = async (
     const count = await getMessagesCount(searchFilter);
     return res.status(200).send({
       data: messages,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });
@@ -281,8 +281,8 @@ export const getSessionRedemptions = async (
       filterRedemptionsByUrlParams(req.query)
     );
     const redemptions = await getRedemptions(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { redemptionDate: -1 },
     });
 
@@ -290,7 +290,7 @@ export const getSessionRedemptions = async (
 
     return res.status(200).send({
       data: redemptions,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });

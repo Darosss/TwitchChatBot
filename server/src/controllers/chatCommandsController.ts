@@ -26,8 +26,8 @@ export const getChatCommandsList = async (
   const searchFilter = filterCommandsByUrlParams(req.query);
   try {
     const chatCommands = await getChatCommands(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       populateSelect: [
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
@@ -38,7 +38,7 @@ export const getChatCommandsList = async (
     const count = await getChatCommandsCount(searchFilter);
     return res.status(200).send({
       data: chatCommands,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });

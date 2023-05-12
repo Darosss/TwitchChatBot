@@ -4,13 +4,28 @@
   height: 100%;
   overflow-x: hidden;
 
-  button {
-    border-radius: 1rem;
-    height: 3vh;
-    width: 50%;
+  .music-player-switch-wrapper {
+    flex: 1;
+    justify-content: center;
+    button.switch-players-button {
+      height: 2vh;
+      flex: 0.5;
 
-    &.upload-button-show-hide {
-      font-size: 1vmin;
+      font-size: 1vh;
+    }
+  }
+
+  .music-player-sterring-wrapper {
+    flex: 1;
+    button {
+      border-radius: 1rem;
+      height: 3vmin;
+      width: 50%;
+      font-size: 1.5vmin;
+
+      &.upload-button-show-hide {
+        font-size: 1vmin;
+      }
     }
   }
 
@@ -21,6 +36,10 @@
 
   .music-player-tabs-wrapper {
     margin-top: 0.2rem;
+    * {
+      font-size: 1.5vmin;
+      flex: 1;
+    }
   }
 
   .tab-containter {

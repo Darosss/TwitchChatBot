@@ -2,7 +2,7 @@ import { Error as ErrorMoongose } from "mongoose";
 
 class AppError extends Error {
   statusCode: number;
-  message: string;
+  override message: string;
 
   constructor(statusCode?: number, message?: string) {
     super(message);

@@ -35,8 +35,8 @@ export const getUsersList = async (
   const searchFilter = filterUsersByUrlParams(req.query);
   try {
     const users = await getUsers(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
     });
 
@@ -44,7 +44,7 @@ export const getUsersList = async (
 
     return res.status(200).send({
       data: users,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });
@@ -100,8 +100,8 @@ export const getUserMessages = async (
 
   try {
     const messages = await getMessages(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { date: -1 },
       select: { __v: 0 },
     });
@@ -109,7 +109,7 @@ export const getUserMessages = async (
 
     return res.status(200).send({
       data: messages,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });
@@ -133,8 +133,8 @@ export const getUserRedemptions = async (
 
   try {
     const redemptions = await getRedemptions(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { redemptionDate: -1 },
     });
 
@@ -142,7 +142,7 @@ export const getUserRedemptions = async (
 
     return res.status(200).send({
       data: redemptions,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });
@@ -163,7 +163,7 @@ export const getLatestEldestUserMessages = async (
     const firstMessages = await getMessages(
       { owner: id },
       {
-        limit: limit,
+        limit: Number(limit),
         sort: { date: 1 },
         select: { __v: 0 },
       }
@@ -171,7 +171,7 @@ export const getLatestEldestUserMessages = async (
     const latestMessages = await getMessages(
       { owner: id },
       {
-        limit: limit,
+        limit: Number(limit),
         sort: { date: -1 },
         select: { __v: 0 },
       }

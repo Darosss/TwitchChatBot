@@ -6,7 +6,7 @@ import { getAuthorizeUrl } from "@services/AuthService";
 import DrawerBar from "@components/drawer";
 import { routes } from "@routes/routesList";
 import ChangeTheme from "@components/changeTheme";
-import { SocketContext } from "@context/SocketContext";
+import { SocketContext } from "@context/socket";
 
 interface NavLinkProps extends LinkProps {
   label: string;

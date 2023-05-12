@@ -18,8 +18,8 @@ export const getMessagesList = async (
   const searchFilter = await filterMessagesByUrlParams(req.query);
   try {
     const messages = await getMessages(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
       select: { __v: 0 },
     });
@@ -27,7 +27,7 @@ export const getMessagesList = async (
     const count = await getMessagesCount(searchFilter);
     return res.status(200).send({
       data: messages,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });

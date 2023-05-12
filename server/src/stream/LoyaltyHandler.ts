@@ -4,12 +4,12 @@ import { ApiClient, HelixChatChatter, HelixPrivilegedUser } from "@twurple/api";
 import { getBaseLog } from "@utils/getBaseLogUtil";
 import removeDifferenceFromSet from "@utils/removeDifferenceSetUtil";
 
-import {
+import type {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
-} from "@libs/types";
+} from "@socket";
 import { Server } from "socket.io";
 
 import retryWithCatch from "@utils/retryWithCatchUtil";

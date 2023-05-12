@@ -1,4 +1,4 @@
-import { SocketContext } from "@context/SocketContext";
+import { SocketContext } from "@context/socket";
 import {
   deleteMp3File,
   getFolderMp3Files,
@@ -12,19 +12,10 @@ export default function AudioFoldersList() {
   const [folderName, setFolderName] = useState("");
   const [fileNameToDelete, setFileNameToDelete] = useState<string | null>(null);
 
-  const {
-    data: foldersData,
-    loading: foldersLoad,
-    error: foldersError,
-    refetchData: refetchFolders,
-  } = getFoldersList();
+  const { data: foldersData } = getFoldersList();
 
-  const {
-    data: mp3Data,
-    loading: mp3Load,
-    error: mp3Error,
-    refetchData: refetchMp3Files,
-  } = getFolderMp3Files(folderName);
+  const { data: mp3Data, refetchData: refetchMp3Files } =
+    getFolderMp3Files(folderName);
 
   const { refetchData: fetchDeleteFile } = deleteMp3File(
     folderName,
@@ -56,11 +47,9 @@ export default function AudioFoldersList() {
   }, [folderName]);
 
   useEffect(() => {
-    socket.on("getAudioInfo", (data) => {
-      setFolderName(data.currentFolder);
+    socket.emit("getAudioInfo", (cb) => {
+      setFolderName(cb.currentFolder);
     });
-
-    socket.emit("getAudioInfo");
   }, []);
 
   if (!foldersData) return <> No folders.</>;

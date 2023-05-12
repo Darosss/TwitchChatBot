@@ -1,9 +1,9 @@
-import {
+import type {
   ClientToServerEvents,
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
-} from "@libs/types";
+} from "@socket";
 import { Server } from "socket.io";
 import { ApiClient, HelixPrivilegedUser } from "@twurple/api/";
 

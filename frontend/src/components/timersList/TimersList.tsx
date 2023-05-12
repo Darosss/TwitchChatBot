@@ -11,7 +11,7 @@ import {
   deleteTimer,
   TimerCreateData,
 } from "@services/TimerService";
-import { socketEmitRefreshTimers } from "@context/SocketContext";
+import { socketEmitRefreshTimers } from "@context/socket";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import { getAllModes } from "@utils/getListModes";

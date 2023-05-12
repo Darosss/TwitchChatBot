@@ -18,8 +18,8 @@ export const getRedemptionsList = async (
   const searchFilter = filterRedemptionsByUrlParams(req.query);
   try {
     const redemptions = await getRedemptions(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
     });
 
@@ -27,7 +27,7 @@ export const getRedemptionsList = async (
 
     return res.status(200).send({
       data: redemptions,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });

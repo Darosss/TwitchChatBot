@@ -22,8 +22,8 @@ export const getMoodsList = async (
   const searchFilter = filterMoodsByUrlParams(req.query);
   try {
     const moods = await getMoods(searchFilter, {
-      limit: limit,
-      skip: page,
+      limit: Number(limit),
+      skip: Number(page),
       sort: { createdAt: -1 },
     });
 
@@ -31,7 +31,7 @@ export const getMoodsList = async (
 
     return res.status(200).send({
       data: moods,
-      totalPages: Math.ceil(count / limit),
+      totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page),
     });

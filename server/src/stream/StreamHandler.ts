@@ -2,14 +2,14 @@ import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
 import { ConfigDocument, UserModel } from "@models/types";
 import { ConfigDefaults } from "@defaults/types";
 import { configDefaults } from "@defaults/configsDefaults";
-import {
+import type {
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
   CustomRewardCreateData,
   CustomRewardData,
-} from "@libs/types";
+} from "@socket";
 import { Server, Socket } from "socket.io";
 
 import {
@@ -34,6 +34,7 @@ import EventSubHandler from "./EventSubHandler";
 import ClientTmiHandler from "./TwitchTmiHandler";
 import { botId } from "@configs/envVariables";
 import { removeAuthToken } from "@services/auth";
+import MusicYTHandler from "./MusicYTHandler";
 interface StreamHandlerOptions {
   config: ConfigDocument;
   twitchApi: ApiClient;
@@ -65,6 +66,7 @@ class StreamHandler {
   private loayaltyHandler: LoyaltyHandler;
   private timersHandler: TimersHandler;
   private musicHandler: MusicStreamHandler;
+  private musicYTHandler: MusicYTHandler;
   private eventSubHandler: EventSubHandler;
   private configs: ConfigDefaults;
   private loggedIn: boolean = true;
@@ -83,11 +85,16 @@ class StreamHandler {
       clientTmi.say.bind(clientTmi),
       this.configs.musicConfigs
     );
+    this.musicYTHandler = new MusicYTHandler(
+      socketIO,
+      clientTmi.say.bind(clientTmi),
+      this.configs.musicConfigs
+    );
     this.commandsHandler = new CommandsHandler(
       twitchApi,
       socketIO,
       authorizedUser,
-      this.musicHandler,
+      this.musicYTHandler,
       {
         ...this.configs.commandsConfigs,
         permissionLevels: this.configs.headConfigs.permissionLevels,
@@ -120,7 +127,6 @@ class StreamHandler {
     this.initOnMessageEvents();
     this.initSocketEvents();
 
-    this.musicHandler.init();
     this.triggersHandler;
     this.eventSubHandler.init();
   }
@@ -268,6 +274,7 @@ class StreamHandler {
       this.timersHandler.refreshConfigs(timersConfigs);
 
       this.musicHandler.refreshConfigs(musicConfigs);
+      this.musicYTHandler.refreshConfigs(musicConfigs);
     }
   }
 
@@ -339,6 +346,8 @@ class StreamHandler {
       });
 
       this.onMusicHandlerEvents(socket);
+
+      this.onMusicYtHandlerEvents(socket);
     });
   }
 
@@ -463,30 +472,32 @@ class StreamHandler {
       SocketData
     >
   ) {
-    socket.on("getAudioStreamData", () => {
+    socket.on("getAudioStreamData", (cb) => {
       const audioData = this.musicHandler.getAudioStreamData();
-      if (audioData) this.socketIO.to(socket.id).emit("audio", audioData);
+      const isPlaying = this.musicHandler.isMusicPlaying();
+      if (!audioData) return;
+      cb(isPlaying, audioData);
     });
 
     socket.on("musicPause", () => {
-      this.musicHandler.pausePlayer(true);
+      this.musicHandler.pausePlayer();
     });
 
     socket.on("musicStop", () => {});
 
     socket.on("musicPlay", () => {
-      this.musicHandler.resumePlayer(true);
+      this.musicHandler.resumePlayer();
     });
     socket.on("loadSongs", (folderName) => {
       this.musicHandler.loadNewSongs(folderName, true);
     });
 
     socket.on("musicNext", () => {
-      this.musicHandler.nextSong(true);
+      this.musicHandler.nextSong();
     });
 
     socket.on("changeVolume", (volume) => {
-      this.musicHandler.changeVolume(volume, true);
+      this.musicHandler.changeVolume(volume);
     });
 
     socket.on("getAudioInfo", () => {
@@ -494,6 +505,49 @@ class StreamHandler {
       if (!audioInfo) return;
 
       this.socketIO.to(socket.id).emit("getAudioInfo", audioInfo);
+    });
+  }
+
+  private onMusicYtHandlerEvents(
+    socket: Socket<
+      ClientToServerEvents,
+      ServerToClientEvents,
+      InterServerEvents,
+      SocketData
+    >
+  ) {
+    socket.on("getAudioYTData", (cb) => {
+      const audioData = this.musicYTHandler.getAudioStreamData();
+      const isPlaying = this.musicYTHandler.isMusicPlaying();
+      if (!audioData) return;
+      cb(isPlaying, audioData);
+    });
+    socket.on("getAudioYTInfo", (cb) => {
+      const audioData = this.musicYTHandler.getAudioInfo();
+      if (!audioData) return;
+      cb(audioData);
+    });
+
+    socket.on("musicYTPause", () => {
+      this.musicYTHandler.pausePlayer();
+    });
+
+    socket.on("musicYTStop", () => {});
+
+    socket.on("musicYTPlay", () => {
+      this.musicYTHandler.resumePlayer();
+    });
+
+    socket.on("loadYTPlaylist", async (playlistId: string) => {
+      await this.musicYTHandler.loadNewSongs("xd", true);
+    });
+
+    socket.on("musicYTNext", () => {
+      this.musicYTHandler.nextSong();
+    });
+
+    socket.on("changeYTVolume", (volume) => {
+      this.musicYTHandler.changeVolume(volume);
     });
   }
 
