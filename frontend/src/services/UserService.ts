@@ -30,19 +30,19 @@ interface FirstAndLatestMsgs {
   latestMessages: Message[];
 }
 
-export const getUsersList = () => {
+export const useGetUsersList = () => {
   return useAxiosCustom<PaginationData<User>>({
     url: `/users`,
   });
 };
 
-export const getUser = (userId: string) => {
+export const useGetUser = (userId: string) => {
   return useAxiosCustom<ResponseData<User>>({
     url: `/users/${userId}`,
   });
 };
 
-export const editUser = (userId: string, data: UserUpdateData) => {
+export const useEditUser = (userId: string, data: UserUpdateData) => {
   return useAxiosCustom<User>({
     url: `/users/${userId}`,
     method: "POST",
@@ -51,19 +51,19 @@ export const editUser = (userId: string, data: UserUpdateData) => {
   });
 };
 
-export const getUserMessages = (userId: string) => {
+export const useGetUserMessages = (userId: string) => {
   return useAxiosCustom<PaginationData<Message>>({
     url: `/users/${userId}/messages`,
   });
 };
 
-export const getLatestEldestMsgs = (userId: string) => {
+export const useGetLatestEldestMsgs = (userId: string) => {
   return useAxiosCustom<{ data: FirstAndLatestMsgs }>({
     url: `/users/${userId}/messages/latest-eldest`,
   });
 };
 
-export const getUserRedemptions = (userId: string) => {
+export const useGetUserRedemptions = (userId: string) => {
   return useAxiosCustom<PaginationData<Redemption>>({
     url: `/users/${userId}/redemptions`,
   });

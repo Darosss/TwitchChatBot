@@ -34,14 +34,14 @@ export default function Pagination(props: {
       prevState.set("limit", String(pageSizeT));
       return prevState;
     });
-  }, [pageSizeT]);
+  }, [pageSizeT, setSearchParams]);
 
   useEffect(() => {
     setSearchParams((prevState) => {
       prevState.set("page", String(currentPage));
       return prevState;
     });
-  }, [currentPage]);
+  }, [currentPage, setSearchParams]);
 
   const paginationRange = usePagination(
     totalCount,
@@ -128,9 +128,7 @@ export default function Pagination(props: {
           className={classnames("pagination-item", {
             disabled: currentPage === 1,
           })}
-          onClick={() => {
-            currentPage > 1 ? onPrevious() : "";
-          }}
+          onClick={() => (currentPage > 1 ? onPrevious() : "")}
         >
           <div className="arrow left" />
         </li>
@@ -164,9 +162,7 @@ export default function Pagination(props: {
           className={classnames("pagination-item", {
             disabled: currentPage === lastPage,
           })}
-          onClick={() => {
-            currentPage < Number(lastPage) ? onNext() : "";
-          }}
+          onClick={() => (currentPage < Number(lastPage) ? onNext() : "")}
         >
           <div className="arrow right" />
         </li>

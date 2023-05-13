@@ -13,7 +13,7 @@ export interface AuthLink {
   data: string;
 }
 
-export const getAuthorizeUrl = () => {
+export const useGetAuthorizeUrl = () => {
   return useAxiosCustom<AuthLink>({
     url: `/auth/authorize-url`,
   });

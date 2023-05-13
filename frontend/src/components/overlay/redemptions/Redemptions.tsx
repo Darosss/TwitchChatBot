@@ -16,8 +16,6 @@ export default function Redemptions() {
     socket.on("onRedemption", (data, audioBuffer) => {
       const { rewardTitle, userDisplayName, rewardImage } = data;
 
-      let redemptionAudio: HTMLAudioElement;
-
       setRedemptionImg(rewardImage);
       setRedemptionInfo(`${userDisplayName} has redeemed - ${rewardTitle}`);
       setShowRedemption(true);
@@ -52,7 +50,7 @@ export default function Redemptions() {
     return () => {
       socket.off("onRedemption");
     };
-  }, []);
+  }, [socket]);
 
   if (showRedemption)
     return (

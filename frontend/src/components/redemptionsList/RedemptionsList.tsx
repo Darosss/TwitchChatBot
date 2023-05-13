@@ -4,10 +4,10 @@ import Pagination from "@components/pagination";
 import { Link, useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import FilterBarRedemptions from "./filterBarRedemptions";
-import { getRedemptions, Redemption } from "src/services/RedemptionService";
+import { useGetRedemptions, Redemption } from "src/services/RedemptionService";
 import { PaginationData } from "@services/ApiService";
-import { getSessionRedemptions } from "@services/StreamSessionService";
-import { getUserRedemptions } from "@services/UserService";
+import { useGetSessionRedemptions } from "@services/StreamSessionService";
+import { useGetUserRedemptions } from "@services/UserService";
 import { DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
 
@@ -23,10 +23,8 @@ export default function RedemptionsList(props: {
   switch (redemptions) {
     case "user":
       return <RedemptionsUser />;
-      break;
     case "session":
       return <RedemptionsSession />;
-      break;
     default:
       return <RedemptionsAll />;
   }
@@ -34,7 +32,7 @@ export default function RedemptionsList(props: {
 
 const RedemptionsUser = () => {
   const { userId } = useParams();
-  const { data, loading, error } = getUserRedemptions(userId!);
+  const { data, loading, error } = useGetUserRedemptions(userId!);
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!data || loading) return <>Loading!</>;
 
@@ -43,7 +41,7 @@ const RedemptionsUser = () => {
 
 const RedemptionsSession = () => {
   const { sessionId } = useParams();
-  const { data, loading, error } = getSessionRedemptions(sessionId!);
+  const { data, loading, error } = useGetSessionRedemptions(sessionId!);
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!data || loading) return <>Loading!</>;
 
@@ -51,7 +49,7 @@ const RedemptionsSession = () => {
 };
 
 const RedemptionsAll = () => {
-  const { data, loading, error } = getRedemptions();
+  const { data, loading, error } = useGetRedemptions();
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!data || loading) return <>Loading!</>;
 

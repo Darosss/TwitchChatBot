@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { SocketContext } from "@context/socket";
-import { getAllModes } from "@utils/getListModes";
-import { editTag } from "@services/TagService";
-import { editAffix } from "@services/AffixService";
-import { editMood } from "@services/MoodService";
+import { useGetAllModes } from "@utils/getListModes";
+import { useEditTag } from "@services/TagService";
+import { useEditAffix } from "@services/AffixService";
+import { useEditMood } from "@services/MoodService";
 import { addNotification } from "@utils/getNotificationValues";
 
 export default function StreamModes() {
@@ -23,19 +23,19 @@ export default function StreamModes() {
     false,
   ]);
 
-  const { refetchData: fetchEditTag } = editTag(tagToUpdate[0], {
+  const { refetchData: fetchEditTag } = useEditTag(tagToUpdate[0], {
     enabled: tagToUpdate[1],
   });
 
-  const { refetchData: fetchAffixEdit } = editAffix(affixToUpdate[0], {
+  const { refetchData: fetchAffixEdit } = useEditAffix(affixToUpdate[0], {
     enabled: affixToUpdate[1],
   });
 
-  const { refetchData: fetchMoodEdit } = editMood(moodToUpdate[0], {
+  const { refetchData: fetchMoodEdit } = useEditMood(moodToUpdate[0], {
     enabled: moodToUpdate[1],
   });
 
-  const modes = getAllModes();
+  const modes = useGetAllModes();
 
   useEffect(() => {
     if (!tagToUpdate[0]) return;
@@ -45,6 +45,7 @@ export default function StreamModes() {
       socket.emit("changeModes");
       setTagToUpdate(["", false]);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tagToUpdate]);
 
   useEffect(() => {
@@ -55,6 +56,7 @@ export default function StreamModes() {
       socket.emit("changeModes");
       setAffixToUpdate(["", false]);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [affixToUpdate]);
 
   useEffect(() => {
@@ -65,6 +67,7 @@ export default function StreamModes() {
       socket.emit("changeModes");
       setMoodToUpdate(["", false]);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moodToUpdate]);
 
   if (!modes) return <> Loading...</>;

@@ -4,11 +4,7 @@ import { CommandsConfigs } from "@services/ConfigService";
 import { MusicConfigs } from "@services/ConfigService";
 import { PointsConfigs } from "@services/ConfigService";
 import { ChatGamesConfigs } from "@services/ConfigService";
-import {
-  ConfigUpdateData,
-  HeadConfigs,
-  TimersConfigs,
-} from "@services/ConfigService";
+import { HeadConfigs, TimersConfigs } from "@services/ConfigService";
 
 export const headConfigsInitial: HeadConfigs = {
   permissionLevels: {
@@ -32,7 +28,7 @@ export const timersConfigsInitial: TimersConfigs = {
   timersIntervalDelay: 0,
   nonFollowTimerPoints: 0,
   nonSubTimerPoints: 0,
-  sufixChance: 0,
+  suffixChance: 0,
   prefixChance: 0,
 };
 export const chatGamesConfigsInitial: ChatGamesConfigs = {
@@ -42,7 +38,7 @@ export const chatGamesConfigsInitial: ChatGamesConfigs = {
 };
 export const triggersConfigsInitial: TriggersConfigs = {
   randomMessageChance: 0,
-  sufixChance: 0,
+  suffixChance: 0,
   prefixChance: 0,
 };
 export const pointsConfigsInitial: PointsConfigs = {

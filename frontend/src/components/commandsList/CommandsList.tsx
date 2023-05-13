@@ -1,27 +1,25 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import FilterBarCommands from "./filterBarCommands";
 import Modal from "@components/modal";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-import { SocketContext, socketEmitRefreshCommands } from "@context/socket";
+import { socketEmitRefreshCommands } from "@context/socket";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import {
-  getCommands,
-  editCommand,
-  createCommand,
-  deleteCommand,
+  useGetCommands,
+  useEditCommand,
+  useCreateCommand,
+  useDeleteCommand,
   ChatCommand,
   ChatCommandCreateData,
 } from "@services/ChatCommandService";
 import { addNotification } from "@utils/getNotificationValues";
-import { getAllModes } from "@utils/getListModes";
+import { useGetAllModes } from "@utils/getListModes";
 import { DispatchAction } from "./types";
 import CommandsData from "./CommandsData";
 import CommandModalData from "./CommandModalData";
 
 export default function CommandsList() {
-  const socket = useContext(SocketContext);
-
   const [showModal, setShowModal] = useState(false);
 
   const [editingCommand, setEditingCommand] = useState("");
@@ -29,24 +27,34 @@ export default function CommandsList() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const modes = getAllModes();
+  const modes = useGetAllModes();
 
-  const { data: commandsData, loading, error, refetchData } = getCommands();
+  const { data: commandsData, loading, error, refetchData } = useGetCommands();
 
-  const { refetchData: fetchEditCommand } = editCommand(editingCommand, state);
-  const { refetchData: fetchCreateCommand } = createCommand(state);
-  const { refetchData: fetchDeleteCommand } = deleteCommand(
+  const { refetchData: fetchEditCommand } = useEditCommand(
+    editingCommand,
+    state
+  );
+  const { refetchData: fetchCreateCommand } = useCreateCommand(state);
+  const { refetchData: fetchDeleteCommand } = useDeleteCommand(
     commandIdDelete || ""
   );
-  useEffect(() => {
-    handleActionOnChangeState(commandIdDelete, setCommandIdDelete, () => {
-      fetchDeleteCommand().then(() => {
-        refetchData();
-        addNotification("Deleted", `Command deleted successfully`, "danger");
 
-        setCommandIdDelete(null);
+  const handleOnDeleteCommand = useCallback(
+    (commandName: string) => {
+      handleActionOnChangeState(commandName, setCommandIdDelete, () => {
+        fetchDeleteCommand().then(() => {
+          refetchData();
+          addNotification("Deleted", `Command deleted successfully`, "danger");
+          setCommandIdDelete(null);
+        });
       });
-    });
+    },
+    [fetchDeleteCommand, refetchData]
+  );
+  useEffect(() => {
+    if (commandIdDelete) handleOnDeleteCommand(commandIdDelete);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [commandIdDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

@@ -15,19 +15,19 @@ export interface WidgetsCreateData
 
 export interface WidgetsUpdateData extends Partial<WidgetsCreateData> {}
 
-export const getWidgets = () => {
+export const useGetWidgets = () => {
   return useAxiosCustom<PaginationData<Widgets>>({
     url: `/widgets`,
   });
 };
 
-export const getWidgetById = (id: string) => {
+export const useGetWidgetById = (id: string) => {
   return useAxiosCustom<ResponseData<Widgets>>({
     url: `/widgets/${id}`,
   });
 };
 
-export const createLayout = (data: WidgetsCreateData) => {
+export const useCreateLayout = (data: WidgetsCreateData) => {
   return useAxiosCustom<Widgets>({
     url: `/widgets/create`,
     method: "POST",
@@ -37,7 +37,7 @@ export const createLayout = (data: WidgetsCreateData) => {
   });
 };
 
-export const editWidgetById = (id: string, data: WidgetsUpdateData) => {
+export const useEditWidgetById = (id: string, data: WidgetsUpdateData) => {
   return useAxiosCustom<Widgets>({
     url: `/widgets/${id}`,
     method: "POST",
@@ -46,7 +46,7 @@ export const editWidgetById = (id: string, data: WidgetsUpdateData) => {
   });
 };
 
-export const removeWidgetById = (id: string) => {
+export const useRemoveWidgetById = (id: string) => {
   return useAxiosCustom<Widgets>({
     url: `/widgets/delete/${id}`,
     method: "DELETE",

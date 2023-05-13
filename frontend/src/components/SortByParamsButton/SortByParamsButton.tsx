@@ -20,7 +20,7 @@ export default function SortByParamsButton(props: {
     }
 
     if (sortByParam !== sortBy) setCurrentSearch("");
-  }, [searchParams]);
+  }, [searchParams, sortBy]);
 
   useEffect(() => {
     if (!currentSearch) return;

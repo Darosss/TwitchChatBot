@@ -1,5 +1,5 @@
 import DrawerBar from "@components/drawer";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import PreviousPage from "@components/previousPage";
 import { addNotification } from "@utils/getNotificationValues";

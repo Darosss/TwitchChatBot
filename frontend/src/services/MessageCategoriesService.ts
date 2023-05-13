@@ -27,13 +27,13 @@ export interface MessageCategoryCreateData
 interface MessageCategoryUpdateData
   extends Partial<MessageCategoryCreateData> {}
 
-export const getMessageCategories = () => {
+export const useGetMessageCategories = () => {
   return useAxiosCustom<PaginationData<MessageCategory>>({
     url: `/message-categories`,
   });
 };
 
-export const editMessageCategoryById = (
+export const useEditMessageCategoryById = (
   id: string,
   data: MessageCategoryUpdateData
 ) => {
@@ -46,7 +46,7 @@ export const editMessageCategoryById = (
   });
 };
 
-export const incrementUsesCategoryById = (id: string) => {
+export const useIncrementUsesCategoryById = (id: string) => {
   return useAxiosCustom<MessageCategory>({
     url: `/message-categories/${id}/uses`,
     method: "POST",
@@ -55,7 +55,7 @@ export const incrementUsesCategoryById = (id: string) => {
   });
 };
 
-export const createMessageCategory = (data: MessageCategoryCreateData) => {
+export const useCreateMessageCategory = (data: MessageCategoryCreateData) => {
   return useAxiosCustom<MessageCategoryCreateData>({
     url: `/message-categories/create`,
     method: "POST",
@@ -65,7 +65,7 @@ export const createMessageCategory = (data: MessageCategoryCreateData) => {
   });
 };
 
-export const deleteMessageCategoryById = (id: string) => {
+export const useDeleteMessageCategoryById = (id: string) => {
   return useAxiosCustom<any>({
     url: `/message-categories/delete/${id}`,
     method: "DELETE",

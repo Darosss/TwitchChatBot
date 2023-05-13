@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import {
-  getCurrentSessionStatistics,
+  useGetCurrentSessionStatistics,
   TopMsgsUsers,
   TopRedemptionsUsers,
   TopUsedWords,
@@ -36,7 +36,7 @@ export default function StreamStatistics() {
     loading,
     error,
     refetchData,
-  } = getCurrentSessionStatistics();
+  } = useGetCurrentSessionStatistics();
 
   useEffect(() => {
     const statisticInterval = setInterval(() => {
@@ -44,6 +44,7 @@ export default function StreamStatistics() {
     }, FETCH_INTERVAL * 1000);
 
     return () => clearInterval(statisticInterval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

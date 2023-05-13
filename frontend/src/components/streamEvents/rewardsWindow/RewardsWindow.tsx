@@ -5,8 +5,8 @@ import Modal from "@components/modal";
 import { SocketContext, CustomRewardData } from "@context/socket";
 import { addNotification } from "@utils/getNotificationValues";
 import useFileUpload from "@hooks/useFileUpload";
-import { getAlertSoundsMp3Names } from "@services/FilesService";
-import { deleteAlertSound } from "@services/FilesService";
+import { useGetAlertSoundsMp3Names } from "@services/FilesService";
+import { useDeleteAlertSound } from "@services/FilesService";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 
 export default function MessagesWindow() {
@@ -24,15 +24,14 @@ export default function MessagesWindow() {
   const [alertSoundNameDelete, setAlertSoundNameDelete] = useState<
     string | null
   >(null);
-  const { uploadProgress, handleFileUpload, error, success } = useFileUpload(
-    `files/upload/alertSounds`
-  );
+  const { handleFileUpload } = useFileUpload(`files/upload/alertSounds`);
 
   const { data: mp3AlertSounds, refetchData: refetchMp3AlertSounds } =
-    getAlertSoundsMp3Names();
+    useGetAlertSoundsMp3Names();
 
-  const { data: delAlertSoundData, refetchData: refetchDeleteAlertSound } =
-    deleteAlertSound(alertSoundNameDelete || "");
+  const { refetchData: refetchDeleteAlertSound } = useDeleteAlertSound(
+    alertSoundNameDelete || ""
+  );
 
   useEffect(() => {
     handleActionOnChangeState(
@@ -50,6 +49,7 @@ export default function MessagesWindow() {
         });
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [alertSoundNameDelete]);
 
   useEffect(() => {
@@ -67,10 +67,10 @@ export default function MessagesWindow() {
     return () => {
       socket.off("getCustomRewards");
     };
-  }, []);
+  }, [socket]);
 
   const emitRemoveAlertSoundReward = (id: string, name: string) => {
-    if (confirm(`Are you sure to delete custom reward: ${name}`)) {
+    if (window.confirm(`Are you sure to delete custom reward: ${name}`)) {
       socket.emit("deleteCustomReward", id, (succes) => {
         if (!succes) {
           addNotification(

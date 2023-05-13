@@ -48,43 +48,43 @@ export interface StreamSessionStatistics {
   viewers: Map<string, number>;
 }
 
-export const getSessions = () => {
+export const useGetSessions = () => {
   return useAxiosCustom<PaginationData<StreamSession>>({
     url: `/stream-sessions`,
   });
 };
 
-export const getSessionById = (sessionId: string) => {
+export const useGetSessionById = (sessionId: string) => {
   return useAxiosCustom<ResponseData<StreamSession>>({
     url: `/stream-sessions/${sessionId}`,
   });
 };
 
-export const getSessionMessages = (sessionId: string) => {
+export const useGetSessionMessages = (sessionId: string) => {
   return useAxiosCustom<PaginationData<Message>>({
     url: `/stream-sessions/${sessionId}/messages`,
   });
 };
 
-export const getSessionRedemptions = (sessionId: string) => {
+export const useGetSessionRedemptions = (sessionId: string) => {
   return useAxiosCustom<PaginationData<Redemption>>({
     url: `/stream-sessions/${sessionId}/redemptions`,
   });
 };
 
-export const getCurrentSessionMessages = () => {
+export const useGetCurrentSessionMessages = () => {
   return useAxiosCustom<PaginationData<Message>>({
     url: `/stream-sessions/current-session/messages`,
   });
 };
 
-export const getCurrentSessionRedemptions = () => {
+export const useGetCurrentSessionRedemptions = () => {
   return useAxiosCustom<PaginationData<Redemption>>({
     url: `/stream-sessions/current-session/redemptions`,
   });
 };
 
-export const getCurrentSessionStatistics = () => {
+export const useGetCurrentSessionStatistics = () => {
   return useAxiosCustom<{ data: StreamSessionStatistics }>({
     url: `/stream-sessions/current-session/statistics`,
   });

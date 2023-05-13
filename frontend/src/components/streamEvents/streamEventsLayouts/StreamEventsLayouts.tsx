@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {
-  createLayout,
-  getWidgets,
-  removeWidgetById,
+  useCreateLayout,
+  useGetWidgets,
+  useRemoveWidgetById,
 } from "@services/WidgetsService";
 import { Link } from "react-router-dom";
 import {
@@ -18,19 +18,19 @@ import {
 } from "@components/cardboxWrapper/CardboxWrapper";
 
 export default function StreamNotifications() {
-  const { data, loading, error, refetchData } = getWidgets();
+  const { data, loading, error, refetchData } = useGetWidgets();
 
   const [layoutName, setLayoutName] = useState<string>("");
 
   const [layoutIdToDelete, setLayoutIdToDelete] = useState<string | null>(null);
 
-  const { refetchData: fetchCreateLayout } = createLayout({
+  const { refetchData: fetchCreateLayout } = useCreateLayout({
     name: layoutName,
     layout: initialLayoutWidgets,
     toolbox: initialToolboxWidgets,
   });
 
-  const { refetchData: fetchDeleteLayout } = removeWidgetById(
+  const { refetchData: fetchDeleteLayout } = useRemoveWidgetById(
     layoutIdToDelete ? layoutIdToDelete : ""
   );
 
@@ -47,6 +47,7 @@ export default function StreamNotifications() {
         setLayoutIdToDelete(null);
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [layoutIdToDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

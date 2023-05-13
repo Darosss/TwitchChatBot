@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import "react-notifications-component/dist/theme.css";
 
 import {
-  getMessageCategories,
-  incrementUsesCategoryById,
+  useGetMessageCategories,
+  useIncrementUsesCategoryById,
 } from "@services/MessageCategoriesService";
 import Modal from "@components/modal";
 import { SocketContext } from "@context/socket";
@@ -16,15 +16,16 @@ export default function MessagesWindow() {
   const [currentMessages, setCurrentMessages] = useState<string[]>([]);
   const [currentIdCategory, setCurrentIdCategory] = useState<string>("");
   const [messageTosend, setMessageToSend] = useState<string>("");
-  const { data, loading, error } = getMessageCategories();
+  const { data, loading, error } = useGetMessageCategories();
 
   const { refetchData: fetchUpdateUses } =
-    incrementUsesCategoryById(currentIdCategory);
+    useIncrementUsesCategoryById(currentIdCategory);
 
   useEffect(() => {
     if (currentIdCategory || messageTosend) {
       fetchUpdateUses();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIdCategory, messageTosend]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

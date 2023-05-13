@@ -1,9 +1,6 @@
 import React, { useContext, useEffect, useReducer, useState } from "react";
 
-import { SocketContext, EventAndUser } from "@context/socket";
-import { Link } from "react-router-dom";
-import { DateTooltip } from "@components/dateTooltip";
-import moment from "moment";
+import { SocketContext } from "@context/socket";
 import StreamSessionEvents from "@components/streamSessionEvents";
 import { SessionEvents } from "@services/StreamSessionService";
 
@@ -15,12 +12,6 @@ export default function StreamNotifications() {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const [userNotif, setUserNotif] = useState<SessionEvents[]>([]);
-
-  const removeParentElement = (
-    e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
-  ) => {
-    (e.target as HTMLButtonElement).parentElement?.remove();
-  };
 
   useEffect(() => {
     socket?.on("userJoinTwitchChat", (eventAndUser) => {
@@ -47,7 +38,7 @@ export default function StreamNotifications() {
     return () => {
       socket.off("userJoinTwitchChat");
     };
-  }, [socket]);
+  }, [socket, userNotif]);
 
   return <StreamSessionEvents sessionEvents={userNotif} />;
 }

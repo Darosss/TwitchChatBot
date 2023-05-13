@@ -16,14 +16,14 @@ interface MoodUpdateData extends Partial<MoodCreateData> {
   enabled?: boolean;
 }
 
-export const getMoods = (urlParams = true) => {
+export const useGetMoods = (urlParams = true) => {
   return useAxiosCustom<PaginationData<Mood>>({
     url: `/moods`,
     urlParams: urlParams,
   });
 };
 
-export const editMood = (id: string, data: MoodUpdateData) => {
+export const useEditMood = (id: string, data: MoodUpdateData) => {
   return useAxiosCustom<Mood>({
     url: `/moods/${id}`,
     method: "POST",
@@ -32,7 +32,7 @@ export const editMood = (id: string, data: MoodUpdateData) => {
   });
 };
 
-export const createMood = (data: MoodCreateData) => {
+export const useCreateMood = (data: MoodCreateData) => {
   return useAxiosCustom<Mood>({
     url: `/moods/create/`,
     method: "POST",
@@ -42,7 +42,7 @@ export const createMood = (data: MoodCreateData) => {
   });
 };
 
-export const deleteMood = (id: string) => {
+export const useDeleteMood = (id: string) => {
   return useAxiosCustom<Mood>({
     url: `/moods/delete/${id}`,
     method: "DELETE",

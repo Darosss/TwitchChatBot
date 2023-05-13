@@ -1,4 +1,4 @@
-import React, { Children, useRef, useState } from "react";
+import React, { Children, useEffect, useRef, useState } from "react";
 
 const SLIDE_DELAY = 9999;
 
@@ -15,22 +15,6 @@ export default function Slideshow(props: {
 
   const [slideShowOn, setSlideShowOn] = useState(true);
 
-  function resetTimeout() {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-  }
-
-  const startTimeout = () => {
-    timeoutRef.current = setTimeout(
-      () =>
-        setIndex((prevIndex) =>
-          prevIndex === arrayChildren.length - 1 ? 0 : prevIndex + 1
-        ),
-      SLIDE_DELAY
-    );
-  };
-
   const toggleSlideShow = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -38,7 +22,22 @@ export default function Slideshow(props: {
     e.currentTarget.innerHTML = `${slideShowOn ? "&#9632;" : "&#9654;"}`;
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
+    function resetTimeout() {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    }
+
+    const startTimeout = () => {
+      timeoutRef.current = setTimeout(
+        () =>
+          setIndex((prevIndex) =>
+            prevIndex === arrayChildren.length - 1 ? 0 : prevIndex + 1
+          ),
+        SLIDE_DELAY
+      );
+    };
     if (slideShowOn) {
       startTimeout();
     }
@@ -46,7 +45,7 @@ export default function Slideshow(props: {
     return () => {
       resetTimeout();
     };
-  }, [index, slideShowOn]);
+  }, [arrayChildren, index, slideShowOn]);
 
   if (!children) return <></>;
 

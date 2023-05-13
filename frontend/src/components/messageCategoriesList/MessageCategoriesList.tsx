@@ -4,17 +4,17 @@ import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
 
 import {
-  createMessageCategory,
-  deleteMessageCategoryById,
-  editMessageCategoryById,
-  getMessageCategories,
+  useCreateMessageCategory,
+  useDeleteMessageCategoryById,
+  useEditMessageCategoryById,
+  useGetMessageCategories,
   MessageCategory,
   MessageCategoryCreateData,
 } from "@services/MessageCategoriesService";
 import Modal from "@components/modal";
 import FilterBarCategories from "./filterBarCategories";
 import { addNotification } from "@utils/getNotificationValues";
-import { getAllModes } from "@utils/getListModes";
+import { useGetAllModes } from "@utils/getListModes";
 import { DispatchAction } from "./types";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import CategoriesData from "./CategoriesData";
@@ -28,21 +28,21 @@ export default function MessageCategoriesList() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const modes = getAllModes();
+  const modes = useGetAllModes();
 
   const {
     data: categoriesData,
     loading,
     error,
     refetchData,
-  } = getMessageCategories();
+  } = useGetMessageCategories();
 
-  const { refetchData: fetchEditCategory } = editMessageCategoryById(
+  const { refetchData: fetchEditCategory } = useEditMessageCategoryById(
     editingCategory,
     state
   );
-  const { refetchData: fetchCreateCategory } = createMessageCategory(state);
-  const { refetchData: fetchDeleteCategory } = deleteMessageCategoryById(
+  const { refetchData: fetchCreateCategory } = useCreateMessageCategory(state);
+  const { refetchData: fetchDeleteCategory } = useDeleteMessageCategoryById(
     categoryIdDelete || ""
   );
 
@@ -58,6 +58,7 @@ export default function MessageCategoriesList() {
         setCategoryIdDelete(null);
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryIdDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

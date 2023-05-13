@@ -19,33 +19,35 @@ export default function UrlParamsInput(props: {
 
   const inputsWrapper = useRef<HTMLDivElement>(null);
 
-  const onBlurOrKeySearchParamsChange = (
-    queryName?: string,
-    value?: string
-  ) => {
-    setSearchParams((prevState) => {
-      if (queryName) {
-        if (value) {
-          prevState.set(queryName, value);
-        } else {
-          prevState.delete(queryName);
-        }
-      }
-      return prevState;
-    });
-  };
-
-  const onKeyDownInput = (key: string, queryString: string, value: string) => {
-    if (key === "Enter") {
-      onBlurOrKeySearchParamsChange(queryString, value);
-    }
-  };
-
   const clearFilters = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setSearchParams("");
   };
 
   useEffect(() => {
+    const onKeyDownInput = (
+      key: string,
+      queryString: string,
+      value: string
+    ) => {
+      if (key === "Enter") {
+        onBlurOrKeySearchParamsChange(queryString, value);
+      }
+    };
+    const onBlurOrKeySearchParamsChange = (
+      queryName?: string,
+      value?: string
+    ) => {
+      setSearchParams((prevState) => {
+        if (queryName) {
+          if (value) {
+            prevState.set(queryName, value);
+          } else {
+            prevState.delete(queryName);
+          }
+        }
+        return prevState;
+      });
+    };
     const childrensWrapper = inputsWrapper.current?.children;
     if (childrensWrapper) {
       for (let i = 0; i < childrensWrapper.length; i++) {
@@ -65,7 +67,7 @@ export default function UrlParamsInput(props: {
         };
       }
     }
-  }, [children]);
+  }, [children, searchParams, setSearchParams]);
 
   return (
     <div className="filter-wrapper">

@@ -5,16 +5,16 @@ import PreviousPage from "@components/previousPage";
 import FilterBarTriggers from "./filterBarTriggers";
 import {
   Trigger,
-  getTriggers,
-  editTrigger,
-  createTrigger,
-  deleteTrigger,
+  useGetTriggers,
+  useEditTrigger,
+  useCreateTrigger,
+  useDeleteTrigger,
   TriggerCreateData,
 } from "@services/TriggerService";
 import { socketEmitRefreshTriggers } from "@context/socket";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
-import { getAllModes } from "@utils/getListModes";
+import { useGetAllModes } from "@utils/getListModes";
 import TriggersData from "./TriggersData";
 import TriggerModalData from "./TriggerModalData";
 import { DispatchAction } from "./types";
@@ -27,13 +27,16 @@ export default function TriggersList() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const modes = getAllModes();
+  const modes = useGetAllModes();
 
-  const { data: commandsData, loading, error, refetchData } = getTriggers();
+  const { data: commandsData, loading, error, refetchData } = useGetTriggers();
 
-  const { refetchData: fetchEditTrigger } = editTrigger(editingTrigger, state);
-  const { refetchData: fetchCreateTrigger } = createTrigger(state);
-  const { refetchData: fetchDeleteTrigger } = deleteTrigger(
+  const { refetchData: fetchEditTrigger } = useEditTrigger(
+    editingTrigger,
+    state
+  );
+  const { refetchData: fetchCreateTrigger } = useCreateTrigger(state);
+  const { refetchData: fetchDeleteTrigger } = useDeleteTrigger(
     triggerIdDelete || ""
   );
 
@@ -45,6 +48,7 @@ export default function TriggersList() {
         setTriggerIdDelete(null);
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerIdDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

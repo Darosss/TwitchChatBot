@@ -15,19 +15,19 @@ export interface OverlayCreateData
 
 export interface OverlaysUpdateData extends Partial<OverlayCreateData> {}
 
-export const getOverlays = () => {
+export const useGetOverlays = () => {
   return useAxiosCustom<PaginationData<Overlay>>({
     url: `/overlays`,
   });
 };
 
-export const getOverlayById = (id: string) => {
+export const useGetOverlayById = (id: string) => {
   return useAxiosCustom<ResponseData<Overlay>>({
     url: `/overlays/${id}`,
   });
 };
 
-export const createOverlay = (data: OverlayCreateData) => {
+export const useCreateOverlay = (data: OverlayCreateData) => {
   return useAxiosCustom<Overlay>({
     url: `/overlays/create`,
     method: "POST",
@@ -37,7 +37,7 @@ export const createOverlay = (data: OverlayCreateData) => {
   });
 };
 
-export const editOverlayById = (id: string, data: OverlaysUpdateData) => {
+export const useEditOverlayById = (id: string, data: OverlaysUpdateData) => {
   return useAxiosCustom<Overlay>({
     url: `/overlays/${id}`,
     method: "POST",
@@ -46,7 +46,7 @@ export const editOverlayById = (id: string, data: OverlaysUpdateData) => {
   });
 };
 
-export const removeOverlayById = (id: string) => {
+export const useRemoveOverlayById = (id: string) => {
   return useAxiosCustom<Overlay>({
     url: `/overlays/delete/${id}`,
     method: "DELETE",

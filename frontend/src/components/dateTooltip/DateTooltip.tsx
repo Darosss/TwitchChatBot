@@ -1,5 +1,4 @@
 import React from "react";
-
 import moment from "moment";
 
 export function DateTooltip(props: {
@@ -22,7 +21,7 @@ export function DateTimeTooltip(props: {
   date: moment.MomentInput;
   suffix?: boolean;
 }) {
-  const { date, suffix = true } = props;
+  const { date } = props;
 
   return (
     <div className="tooltip">

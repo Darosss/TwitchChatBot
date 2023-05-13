@@ -14,14 +14,14 @@ interface TagUpdateData extends Partial<TagCreateData> {
   enabled?: boolean;
 }
 
-export const getTags = (urlParams = true) => {
+export const useGetTags = (urlParams = true) => {
   return useAxiosCustom<PaginationData<Tag>>({
     url: `/tags`,
     urlParams: urlParams,
   });
 };
 
-export const editTag = (id: string, data: TagUpdateData) => {
+export const useEditTag = (id: string, data: TagUpdateData) => {
   return useAxiosCustom<Tag>({
     url: `/tags/${id}`,
     method: "POST",
@@ -30,7 +30,7 @@ export const editTag = (id: string, data: TagUpdateData) => {
   });
 };
 
-export const createTag = (data: TagCreateData) => {
+export const useCreateTag = (data: TagCreateData) => {
   return useAxiosCustom<Tag>({
     url: `/tags/create/`,
     method: "POST",
@@ -40,7 +40,7 @@ export const createTag = (data: TagCreateData) => {
   });
 };
 
-export const deleteTag = (id: string) => {
+export const useDeleteTag = (id: string) => {
   return useAxiosCustom<Tag>({
     url: `/tags/delete/${id}`,
     method: "DELETE",

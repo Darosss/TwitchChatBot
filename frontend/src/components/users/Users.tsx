@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-import { getUsersList, User } from "@services/UserService";
+import { useGetUsersList, User } from "@services/UserService";
 import FilterBarUsers from "./filterBarUsers";
 import { DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
@@ -13,7 +13,7 @@ interface UserDetailsProps {
 }
 
 export default function Users() {
-  const { data: usersData, loading, error } = getUsersList();
+  const { data: usersData, loading, error } = useGetUsersList();
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!usersData || loading) return <>Loading...</>;

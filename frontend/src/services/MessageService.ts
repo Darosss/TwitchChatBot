@@ -9,7 +9,7 @@ export interface Message {
   ownerUsername: string;
 }
 
-export const getMessages = () => {
+export const useGetMessages = () => {
   return useAxiosCustom<PaginationData<Message>>({
     url: `/messages`,
   });

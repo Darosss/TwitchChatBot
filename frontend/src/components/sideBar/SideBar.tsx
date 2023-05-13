@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { Link, LinkProps } from "react-router-dom";
 import resetWindowScroll from "@utils/resetScroll";
-import { getAuthorizeUrl } from "@services/AuthService";
+import { useGetAuthorizeUrl } from "@services/AuthService";
 import DrawerBar from "@components/drawer";
 import { routes } from "@routes/routesList";
 import ChangeTheme from "@components/changeTheme";
@@ -14,7 +14,7 @@ interface NavLinkProps extends LinkProps {
 
 export default function SideBar() {
   const socket = useContext(SocketContext);
-  const { data: authData, error } = getAuthorizeUrl();
+  const { data: authData, error } = useGetAuthorizeUrl();
 
   const [loggedUser, setLoggedUser] = useState<string>("");
 
@@ -27,7 +27,7 @@ export default function SideBar() {
     return () => {
       socket.off("sendLoggedUserInfo");
     };
-  }, []);
+  }, [socket]);
 
   return (
     <DrawerBar direction={"right"} size={"15vw"} overlay={true}>

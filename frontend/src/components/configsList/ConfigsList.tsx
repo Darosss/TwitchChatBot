@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 
 import PreviousPage from "@components/previousPage";
 import {
-  getConfigs,
-  editConfig,
+  useGetConfigs,
+  useEditConfig,
   TimersConfigs,
   CommandsConfigs,
   ChatGamesConfigs,
@@ -12,7 +12,7 @@ import {
   LoyaltyConfigs,
   HeadConfigs,
   MusicConfigs,
-  resetConfigs,
+  useResetConfigs,
 } from "@services/ConfigService";
 import { SocketContext } from "@context/socket";
 import { addNotification } from "@utils/getNotificationValues";
@@ -64,12 +64,11 @@ export default function ConfigsList() {
     loading,
     error,
     refetchData: refetchConfigsData,
-  } = getConfigs();
+  } = useGetConfigs();
 
-  const { data: resetCfgData, refetchData: resetConfigsToDefaults } =
-    resetConfigs();
+  const { refetchData: resetConfigsToDefaults } = useResetConfigs();
 
-  const { refetchData: fetchEditConfig } = editConfig({
+  const { refetchData: fetchEditConfig } = useEditConfig({
     commandsConfigs: commandsCfg,
     timersConfigs: timersCfg,
     chatGamesConfigs: chatGamesCfg,
@@ -114,7 +113,7 @@ export default function ConfigsList() {
   };
 
   const onClickResetConfigs = () => {
-    if (confirm("Are you sure you want reset configs to defaults?")) {
+    if (window.confirm("Are you sure you want reset configs to defaults?")) {
       resetConfigsToDefaults().then(() => {
         refetchConfigsData();
         socket.emit("saveConfigs");

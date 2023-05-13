@@ -12,7 +12,7 @@ import {
   initialToolboxWidgets,
 } from "src/layout/initialLayoutWidgets";
 import { useParams } from "react-router-dom";
-import { editWidgetById, getWidgetById } from "@services/WidgetsService";
+import { useEditWidgetById, useGetWidgetById } from "@services/WidgetsService";
 import StreamModes from "./streamModes";
 import { getInitialCurrentBreakpoint } from "@utils/layoutBreakpoints";
 import ReactGrid from "@components/reactGrid";
@@ -43,8 +43,8 @@ export default function StreamEvents(params: { editor?: boolean }) {
     getInitialCurrentBreakpoint()
   );
 
-  const { data, loading, error } = getWidgetById(eventsId || "");
-  const { refetchData: fetchEditWidgets } = editWidgetById(
+  const { data, loading, error } = useGetWidgetById(eventsId || "");
+  const { refetchData: fetchEditWidgets } = useEditWidgetById(
     data?.data?._id || "",
     { layout: layoutWidgets, toolbox: toolbox }
   );

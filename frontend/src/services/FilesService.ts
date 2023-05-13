@@ -1,19 +1,20 @@
 import useAxiosCustom, { ResponseData } from "./ApiService";
 
-export const getFoldersList = () => {
+export const useGetFoldersList = () => {
   return useAxiosCustom<ResponseData<string[]>>({
     url: `/files/folder-list`,
   });
 };
 
-export const getFolderMp3Files = (folderName: string) => {
+export const useGetFolderMp3Files = (folderName: string) => {
+  console.log("test service");
   return useAxiosCustom<ResponseData<string[]>>({
     url: `/files/audio/${folderName}`,
     manual: true,
   });
 };
 
-export const deleteMp3File = (folderName: string, fileName: string) => {
+export const useDeleteMp3File = (folderName: string, fileName: string) => {
   return useAxiosCustom<ResponseData<string>>({
     url: `/files/delete/audio/${folderName}/${fileName}`,
     method: "DELETE",
@@ -22,7 +23,7 @@ export const deleteMp3File = (folderName: string, fileName: string) => {
   });
 };
 
-export const createAudioFolder = (folderName: string) => {
+export const useCreateAudioFolder = (folderName: string) => {
   return useAxiosCustom<ResponseData<string>>({
     url: `/files/create/audio/${folderName}`,
     method: "POST",
@@ -31,7 +32,7 @@ export const createAudioFolder = (folderName: string) => {
   });
 };
 
-export const deleteAudioFolder = (folderName: string) => {
+export const useDeleteAudioFolder = (folderName: string) => {
   return useAxiosCustom<ResponseData<string>>({
     url: `/files/delete/folder/audio/${folderName}`,
     method: "DELETE",
@@ -40,13 +41,13 @@ export const deleteAudioFolder = (folderName: string) => {
   });
 };
 
-export const getAlertSoundsMp3Names = () => {
+export const useGetAlertSoundsMp3Names = () => {
   return useAxiosCustom<ResponseData<string[]>>({
     url: `/files/audio/alertSounds`,
   });
 };
 
-export const deleteAlertSound = (fileName: string) => {
+export const useDeleteAlertSound = (fileName: string) => {
   return useAxiosCustom<ResponseData<string>>({
     url: `/files/delete/alertSounds/${fileName}`,
     method: "DELETE",

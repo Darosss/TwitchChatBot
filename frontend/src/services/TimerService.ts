@@ -31,13 +31,13 @@ export interface TimerCreateData
 
 interface TimerUpdateData extends Partial<TimerCreateData> {}
 
-export const getTimers = () => {
+export const useGetTimers = () => {
   return useAxiosCustom<PaginationData<Timer>>({
     url: `/timers`,
   });
 };
 
-export const editTimer = (commandId: string, data: TimerUpdateData) => {
+export const useEditTimer = (commandId: string, data: TimerUpdateData) => {
   return useAxiosCustom<TimerUpdateData>({
     url: `/timers/${commandId}`,
     method: "POST",
@@ -46,7 +46,7 @@ export const editTimer = (commandId: string, data: TimerUpdateData) => {
   });
 };
 
-export const createTimer = (data: TimerCreateData) => {
+export const useCreateTimer = (data: TimerCreateData) => {
   return useAxiosCustom<TimerCreateData>({
     url: `/timers/create/`,
     method: "POST",
@@ -56,7 +56,7 @@ export const createTimer = (data: TimerCreateData) => {
   });
 };
 
-export const deleteTimer = (timerId: string) => {
+export const useDeleteTimer = (timerId: string) => {
   return useAxiosCustom<Timer>({
     url: `/timers/delete/${timerId}`,
     method: "DELETE",

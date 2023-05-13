@@ -1,26 +1,22 @@
+import React, { useEffect, useState } from "react";
 import {
-  createAudioFolder,
-  deleteAudioFolder,
-  getFoldersList,
+  useCreateAudioFolder,
+  useDeleteAudioFolder,
+  useGetFoldersList,
 } from "@services/FilesService";
 import { addNotification } from "@utils/getNotificationValues";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
-import React, { useContext, useEffect, useState } from "react";
 
 export default function AudioFolderCreate() {
   const [folderName, setFolderName] = useState("");
   const [folderToDelete, setFolderToDelete] = useState<string | null>(null);
 
-  const {
-    data: foldersData,
-    loading: foldersLoad,
-    error: foldersError,
-    refetchData: refetchFolders,
-  } = getFoldersList();
+  const { data: foldersData, refetchData: refetchFolders } =
+    useGetFoldersList();
 
-  const { refetchData: fetchCreateFolder } = createAudioFolder(folderName);
+  const { refetchData: fetchCreateFolder } = useCreateAudioFolder(folderName);
 
-  const { refetchData: fetchDeleteFolder } = deleteAudioFolder(
+  const { refetchData: fetchDeleteFolder } = useDeleteAudioFolder(
     folderToDelete || ""
   );
 
@@ -32,6 +28,7 @@ export default function AudioFolderCreate() {
         setFolderToDelete(null);
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [folderToDelete]);
 
   const handleCreateButton = () => {

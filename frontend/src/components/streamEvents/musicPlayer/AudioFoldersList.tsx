@@ -1,23 +1,23 @@
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { SocketContext } from "@context/socket";
 import {
-  deleteMp3File,
-  getFolderMp3Files,
-  getFoldersList,
+  useDeleteMp3File,
+  useGetFolderMp3Files,
+  useGetFoldersList,
 } from "@services/FilesService";
 import { addNotification } from "@utils/getNotificationValues";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
-import React, { useContext, useEffect, useState } from "react";
 export default function AudioFoldersList() {
   const socket = useContext(SocketContext);
   const [folderName, setFolderName] = useState("");
   const [fileNameToDelete, setFileNameToDelete] = useState<string | null>(null);
 
-  const { data: foldersData } = getFoldersList();
+  const { data: foldersData } = useGetFoldersList();
 
   const { data: mp3Data, refetchData: refetchMp3Files } =
-    getFolderMp3Files(folderName);
+    useGetFolderMp3Files(folderName);
 
-  const { refetchData: fetchDeleteFile } = deleteMp3File(
+  const { refetchData: fetchDeleteFile } = useDeleteMp3File(
     folderName,
     fileNameToDelete || ""
   );
@@ -30,27 +30,35 @@ export default function AudioFoldersList() {
     setFolderName(folder);
   };
 
-  useEffect(() => {
-    handleActionOnChangeState(fileNameToDelete, setFileNameToDelete, () => {
-      fetchDeleteFile().then(() => {
-        refetchMp3Files();
-        addNotification("Deleted", "File deleted successfully", "danger");
-        setFileNameToDelete(null);
+  const handleOnDeleteFolderName = useCallback(
+    (folderName: string) => {
+      handleActionOnChangeState(folderName, setFileNameToDelete, () => {
+        fetchDeleteFile().then(() => {
+          refetchMp3Files();
+          addNotification("Deleted", "File deleted successfully", "danger");
+          setFileNameToDelete(null);
+        });
       });
-    });
-  }, [fileNameToDelete]);
+    },
+    [fetchDeleteFile, refetchMp3Files]
+  );
+
+  useEffect(() => {
+    if (fileNameToDelete) handleOnDeleteFolderName(fileNameToDelete);
+  }, [handleOnDeleteFolderName, fileNameToDelete]);
 
   useEffect(() => {
     if (!folderName) return;
-
     refetchMp3Files();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [folderName]);
 
   useEffect(() => {
+    console.log("socket, lele");
     socket.emit("getAudioInfo", (cb) => {
       setFolderName(cb.currentFolder);
     });
-  }, []);
+  }, [socket]);
 
   if (!foldersData) return <> No folders.</>;
 

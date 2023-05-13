@@ -32,13 +32,13 @@ export interface TriggerCreateData
 
 interface TriggerUpdateData extends Partial<TriggerCreateData> {}
 
-export const getTriggers = () => {
+export const useGetTriggers = () => {
   return useAxiosCustom<PaginationData<Trigger>>({
     url: `/triggers`,
   });
 };
 
-export const editTrigger = (commandId: string, data: TriggerUpdateData) => {
+export const useEditTrigger = (commandId: string, data: TriggerUpdateData) => {
   return useAxiosCustom<TriggerUpdateData>({
     url: `/triggers/${commandId}`,
     method: "POST",
@@ -47,7 +47,7 @@ export const editTrigger = (commandId: string, data: TriggerUpdateData) => {
   });
 };
 
-export const createTrigger = (data: TriggerCreateData) => {
+export const useCreateTrigger = (data: TriggerCreateData) => {
   return useAxiosCustom<TriggerCreateData>({
     url: `/triggers/create`,
     method: "POST",
@@ -57,7 +57,7 @@ export const createTrigger = (data: TriggerCreateData) => {
   });
 };
 
-export const deleteTrigger = (triggerId: string) => {
+export const useDeleteTrigger = (triggerId: string) => {
   return useAxiosCustom<Trigger>({
     url: `/triggers/delete/${triggerId}`,
     method: "DELETE",

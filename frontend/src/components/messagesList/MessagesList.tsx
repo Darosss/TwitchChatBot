@@ -5,9 +5,9 @@ import { Link, useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import FilterBarMessages from "./filterBarMessages";
 import { PaginationData } from "@services/ApiService";
-import { getMessages, Message } from "@services/MessageService";
-import { getUserMessages } from "@services/UserService";
-import { getSessionMessages } from "@services/StreamSessionService";
+import { useGetMessages, Message } from "@services/MessageService";
+import { useGetUserMessages } from "@services/UserService";
+import { useGetSessionMessages } from "@services/StreamSessionService";
 import { DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
 
@@ -23,10 +23,8 @@ export default function MessagesList(props: {
   switch (messages) {
     case "user":
       return <MessagesUser />;
-      break;
     case "session":
       return <MessagesSession />;
-      break;
     default:
       return <MessagesAll />;
   }
@@ -34,7 +32,7 @@ export default function MessagesList(props: {
 
 const MessagesUser = () => {
   const { userId } = useParams();
-  const { data, loading, error } = getUserMessages(userId!);
+  const { data, loading, error } = useGetUserMessages(userId!);
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!data || loading) return <>Loading!</>;
 
@@ -43,7 +41,7 @@ const MessagesUser = () => {
 
 const MessagesSession = () => {
   const { sessionId } = useParams();
-  const { data, loading, error } = getSessionMessages(sessionId!);
+  const { data, loading, error } = useGetSessionMessages(sessionId!);
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!data || loading) return <>Loading!</>;
 
@@ -51,7 +49,7 @@ const MessagesSession = () => {
 };
 
 const MessagesAll = () => {
-  const { data, loading, error } = getMessages();
+  const { data, loading, error } = useGetMessages();
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!data || loading) return <>Loading!</>;
 

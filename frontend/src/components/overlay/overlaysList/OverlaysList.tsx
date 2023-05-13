@@ -7,10 +7,9 @@ import {
   initialToolboxOverlays,
 } from "src/layout/initialLayoutOverlays";
 import {
-  createOverlay,
-  getOverlays,
-  Overlay,
-  removeOverlayById,
+  useCreateOverlay,
+  useGetOverlays,
+  useRemoveOverlayById,
 } from "@services/OverlayService";
 import CardboxWrapper, {
   CardboxInput,
@@ -18,19 +17,19 @@ import CardboxWrapper, {
 } from "@components/cardboxWrapper/CardboxWrapper";
 
 export default function OverlaysList() {
-  const { data, loading, error, refetchData } = getOverlays();
+  const { data, loading, error, refetchData } = useGetOverlays();
 
   const [overlayName, setLayoutName] = useState<string>("");
 
   const [overlayIdDelete, setLayoutIdDelete] = useState<string | null>(null);
 
-  const { refetchData: fetchCreateLayout } = createOverlay({
+  const { refetchData: fetchCreateLayout } = useCreateOverlay({
     name: overlayName,
     layout: initialLayoutOverlays,
     toolbox: initialToolboxOverlays,
   });
 
-  const { refetchData: fetchDeleteLayout } = removeOverlayById(
+  const { refetchData: fetchDeleteLayout } = useRemoveOverlayById(
     overlayIdDelete ? overlayIdDelete : ""
   );
 
@@ -47,6 +46,7 @@ export default function OverlaysList() {
         setLayoutIdDelete(null);
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [overlayIdDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

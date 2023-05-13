@@ -23,14 +23,14 @@ interface AffixUpdateData
       >
     > {}
 
-export const getAffixes = (urlParams = true) => {
+export const useGetAffixes = (urlParams = true) => {
   return useAxiosCustom<PaginationData<Affix>>({
     url: `/affixes`,
     urlParams: urlParams,
   });
 };
 
-export const editAffix = (id: string, data: AffixUpdateData) => {
+export const useEditAffix = (id: string, data: AffixUpdateData) => {
   return useAxiosCustom<Affix>({
     url: `/affixes/${id}`,
     method: "POST",
@@ -39,7 +39,7 @@ export const editAffix = (id: string, data: AffixUpdateData) => {
   });
 };
 
-export const createAffix = (data: AffixCreateData) => {
+export const useCreateAffix = (data: AffixCreateData) => {
   return useAxiosCustom<Affix>({
     url: `/affixes/create/`,
     method: "POST",
@@ -49,7 +49,7 @@ export const createAffix = (data: AffixCreateData) => {
   });
 };
 
-export const deleteAffix = (id: string) => {
+export const useDeleteAffix = (id: string) => {
   return useAxiosCustom<Affix>({
     url: `/affixes/delete/${id}`,
     method: "DELETE",

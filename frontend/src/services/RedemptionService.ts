@@ -14,7 +14,7 @@ export interface Redemption {
   message?: string;
 }
 
-export const getRedemptions = () => {
+export const useGetRedemptions = () => {
   return useAxiosCustom<PaginationData<Redemption>>({
     url: `/redemptions`,
   });

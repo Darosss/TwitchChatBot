@@ -5,10 +5,10 @@ import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
 import {
-  getMoods,
-  editMood,
-  createMood,
-  deleteMood,
+  useGetMoods,
+  useEditMood,
+  useCreateMood,
+  useDeleteMood,
   Mood,
 } from "@services/MoodService";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
@@ -27,21 +27,21 @@ export default function Moods() {
   const [prefixes, setPrefixes] = useState([""]);
   const [sufixes, setSufixes] = useState([""]);
 
-  const { data: moodsData, loading, error, refetchData } = getMoods();
+  const { data: moodsData, loading, error, refetchData } = useGetMoods();
 
-  const { refetchData: fetchEditMood } = editMood(editingMood, {
+  const { refetchData: fetchEditMood } = useEditMood(editingMood, {
     name: name,
     sufixes: sufixes,
     prefixes: prefixes,
   });
 
-  const { refetchData: fetchCreateMood } = createMood({
+  const { refetchData: fetchCreateMood } = useCreateMood({
     name: createName,
     prefixes: prefixes,
     sufixes: sufixes,
   });
 
-  const { refetchData: fetchDeleteMood } = deleteMood(
+  const { refetchData: fetchDeleteMood } = useDeleteMood(
     moodIdDelete ? moodIdDelete : ""
   );
 
@@ -57,6 +57,7 @@ export default function Moods() {
           addNotification("Warning", err.response.data.message, "warning");
         });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moodIdDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

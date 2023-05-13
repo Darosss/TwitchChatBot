@@ -5,7 +5,7 @@ export const handleActionOnChangeState = (
 ) => {
   if (
     idToDelete !== null &&
-    confirm(`Are you sure you want to delete layout: ${idToDelete}?`)
+    window.confirm(`Are you sure you want to delete layout: ${idToDelete}?`)
   ) {
     callback();
   } else {

@@ -5,10 +5,10 @@ import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
 import {
-  getAffixes,
-  editAffix,
-  createAffix,
-  deleteAffix,
+  useGetAffixes,
+  useEditAffix,
+  useCreateAffix,
+  useDeleteAffix,
   Affix,
 } from "@services/AffixService";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
@@ -29,9 +29,9 @@ export default function Affixes() {
   const [prefixes, setPrefixes] = useState<string[]>([""]);
   const [suffixes, setSuffixes] = useState<string[]>([""]);
 
-  const { data: affixesData, loading, error, refetchData } = getAffixes();
+  const { data: affixesData, loading, error, refetchData } = useGetAffixes();
 
-  const { refetchData: fetchEditAffix } = editAffix(editingAffix, {
+  const { refetchData: fetchEditAffix } = useEditAffix(editingAffix, {
     name: name,
     prefixes: prefixes,
     suffixes: suffixes,
@@ -39,11 +39,11 @@ export default function Affixes() {
     suffixChance: suffixChance,
   });
 
-  const { refetchData: fetchCreateAffix } = createAffix({
+  const { refetchData: fetchCreateAffix } = useCreateAffix({
     name: createName,
   });
 
-  const { refetchData: fetchDeleteAffix } = deleteAffix(
+  const { refetchData: fetchDeleteAffix } = useDeleteAffix(
     affixIdDelete ? affixIdDelete : ""
   );
 
@@ -59,6 +59,7 @@ export default function Affixes() {
           addNotification("Warning", err.response.data.message, "warning");
         });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [affixIdDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

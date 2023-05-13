@@ -10,7 +10,7 @@ import { Message as MessageType } from "@services/MessageService";
 import Message from "@components/message";
 import { SocketContext } from "@context/socket";
 import { addNotification } from "@utils/getNotificationValues";
-import { getCurrentSessionMessages } from "@services/StreamSessionService";
+import { useGetCurrentSessionMessages } from "@services/StreamSessionService";
 
 export default function StreamChat() {
   const socket = useContext(SocketContext);
@@ -25,7 +25,7 @@ export default function StreamChat() {
 
   const [messageToSend, setMessageToSend] = useState("");
 
-  const { data, loading, error, refetchData } = getCurrentSessionMessages();
+  const { data } = useGetCurrentSessionMessages();
 
   const chatToBottom = () => {
     setTimeout(() => {

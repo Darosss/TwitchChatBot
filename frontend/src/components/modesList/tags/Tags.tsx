@@ -5,10 +5,10 @@ import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
 import {
-  getTags,
-  editTag,
-  createTag,
-  deleteTag,
+  useGetTags,
+  useEditTag,
+  useCreateTag,
+  useDeleteTag,
   Tag,
 } from "@services/TagService";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
@@ -25,15 +25,15 @@ export default function Tags() {
   const [name, setName] = useState("");
   const [createName, setCreateName] = useState("");
 
-  const { data: tagsData, loading, error, refetchData } = getTags();
+  const { data: tagsData, loading, error, refetchData } = useGetTags();
 
-  const { refetchData: fetchEditTag } = editTag(editingTag, { name: name });
+  const { refetchData: fetchEditTag } = useEditTag(editingTag, { name: name });
 
-  const { refetchData: fetchCreateTag } = createTag({
+  const { refetchData: fetchCreateTag } = useCreateTag({
     name: createName,
   });
 
-  const { refetchData: fetchDeleteTag } = deleteTag(
+  const { refetchData: fetchDeleteTag } = useDeleteTag(
     tagIdDelete ? tagIdDelete : ""
   );
 
@@ -49,6 +49,7 @@ export default function Tags() {
           addNotification("Warning", err.response.data.message, "warning");
         });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tagIdDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

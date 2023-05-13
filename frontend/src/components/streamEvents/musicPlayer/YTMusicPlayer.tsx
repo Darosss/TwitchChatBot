@@ -66,7 +66,7 @@ export default function YTMusicPlayer() {
       socket.off("getAudioYTInfo");
       clearInterval(SONG_COUNT_TIMER);
     };
-  }, []);
+  }, [socket]);
 
   const emitNextYoutubeSong = () => {
     socket.emit("musicYTNext");
@@ -96,6 +96,10 @@ export default function YTMusicPlayer() {
             audioData={audioData}
             setAudioData={setAudioData}
             onChangeVolumeFn={emitChangeYTVolume}
+            eventsNames={{
+              audioInfo: "getAudioYTInfo",
+              audioStop: "musicYTStop",
+            }}
           />
         );
       case "playlists":
@@ -123,7 +127,7 @@ export default function YTMusicPlayer() {
         activeTabState: [activeTab, setActiveTab],
       },
     ];
-  }, [activeTab, setActiveTab, socket]);
+  }, [activeTab, setActiveTab]);
 
   return (
     <>

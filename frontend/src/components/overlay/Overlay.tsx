@@ -9,7 +9,10 @@ import {
 import { useParams } from "react-router-dom";
 import { getInitialCurrentBreakpoint } from "@utils/layoutBreakpoints";
 import ReactGrid from "@components/reactGrid";
-import { editOverlayById, getOverlayById } from "@services/OverlayService";
+import {
+  useEditOverlayById,
+  useGetOverlayById,
+} from "@services/OverlayService";
 import MusicPlayer from "./musicPlayer";
 import YoutubePlayerVideo from "./youtubePlayerVideo";
 import { HelmetTitle } from "@components/componentWithTitle";
@@ -33,11 +36,14 @@ export default function Overlay(params: { editor?: boolean }) {
     getInitialCurrentBreakpoint()
   );
 
-  const { data, error } = getOverlayById(overlayId || "");
-  const { refetchData: fetchEditOverlay } = editOverlayById(overlayId || "", {
-    layout: layoutOverlay,
-    toolbox: toolbox,
-  });
+  const { data, error } = useGetOverlayById(overlayId || "");
+  const { refetchData: fetchEditOverlay } = useEditOverlayById(
+    overlayId || "",
+    {
+      layout: layoutOverlay,
+      toolbox: toolbox,
+    }
+  );
 
   useEffect(() => {
     if (!data) return;

@@ -1,7 +1,7 @@
 import { PaginationData } from "@services/ApiService";
-import { getMoods, Mood } from "@services/MoodService";
-import { getAffixes, Affix } from "@services/AffixService";
-import { getTags, Tag } from "@services/TagService";
+import { useGetMoods, Mood } from "@services/MoodService";
+import { useGetAffixes, Affix } from "@services/AffixService";
+import { useGetTags, Tag } from "@services/TagService";
 
 export interface AllModesReturn {
   tags: Tag[];
@@ -12,10 +12,10 @@ export interface AllModesReturn {
   refetchMoods: () => Promise<PaginationData<Mood>>;
 }
 
-export const getAllModes = (): AllModesReturn | undefined => {
-  const { data: tags, refetchData: refetchTags } = getTags(false);
-  const { data: affixes, refetchData: refetchAffixes } = getAffixes(false);
-  const { data: moods, refetchData: refetchMoods } = getMoods(false);
+export const useGetAllModes = (): AllModesReturn | undefined => {
+  const { data: tags, refetchData: refetchTags } = useGetTags(false);
+  const { data: affixes, refetchData: refetchAffixes } = useGetAffixes(false);
+  const { data: moods, refetchData: refetchMoods } = useGetMoods(false);
 
   if (!tags || !affixes || !moods) return;
 

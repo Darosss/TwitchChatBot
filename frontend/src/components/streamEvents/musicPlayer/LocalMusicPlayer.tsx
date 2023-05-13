@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import UploadMp3Form from "./UploadMp3Form";
 import AudioFoldersList from "./AudioFoldersList";
 import AudioFolderCreate from "./AudioFolderCreate";
@@ -18,7 +18,6 @@ interface TabButtonsListMemo {
     React.Dispatch<React.SetStateAction<AvailableTabs>>
   ];
 }
-let SONG_COUNT_TIMER: NodeJS.Timer | undefined;
 
 export default function LocalMusicPlayer() {
   const socket = useContext(SocketContext);
@@ -34,47 +33,9 @@ export default function LocalMusicPlayer() {
 
   const [activeTab, setActiveTab] = useState<AvailableTabs>("information");
 
-  useEffect(() => {
-    const onGetAudioYTInfo = (cb: AudioStreamDataInfo) => {
-      setAudioData(cb);
-      clearInterval(SONG_COUNT_TIMER);
-      let currTime = cb.currentTime;
-      SONG_COUNT_TIMER = setInterval(() => {
-        currTime++;
-        countSongTime(currTime, cb.duration);
-      }, 1000);
-    };
-    const countSongTime = (time: number, duration: number) => {
-      setAudioData((prevState) => ({ ...prevState, currentTime: time }));
-      time++;
-      if (time >= duration) {
-        setAudioData((prevState) => ({ ...prevState, currentTime: 0 }));
-      }
-    };
-
-    socket.on("getAudioInfo", (data) => {
-      onGetAudioYTInfo(data);
-    });
-
-    socket.emit("getAudioInfo", (cb) => {
-      onGetAudioYTInfo(cb);
-    });
-
-    socket.on("audioStop", () => {
-      setAudioData((prevState) => ({ ...prevState, isPlaying: false }));
-    });
-
-    return () => {
-      socket.off("getAudioInfo");
-      socket.off("audioStop");
-      clearInterval(SONG_COUNT_TIMER);
-    };
-  }, []);
-
   const toggleLocalPlayPause = () => {
     if (audioData.isPlaying) {
       socket.emit("musicPause");
-      clearInterval(SONG_COUNT_TIMER);
     } else {
       socket.emit("musicPlay");
     }
@@ -100,6 +61,7 @@ export default function LocalMusicPlayer() {
             audioData={audioData}
             setAudioData={setAudioData}
             onChangeVolumeFn={emitChangeLocalVolume}
+            eventsNames={{ audioInfo: "getAudioInfo", audioStop: "audioStop" }}
           />
         );
       case "upload":
@@ -134,7 +96,7 @@ export default function LocalMusicPlayer() {
         activeTabState: [activeTab, setActiveTab],
       },
     ];
-  }, [activeTab, setActiveTab, socket]);
+  }, [activeTab, setActiveTab]);
 
   return (
     <>

@@ -3,7 +3,11 @@ import { useParams } from "react-router-dom";
 
 import Message from "@components/message";
 import PreviousPage from "@components/previousPage";
-import { editUser, getLatestEldestMsgs, getUser } from "@services/UserService";
+import {
+  useEditUser,
+  useGetLatestEldestMsgs,
+  useGetUser,
+} from "@services/UserService";
 import { addNotification } from "@utils/getNotificationValues";
 import { DateTooltip } from "@components/dateTooltip";
 import { HelmetTitle } from "@components/componentWithTitle";
@@ -13,9 +17,14 @@ export default function UserProfile() {
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notes, setNotes] = useState("");
 
-  const { data: userData, loading, error, refetchData } = getUser(userId || "");
+  const {
+    data: userData,
+    loading,
+    error,
+    refetchData,
+  } = useGetUser(userId || "");
 
-  const { refetchData: fetchEditUser } = editUser(userId || "", {
+  const { refetchData: fetchEditUser } = useEditUser(userId || "", {
     notes: notes.split("\n"),
   });
 
@@ -23,8 +32,7 @@ export default function UserProfile() {
     data: msgsData,
     loading: msgLoading,
     error: msgsError,
-    refetchData: refetchLatestAndFirstMsgs,
-  } = getLatestEldestMsgs(userId || "");
+  } = useGetLatestEldestMsgs(userId || "");
 
   const showEdit = () => {
     setIsEditingNotes((prevState) => {

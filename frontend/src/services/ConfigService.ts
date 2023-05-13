@@ -72,13 +72,13 @@ export interface Config {
 export interface ConfigUpdateData
   extends Omit<Config, "_id" | "createdAt" | "updatedAt"> {}
 
-export const getConfigs = () => {
+export const useGetConfigs = () => {
   return useAxiosCustom<Config>({
     url: `/configs`,
   });
 };
 
-export const editConfig = (data: ConfigUpdateData) => {
+export const useEditConfig = (data: ConfigUpdateData) => {
   return useAxiosCustom<Config>({
     url: `/configs/edit`,
     method: "POST",
@@ -87,7 +87,7 @@ export const editConfig = (data: ConfigUpdateData) => {
   });
 };
 
-export const resetConfigs = () => {
+export const useResetConfigs = () => {
   return useAxiosCustom<Config>({
     url: `/configs/defaults`,
     method: "POST",

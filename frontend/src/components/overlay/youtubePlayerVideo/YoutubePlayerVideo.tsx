@@ -34,7 +34,7 @@ export default function MusicPlayer() {
     return () => {
       socket.off("musicYTPause", handleYTPause);
     };
-  }, [handleYTPause]);
+  }, [handleYTPause, socket]);
 
   useEffect(() => {
     socket.on("audioYT", (data) => {
@@ -45,7 +45,7 @@ export default function MusicPlayer() {
     return () => {
       socket.off("audioYT");
     };
-  }, [handleYTResume]);
+  }, [handleYTResume, socket]);
 
   useEffect(() => {
     socket.on("changeYTVolume", (volume) => {
@@ -55,7 +55,7 @@ export default function MusicPlayer() {
     return () => {
       socket.off("changeYTVolume");
     };
-  }, [handleYTChangeVolume]);
+  }, [handleYTChangeVolume, socket]);
 
   const onPlayerReady: YouTubeProps["onReady"] = (event) => {
     setPlayer(event);
@@ -92,9 +92,9 @@ export default function MusicPlayer() {
   );
 }
 
-function SongsPlaylist(props: { songs: [string, string][] }) {
-  const { songs } = props;
-  return <div> Playlist</div>;
-}
+// function SongsPlaylist(props: { songs: [string, string][] }) {
+//   const { songs } = props;
+//   return <div> Playlist</div>;
+// }
 
 //TODO: when widget is < 500 px show only name, <= 1000 show name + progress

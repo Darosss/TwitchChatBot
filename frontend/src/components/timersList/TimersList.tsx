@@ -5,16 +5,16 @@ import PreviousPage from "@components/previousPage";
 import FilterBarTimers from "./filterBarTimers";
 import {
   Timer,
-  getTimers,
-  editTimer,
-  createTimer,
-  deleteTimer,
+  useGetTimers,
+  useEditTimer,
+  useCreateTimer,
+  useDeleteTimer,
   TimerCreateData,
 } from "@services/TimerService";
 import { socketEmitRefreshTimers } from "@context/socket";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
-import { getAllModes } from "@utils/getListModes";
+import { useGetAllModes } from "@utils/getListModes";
 import { DispatchAction } from "./types";
 import TimersData from "./TimersData";
 import TimerModalData from "./TimerModalData";
@@ -27,13 +27,15 @@ export default function TimersList() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const modes = getAllModes();
+  const modes = useGetAllModes();
 
-  const { data: commandsData, loading, error, refetchData } = getTimers();
+  const { data: commandsData, loading, error, refetchData } = useGetTimers();
 
-  const { refetchData: fetchEditTimer } = editTimer(editingTimer, state);
-  const { refetchData: fetchCreateTimer } = createTimer(state);
-  const { refetchData: fetchDeleteCommand } = deleteTimer(timerIdDelete || "");
+  const { refetchData: fetchEditTimer } = useEditTimer(editingTimer, state);
+  const { refetchData: fetchCreateTimer } = useCreateTimer(state);
+  const { refetchData: fetchDeleteCommand } = useDeleteTimer(
+    timerIdDelete || ""
+  );
 
   useEffect(() => {
     handleActionOnChangeState(timerIdDelete, setTimerIdDelete, () => {
@@ -43,6 +45,7 @@ export default function TimersList() {
         setTimerIdDelete(null);
       });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timerIdDelete]);
 
   if (error) return <>There is an error. {error.response?.data.message}</>;

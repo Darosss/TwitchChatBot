@@ -29,13 +29,16 @@ export interface ChatCommandCreateData
 
 interface ChatCommandUpdateData extends Partial<ChatCommandCreateData> {}
 
-export const getCommands = () => {
+export const useGetCommands = () => {
   return useAxiosCustom<PaginationData<ChatCommand>>({
     url: `/chat-commands`,
   });
 };
 
-export const editCommand = (commandId: string, data: ChatCommandUpdateData) => {
+export const useEditCommand = (
+  commandId: string,
+  data: ChatCommandUpdateData
+) => {
   return useAxiosCustom<ChatCommandUpdateData>({
     url: `/chat-commands/${commandId}`,
     method: "POST",
@@ -44,7 +47,7 @@ export const editCommand = (commandId: string, data: ChatCommandUpdateData) => {
   });
 };
 
-export const createCommand = (data: ChatCommandCreateData) => {
+export const useCreateCommand = (data: ChatCommandCreateData) => {
   return useAxiosCustom<ChatCommandCreateData>({
     url: `/chat-commands/create/`,
     method: "POST",
@@ -54,7 +57,7 @@ export const createCommand = (data: ChatCommandCreateData) => {
   });
 };
 
-export const deleteCommand = (commandId: string) => {
+export const useDeleteCommand = (commandId: string) => {
   return useAxiosCustom<any>({
     url: `/chat-commands/delete/${commandId}`,
     method: "DELETE",

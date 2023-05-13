@@ -137,7 +137,7 @@ export default function MusicPlayer() {
       clearInterval(intervalContentId);
       musicStop();
     };
-  }, []);
+  }, [socket]);
 
   return (
     <div className="music-player-wrapper">

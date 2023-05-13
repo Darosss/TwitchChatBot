@@ -3,13 +3,17 @@ import { useParams } from "react-router-dom";
 import LineChart from "@components/lineChart";
 import PreviousPage from "@components/previousPage";
 import SlideShow from "@components/slideShow";
-import { getSessionById } from "@services/StreamSessionService";
+import { useGetSessionById } from "@services/StreamSessionService";
 import { DateTooltip } from "@components/dateTooltip";
 import StreamSessionEvents from "@components/streamSessionEvents";
 
 export default function StreamSessionDetail() {
   const { sessionId } = useParams();
-  const { data: sessionData, loading, error } = getSessionById(sessionId || "");
+  const {
+    data: sessionData,
+    loading,
+    error,
+  } = useGetSessionById(sessionId || "");
 
   if (error) return <>There is an error. {error.response?.data.message}</>;
   if (!sessionData || loading) return <>Loading!</>;
