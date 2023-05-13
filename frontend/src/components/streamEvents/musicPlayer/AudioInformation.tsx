@@ -60,8 +60,6 @@ export default function AudioInformation<
 
       let currTime = cb.currentTime;
       SONG_COUNT_TIMER = setInterval(() => {
-        console.log("testkurwa mac");
-
         currTime++;
         countSongTime(currTime, cb.duration);
       }, 1000);

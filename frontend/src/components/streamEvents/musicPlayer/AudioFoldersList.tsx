@@ -54,7 +54,6 @@ export default function AudioFoldersList() {
   }, [folderName]);
 
   useEffect(() => {
-    console.log("socket, lele");
     socket.emit("getAudioInfo", (cb) => {
       setFolderName(cb.currentFolder);
     });

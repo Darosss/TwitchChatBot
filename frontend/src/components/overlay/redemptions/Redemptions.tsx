@@ -23,11 +23,9 @@ export default function Redemptions() {
       const audioCtx = new AudioContext();
       audioCtx.decodeAudioData(audioBuffer, (buffer) => {
         if (source) {
-          console.log("SOURCE ALREADY IS SO STOP ");
           source.stop();
         }
 
-        console.log("Create new source ");
         source = new AudioBufferSourceNode(audioCtx, {
           buffer: buffer,
         });
@@ -41,7 +39,6 @@ export default function Redemptions() {
 
         if (source)
           source.onended = function () {
-            console.log("ended");
             setShowRedemption(false);
           };
       });

@@ -15,10 +15,6 @@ export default function StreamSessionEvents(props: StreamSessionProps) {
     <div id="stream-notifications" className="stream-notifications">
       <div className="widget-header"> Stream notifications </div>
       {sessionEvents.map((event, index) => {
-        console.log(
-          new Date(event.user.createdAt).getTime() / 1000 -
-            new Date(event.createdAt).getTime() / 1000
-        );
         return (
           <div
             className={`user-info ${

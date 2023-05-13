@@ -114,7 +114,6 @@ export default function StreamModes() {
                     prefixes.push(affix.prefixes.join(" | "));
                     suffixes.push(affix.suffixes.join(" | "));
                   });
-                  console.log(prefixes, suffixes);
                   addNotification(
                     "Enabled prefixes",
                     `${prefixes.join(" | ")}`,
