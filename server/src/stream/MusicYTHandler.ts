@@ -8,13 +8,13 @@ import type {
   AudioYTData
 } from "@socket";
 import { MusicConfigs } from "@models/types";
-import { google, youtube_v3 } from "googleapis";
 import moment from "moment";
 import MusicHeadHandler from "./MusicHeadHandler";
 import { shuffleArray } from "@utils/arraysOperationUtiil";
 import { SongProperties } from "./types";
 import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";
 import { isValidUrl } from "@utils/stringsOperationsUtil";
+import YoutubeApiHandler from "./YoutubeAPIHandler";
 
 interface PlaylistDetails {
   id: string;
@@ -23,7 +23,7 @@ interface PlaylistDetails {
 }
 
 class MusicYTHandler extends MusicHeadHandler {
-  private youtube: youtube_v3.Youtube;
+  private readonly youtubeAPIHandler: YoutubeApiHandler;
   private maxSongDuration = 60 * 10; // 10min; TODO: add to configs
   private playlistDetails: PlaylistDetails = {
     id: "",
@@ -36,10 +36,7 @@ class MusicYTHandler extends MusicHeadHandler {
     configs: MusicConfigs
   ) {
     super(socketIO, sayInAuthorizedChannel, configs, "audioYT");
-    this.youtube = google.youtube({
-      version: "v3",
-      auth: process.env.YOUTUBE_API_KEY_V3
-    });
+    this.youtubeAPIHandler = new YoutubeApiHandler();
   }
 
   protected async addSongToQue(song: SongProperties, requester = ""): Promise<void> {
@@ -77,10 +74,13 @@ class MusicYTHandler extends MusicHeadHandler {
 
   //TODO: add possibility to take more than 50 items of playlist
   private async addVideosFromCurrentPlaylistIntoSongsList() {
-    const videosIds = await this.getYoutubePlaylistItemsById(this.playlistDetails.id, this.playlistDetails.count);
+    const videosIds = await this.youtubeAPIHandler.getYoutubePlaylistVideosIds(
+      this.playlistDetails.id,
+      this.playlistDetails.count
+    );
     if (videosIds.length <= 0) return;
 
-    const videosDetails = await this.getYoutubeVideosById(videosIds);
+    const videosDetails = await this.getYoutubeVideosDetailsById(videosIds);
 
     if (videosDetails) {
       this.clientSay(`Loaded ${videosDetails.length} songs from ${this.playlistDetails.name} playlist into que.`);
@@ -146,53 +146,19 @@ class MusicYTHandler extends MusicHeadHandler {
     }
   }
 
-  private async getYoutubePlaylistItemsById(id: string, maxResults = 20): Promise<string[]> {
-    try {
-      const foundPlaylistItems = await this.youtube.playlistItems.list({
-        part: ["id", "snippet", "status"],
-        playlistId: id,
-        maxResults: maxResults
-      });
-
-      const playlistItems = foundPlaylistItems.data.items;
-      if (!playlistItems) return [];
-
-      const videosIds = playlistItems.map((item) => {
-        const privacyStatus = item.status?.privacyStatus;
-        const videoId = item.snippet?.resourceId?.videoId;
-
-        if (videoId && privacyStatus === "public") return videoId;
-        return "";
-      });
-
-      return videosIds;
-    } catch (err) {
-      console.error(err);
-
-      this.clientSay("Playlist isn't a playlist? Clueless");
-      return [];
-    }
-  }
-
   private async getYoutubePlaylistDetailsById(id: string): Promise<PlaylistDetails | undefined> {
     try {
-      const foundPlaylist = await this.youtube.playlists.list({
-        part: ["id", "snippet", "contentDetails"],
-        id: [id],
-        maxResults: 1
-      });
+      const foundPlaylist = await this.youtubeAPIHandler.getYoutubePlaylistById(id);
 
-      const items = foundPlaylist.data.items!;
+      if (!foundPlaylist) return;
 
-      if (items!.length > 0) {
-        const details: PlaylistDetails = {
-          id: items[0].id!,
-          name: items[0].snippet!.title || "",
-          count: items[0].contentDetails!.itemCount || 0
-        };
+      const details: PlaylistDetails = {
+        id: foundPlaylist.id || "",
+        name: foundPlaylist.snippet?.title || "",
+        count: foundPlaylist.contentDetails?.itemCount || 0
+      };
 
-        return details;
-      }
+      return details;
     } catch (err) {
       console.error(err);
     }
@@ -205,48 +171,25 @@ class MusicYTHandler extends MusicHeadHandler {
     this.playlistDetails = playlistDetails;
   }
 
-  private async getYoutubeVideosById(ids: string[]): Promise<SongProperties[] | undefined> {
-    const videoDetails = await this.youtube.videos.list({
-      part: ["contentDetails", "snippet"],
-      id: ids
-    });
+  private async getYoutubeVideosDetailsById(ids: string[]): Promise<SongProperties[] | undefined> {
+    const videoDetails = await this.youtubeAPIHandler.getYoutubeVideosById(ids);
 
-    const foundedVideos = videoDetails.data.items?.map<SongProperties>((item) => {
+    if (!videoDetails) return;
+
+    const foundedVideos = videoDetails?.map<SongProperties>((item) => {
       return {
         id: item.id || "",
-        name: item.snippet!.title || "",
-        duration: moment.duration(item.contentDetails!.duration).asSeconds()
+        name: item.snippet?.title || "",
+        duration: moment.duration(item.contentDetails?.duration || 0).asSeconds()
       };
     });
 
-    const filter = foundedVideos?.filter((item) => {
+    // in case where id and name === "" filter;
+    const filteredVideos = foundedVideos?.filter((item) => {
       if (item.id.length > 0 && item.name.length > 0) return true;
     });
 
-    return filter;
-  }
-
-  private async getYoutubeSearchItemsIds(opts: youtube_v3.Params$Resource$Search$List): Promise<string[] | undefined> {
-    const { part = ["snippet"], q, maxResults = 1, videoCategoryId = "10" } = opts;
-    const searchResult = await this.youtube.search.list({
-      part: part,
-      q: q,
-      type: ["video"],
-      videoEmbeddable: "true",
-      videoCategoryId: videoCategoryId,
-      maxResults: maxResults
-    });
-
-    const items = searchResult.data.items;
-
-    const videosIds = items?.map((item) => {
-      const videoId = item.id?.videoId;
-
-      if (videoId) return videoId;
-      return "";
-    });
-
-    return videosIds;
+    return filteredVideos;
   }
 
   public override pausePlayer() {
@@ -321,14 +264,14 @@ class MusicYTHandler extends MusicHeadHandler {
   }
 
   private async searchForRequestedSong(searchQuery: string): Promise<SongProperties | undefined> {
-    const searchedItem = await this.getYoutubeSearchItemsIds({
+    const searchedItem = await this.youtubeAPIHandler.getYoutubeSearchVideosIds({
       q: searchQuery,
       maxResults: 1
     });
 
     if (!searchedItem) return;
 
-    const videoDetails = await this.getYoutubeVideosById(searchedItem);
+    const videoDetails = await this.getYoutubeVideosDetailsById(searchedItem);
 
     if (videoDetails) return videoDetails[0];
   }
