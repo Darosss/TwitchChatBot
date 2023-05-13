@@ -1,9 +1,9 @@
-import Express, { Router } from "express";
+import { Router } from "express";
 import {
   getChatCommandsList,
   addNewCommand,
   editChatCommandById,
-  deleteCommandById,
+  deleteCommandById
 } from "@controllers/chatCommandsController";
 import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
 import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";

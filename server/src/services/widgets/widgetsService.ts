@@ -4,23 +4,13 @@ import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
 import { FilterQuery, UpdateQuery } from "mongoose";
-import {
-  WidgetCreateData,
-  WidgetsFindOptions,
-  WidgetUpdateData,
-  ManyWidgetsFindOptions,
-} from "./types/";
+import { WidgetCreateData, WidgetsFindOptions, WidgetUpdateData, ManyWidgetsFindOptions } from "./types/";
 
 export const getWidgets = async (
   filter: FilterQuery<WidgetsDocument> = {},
   widgetFindOptions: ManyWidgetsFindOptions
 ) => {
-  const {
-    limit = 50,
-    skip = 1,
-    sort = { createdAt: -1 },
-    select = { __v: 0 },
-  } = widgetFindOptions;
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = widgetFindOptions;
 
   try {
     const widget = await Widgets.find(filter)
@@ -36,15 +26,11 @@ export const getWidgets = async (
   }
 };
 
-export const getWidgetsCount = async (
-  filter: FilterQuery<WidgetsDocument> = {}
-) => {
+export const getWidgetsCount = async (filter: FilterQuery<WidgetsDocument> = {}) => {
   return await Widgets.countDocuments(filter);
 };
 
-export const createWidget = async (
-  createData: WidgetCreateData | WidgetCreateData[]
-) => {
+export const createWidget = async (createData: WidgetCreateData | WidgetCreateData[]) => {
   try {
     const createdWidget = await Widgets.create(createData);
     if (!createdWidget) {
@@ -58,10 +44,7 @@ export const createWidget = async (
   }
 };
 
-export const getWidgetById = async (
-  id: string,
-  widgetFindOptions: WidgetsFindOptions
-) => {
+export const getWidgetById = async (id: string, widgetFindOptions: WidgetsFindOptions) => {
   const { select = { __v: 0 } } = widgetFindOptions;
 
   try {
@@ -76,13 +59,10 @@ export const getWidgetById = async (
   }
 };
 
-export const updateWidgetById = async (
-  id: string,
-  updateData: UpdateQuery<WidgetUpdateData>
-) => {
+export const updateWidgetById = async (id: string, updateData: UpdateQuery<WidgetUpdateData>) => {
   try {
     const updatedWidget = await Widgets.findByIdAndUpdate(id, updateData, {
-      new: true,
+      new: true
     });
 
     const widget = checkExistResource(updatedWidget, `Widget with id(${id})`);

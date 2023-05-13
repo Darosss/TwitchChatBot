@@ -21,7 +21,7 @@ class AppError extends Error {
   }
 }
 
-const handleAppError = (err: any) => {
+const handleAppError = (err: unknown) => {
   if (err instanceof AppError) {
     throw new AppError(err.statusCode, err.message);
   } else if (err instanceof ErrorMoongose) {

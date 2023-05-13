@@ -2,7 +2,7 @@ import {
   baseChatFeaturesFields,
   commonChatFeaturesFields,
   delayField,
-  descriptionField,
+  descriptionField
 } from "@utils/commonSchemaFieldsUtil";
 import { Model, model, Schema } from "mongoose";
 import { TimerDocument } from "./types";
@@ -16,7 +16,7 @@ const TimerSchema: Schema<TimerDocument> = new Schema(
     points: { type: Number, default: 0 },
     reqPoints: { type: Number, default: 20 },
     nonFollowMulti: { type: Boolean, default: false },
-    nonSubMulti: { type: Boolean, default: false },
+    nonSubMulti: { type: Boolean, default: false }
   },
   { timestamps: true }
 );

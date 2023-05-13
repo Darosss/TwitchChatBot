@@ -6,7 +6,7 @@ import type {
   InterServerEvents,
   SocketData,
   AudioStreamData,
-  AudioStreamDataInfo,
+  AudioStreamDataInfo
 } from "@socket";
 import { musicPath } from "@configs/globalPaths";
 import path from "path";
@@ -14,18 +14,14 @@ import { getMp3AudioDuration } from "@utils/filesManipulateUtil";
 import { MusicConfigs } from "@models/types";
 import MusicHeadHandler from "./MusicHeadHandler";
 import { SongProperties } from "./types";
+import { shuffleArray } from "@utils/arraysOperationUtiil";
 
 class MusicStreamHandler extends MusicHeadHandler {
   private readonly formatFile: string = ".mp3";
   private currentFolder = musicPath;
   protected override currentSong: AudioStreamData | undefined;
   constructor(
-    socketIO: Server<
-      ClientToServerEvents,
-      ServerToClientEvents,
-      InterServerEvents,
-      SocketData
-    >,
+    socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     sayInAuthorizedChannel: (message: string) => void,
     configs: MusicConfigs
   ) {
@@ -37,15 +33,12 @@ class MusicStreamHandler extends MusicHeadHandler {
       const currentTimeSong = this.getCurrentTimeSong();
       return {
         ...this.currentSong,
-        currentTime: currentTimeSong,
+        currentTime: currentTimeSong
       };
     }
   }
 
-  public async loadNewSongs(
-    idOrFolderName: string,
-    shuffle = true
-  ): Promise<void> {
+  public async loadNewSongs(idOrFolderName: string, shuffle = true): Promise<void> {
     const loadedFolder = path.join(musicPath, idOrFolderName);
     if (!this.isADirectory(loadedFolder)) return;
     this.currentFolder = loadedFolder;
@@ -53,22 +46,17 @@ class MusicStreamHandler extends MusicHeadHandler {
     try {
       const loaded = await this.loadSongsFromMusicPath(shuffle);
       if (!loaded) return;
-      this.clientSay(
-        `Loaded new songs from ${idOrFolderName}. Number of songs: ${this.songsList.length}`
-      );
+      this.clientSay(`Loaded new songs from ${idOrFolderName}. Number of songs: ${this.songsList.length}`);
       await this.prepareInitialQue();
       this.emitGetAudioInfo();
     } catch (err) {
-      this.clientSay(
-        `Couldn't load new songs. Probably folder does not exist.`
-      );
+      this.clientSay(`Couldn't load new songs. Probably folder does not exist.`);
     }
   }
 
   protected async addSongToQue(song: SongProperties, requester = "") {
     try {
-      const mp3FilePath =
-        path.join(this.currentFolder, song.name) + this.formatFile;
+      const mp3FilePath = path.join(this.currentFolder, song.name) + this.formatFile;
       const duration = await getMp3AudioDuration(mp3FilePath);
       const mp3FileBuffer = fs.readFileSync(mp3FilePath);
 
@@ -82,13 +70,11 @@ class MusicStreamHandler extends MusicHeadHandler {
           duration: duration,
           currentTime: 0,
           requester: requester,
-          volume: this.volume,
-        },
+          volume: this.volume
+        }
       ]);
     } catch (err) {
-      console.error(
-        "Probably mp3 isn't correct encoded or bad file path. Skip song."
-      );
+      console.error("Probably mp3 isn't correct encoded or bad file path. Skip song.");
 
       this.addNextItemToQueAndPushToEnd();
     }
@@ -96,9 +82,7 @@ class MusicStreamHandler extends MusicHeadHandler {
 
   protected async prepareInitialQue() {
     if (this.songsList.length <= 0) {
-      this.clientSay(
-        `There are not songs in ${path.basename(this.currentFolder)}`
-      );
+      this.clientSay(`There are not songs in ${path.basename(this.currentFolder)}`);
       return;
     }
     if (this.musicQue.length > 0) this.musicQue.splice(0, this.musicQue.length);
@@ -111,7 +95,7 @@ class MusicStreamHandler extends MusicHeadHandler {
   public getAudioInfo(): AudioStreamDataInfo | undefined {
     const songsInQue: [string, string][] = [];
 
-    this.musicQue.forEach(([id, audioProps]) => {
+    this.musicQue.forEach(([, audioProps]) => {
       songsInQue.push([audioProps.name, audioProps.requester || ""]);
     });
     const info: AudioStreamDataInfo = {
@@ -121,10 +105,7 @@ class MusicStreamHandler extends MusicHeadHandler {
       songsInQue: songsInQue,
       isPlaying: this.isPlaying,
       volume: this.volume,
-      currentFolder:
-        this.currentFolder !== musicPath
-          ? path.basename(this.currentFolder)
-          : "",
+      currentFolder: this.currentFolder !== musicPath ? path.basename(this.currentFolder) : ""
     };
     return info;
   }
@@ -153,20 +134,16 @@ class MusicStreamHandler extends MusicHeadHandler {
           return {
             id: file.name.replace(this.formatFile, ""),
             name: file.name.replace(this.formatFile, ""),
-            duration: 150,
+            duration: 150
           };
         });
 
-      if (shuffle) this.shuffleSongs();
+      if (shuffle) this.songsList = shuffleArray(this.songsList);
 
       return true;
     } catch {
       return false;
     }
-  }
-
-  private shuffleSongs() {
-    this.songsList.sort((a, b) => 0.5 - Math.random());
   }
 
   private isADirectory(directoryPath: string) {

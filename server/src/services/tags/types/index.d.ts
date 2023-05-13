@@ -1,19 +1,18 @@
 import { TagModel } from "@models/types";
-import { PopulateOption, PopulateOptions } from "mongoose";
+import { PopulateOption } from "mongoose";
 import { SortQuery, SelectQuery } from "@services/types";
 
 export interface TagFindOptions {
-  select?: SelectQuery<TagModel> | {};
+  select?: SelectQuery<TagModel>;
   populateSelect?: PopulateOption.select;
 }
 
 export interface ManyTagsFindOptions extends TagFindOptions {
-  sort?: SortQuery<TagModel> | {};
+  sort?: SortQuery;
   skip?: number;
   limit?: number;
 }
 
-export interface TagCreateData extends Pick<TagModel, "name"> {}
+export type TagCreateData = Pick<TagModel, "name">;
 
-export interface TagUpdateData
-  extends Partial<Pick<TagModel, "name" | "enabled">> {}
+export type TagUpdateData = Partial<Pick<TagModel, "name" | "enabled">>;

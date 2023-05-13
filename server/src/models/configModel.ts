@@ -1,10 +1,7 @@
 import { Model, model, Schema } from "mongoose";
 import { ConfigDocument } from "./types";
 import { configDefaults } from "../defaults/configsDefaults";
-import {
-  prefixChanceField,
-  suffixChanceField,
-} from "@utils/commonSchemaFieldsUtil";
+import { prefixChanceField, suffixChanceField } from "@utils/commonSchemaFieldsUtil";
 const {
   commandsConfigs,
   timersConfigs,
@@ -13,7 +10,7 @@ const {
   loyaltyConfigs,
   chatGamesConfigs,
   musicConfigs,
-  headConfigs,
+  headConfigs
 } = configDefaults;
 
 const ConfigSchema: Schema<ConfigDocument> = new Schema(
@@ -22,142 +19,142 @@ const ConfigSchema: Schema<ConfigDocument> = new Schema(
       commandsPrefix: {
         type: String,
         required: true,
-        default: commandsConfigs.commandsPrefix,
-      },
+        default: commandsConfigs.commandsPrefix
+      }
     },
     timersConfigs: {
       timersIntervalDelay: {
         type: Number,
         required: true,
-        default: timersConfigs.timersIntervalDelay,
+        default: timersConfigs.timersIntervalDelay
       },
       nonFollowTimerPoints: {
         type: Number,
         required: true,
-        default: timersConfigs.nonFollowTimerPoints,
+        default: timersConfigs.nonFollowTimerPoints
       },
       nonSubTimerPoints: {
         type: Number,
         required: true,
-        default: timersConfigs.nonSubTimerPoints,
+        default: timersConfigs.nonSubTimerPoints
       },
       ...prefixChanceField,
-      ...suffixChanceField,
+      ...suffixChanceField
     },
     triggersConfigs: {
       randomMessageChance: {
         type: Number,
         required: true,
-        default: triggersConfigs.randomMessageChance,
+        default: triggersConfigs.randomMessageChance
       },
       ...prefixChanceField,
-      ...suffixChanceField,
+      ...suffixChanceField
     },
     pointsConfigs: {
       pointsIncrement: {
         message: {
           type: Number,
           requried: true,
-          default: pointsConfigs.pointsIncrement.message,
+          default: pointsConfigs.pointsIncrement.message
         },
         watch: {
           type: Number,
           requried: true,
-          default: pointsConfigs.pointsIncrement.watch,
+          default: pointsConfigs.pointsIncrement.watch
         },
         watchMultipler: {
           type: Number,
           requried: true,
-          default: pointsConfigs.pointsIncrement.watchMultipler,
-        },
-      },
+          default: pointsConfigs.pointsIncrement.watchMultipler
+        }
+      }
     },
     loyaltyConfigs: {
       intervalCheckChatters: {
         type: Number,
         required: true,
-        default: loyaltyConfigs.intervalCheckChatters,
-      },
+        default: loyaltyConfigs.intervalCheckChatters
+      }
     },
     chatGamesConfigs: {
       activeUserTimeDelay: {
         type: Number,
         required: true,
-        default: chatGamesConfigs.activeUserTimeDelay,
+        default: chatGamesConfigs.activeUserTimeDelay
       },
       chatGamesIntervalDelay: {
         type: Number,
         required: true,
-        default: chatGamesConfigs.chatGamesIntervalDelay,
+        default: chatGamesConfigs.chatGamesIntervalDelay
       },
       minActiveUsersThreshold: {
         type: Number,
         required: true,
-        default: chatGamesConfigs.minActiveUsersThreshold,
-      },
+        default: chatGamesConfigs.minActiveUsersThreshold
+      }
     },
     musicConfigs: {
       songRequest: {
         type: Boolean,
         required: true,
-        default: musicConfigs.songRequest,
+        default: musicConfigs.songRequest
       },
       maxAutoQueSize: {
         type: Number,
         required: true,
-        default: musicConfigs.maxAutoQueSize,
+        default: musicConfigs.maxAutoQueSize
       },
       maxSongRequestByUser: {
         type: Number,
         required: true,
-        default: musicConfigs.maxSongRequestByUser,
-      },
+        default: musicConfigs.maxSongRequestByUser
+      }
     },
     headConfigs: {
       permissionLevels: {
         broadcaster: {
           type: Number,
           requried: true,
-          default: headConfigs.permissionLevels.broadcaster,
+          default: headConfigs.permissionLevels.broadcaster
         },
         mod: {
           type: Number,
           requried: true,
-          default: headConfigs.permissionLevels.mod,
+          default: headConfigs.permissionLevels.mod
         },
         vip: {
           type: Number,
           requried: true,
-          default: headConfigs.permissionLevels.vip,
+          default: headConfigs.permissionLevels.vip
         },
         all: {
           type: Number,
           requried: true,
-          default: headConfigs.permissionLevels.all,
-        },
+          default: headConfigs.permissionLevels.all
+        }
       },
       intervalCheckViewersPeek: {
         type: Number,
         required: true,
-        default: headConfigs.intervalCheckViewersPeek,
+        default: headConfigs.intervalCheckViewersPeek
       },
       delayBetweenMessages: {
         min: {
           type: Number,
           requried: true,
-          default: headConfigs.delayBetweenMessages.min,
+          default: headConfigs.delayBetweenMessages.min
         },
         max: {
           type: Number,
           requried: true,
-          default: headConfigs.delayBetweenMessages.max,
-        },
-      },
-    },
+          default: headConfigs.delayBetweenMessages.max
+        }
+      }
+    }
   },
   {
     capped: { size: 100000, max: 1 },
-    timestamps: true,
+    timestamps: true
   }
 );
 

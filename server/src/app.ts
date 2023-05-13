@@ -1,17 +1,9 @@
-import express, {
-  NextFunction,
-  Request,
-  RequestHandler,
-  Response,
-} from "express";
+import express, { NextFunction, Request, RequestHandler, Response } from "express";
 import cors from "cors";
 import initRoutes from "./routes";
 import localSocket from "./socketIO";
 import http from "http";
-import {
-  errorResponder,
-  invalidPathHandler,
-} from "@middlewares/errorHandlersMiddleware";
+import { errorResponder, invalidPathHandler } from "@middlewares/errorHandlersMiddleware";
 import twitchHandlersMiddleware from "@middlewares/twitchHandlersMiddleware";
 import { hostFrontendURL, localFrontendURL } from "@configs/envVariables";
 
@@ -26,7 +18,7 @@ const expressApp = () => {
       origin: [hostFrontendURL, localFrontendURL],
       methods: ["POST", "GET", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization", "Accept"],
-      credentials: true,
+      credentials: true
     })
   );
   app.use(express.urlencoded({ extended: true }));

@@ -4,7 +4,7 @@ import { MoodDocument } from "./types";
 
 const MoodSchema: Schema<MoodDocument> = new Schema(
   {
-    ...baseChatFeaturesFields,
+    ...baseChatFeaturesFields
   },
   { timestamps: true }
 );

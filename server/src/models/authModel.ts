@@ -11,10 +11,10 @@ const AuthSchema: Schema<AuthDocument> = new Schema(
     ivRefreshToken: { type: Buffer },
     expiresIn: { type: Number, require: true, default: 0 },
     obtainmentTimestamp: { type: Number, required: true, default: 0 },
-    scope: [String],
+    scope: [String]
   },
   {
-    capped: { size: 100000, max: 1 },
+    capped: { size: 100000, max: 1 }
   }
 );
 
@@ -22,17 +22,13 @@ AuthSchema.pre("save", async function (next) {
   try {
     // Encrypt access token
     const accessToken = this.accessToken;
-    const { iv: ivAccessToken, encrypted: encryptedAccessToken } = encryptToken(
-      accessToken,
-      encryptionKey
-    );
+    const { iv: ivAccessToken, encrypted: encryptedAccessToken } = encryptToken(accessToken, encryptionKey);
     this.accessToken = encryptedAccessToken;
     this.ivAccessToken = ivAccessToken;
 
     // Encrypt refresh token
     const refreshToken = this.refreshToken;
-    const { iv: ivRefreshToken, encrypted: encryptedRefreshToken } =
-      encryptToken(refreshToken, encryptionKey);
+    const { iv: ivRefreshToken, encrypted: encryptedRefreshToken } = encryptToken(refreshToken, encryptionKey);
     this.refreshToken = encryptedRefreshToken;
     this.ivRefreshToken = ivRefreshToken;
 

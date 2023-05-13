@@ -9,7 +9,7 @@ import {
   ChatCommandCreateData,
   ChatCommandsFindOptions,
   ChatCommandUpdateData,
-  ManyChatCommandsFindOptions,
+  ManyChatCommandsFindOptions
 } from "./types/";
 
 export const getChatCommands = async (
@@ -21,7 +21,7 @@ export const getChatCommands = async (
     skip = 1,
     sort = { createdAt: -1 },
     select = { __v: 0 },
-    populateSelect,
+    populateSelect
   } = chatCommandsFindOptions;
 
   try {
@@ -50,9 +50,7 @@ export const getAllChatCommands = async () => {
   }
 };
 
-export const getOneChatCommand = async (
-  filter: FilterQuery<ChatCommandDocument> = {}
-) => {
+export const getOneChatCommand = async (filter: FilterQuery<ChatCommandDocument> = {}) => {
   try {
     const foundChatCommand = await ChatCommand.findOne(filter);
 
@@ -65,15 +63,11 @@ export const getOneChatCommand = async (
   }
 };
 
-export const getChatCommandsCount = async (
-  filter: FilterQuery<ChatCommandDocument> = {}
-) => {
+export const getChatCommandsCount = async (filter: FilterQuery<ChatCommandDocument> = {}) => {
   return await ChatCommand.countDocuments(filter);
 };
 
-export const createChatCommand = async (
-  createData: ChatCommandCreateData | ChatCommandCreateData[]
-) => {
+export const createChatCommand = async (createData: ChatCommandCreateData | ChatCommandCreateData[]) => {
   try {
     const createdCommand = await ChatCommand.create(createData);
 
@@ -88,52 +82,32 @@ export const createChatCommand = async (
   }
 };
 
-export const getChatCommandById = async (
-  id: string,
-  chatCommandFindOptions: ChatCommandsFindOptions
-) => {
+export const getChatCommandById = async (id: string, chatCommandFindOptions: ChatCommandsFindOptions) => {
   const { select = { __v: 0 } } = chatCommandFindOptions;
 
   try {
     const foundChatCommand = await ChatCommand.findById(id).select(select);
 
-    const chatCommand = checkExistResource(
-      foundChatCommand,
-      `Chat command with id(${id})`
-    );
+    const chatCommand = checkExistResource(foundChatCommand, `Chat command with id(${id})`);
 
     return chatCommand;
   } catch (err) {
-    logger.error(
-      `Error occured while getting chat command with id(${id}): ${err}`
-    );
+    logger.error(`Error occured while getting chat command with id(${id}): ${err}`);
     handleAppError(err);
   }
 };
 
-export const updateChatCommandById = async (
-  id: string,
-  updateData: UpdateQuery<ChatCommandUpdateData>
-) => {
+export const updateChatCommandById = async (id: string, updateData: UpdateQuery<ChatCommandUpdateData>) => {
   try {
-    const updatedChatCommand = await ChatCommand.findByIdAndUpdate(
-      id,
-      updateData,
-      {
-        new: true,
-      }
-    );
+    const updatedChatCommand = await ChatCommand.findByIdAndUpdate(id, updateData, {
+      new: true
+    });
 
-    const chatCommand = checkExistResource(
-      updatedChatCommand,
-      `Chat command with id(${id})`
-    );
+    const chatCommand = checkExistResource(updatedChatCommand, `Chat command with id(${id})`);
 
     return chatCommand;
   } catch (err) {
-    logger.error(
-      `Error occured while editing chat command with id(${id}): ${err}`
-    );
+    logger.error(`Error occured while editing chat command with id(${id}): ${err}`);
     handleAppError(err);
   }
 };
@@ -143,13 +117,9 @@ export const updateChatCommands = async (
   updateData: UpdateQuery<ChatCommandUpdateData>
 ) => {
   try {
-    const updatedChatCommand = await ChatCommand.findOneAndUpdate(
-      filter,
-      updateData,
-      {
-        new: true,
-      }
-    );
+    const updatedChatCommand = await ChatCommand.findOneAndUpdate(filter, updateData, {
+      new: true
+    });
 
     const chatCommand = checkExistResource(updatedChatCommand, `Chat command`);
 
@@ -164,23 +134,16 @@ export const deleteChatCommandById = async (id: string) => {
   try {
     const deletedChatCommand = await ChatCommand.findByIdAndDelete(id);
 
-    const chatCommand = checkExistResource(
-      deletedChatCommand,
-      `Chat command with id(${id})`
-    );
+    const chatCommand = checkExistResource(deletedChatCommand, `Chat command with id(${id})`);
 
     return chatCommand;
   } catch (err) {
-    logger.error(
-      `Error occured while deleting chat command with id(${id}) : ${err}`
-    );
+    logger.error(`Error occured while deleting chat command with id(${id}) : ${err}`);
     handleAppError(err);
   }
 };
 
-export const getChatCommandsAliases = async (
-  modesEnabled: boolean = false
-): Promise<string[] | undefined> => {
+export const getChatCommandsAliases = async (modesEnabled = false): Promise<string[] | undefined> => {
   try {
     const pipeline: PipelineStage[] = [
       { $match: { enabled: true } },
@@ -191,17 +154,17 @@ export const getChatCommandsAliases = async (
             $reduce: {
               input: "$aliases",
               initialValue: [],
-              in: { $concatArrays: ["$$value", "$$this"] },
-            },
+              in: { $concatArrays: ["$$value", "$$this"] }
+            }
           },
-          _id: 0,
-        },
+          _id: 0
+        }
       },
       { $unwind: "$aliases" },
       { $addFields: { aliasesLower: { $toLower: "$aliases" } } },
       { $sort: { aliasesLower: 1 } },
       { $group: { _id: null, aliases: { $push: "$aliasesLower" } } },
-      { $project: { _id: 0, aliases: 1 } },
+      { $project: { _id: 0, aliases: 1 } }
     ];
 
     if (modesEnabled) {
@@ -215,9 +178,7 @@ export const getChatCommandsAliases = async (
     }
     return [];
   } catch (err) {
-    logger.error(
-      `Error occured while aggregating chat commands for all aliases words: ${err}`
-    );
+    logger.error(`Error occured while aggregating chat commands for all aliases words: ${err}`);
     handleAppError(err);
   }
 };

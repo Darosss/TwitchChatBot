@@ -1,7 +1,4 @@
-import {
-  baseChatFeaturesFields,
-  chatFeaturesModeFields,
-} from "@utils/commonSchemaFieldsUtil";
+import { baseChatFeaturesFields, chatFeaturesModeFields } from "@utils/commonSchemaFieldsUtil";
 import mongoose, { Model, model, Schema } from "mongoose";
 import { MessageCategoryDocument } from "./types";
 
@@ -10,14 +7,11 @@ const MessageCategorySchema: Schema<MessageCategoryDocument> = new Schema(
     ...baseChatFeaturesFields,
     ...chatFeaturesModeFields,
     messages: {
-      type: [mongoose.Schema.Types.Array as any] as Array<[string, number]>,
-      default: [["default", 0]],
-    },
+      type: [mongoose.Schema.Types.Array as unknown] as Array<[string, number]>,
+      default: [["default", 0]]
+    }
   },
   { timestamps: true }
 );
 
-export const MessageCategory: Model<MessageCategoryDocument> = model(
-  "MessageCategories",
-  MessageCategorySchema
-);
+export const MessageCategory: Model<MessageCategoryDocument> = model("MessageCategories", MessageCategorySchema);

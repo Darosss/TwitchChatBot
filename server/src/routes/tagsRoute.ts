@@ -1,12 +1,12 @@
 import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
-import Express, { Router } from "express";
+import { Router } from "express";
 
 import {
   getTagsList,
   addNewTag,
   // getTagById,
   editTagById,
-  deleteTag,
+  deleteTag
 } from "@controllers/tagsController";
 import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
 

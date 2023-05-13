@@ -1,4 +1,4 @@
-import Express, { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestTriggerQuery } from "@types";
 import { filterTriggersByUrlParams } from "./filters/triggersFilter";
 import {
@@ -8,7 +8,7 @@ import {
   getTriggersCount,
   updateTriggerById,
   TriggerCreateData,
-  TriggerUpdateData,
+  TriggerUpdateData
 } from "@services/triggers";
 
 export const getTriggersList = async (
@@ -16,12 +16,7 @@ export const getTriggersList = async (
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    page = 1,
-    limit = 50,
-    sortBy = "createdAt",
-    sortOrder = "desc",
-  } = req.query;
+  const { page = 1, limit = 50, sortBy = "createdAt", sortOrder = "desc" } = req.query;
 
   const searchFilter = filterTriggersByUrlParams(req.query);
   try {
@@ -30,9 +25,9 @@ export const getTriggersList = async (
       skip: Number(page),
       populateSelect: [
         { path: "tag", select: { _id: 1, name: 1, enabled: true } },
-        { path: "mood", select: { _id: 1, name: 1, enabled: true } },
+        { path: "mood", select: { _id: 1, name: 1, enabled: true } }
       ],
-      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 }
     });
 
     const count = await getTriggersCount(searchFilter);
@@ -41,7 +36,7 @@ export const getTriggersList = async (
       data: triggers,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
@@ -53,17 +48,7 @@ export const addNewTrigger = async (
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    name,
-    chance,
-    delay,
-    tag,
-    mood,
-    words,
-    messages,
-    enabled = true,
-    mode,
-  } = req.body;
+  const { name, chance, delay, tag, mood, words, messages, enabled = true, mode } = req.body;
 
   try {
     const newTrigger = await createTrigger({
@@ -75,12 +60,10 @@ export const addNewTrigger = async (
       delay: delay,
       messages: messages,
       words: words,
-      mode: mode,
+      mode: mode
     });
 
-    return res
-      .status(200)
-      .send({ message: "Trigger added successfully", trigger: newTrigger });
+    return res.status(200).send({ message: "Trigger added successfully", trigger: newTrigger });
   } catch (err) {
     next(err);
   }
@@ -92,17 +75,7 @@ export const editTriggerById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const {
-    name,
-    chance,
-    tag,
-    mood,
-    delay,
-    words,
-    messages,
-    enabled = true,
-    mode,
-  } = req.body;
+  const { name, chance, tag, mood, delay, words, messages, enabled = true, mode } = req.body;
 
   try {
     const updatedTrigger = await updateTriggerById(id, {
@@ -114,27 +87,23 @@ export const editTriggerById = async (
       delay: delay,
       messages: messages,
       words: words,
-      mode: mode,
+      mode: mode
     });
 
     return res.status(200).send({
       message: "Trigger updated successfully",
-      data: updatedTrigger,
+      data: updatedTrigger
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const deleteTrigger = async (
-  req: Request<RequestParams, {}, {}, {}>,
-  res: Response,
-  next: NextFunction
-) => {
+export const deleteTrigger = async (req: Request<RequestParams, {}, {}, {}>, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
   try {
-    const deletedTrigger = await deleteTriggerById(id);
+    await deleteTriggerById(id);
 
     return res.status(200).send({ message: "Trigger deleted successfully" });
   } catch (err) {

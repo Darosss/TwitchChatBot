@@ -13,17 +13,12 @@ class MessagesHandler {
     this.configs = refreshedConfigs;
   }
 
-  public async saveMessageAndUpdateUser(
-    userId: string,
-    userName: string,
-    date: Date,
-    message: string
-  ) {
+  public async saveMessageAndUpdateUser(userId: string, userName: string, date: Date, message: string) {
     await this.saveMessageToDatabase({
       owner: userId,
       ownerUsername: userName,
       date: date,
-      message: message,
+      message: message
     });
 
     await this.updateUserStatistics(userId);
@@ -31,14 +26,17 @@ class MessagesHandler {
   private async saveMessageToDatabase(messageCreateData: MessageCreateData) {
     try {
       const newMessage = await createMessage(messageCreateData);
-    } catch (err) {}
+      return newMessage;
+    } catch (err) {
+      console.error("Error occured when saving message into database", err);
+    }
   }
 
   private async updateUserStatistics(userId: string) {
     const updateData = {
       $inc: { points: this.configs.pointsIncrement.message, messageCount: 1 },
       // add points by message,       count messages
-      $set: { lastSeen: new Date() },
+      $set: { lastSeen: new Date() }
       // set last seen to new Date()
     };
 

@@ -1,11 +1,11 @@
-import Express, { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import {
   getMessageCategories,
   getMessageCategoriesCount,
   updateMessageCategoryById,
   createMessageCategories,
   deleteMessageCategory,
-  MessageCategoryCreateData,
+  MessageCategoryCreateData
 } from "@services/messageCategories";
 import { RequestParams, RequestQueryMessageCategories } from "@types";
 import { filterMessageCategoriesByUrlParams } from "./filters/messageCategoriesFilter";
@@ -15,12 +15,7 @@ export const getMessageCategoriesList = async (
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    page = 1,
-    limit = 50,
-    sortBy = "uses",
-    sortOrder = "desc",
-  } = req.query;
+  const { page = 1, limit = 50, sortBy = "uses", sortOrder = "desc" } = req.query;
 
   const searchFilter = await filterMessageCategoriesByUrlParams(req.query);
 
@@ -30,10 +25,10 @@ export const getMessageCategoriesList = async (
       skip: Number(page),
       populateSelect: [
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
-        { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
+        { path: "mood", select: { _id: 1, name: 1, enabled: 1 } }
       ],
       sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
-      select: { __v: 0 },
+      select: { __v: 0 }
     });
 
     const count = await getMessageCategoriesCount(searchFilter);
@@ -41,7 +36,7 @@ export const getMessageCategoriesList = async (
       data: categories,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
@@ -62,12 +57,12 @@ export const editMessageCategoryById = async (
       messages: messages,
       tag: tag,
       mood: mood,
-      enabled: enabled,
+      enabled: enabled
     });
 
     return res.status(200).send({
       message: "Message category updated successfully",
-      data: updatedCategoryMessage,
+      data: updatedCategoryMessage
     });
   } catch (err) {
     next(err);
@@ -83,12 +78,12 @@ export const updateUsesCategoryById = async (
 
   try {
     const updatedCategoryMessage = await updateMessageCategoryById(id, {
-      $inc: { uses: 1 },
+      $inc: { uses: 1 }
     });
 
     return res.status(200).send({
       message: "Message category updated successfully",
-      data: updatedCategoryMessage,
+      data: updatedCategoryMessage
     });
   } catch (err) {
     next(err);
@@ -108,12 +103,12 @@ export const addNewCategory = async (
       messages: messages,
       enabled: enabled,
       tag: tag,
-      mood: mood,
+      mood: mood
     });
 
     return res.status(200).send({
       message: "Message category added successfully",
-      messageCategory: newMessageCategory,
+      messageCategory: newMessageCategory
     });
   } catch (err) {
     next(err);
@@ -128,11 +123,9 @@ export const deleteMessageCategoryById = async (
   const { id } = req.params;
 
   try {
-    const deletedMessageCategory = await deleteMessageCategory(id);
+    await deleteMessageCategory(id);
 
-    return res
-      .status(200)
-      .send({ message: "Message category deleted successfully" });
+    return res.status(200).send({ message: "Message category deleted successfully" });
   } catch (err) {
     next(err);
   }

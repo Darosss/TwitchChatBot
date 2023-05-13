@@ -1,10 +1,10 @@
-import Express, { Router } from "express";
+import { Router } from "express";
 import {
   getWidgetsList,
   addNewWidget,
   editWidgetById,
   removeWidgetById,
-  getWidgetById,
+  getWidgetById
 } from "@controllers/widgetsController";
 const widgetsRouter = Router();
 

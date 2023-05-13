@@ -3,7 +3,7 @@ import {
   AudioStreamDataInfo,
   AudioYTData,
   AudioYTDataInfo,
-  AudioStreamData,
+  AudioStreamData
 } from "./dataTypes";
 
 export interface ClientToServerEvents
@@ -20,16 +20,9 @@ export interface ClientToServerEvents
 }
 
 export interface ClientToServerCustomRewards {
-  createCustomReward: (
-    data: CustomRewardCreateData,
-    cb: (success: boolean) => void
-  ) => void;
+  createCustomReward: (data: CustomRewardCreateData, cb: (success: boolean) => void) => void;
   deleteCustomReward: (id: string, cb: (success: boolean) => void) => void;
-  updateCustomReward: (
-    id: string,
-    data: CustomRewardCreateData,
-    cb: (success: boolean) => void
-  ) => void;
+  updateCustomReward: (id: string, data: CustomRewardCreateData, cb: (success: boolean) => void) => void;
   getCustomRewards: () => void;
 }
 
@@ -39,9 +32,7 @@ export interface ClientToServerMusicLocalEvents {
   musicPlay: () => void;
   musicNext: () => void;
   changeVolume: (volume: number) => void;
-  getAudioStreamData: (
-    cb: (isPlaying: boolean, data: AudioStreamData) => void
-  ) => void;
+  getAudioStreamData: (cb: (isPlaying: boolean, data: AudioStreamData) => void) => void;
   loadSongs: (folderName: string) => void;
   getAudioInfo: (cb: (data: AudioStreamDataInfo) => void) => void;
 }

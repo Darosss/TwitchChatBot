@@ -1,5 +1,5 @@
 import { getTwitchAuthUrl } from "../auth/auth";
-import Express, { Request, Response } from "express";
+import { Request, Response } from "express";
 
 export const afterTwitchAuthorization = async (req: Request, res: Response) => {
   res.status(200).send("Logged in successfully! You can close this page");

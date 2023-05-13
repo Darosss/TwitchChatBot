@@ -10,5 +10,5 @@ export const {
   BOT_USERNAME: botUsername,
   BOT_PASSWORD: botPassword,
   BOT_ID: botId,
-  NODE_ENV: nodeEnv,
+  NODE_ENV: nodeEnv
 } = process.env;

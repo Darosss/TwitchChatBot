@@ -1,4 +1,4 @@
-import Express, { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestSearch } from "@types";
 import { filterAffixesByUrlParams } from "./filters/affixesFilter";
 import {
@@ -8,15 +8,10 @@ import {
   getAffixesCount,
   updateAffixById,
   AffixCreateData,
-  AffixUpdateData,
+  AffixUpdateData
 } from "@services/affixes";
-import { AffixModel } from "@models/types";
 
-export const getAffixesList = async (
-  req: Request<{}, {}, {}, RequestSearch<AffixModel>>,
-  res: Response,
-  next: NextFunction
-) => {
+export const getAffixesList = async (req: Request<{}, {}, {}, RequestSearch>, res: Response, next: NextFunction) => {
   const { page = 1, limit = 50 } = req.query;
 
   const searchFilter = filterAffixesByUrlParams(req.query);
@@ -24,7 +19,7 @@ export const getAffixesList = async (
     const affixes = await getAffixes(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      sort: { createdAt: -1 },
+      sort: { createdAt: "asc" }
     });
 
     const count = await getAffixesCount(searchFilter);
@@ -33,18 +28,14 @@ export const getAffixesList = async (
       data: affixes,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const addNewAffix = async (
-  req: Request<{}, {}, AffixCreateData, {}>,
-  res: Response,
-  next: NextFunction
-) => {
+export const addNewAffix = async (req: Request<{}, {}, AffixCreateData, {}>, res: Response, next: NextFunction) => {
   const { name } = req.body;
 
   try {
@@ -52,7 +43,7 @@ export const addNewAffix = async (
 
     return res.status(200).send({
       message: "Affix added successfully",
-      affix: newAffix,
+      affix: newAffix
     });
   } catch (err) {
     next(err);
@@ -65,8 +56,7 @@ export const editAffixById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, enabled, prefixes, suffixes, prefixChance, suffixChance } =
-    req.body;
+  const { name, enabled, prefixes, suffixes, prefixChance, suffixChance } = req.body;
 
   try {
     const updatedAffix = await updateAffixById(id, {
@@ -75,27 +65,23 @@ export const editAffixById = async (
       prefixes: prefixes,
       suffixes: suffixes,
       prefixChance: prefixChance,
-      suffixChance: suffixChance,
+      suffixChance: suffixChance
     });
 
     return res.status(200).send({
       message: "Affix updated successfully",
-      data: updatedAffix,
+      data: updatedAffix
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const deleteAffix = async (
-  req: Request<RequestParams, {}, {}, {}>,
-  res: Response,
-  next: NextFunction
-) => {
+export const deleteAffix = async (req: Request<RequestParams, {}, {}, {}>, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
   try {
-    const deletedAffix = await deleteAffixById(id);
+    await deleteAffixById(id);
 
     return res.status(200).send({ message: "Affix deleted successfully" });
   } catch (err) {

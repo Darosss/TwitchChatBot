@@ -1,12 +1,12 @@
 import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
-import Express, { Router } from "express";
+import { Router } from "express";
 
 import {
   getMoodsList,
   addNewMood,
   // getMoodById,
   editMoodById,
-  deleteMood,
+  deleteMood
 } from "@controllers/moodsController";
 import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
 

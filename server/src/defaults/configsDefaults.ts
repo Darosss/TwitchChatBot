@@ -2,39 +2,39 @@ import { ConfigDefaults } from "./types";
 
 export const configDefaults: ConfigDefaults = {
   commandsConfigs: {
-    commandsPrefix: "--",
+    commandsPrefix: "--"
   },
   timersConfigs: {
     timersIntervalDelay: 20,
     nonFollowTimerPoints: 10,
     nonSubTimerPoints: 10,
     prefixChance: 10,
-    suffixChance: 30,
+    suffixChance: 30
   },
   chatGamesConfigs: {
     activeUserTimeDelay: 150,
     chatGamesIntervalDelay: 20,
-    minActiveUsersThreshold: 3,
+    minActiveUsersThreshold: 3
   },
   triggersConfigs: {
     randomMessageChance: 10,
     prefixChance: 30,
-    suffixChance: 70,
+    suffixChance: 70
   },
   pointsConfigs: {
     pointsIncrement: {
       message: 1,
       watch: 10,
-      watchMultipler: 2.0,
-    },
+      watchMultipler: 2.0
+    }
   },
   loyaltyConfigs: {
-    intervalCheckChatters: 300,
+    intervalCheckChatters: 300
   },
   musicConfigs: {
     songRequest: false,
     maxAutoQueSize: 3,
-    maxSongRequestByUser: 1,
+    maxSongRequestByUser: 1
   },
   headConfigs: {
     intervalCheckViewersPeek: 600,
@@ -42,11 +42,11 @@ export const configDefaults: ConfigDefaults = {
       broadcaster: 10,
       mod: 8,
       vip: 4,
-      all: 0,
+      all: 0
     },
     delayBetweenMessages: {
       min: 1000,
-      max: 2000,
-    },
-  },
+      max: 2000
+    }
+  }
 };

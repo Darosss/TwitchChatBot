@@ -7,17 +7,12 @@ import type {
   AudioStreamData,
   AudioStreamDataInfo,
   AudioYTData,
-  AudioYTDataInfo,
+  AudioYTDataInfo
 } from "@socket";
 import { MusicConfigs } from "@models/types";
 import moment from "moment";
 import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";
-import {
-  EmitAudioNames,
-  SongProperties,
-  EmitPauseMusic,
-  EmitChangeVolumeMusic,
-} from "./types";
+import { EmitAudioNames, SongProperties, EmitPauseMusic, EmitChangeVolumeMusic } from "./types";
 
 abstract class MusicHeadHandler {
   protected emitName: EmitAudioNames;
@@ -28,28 +23,18 @@ abstract class MusicHeadHandler {
   protected isPlayingTimeout: NodeJS.Timeout | undefined;
   protected readonly clientSay: (message: string) => void;
   protected readonly secondsBetweenAudio = 2;
-  protected volume: number = 50;
+  protected volume = 50;
 
   protected readonly delayBetweenServer = 2;
   protected currentSongStart: Date = new Date();
   protected currentSong: AudioStreamData | AudioYTData | undefined;
-  protected previousSongName: string = "";
-  protected currentDelay: number = 0;
-  protected readonly socketIO: Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
-  >;
+  protected previousSongName = "";
+  protected currentDelay = 0;
+  protected readonly socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
   protected configs: MusicConfigs;
 
   constructor(
-    socketIO: Server<
-      ClientToServerEvents,
-      ServerToClientEvents,
-      InterServerEvents,
-      SocketData
-    >,
+    socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     sayInAuthorizedChannel: (message: string) => void,
     configs: MusicConfigs,
     emitName: EmitAudioNames
@@ -60,24 +45,15 @@ abstract class MusicHeadHandler {
     this.emitName = emitName;
   }
 
-  protected abstract addSongToQue(
-    song: SongProperties,
-    requester?: string
-  ): Promise<void>;
+  protected abstract addSongToQue(song: SongProperties, requester?: string): Promise<void>;
 
   protected abstract prepareInitialQue(): Promise<void>;
 
   public abstract loadNewSongs(idOrFolderName: string): Promise<void>;
 
-  protected abstract getAudioInfo():
-    | AudioStreamDataInfo
-    | AudioYTDataInfo
-    | undefined;
+  protected abstract getAudioInfo(): AudioStreamDataInfo | AudioYTDataInfo | undefined;
 
-  public abstract getAudioStreamData():
-    | AudioStreamData
-    | AudioYTData
-    | undefined;
+  public abstract getAudioStreamData(): AudioStreamData | AudioYTData | undefined;
 
   public async refreshConfigs(configs: MusicConfigs) {
     this.configs = configs;
@@ -131,7 +107,7 @@ abstract class MusicHeadHandler {
     if (this.currentSong) {
       console.log({
         currTime: this.currentSong.currentTime,
-        currTimeSong: currentTimeSong,
+        currTimeSong: currentTimeSong
       });
       this.currentSong.currentTime += currentTimeSong;
 
@@ -157,8 +133,7 @@ abstract class MusicHeadHandler {
 
   protected getCurrentTimeSong() {
     const currentTimeSong = moment().diff(this.currentSongStart, "seconds");
-    if (currentTimeSong > this.delayBetweenServer)
-      return currentTimeSong - this.delayBetweenServer;
+    if (currentTimeSong > this.delayBetweenServer) return currentTimeSong - this.delayBetweenServer;
     return currentTimeSong;
   }
 
@@ -214,14 +189,13 @@ abstract class MusicHeadHandler {
 
     let songName = audioProps.name;
 
-    if (audioProps.requester)
-      songName += ` Requested by @${audioProps.requester}`;
+    if (audioProps.requester) songName += ` Requested by @${audioProps.requester}`;
 
     return songName;
   }
 
   protected removeFromQue(name: string) {
-    let index = this.musicQue.findIndex(([id]) => id === name);
+    const index = this.musicQue.findIndex(([id]) => id === name);
 
     if (index !== -1) {
       this.musicQue.splice(index, 1);
@@ -235,18 +209,14 @@ abstract class MusicHeadHandler {
   }
 
   protected removeFromRequestedQue(username: string) {
-    let index = this.songRequestList.findIndex(
-      ([requester]) => requester === username
-    );
+    const index = this.songRequestList.findIndex(([requester]) => requester === username);
 
     if (index !== -1) this.songRequestList.splice(index, 1);
   }
 
   protected addSongRequestListIntoQue() {
     if (this.songRequestList.length > 0) {
-      this.songRequestList.forEach(
-        async ([username, song]) => await this.addSongToQue(song, username)
-      );
+      this.songRequestList.forEach(async ([username, song]) => await this.addSongToQue(song, username));
     }
   }
 
@@ -270,9 +240,7 @@ abstract class MusicHeadHandler {
 
   protected getRemainingTimeOfCurrentSong() {
     if (!this.currentSong) return 0;
-    const time = Math.floor(
-      this.currentSong.duration - this.getCurrentTimeSong()
-    );
+    const time = Math.floor(this.currentSong.duration - this.getCurrentTimeSong());
 
     return time;
   }

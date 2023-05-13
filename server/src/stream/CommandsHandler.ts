@@ -1,31 +1,20 @@
 import HeadHandler from "./HeadHandler";
 import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
-import {
-  ChatCommandModel,
-  CommandsConfigs,
-  HeadConfigs,
-  UserModel,
-} from "@models/types";
+import { ChatCommandModel, CommandsConfigs, HeadConfigs, UserModel } from "@models/types";
 import {
   getChatCommands,
   getChatCommandsAliases,
   getOneChatCommand,
-  updateChatCommandById,
+  updateChatCommandById
 } from "@services/chatCommands";
 import { commandLogger } from "@utils/loggerUtil";
 import { randomWithMax } from "@utils/randomNumbersUtil";
-import type {
-  ClientToServerEvents,
-  InterServerEvents,
-  ServerToClientEvents,
-  SocketData,
-} from "@socket";
+import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";
 import { Server } from "socket.io";
 import MusicYTHandler from "./MusicYTHandler";
 import { MusicPlayerCommands } from "./types";
 
-type CommandsHandlerConfigs = CommandsConfigs &
-  Pick<HeadConfigs, "permissionLevels">;
+type CommandsHandlerConfigs = CommandsConfigs & Pick<HeadConfigs, "permissionLevels">;
 
 class CommandsHandler extends HeadHandler {
   private commandsAliases: string[] = [];
@@ -37,12 +26,7 @@ class CommandsHandler extends HeadHandler {
 
   constructor(
     twitchApi: ApiClient,
-    socketIO: Server<
-      ClientToServerEvents,
-      ServerToClientEvents,
-      InterServerEvents,
-      SocketData
-    >,
+    socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     authorizedUser: HelixPrivilegedUser,
     musicHandler: MusicYTHandler,
     configs: CommandsHandlerConfigs
@@ -84,7 +68,7 @@ class CommandsHandler extends HeadHandler {
       ["next", this.musicCommandCommonPermission],
       ["previous", this.musicCommandCommonPermission],
       ["when", this.musicCommandCommonPermission],
-      ["sr", this.musicCommandCommonPermission],
+      ["sr", this.musicCommandCommonPermission]
     ]);
   }
 
@@ -94,7 +78,7 @@ class CommandsHandler extends HeadHandler {
 
     const answers = await Promise.all([
       this.checkMessageForDefaultMusicCommand(user, message),
-      this.checkMessageForCustomCommand(user, message),
+      this.checkMessageForCustomCommand(user, message)
     ]);
 
     const [musicCmdAnswer, customCmdAnswer] = answers;
@@ -104,29 +88,18 @@ class CommandsHandler extends HeadHandler {
   }
 
   private async checkMessageForCustomCommand(user: UserModel, message: string) {
-    const commandAlias = this.commandsAliases.find((alias) =>
-      message.toLowerCase().includes(alias)
-    );
+    const commandAlias = this.commandsAliases.find((alias) => message.toLowerCase().includes(alias));
     if (!commandAlias) return await this.notFoundCommand();
 
     return await this.findAndCheckCommandByAlias(user, commandAlias);
   }
 
-  private async checkMessageForDefaultMusicCommand(
-    user: UserModel,
-    message: string
-  ) {
-    const defaultMusicAlias = [...this.defaultsMusicAliases.keys()].find(
-      (alias: string) =>
-        message.toLowerCase().startsWith(this.configs.commandsPrefix + alias)
+  private async checkMessageForDefaultMusicCommand(user: UserModel, message: string) {
+    const defaultMusicAlias = [...this.defaultsMusicAliases.keys()].find((alias: string) =>
+      message.toLowerCase().startsWith(this.configs.commandsPrefix + alias)
     );
     if (defaultMusicAlias) {
-      return this.onMessageMusicCommand(
-        defaultMusicAlias,
-        user.privileges,
-        user.username,
-        message
-      );
+      return this.onMessageMusicCommand(defaultMusicAlias, user.privileges, user.username, message);
     }
   }
 
@@ -139,14 +112,10 @@ class CommandsHandler extends HeadHandler {
     const commandPrivilege = this.defaultsMusicAliases.get(musicCommand);
 
     if (commandPrivilege && commandPrivilege > privilege) {
-      commandLogger.info(
-        `Music command: ${musicCommand} - was invoked, but privilege does not match`
-      );
+      commandLogger.info(`Music command: ${musicCommand} - was invoked, but privilege does not match`);
       return "You have no permission to do that! SabaPing";
     }
-    commandLogger.info(
-      `Music command: ${musicCommand} - was invoked and executed`
-    );
+    commandLogger.info(`Music command: ${musicCommand} - was invoked and executed`);
     switch (musicCommand) {
       case "play":
         this.musicHandler.resumePlayer();
@@ -200,21 +169,12 @@ class CommandsHandler extends HeadHandler {
     if (!foundCommand) return "Something went wrong. Try again later.";
 
     if (this.canUserUseCommand(user.privileges, foundCommand.privilege)) {
-      commandLogger.info(
-        `${user.username} - used (${foundCommand.name}) command with (${alias}) alias`
-      );
-      let randomCommandMsg =
-        foundCommand.messages[randomWithMax(foundCommand.messages.length)];
+      commandLogger.info(`${user.username} - used (${foundCommand.name}) command with (${alias}) alias`);
+      let randomCommandMsg = foundCommand.messages[randomWithMax(foundCommand.messages.length)];
 
-      randomCommandMsg = this.formatCommandMessageCommandData(
-        foundCommand,
-        randomCommandMsg
-      );
+      randomCommandMsg = this.formatCommandMessageCommandData(foundCommand, randomCommandMsg);
 
-      randomCommandMsg = this.formatCommandMessageUserData(
-        user,
-        randomCommandMsg
-      );
+      randomCommandMsg = this.formatCommandMessageUserData(user, randomCommandMsg);
 
       this.updateUsesCommand(foundCommand.id);
 
@@ -230,7 +190,7 @@ class CommandsHandler extends HeadHandler {
 
   private async getCommandByAlias(alias: string) {
     const foundCommand = await getOneChatCommand({
-      aliases: { $elemMatch: { $regex: alias, $options: "i" } },
+      aliases: { $elemMatch: { $regex: alias, $options: "i" } }
     });
 
     return foundCommand;
@@ -238,8 +198,9 @@ class CommandsHandler extends HeadHandler {
 
   private async updateUsesCommand(id: string) {
     const updatedCommand = await updateChatCommandById(id, {
-      $inc: { uses: 1 },
+      $inc: { uses: 1 }
     });
+    return updatedCommand;
   }
 
   private formatCommandMessageUserData(user: UserModel, message?: string) {
@@ -249,9 +210,7 @@ class CommandsHandler extends HeadHandler {
     let matches = formatMsg.match(regExp);
 
     while (matches !== null) {
-      const userDetail = this.formatModelDetail(
-        user[matches[1] as keyof UserModel]
-      );
+      const userDetail = this.formatModelDetail(user[matches[1] as keyof UserModel]);
       formatMsg = formatMsg.replace(matches[0], userDetail);
 
       matches = formatMsg.match(regExp);
@@ -260,19 +219,14 @@ class CommandsHandler extends HeadHandler {
     return formatMsg;
   }
 
-  private formatCommandMessageCommandData(
-    chatCommand: ChatCommandModel,
-    message?: string
-  ) {
+  private formatCommandMessageCommandData(chatCommand: ChatCommandModel, message?: string) {
     let formatMsg = message || "";
     const regExp = /\$command\{(.*?)\}/;
 
     let matches = formatMsg.match(regExp);
 
     while (matches !== null) {
-      const commandDetail = this.formatModelDetail(
-        chatCommand[matches[1] as keyof ChatCommandModel]
-      );
+      const commandDetail = this.formatModelDetail(chatCommand[matches[1] as keyof ChatCommandModel]);
 
       formatMsg = formatMsg.replace(matches[0], commandDetail);
 
@@ -282,34 +236,28 @@ class CommandsHandler extends HeadHandler {
     return formatMsg;
   }
 
-  private formatModelDetail(detail: any) {
+  private formatModelDetail(detail: unknown): string {
     //FIXME: ++1 detail for uses, it doesnt change a thing for points or messages so just for now.
-    if (typeof detail === "number") return Math.round(++detail);
+    if (typeof detail === "number") return String(Math.round(++detail));
     else if (detail instanceof Date) return detail.toLocaleString();
 
-    return detail;
+    return String(detail);
   }
 
   private async notFoundCommand() {
     //Hard codded
     let notFoundCommandMessage = "Not found command. Most used commands are:";
 
-    const mostUsedCommands = await getChatCommands(
-      {},
-      { limit: 3, sort: { uses: -1 }, select: { aliases: 1 } }
-    );
+    const mostUsedCommands = await getChatCommands({}, { limit: 3, sort: { uses: -1 }, select: { aliases: 1 } });
 
     mostUsedCommands.forEach((command) => {
       notFoundCommandMessage += ` ${this.configs.commandsPrefix}${command.aliases[0]} `;
     });
+    [...this.defaultsMusicAliases.entries()].forEach(([command, permission]) => {
+      if (permission > this.musicCommandCommonPermission) return;
 
-    [...this.defaultsMusicAliases.entries()].forEach(
-      ([command, permission]) => {
-        if (permission > this.musicCommandCommonPermission) return;
-
-        notFoundCommandMessage += ` ${this.configs.commandsPrefix}${command}`;
-      }
-    );
+      notFoundCommandMessage += ` ${this.configs.commandsPrefix}${command}`;
+    });
 
     return notFoundCommandMessage;
   }

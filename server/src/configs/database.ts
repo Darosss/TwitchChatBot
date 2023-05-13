@@ -1,9 +1,6 @@
 import { configExist, createNewConfig } from "@services/configs";
 import mongoose, { ConnectOptions } from "mongoose";
-import {
-  createChatCommand,
-  getChatCommandsCount,
-} from "@services/chatCommands";
+import { createChatCommand, getChatCommandsCount } from "@services/chatCommands";
 import { getDefaultChatCommands } from "@defaults/commandsDefaults";
 import { createTag, getOneTag, getTagsCount } from "@services/tags";
 import { getDefaultMood, getDefaultTag } from "@defaults/modesDefaults";
@@ -15,7 +12,7 @@ const initMongoDataBase = async () => {
 
   try {
     await mongoose.connect(databaseConnectURL, {
-      useNewUrlParser: true,
+      useNewUrlParser: true
     } as ConnectOptions);
   } catch (error) {
     console.error("Failed to connect to database:", error);
@@ -24,10 +21,7 @@ const initMongoDataBase = async () => {
 
   await createDefaultConfigs();
 
-  const modesPromise = await Promise.all([
-    createDefaultTag(),
-    createDefaultMood(),
-  ]);
+  await Promise.all([createDefaultTag(), createDefaultMood()]);
 
   await createDefaultCommands();
 };
@@ -47,7 +41,7 @@ const createDefaultCommands = async () => {
         return {
           ...command,
           tag: tag.id,
-          mood: mood.id,
+          mood: mood.id
         };
       });
       await createChatCommand(chatCommandsWithModes);

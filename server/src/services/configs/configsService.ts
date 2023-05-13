@@ -10,14 +10,9 @@ export const getConfigs = async () => {
     const configs = await Config.findOne({}).select({ __v: 0 });
     if (!configs) {
       await createNewConfig();
-      logger.error(
-        `Could not get configs: No configs found. Create default one`
-      );
+      logger.error(`Could not get configs: No configs found. Create default one`);
 
-      throw new AppError(
-        400,
-        "Couldn't get configs. Default configs should be accessible after refresh."
-      );
+      throw new AppError(400, "Couldn't get configs. Default configs should be accessible after refresh.");
     }
 
     return configs;
@@ -40,12 +35,10 @@ export const createNewConfig = async () => {
   }
 };
 
-export const updateConfigs = async (
-  updateData: UpdateQuery<ConfigUpdateData>
-) => {
+export const updateConfigs = async (updateData: UpdateQuery<ConfigUpdateData>) => {
   try {
     const foundConfig = await Config.findOneAndUpdate({}, updateData, {
-      new: true,
+      new: true
     });
 
     const updatedConfigs = checkExistResource(foundConfig, "Configs");

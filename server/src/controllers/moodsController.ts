@@ -1,4 +1,4 @@
-import Express, { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestSearch } from "@types";
 import { filterMoodsByUrlParams } from "./filters/moodsFilter";
 import {
@@ -8,15 +8,10 @@ import {
   getMoodsCount,
   updateMoodById,
   MoodCreateData,
-  MoodUpdateData,
+  MoodUpdateData
 } from "@services/moods";
-import { MoodModel } from "@models/types";
 
-export const getMoodsList = async (
-  req: Request<{}, {}, {}, RequestSearch<MoodModel>>,
-  res: Response,
-  next: NextFunction
-) => {
+export const getMoodsList = async (req: Request<{}, {}, {}, RequestSearch>, res: Response, next: NextFunction) => {
   const { page = 1, limit = 50 } = req.query;
 
   const searchFilter = filterMoodsByUrlParams(req.query);
@@ -24,7 +19,7 @@ export const getMoodsList = async (
     const moods = await getMoods(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      sort: { createdAt: -1 },
+      sort: { createdAt: -1 }
     });
 
     const count = await getMoodsCount(searchFilter);
@@ -33,28 +28,22 @@ export const getMoodsList = async (
       data: moods,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const addNewMood = async (
-  req: Request<{}, {}, MoodCreateData, {}>,
-  res: Response,
-  next: NextFunction
-) => {
+export const addNewMood = async (req: Request<{}, {}, MoodCreateData, {}>, res: Response, next: NextFunction) => {
   const { name } = req.body;
 
   try {
     const newMood = await createMood({
-      name: name,
+      name: name
     });
 
-    return res
-      .status(200)
-      .send({ message: "Mood added successfully", mood: newMood });
+    return res.status(200).send({ message: "Mood added successfully", mood: newMood });
   } catch (err) {
     next(err);
   }
@@ -71,27 +60,23 @@ export const editMoodById = async (
   try {
     const updatedMood = await updateMoodById(id, {
       name: name,
-      enabled: enabled,
+      enabled: enabled
     });
 
     return res.status(200).send({
       message: "Mood updated successfully",
-      data: updatedMood,
+      data: updatedMood
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const deleteMood = async (
-  req: Request<RequestParams, {}, {}, {}>,
-  res: Response,
-  next: NextFunction
-) => {
+export const deleteMood = async (req: Request<RequestParams, {}, {}, {}>, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
   try {
-    const deletedMood = await deleteMoodById(id);
+    await deleteMoodById(id);
 
     return res.status(200).send({ message: "Mood deleted successfully" });
   } catch (err) {

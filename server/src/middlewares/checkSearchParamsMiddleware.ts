@@ -2,18 +2,11 @@ import { RequestQuery } from "@types";
 import { AppError } from "@utils/ErrorHandlerUtil";
 import { NextFunction, Request, Response } from "express";
 
-const checkSearchParams = (
-  req: Request<{}, {}, {}, RequestQuery>,
-  res: Response,
-  next: NextFunction
-) => {
+const checkSearchParams = (req: Request<{}, {}, {}, RequestQuery>, res: Response, next: NextFunction) => {
   const { page, limit } = req.query;
   let message = ``;
 
-  if (
-    (page && limit && Number(page) > 0 && Number(limit) > 0) ||
-    (page === undefined && limit === undefined)
-  )
+  if ((page && limit && Number(page) > 0 && Number(limit) > 0) || (page === undefined && limit === undefined))
     return next();
 
   if (Number(page) <= 0) message += `Page key must be > 0;`;

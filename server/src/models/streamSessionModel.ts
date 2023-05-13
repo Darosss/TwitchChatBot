@@ -4,7 +4,7 @@ import { SessionEventModel, StreamSessionDocument } from "./types";
 const EventsSchema = new Schema<SessionEventModel>(
   {
     user: { type: Schema.Types.ObjectId, ref: "User" },
-    name: { type: String },
+    name: { type: String }
   },
   { timestamps: true }
 );
@@ -15,32 +15,29 @@ const StreamSessionSchema: Schema<StreamSessionDocument> = new Schema({
   sessionTitles: {
     type: Map,
     of: String,
-    default: new Map(),
+    default: new Map()
   },
   categories: {
     type: Map,
     of: String,
-    default: new Map(),
+    default: new Map()
   },
   tags: {
     type: Map,
     of: String,
-    default: new Map(),
+    default: new Map()
   },
   viewers: {
     type: Map,
     of: Number,
-    default: new Map(),
+    default: new Map()
   },
   watchers: {
     type: Map,
     of: Number,
-    default: new Map(),
+    default: new Map()
   },
-  events: [EventsSchema],
+  events: [EventsSchema]
 });
 
-export const StreamSession: Model<StreamSessionDocument> = model(
-  "Sessions",
-  StreamSessionSchema
-);
+export const StreamSession: Model<StreamSessionDocument> = model("Sessions", StreamSessionSchema);

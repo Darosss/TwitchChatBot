@@ -1,8 +1,4 @@
-import {
-  baseChatFeaturesFields,
-  commonChatFeaturesFields,
-  descriptionField,
-} from "@utils/commonSchemaFieldsUtil";
+import { baseChatFeaturesFields, commonChatFeaturesFields, descriptionField } from "@utils/commonSchemaFieldsUtil";
 import { Model, model, Schema } from "mongoose";
 import { ChatCommandDocument } from "./types";
 
@@ -16,13 +12,10 @@ const ChatCommandSchema: Schema<ChatCommandDocument> = new Schema(
       type: Number,
       default: 0,
       min: 0,
-      max: 10,
-    },
+      max: 10
+    }
   },
   { timestamps: true }
 );
 
-export const ChatCommand: Model<ChatCommandDocument> = model(
-  "ChatCommands",
-  ChatCommandSchema
-);
+export const ChatCommand: Model<ChatCommandDocument> = model("ChatCommands", ChatCommandSchema);

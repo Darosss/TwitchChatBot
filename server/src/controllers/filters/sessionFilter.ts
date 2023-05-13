@@ -5,37 +5,34 @@ export const filterSessionByUrlParams = (params: RequestQuerySession) => {
 
   const filterTitles = {
     ...(search_name && {
-      sessionTitles: { $regex: search_name, $options: "i" },
-    }),
+      sessionTitles: { $regex: search_name, $options: "i" }
+    })
   };
 
   const filterCategories = {
-    ...(categories && { categories: { $regex: categories, $options: "i" } }),
+    ...(categories && { categories: { $regex: categories, $options: "i" } })
   };
   const filterTags = {
-    ...(tags && { tags: { $regex: tags, $options: "i" } }),
+    ...(tags && { tags: { $regex: tags, $options: "i" } })
   };
 
   const filterStarted = {
     ...(start_date &&
       end_date === undefined && {
-        sessionStart: { $gte: new Date(start_date) },
+        sessionStart: { $gte: new Date(start_date) }
       }),
     ...(end_date &&
       start_date === undefined && {
-        sessionStart: { $lte: new Date(end_date) },
+        sessionStart: { $lte: new Date(end_date) }
       }),
     ...(start_date &&
       end_date && {
-        $and: [
-          { sessionStart: { $gte: new Date(start_date) } },
-          { sessionStart: { $lte: new Date(end_date) } },
-        ],
-      }),
+        $and: [{ sessionStart: { $gte: new Date(start_date) } }, { sessionStart: { $lte: new Date(end_date) } }]
+      })
   };
 
   const searchFilter = {
-    $and: [filterTitles, filterCategories, filterTags, filterStarted],
+    $and: [filterTitles, filterCategories, filterTags, filterStarted]
   };
 
   return searchFilter;

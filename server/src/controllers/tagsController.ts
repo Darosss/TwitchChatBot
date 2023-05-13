@@ -1,4 +1,4 @@
-import Express, { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestSearch } from "@types";
 import { filterTagsByUrlParams } from "./filters/tagsFilter";
 import {
@@ -8,15 +8,10 @@ import {
   getTagsCount,
   updateTagById,
   TagCreateData,
-  TagUpdateData,
+  TagUpdateData
 } from "@services/tags";
-import { TagModel } from "@models/types";
 
-export const getTagsList = async (
-  req: Request<{}, {}, {}, RequestSearch<TagModel>>,
-  res: Response,
-  next: NextFunction
-) => {
+export const getTagsList = async (req: Request<{}, {}, {}, RequestSearch>, res: Response, next: NextFunction) => {
   const { page = 1, limit = 50 } = req.query;
 
   const searchFilter = filterTagsByUrlParams(req.query);
@@ -24,7 +19,7 @@ export const getTagsList = async (
     const tags = await getTags(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      sort: { createdAt: -1 },
+      sort: { createdAt: -1 }
     });
 
     const count = await getTagsCount(searchFilter);
@@ -33,26 +28,20 @@ export const getTagsList = async (
       data: tags,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const addNewTag = async (
-  req: Request<{}, {}, TagCreateData, {}>,
-  res: Response,
-  next: NextFunction
-) => {
+export const addNewTag = async (req: Request<{}, {}, TagCreateData, {}>, res: Response, next: NextFunction) => {
   const { name } = req.body;
 
   try {
     const newTag = await createTag({ name: name });
 
-    return res
-      .status(200)
-      .send({ message: "Tag added successfully", tag: newTag });
+    return res.status(200).send({ message: "Tag added successfully", tag: newTag });
   } catch (err) {
     next(err);
   }
@@ -69,27 +58,23 @@ export const editTagById = async (
   try {
     const updatedTag = await updateTagById(id, {
       name: name,
-      enabled: enabled,
+      enabled: enabled
     });
 
     return res.status(200).send({
       message: "Tag updated successfully",
-      data: updatedTag,
+      data: updatedTag
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const deleteTag = async (
-  req: Request<RequestParams, {}, {}, {}>,
-  res: Response,
-  next: NextFunction
-) => {
+export const deleteTag = async (req: Request<RequestParams, {}, {}, {}>, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
   try {
-    const deletedTag = await deleteTagById(id);
+    await deleteTagById(id);
 
     return res.status(200).send({ message: "Tag deleted successfully" });
   } catch (err) {

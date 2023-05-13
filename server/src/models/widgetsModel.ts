@@ -9,13 +9,13 @@ const WidgetsModel: Schema<WidgetsDocument> = new Schema(
     layout: {
       type: Map,
       of: [layoutBreakpointSchema],
-      default: new Map(),
+      default: new Map()
     },
     toolbox: {
       type: Map,
       of: [layoutBreakpointSchema],
-      default: new Map(),
-    },
+      default: new Map()
+    }
   },
   { timestamps: true }
 );

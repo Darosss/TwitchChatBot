@@ -1,4 +1,4 @@
-import Express, { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestTimerQuery } from "@types";
 import { filterTimersByUrlParams } from "./filters/timersFilter";
 import {
@@ -8,20 +8,11 @@ import {
   getTimersCount,
   updateTimerById,
   TimerCreateData,
-  TimerUpdateData,
+  TimerUpdateData
 } from "@services/timers";
 
-export const getTimersList = async (
-  req: Request<{}, {}, {}, RequestTimerQuery>,
-  res: Response,
-  next: NextFunction
-) => {
-  const {
-    page = 1,
-    limit = 50,
-    sortBy = "createdAt",
-    sortOrder = "desc",
-  } = req.query;
+export const getTimersList = async (req: Request<{}, {}, {}, RequestTimerQuery>, res: Response, next: NextFunction) => {
+  const { page = 1, limit = 50, sortBy = "createdAt", sortOrder = "desc" } = req.query;
 
   const searchFilter = filterTimersByUrlParams(req.query);
   try {
@@ -30,9 +21,9 @@ export const getTimersList = async (
       skip: Number(page),
       populateSelect: [
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
-        { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
+        { path: "mood", select: { _id: 1, name: 1, enabled: 1 } }
       ],
-      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 }
     });
 
     const count = await getTimersCount(searchFilter);
@@ -41,18 +32,14 @@ export const getTimersList = async (
       data: timers,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const addNewTimer = async (
-  req: Request<{}, {}, TimerCreateData, {}>,
-  res: Response,
-  next: NextFunction
-) => {
+export const addNewTimer = async (req: Request<{}, {}, TimerCreateData, {}>, res: Response, next: NextFunction) => {
   const {
     name,
     messages,
@@ -63,7 +50,7 @@ export const addNewTimer = async (
     mood,
     nonSubMulti,
     reqPoints,
-    description,
+    description
   } = req.body;
 
   try {
@@ -77,12 +64,10 @@ export const addNewTimer = async (
       tag: tag,
       mood: mood,
       nonFollowMulti: nonFollowMulti,
-      nonSubMulti: nonSubMulti,
+      nonSubMulti: nonSubMulti
     });
 
-    return res
-      .status(200)
-      .send({ message: "Timmer added successfully", timmer: newTimer });
+    return res.status(200).send({ message: "Timmer added successfully", timmer: newTimer });
   } catch (err) {
     next(err);
   }
@@ -104,7 +89,7 @@ export const editTimerById = async (
     mood,
     nonSubMulti,
     reqPoints,
-    description,
+    description
   } = req.body;
 
   try {
@@ -118,27 +103,23 @@ export const editTimerById = async (
       reqPoints: reqPoints,
       description: description,
       tag: tag,
-      mood: mood,
+      mood: mood
     });
 
     return res.status(200).send({
       message: "Timmer updated successfully",
-      data: updatedTimer,
+      data: updatedTimer
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const deleteTimer = async (
-  req: Request<RequestParams, {}, {}, {}>,
-  res: Response,
-  next: NextFunction
-) => {
+export const deleteTimer = async (req: Request<RequestParams, {}, {}, {}>, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
   try {
-    const deletedTimer = await deleteTimerById(id);
+    await deleteTimerById(id);
 
     return res.status(200).send({ message: "Timmer deleted successfully" });
   } catch (err) {

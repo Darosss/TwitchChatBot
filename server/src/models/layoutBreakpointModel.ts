@@ -8,5 +8,5 @@ export const layoutBreakpointSchema = new Schema({
   h: Number,
   static: Boolean,
   isDraggable: Boolean,
-  isResizable: Boolean,
+  isResizable: Boolean
 });

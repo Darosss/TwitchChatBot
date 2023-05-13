@@ -1,41 +1,23 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiClient } from "@twurple/api";
-import { createNewAuth, getAuthToken, removeAuthToken } from "@services/auth";
+import { createNewAuth, getAuthToken } from "@services/auth";
 import { getConfigs } from "@services/configs";
 import { RefreshingAuthProvider } from "@twurple/auth";
 import ClientTmiHandler from "../stream/TwitchTmiHandler";
 import StreamHandler from "../stream/StreamHandler";
 import { getTwitchAuthUrl } from "../auth/auth";
 import { logger } from "@utils/loggerUtil";
-import {
-  botPassword,
-  botUsername,
-  clientId,
-  clientSecret,
-  encryptionKey,
-} from "@configs/envVariables";
+import { botPassword, botUsername, clientId, clientSecret, encryptionKey } from "@configs/envVariables";
 import { decryptToken } from "@utils/tokenUtil";
 
-const authorizationTwitch = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const authorizationTwitch = async (req: Request, res: Response, next: NextFunction) => {
   const tokenDB = await getAuthToken();
   if (!tokenDB) {
     const authUrl = getTwitchAuthUrl();
     return res.redirect(authUrl.toString());
   }
-  const decryptedAccessToken = decryptToken(
-    tokenDB.accessToken,
-    tokenDB.ivAccessToken,
-    encryptionKey
-  );
-  const decryptedRefreshToken = decryptToken(
-    tokenDB.refreshToken,
-    tokenDB.ivRefreshToken,
-    encryptionKey
-  );
+  const decryptedAccessToken = decryptToken(tokenDB.accessToken, tokenDB.ivAccessToken, encryptionKey);
+  const decryptedRefreshToken = decryptToken(tokenDB.refreshToken, tokenDB.ivRefreshToken, encryptionKey);
 
   const authProvider = new RefreshingAuthProvider(
     {
@@ -43,12 +25,12 @@ const authorizationTwitch = async (
       clientSecret,
       onRefresh: async (newTokenData) => {
         await createNewAuth(newTokenData);
-      },
+      }
     },
     {
       ...tokenDB,
       accessToken: decryptedAccessToken,
-      refreshToken: decryptedRefreshToken,
+      refreshToken: decryptedRefreshToken
     }
   );
 
@@ -64,15 +46,15 @@ const authorizationTwitch = async (
     const clientTmi = await ClientTmiHandler.getInstance({
       userToListen: authorizedUser.name,
       username: botUsername,
-      password: botPassword,
+      password: botPassword
     });
 
-    const streamHandler = StreamHandler.getInstance({
+    StreamHandler.getInstance({
       twitchApi: twitchApi,
       config: configDB,
       authorizedUser: authorizedUser,
       socketIO: req.io,
-      clientTmi: clientTmi,
+      clientTmi: clientTmi
     });
 
     req.io.emit("forceReconnect");
@@ -81,9 +63,7 @@ const authorizationTwitch = async (
   } catch (err) {
     // await removeAuthToken();
     if (err instanceof Error) {
-      res
-        .status(400)
-        .send({ message: "Something went wrong. Please log in again" });
+      res.status(400).send({ message: "Something went wrong. Please log in again" });
       logger.error(`Error occured while using ApiClient ${err}`);
     } else {
       res.status(500).send({ message: "Interfnal server error" });
