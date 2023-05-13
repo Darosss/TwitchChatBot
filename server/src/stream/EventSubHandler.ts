@@ -32,10 +32,8 @@ class EventSubHandler extends HeadHandler {
 
   public static getInstance(options: EventSubHandlerOptions): EventSubHandler {
     if (!EventSubHandler.instance) {
-      console.log("nie ma instancji");
       EventSubHandler.instance = new EventSubHandler(options);
     } else {
-      console.log("jest instancja uypdate");
       EventSubHandler.instance.updateOptions(options);
     }
     return EventSubHandler.instance;
@@ -46,7 +44,6 @@ class EventSubHandler extends HeadHandler {
     const { apiClient, authorizedUser } = options;
     this.updateProperties(apiClient, authorizedUser);
     this.listener = new EventSubWsListener({ apiClient: options.apiClient });
-    console.log("***********UPDATE EVENT SUB", authorizedUser.name);
     this.init();
   }
 

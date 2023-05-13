@@ -100,7 +100,7 @@ export const deleteMp3File = (req: Request, res: Response, next: NextFunction) =
       logger.error(`Error occured while trying to delete file ${err}`);
       return next(new AppError(400, err.message));
     } else {
-      console.log(`Deleted file ${fileName}`);
+      logger.info(`Deleted file ${fileName}`);
       res.status(200).send("File deleted");
     }
   });
@@ -189,7 +189,7 @@ export const deleteAlertSound = (req: Request, res: Response, next: NextFunction
       logger.error(`Error occured while trying to delete alert sound  ${err}`);
       return next(new AppError(400, err.message));
     } else {
-      console.log(`Deleted file ${fileName}`);
+      logger.info(`Deleted alert sound ${fileName}`);
       res.status(200).send("File deleted");
     }
   });

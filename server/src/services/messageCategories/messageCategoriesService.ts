@@ -198,7 +198,6 @@ export const updateMessageCategoryById = async (id: string, updateData: UpdateQu
 };
 
 export const findCategoryAndUpdateMessageUse = async (id: string, word: string) => {
-  console.log("updating");
   const updatedCategory = await MessageCategory.findOneAndUpdate(
     { _id: id, "messages.0": { $exists: true } },
     { $inc: { "messages.$[elem].1": 1 } },

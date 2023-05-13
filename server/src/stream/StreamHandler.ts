@@ -246,8 +246,6 @@ class StreamHandler {
 
   private initSocketEvents() {
     this.socketIO.on("connect", (socket) => {
-      console.log("Connected - every function in bot should work now");
-
       socket.emit("sendLoggedUserInfo", this.loggedIn ? this.authorizedUser.name : "");
 
       socket.on("logout", async () => {

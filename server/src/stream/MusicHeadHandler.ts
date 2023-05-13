@@ -71,17 +71,13 @@ abstract class MusicHeadHandler {
   }
 
   protected async startPlay(delay = 0, newSong = false) {
-    console.log("startplay => ", this.musicQue[0]);
     this.isPlaying = true;
     this.isPlayingTimeout = setTimeout(async () => {
-      console.log("***TIMEOUT START****");
       if (!this.currentSong || newSong) {
-        console.log("SET CURRENT SONG FROM QUE");
         await this.setCurrentSongFromQue();
       }
 
       if (this.currentSong) {
-        console.log("Current song alreayd is so lets start");
         this.currentDelay = this.currentSong.duration;
         this.socketIO.emit(this.emitName, this.currentSong);
 
@@ -90,25 +86,18 @@ abstract class MusicHeadHandler {
         this.emitGetAudioInfo();
 
         const delayNextSong = this.currentDelay - this.currentSong.currentTime;
-        console.log("delaymextsong", delayNextSong * 1000, "testing");
         this.startPlay(delayNextSong * 1000, true);
       }
     }, delay + this.secondsBetweenAudio * 1000);
   }
 
   protected pausePlayer(emitName: EmitPauseMusic) {
-    console.log("INNER PAUSE!!!");
     const cleared = this.clearTimeout();
     if (!cleared || !this.isPlaying) return;
 
     const currentTimeSong = this.getCurrentTimeSong();
 
-    console.log("Stop current song at", currentTimeSong);
     if (this.currentSong) {
-      console.log({
-        currTime: this.currentSong.currentTime,
-        currTimeSong: currentTimeSong
-      });
       this.currentSong.currentTime += currentTimeSong;
 
       this.socketIO.emit(emitName);
@@ -157,8 +146,6 @@ abstract class MusicHeadHandler {
   protected async addNextItemToQueAndPushToEnd() {
     const firstSong = this.getFirstFromSongListAndMoveToEnd();
     if (firstSong) {
-      console.log("adding songs loading", firstSong);
-
       await this.addSongToQue(firstSong);
     }
   }
