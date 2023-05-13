@@ -1,23 +1,7 @@
-import {
-  TriggerModel,
-  TriggerMode,
-  TriggersConfigs,
-  MoodModel,
-} from "@models/types";
-import {
-  getEnabledSuffixesAndPrefixes,
-  getMultiperEnabledAfixesChances,
-} from "@services/affixes";
-import {
-  findCategoryAndUpdateMessageUse,
-  getLeastMessagesFromEnabledCategories,
-} from "@services/messageCategories";
-import {
-  getOneTrigger,
-  getTriggersWords,
-  updateTriggerById,
-  updateTriggers,
-} from "@services/triggers";
+import { TriggerModel, TriggerMode, TriggersConfigs, MoodModel } from "@models/types";
+import { getEnabledSuffixesAndPrefixes, getMultiperEnabledAfixesChances } from "@services/affixes";
+import { findCategoryAndUpdateMessageUse, getLeastMessagesFromEnabledCategories } from "@services/messageCategories";
+import { getOneTrigger, getTriggersWords, updateTriggerById, updateTriggers } from "@services/triggers";
 import { triggerLogger } from "@utils/loggerUtil";
 import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
 
@@ -33,11 +17,7 @@ class TriggersHandler {
   }
 
   private async init() {
-    Promise.all([
-      this.refreshTriggers(),
-      this.setEveryTriggerDelayOff(),
-      this.updateAffixesMultiplers(),
-    ]);
+    Promise.all([this.refreshTriggers(), this.setEveryTriggerDelayOff(), this.updateAffixesMultiplers()]);
   }
 
   public async refreshTriggers() {
@@ -57,8 +37,7 @@ class TriggersHandler {
   }
 
   private async updateAffixesMultiplers() {
-    const { prefixesMultipler, suffixesMultipler } =
-      await getMultiperEnabledAfixesChances();
+    const { prefixesMultipler, suffixesMultipler } = await getMultiperEnabledAfixesChances();
 
     this.affixesMultipler.prefixMult = prefixesMultipler;
     this.affixesMultipler.suffixMult = suffixesMultipler;
@@ -71,8 +50,7 @@ class TriggersHandler {
         const index = message.toLowerCase().indexOf(word);
         const start = message.lastIndexOf(" ", index) + 1;
         const end = message.indexOf(" ", index);
-        wordInMessage =
-          end === -1 ? message.substring(start) : message.substring(start, end);
+        wordInMessage = end === -1 ? message.substring(start) : message.substring(start, end);
         return true;
       }
     });
@@ -81,28 +59,20 @@ class TriggersHandler {
   }
 
   public async checkMessageForTrigger(message: string) {
-    const { triggerWord, wordInMessage } = await this.getTriggerWordAndTrigger(
-      message
-    );
+    const { triggerWord, wordInMessage } = await this.getTriggerWordAndTrigger(message);
     if (triggerWord) {
       const foundedTrigger = await this.getTriggerByTriggerWord(triggerWord);
 
       if (!foundedTrigger) return false;
 
-      const canSendTrigger = await this.checkTriggersConditions(
-        foundedTrigger,
-        triggerWord,
-        wordInMessage
-      );
+      const canSendTrigger = await this.checkTriggersConditions(foundedTrigger, triggerWord, wordInMessage);
 
       if (canSendTrigger) {
         return await this.getMessageAndUpdateTriggerLogic(foundedTrigger);
       }
     } else if (this.canSendRandomMessage()) {
       const randomMessage = await this.getRandomMessage();
-      triggerLogger.info(
-        `Not found trigger, but executing random message: ${randomMessage}`
-      );
+      triggerLogger.info(`Not found trigger, but executing random message: ${randomMessage}`);
 
       return randomMessage;
     }
@@ -117,8 +87,7 @@ class TriggersHandler {
     try {
       const messagesWord = await getLeastMessagesFromEnabledCategories(true, 3);
 
-      const [randomMessage, categoryId] =
-        messagesWord[randomWithMax(messagesWord.length)];
+      const [randomMessage, categoryId] = messagesWord[randomWithMax(messagesWord.length)];
 
       const [prefix, suffix] = await this.getRandomEnabledAFfixes();
 
@@ -133,16 +102,14 @@ class TriggersHandler {
   }
 
   private shouldGetPrefix() {
-    const prefixChance =
-      this.configs.prefixChance * this.affixesMultipler.prefixMult;
+    const prefixChance = this.configs.prefixChance * this.affixesMultipler.prefixMult;
     if (percentChance(prefixChance)) {
       return true;
     }
     return false;
   }
   private shouldGetsuffix() {
-    const suffixChance =
-      this.configs.suffixChance * this.affixesMultipler.suffixMult;
+    const suffixChance = this.configs.suffixChance * this.affixesMultipler.suffixMult;
     if (percentChance(suffixChance)) {
       return true;
     }
@@ -150,14 +117,11 @@ class TriggersHandler {
   }
 
   private async updateUsedMessageInCategory(id: string, word: string) {
-    const upd = findCategoryAndUpdateMessageUse(id, word);
+    const updatedCat = findCategoryAndUpdateMessageUse(id, word);
+    return updatedCat;
   }
 
-  private async checkTriggersConditions(
-    trigger: TriggerModel,
-    triggerWord: string,
-    wordInMessage: string
-  ) {
+  private async checkTriggersConditions(trigger: TriggerModel, triggerWord: string, wordInMessage: string) {
     const { name, onDelay, chance, mode } = trigger;
     if (
       percentChance(chance) &&
@@ -171,10 +135,7 @@ class TriggersHandler {
 
   private async getMessageAndUpdateTriggerLogic(trigger: TriggerModel) {
     const { _id, name, mood, messages, delay } = trigger;
-    const triggerMessage = await this.getTriggerMessage(
-      mood as MoodModel,
-      messages
-    );
+    const triggerMessage = await this.getTriggerMessage(mood as MoodModel, messages);
     await this.updateTrigerAfterUsage(_id);
 
     await this.setTimeoutRefreshTriggerDelay(_id, name, delay);
@@ -183,25 +144,17 @@ class TriggersHandler {
     return triggerMessage;
   }
 
-  private async checkIfCanSendTrigger(
-    mode: TriggerMode,
-    wholeWord: string,
-    triggerWord: string
-  ) {
+  private async checkIfCanSendTrigger(mode: TriggerMode, wholeWord: string, triggerWord: string) {
     switch (mode) {
       case "WHOLE-WORD":
         if (wholeWord !== triggerWord) {
-          triggerLogger.info(
-            `WHOLE-WORD: Trigger - trigger word (${triggerWord} != ${wholeWord}). Not sending`
-          );
+          triggerLogger.info(`WHOLE-WORD: Trigger - trigger word (${triggerWord} != ${wholeWord}). Not sending`);
           return false;
         }
         break;
       case "STARTS-WITH":
         if (!wholeWord.startsWith(triggerWord)) {
-          triggerLogger.info(
-            `STARTS-WITH: Trigger not starting with word (${triggerWord}  ${wholeWord}). Not sending`
-          );
+          triggerLogger.info(`STARTS-WITH: Trigger not starting with word (${triggerWord}  ${wholeWord}). Not sending`);
           return false;
         }
         break;
@@ -236,9 +189,7 @@ class TriggersHandler {
     if (getPrefix) prefix = prefixes[randomWithMax(prefixes.length)];
     if (getsuffix) suffix = suffixes[randomWithMax(suffixes.length)];
 
-    triggerLogger.info(
-      `Add prefix - ${prefix} and suffix - ${suffix} to message`
-    );
+    triggerLogger.info(`Add prefix - ${prefix} and suffix - ${suffix} to message`);
 
     return [prefix, suffix];
   }
@@ -247,7 +198,7 @@ class TriggersHandler {
     try {
       const foundedTrigger = await getOneTrigger(
         {
-          words: { $regex: new RegExp(`\\b${triggerWord}\\b`, "i") },
+          words: { $regex: new RegExp(`\\b${triggerWord}\\b`, "i") }
         },
         { populateSelect: "mood" }
       );
@@ -258,20 +209,17 @@ class TriggersHandler {
   private async updateTrigerAfterUsage(id: string) {
     const updatedTrigger = await updateTriggerById(id, {
       onDelay: true,
-      $inc: { uses: 1 },
+      $inc: { uses: 1 }
     });
+    return updatedTrigger;
   }
 
-  private async setTimeoutRefreshTriggerDelay(
-    id: string,
-    name: string,
-    delay: number
-  ) {
+  private async setTimeoutRefreshTriggerDelay(id: string, name: string, delay: number) {
     this.triggersOnDelay.set(
       name,
       setTimeout(async () => {
-        const refreshedTrigger = await updateTriggerById(id, {
-          onDelay: false,
+        await updateTriggerById(id, {
+          onDelay: false
         });
 
         this.triggersOnDelay.delete(name);

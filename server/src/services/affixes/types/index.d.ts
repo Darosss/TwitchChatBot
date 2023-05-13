@@ -1,19 +1,18 @@
 import { AffixModel } from "@models/types";
-import { PopulateOption, PopulateOptions } from "mongoose";
+import { PopulateOption } from "mongoose";
 import { SortQuery, SelectQuery } from "@services/types";
 
 export interface AffixFindOptions {
-  select?: SelectQuery<AffixModel> | {};
+  select?: SelectQuery<AffixModel>;
   populateSelect?: PopulateOption.select;
 }
 
 export interface ManyAffixesFindOptions extends AffixFindOptions {
-  sort?: SortQuery<AffixModel> | {};
+  sort: SortQuery;
   skip?: number;
   limit?: number;
 }
 
-export interface AffixCreateData extends Pick<AffixModel, "name"> {}
+export type AffixCreateData = Pick<AffixModel, "name">;
 
-export interface AffixUpdateData
-  extends Partial<Omit<AffixModel, "_id" | "createdAt" | "updatedAt">> {}
+export type AffixUpdateData = Partial<Omit<AffixModel, "_id" | "createdAt" | "updatedAt">>;

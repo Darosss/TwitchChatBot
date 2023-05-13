@@ -13,14 +13,14 @@ export const getLeastMessagePipeline = (divideMessagesBy: number) => {
           $let: {
             vars: {
               sizeOfMessages: {
-                $round: { $divide: [{ $size: "$messages" }, divideMessagesBy] },
-              },
+                $round: { $divide: [{ $size: "$messages" }, divideMessagesBy] }
+              }
             },
-            in: { $slice: ["$messages", "$$sizeOfMessages"] },
-          },
-        },
-      },
-    },
+            in: { $slice: ["$messages", "$$sizeOfMessages"] }
+          }
+        }
+      }
+    }
   ];
 
   return leastMessagePipeline;

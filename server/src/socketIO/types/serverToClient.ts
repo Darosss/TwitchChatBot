@@ -5,12 +5,10 @@ import {
   AudioStreamData,
   AudioStreamDataInfo,
   AudioYTData,
-  AudioYTDataInfo,
+  AudioYTDataInfo
 } from "./dataTypes";
 
-export interface ServerToClientEvents
-  extends ServerToClientYoutubeEvents,
-    ServerToClientMusicLocalEvents {
+export interface ServerToClientEvents extends ServerToClientYoutubeEvents, ServerToClientMusicLocalEvents {
   noArg: () => void;
   withAck: (callback: (e: number) => void) => void;
   messageServer: (date: Date, username: string, message: string) => void;

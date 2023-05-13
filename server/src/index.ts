@@ -22,7 +22,7 @@ startServer().catch((error) => {
   console.error(error);
 });
 
-process.on("unhandledRejection", async (error, p) => {
+process.on("unhandledRejection", async (error) => {
   console.log("=== UNHANDLED REJECTION ===");
   logger.error(`UNHANDLED-ERROR - ${error}`);
 });

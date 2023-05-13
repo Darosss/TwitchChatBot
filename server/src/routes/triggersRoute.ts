@@ -1,12 +1,12 @@
 import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
-import Express, { Router } from "express";
+import { Router } from "express";
 
 import {
   getTriggersList,
   addNewTrigger,
   //   getTriggerById,
   editTriggerById,
-  deleteTrigger,
+  deleteTrigger
 } from "@controllers/triggersController";
 import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
 

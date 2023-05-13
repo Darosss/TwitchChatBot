@@ -1,4 +1,4 @@
-import Express, { Router } from "express";
+import { Router } from "express";
 import {
   uploadMp3File,
   getFoldersList,
@@ -8,7 +8,7 @@ import {
   deleteAudioFolder,
   getAlertSoundsList,
   uploadAlertSound,
-  deleteAlertSound,
+  deleteAlertSound
 } from "@controllers/filesController";
 const filesRouter = Router();
 

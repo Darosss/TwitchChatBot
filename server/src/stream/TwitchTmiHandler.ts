@@ -17,14 +17,12 @@ class ClientTmiHandler {
       options: { debug: true },
       connection: { secure: true, reconnect: true },
       identity: { password: options.password, username: options.username },
-      channels: [options.userToListen],
+      channels: [options.userToListen]
     });
     this.connect();
   }
 
-  public static async getInstance(
-    options: ClientTmiOptions
-  ): Promise<ClientTmiHandler> {
+  public static async getInstance(options: ClientTmiOptions): Promise<ClientTmiHandler> {
     if (!ClientTmiHandler.instance) {
       ClientTmiHandler.instance = new ClientTmiHandler(options);
     } else {
@@ -50,7 +48,7 @@ class ClientTmiHandler {
       options: { debug: true },
       connection: { secure: true, reconnect: true },
       identity: { password: password, username: username },
-      channels: [options.userToListen],
+      channels: [options.userToListen]
     });
     await this.connect();
   }
@@ -64,12 +62,7 @@ class ClientTmiHandler {
   }
 
   public onMessageEvent(
-    callback: (
-      channel: string,
-      userstate: tmi.ChatUserstate,
-      message: string,
-      self: boolean
-    ) => void
+    callback: (channel: string, userstate: tmi.ChatUserstate, message: string, self: boolean) => void
   ) {
     this.clientTmi.on("message", async (channel, userstate, message, self) => {
       callback(channel, userstate, message, self);

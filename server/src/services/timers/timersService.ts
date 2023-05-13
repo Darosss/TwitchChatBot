@@ -5,24 +5,10 @@ import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
 import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
-import {
-  ManyTimersFindOptions,
-  TimerCreateData,
-  TimerFindOptions,
-  TimerUpdateData,
-} from "./types";
+import { ManyTimersFindOptions, TimerCreateData, TimerFindOptions, TimerUpdateData } from "./types";
 
-export const getTimers = async (
-  filter: FilterQuery<TimerDocument> = {},
-  timerFindOptions: ManyTimersFindOptions
-) => {
-  const {
-    limit = 50,
-    skip = 1,
-    sort = { createdAt: -1 },
-    select = { __v: 0 },
-    populateSelect,
-  } = timerFindOptions;
+export const getTimers = async (filter: FilterQuery<TimerDocument> = {}, timerFindOptions: ManyTimersFindOptions) => {
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 }, populateSelect } = timerFindOptions;
 
   try {
     const timer = await Timer.find(filter)
@@ -39,15 +25,11 @@ export const getTimers = async (
   }
 };
 
-export const getTimersCount = async (
-  filter: FilterQuery<TimerDocument> = {}
-) => {
+export const getTimersCount = async (filter: FilterQuery<TimerDocument> = {}) => {
   return await Timer.countDocuments(filter);
 };
 
-export const createTimer = async (
-  createData: TimerCreateData | TimerCreateData[]
-) => {
+export const createTimer = async (createData: TimerCreateData | TimerCreateData[]) => {
   try {
     const createdTimer = await Timer.create(createData);
 
@@ -67,7 +49,7 @@ export const updateTimers = async (
 ) => {
   try {
     const updatedTimers = await Timer.updateMany(filter, updateData, {
-      new: true,
+      new: true
     });
 
     return updatedTimers;
@@ -87,27 +69,22 @@ export const updateEnabledTimersAndEnabledModes = async (
       { $match: { enabled: true, ...matchOption } },
       { $set: { points: { $add: ["$points", pointsInrement] } } },
       { $unset: ["tag_info", "mood_info"] },
-      { $merge: { into: "timers", on: "_id", whenMatched: "replace" } },
+      { $merge: { into: "timers", on: "_id", whenMatched: "replace" } }
     ];
 
     const timers = await Timer.aggregate(pipeline);
 
     return timers;
   } catch (err) {
-    logger.error(
-      `Error occured while aggregating timers for update by enabled and enabled modes: ${err}`
-    );
+    logger.error(`Error occured while aggregating timers for update by enabled and enabled modes: ${err}`);
     handleAppError(err);
   }
 };
 
-export const updateTimerById = async (
-  id: string,
-  updateData: UpdateQuery<TimerUpdateData>
-) => {
+export const updateTimerById = async (id: string, updateData: UpdateQuery<TimerUpdateData>) => {
   try {
     const updatedTimer = await Timer.findByIdAndUpdate(id, updateData, {
-      new: true,
+      new: true
     });
 
     const timer = checkExistResource(updatedTimer, `Timer with id(${id})`);
@@ -139,9 +116,7 @@ export const getTimerById = async (
 ) => {
   const { select = { __v: 0 }, populateSelect } = timerFindOptions;
   try {
-    const foundTimer = await Timer.findById(id, filter)
-      .select(select)
-      .populate(populateSelect);
+    const foundTimer = await Timer.findById(id, filter).select(select).populate(populateSelect);
 
     const timer = checkExistResource(foundTimer, `Timer with id(${id})`);
 
@@ -165,9 +140,7 @@ export const getOneTimer = async (filter: FilterQuery<TimerDocument> = {}) => {
   }
 };
 
-export const getTimersDataWithModesEnabled = async (): Promise<
-  undefined | TimerModel[]
-> => {
+export const getTimersDataWithModesEnabled = async (): Promise<undefined | TimerModel[]> => {
   try {
     const pipeline: PipelineStage[] = [
       { $match: { enabled: true } },
@@ -178,9 +151,9 @@ export const getTimersDataWithModesEnabled = async (): Promise<
           createdAt: 0,
           updatedAt: 0,
           tag_info: 0,
-          mood_info: 0,
-        },
-      },
+          mood_info: 0
+        }
+      }
     ];
 
     const timers = await Timer.aggregate<TimerModel>(pipeline);

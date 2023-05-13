@@ -9,12 +9,7 @@ export const getRedemptions = async (
   filter: FilterQuery<RedemptionDocument> = {},
   redemptionsFindOptions: ManyRedemptionsFindOptions
 ) => {
-  const {
-    limit = 50,
-    skip = 1,
-    sort = {},
-    select = { __v: 0 },
-  } = redemptionsFindOptions;
+  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 } } = redemptionsFindOptions;
   try {
     const redemptions = await Redemption.find(filter)
       .limit(limit * 1)
@@ -29,15 +24,11 @@ export const getRedemptions = async (
   }
 };
 
-export const getRedemptionsCount = async (
-  filter: FilterQuery<RedemptionDocument> = {}
-) => {
+export const getRedemptionsCount = async (filter: FilterQuery<RedemptionDocument> = {}) => {
   return await Redemption.countDocuments(filter);
 };
 
-export const createRedemption = async (
-  redemptionData: RedemptionCreateData
-) => {
+export const createRedemption = async (redemptionData: RedemptionCreateData) => {
   try {
     const redemption = await Redemption.create(redemptionData);
 
@@ -52,23 +43,19 @@ export const createRedemption = async (
   }
 };
 
-export const getMostActiveUsersByRedemptions = async (
-  limit: number = 3,
-  startDate: Date,
-  endDate?: Date
-) => {
+export const getMostActiveUsersByRedemptions = async (limit = 3, startDate: Date, endDate?: Date) => {
   const redemptionsFilter = dateRangeRedemptionFilter(startDate, endDate, 5);
   try {
     const activeUsers = await Redemption.aggregate([
       {
-        $match: redemptionsFilter,
+        $match: redemptionsFilter
       },
       {
         $group: {
           _id: "$userId",
           redemptionsCount: { $sum: 1 },
-          redemptionsCost: { $sum: "$rewardCost" },
-        },
+          redemptionsCost: { $sum: "$rewardCost" }
+        }
       },
       { $sort: { redemptionsCost: -1 } },
       { $limit: limit },
@@ -77,8 +64,8 @@ export const getMostActiveUsersByRedemptions = async (
           from: "users",
           localField: "_id",
           foreignField: "_id",
-          as: "user",
-        },
+          as: "user"
+        }
       },
       { $unwind: "$user" },
       {
@@ -86,37 +73,29 @@ export const getMostActiveUsersByRedemptions = async (
           _id: 1,
           username: "$user.username",
           redemptionsCount: 1,
-          redemptionsCost: 1,
-        },
-      },
+          redemptionsCost: 1
+        }
+      }
     ]);
 
     return activeUsers;
   } catch (err) {
-    logger.error(
-      `Error occured while aggregating redemptions for active users : ${err}`
-    );
+    logger.error(`Error occured while aggregating redemptions for active users : ${err}`);
     handleAppError(err);
   }
 };
 
-const dateRangeRedemptionFilter = (
-  startDate: Date,
-  endDate?: Date,
-  additionalHours = 3
-) => {
+const dateRangeRedemptionFilter = (startDate: Date, endDate?: Date, additionalHours = 3) => {
   if (endDate)
     return {
-      redemptionDate: { $gte: startDate, $lt: endDate },
+      redemptionDate: { $gte: startDate, $lt: endDate }
     };
 
-  const customEndDate = new Date(startDate).setHours(
-    startDate.getHours() + additionalHours
-  );
+  const customEndDate = new Date(startDate).setHours(startDate.getHours() + additionalHours);
   return {
     redemptionDate: {
       $gte: startDate,
-      $lt: new Date(customEndDate),
-    },
+      $lt: new Date(customEndDate)
+    }
   };
 };

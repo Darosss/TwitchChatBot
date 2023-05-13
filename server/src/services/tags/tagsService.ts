@@ -10,16 +10,8 @@ import { logger } from "@utils/loggerUtil";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { ManyTagsFindOptions, TagCreateData, TagUpdateData } from "./types";
 
-export const getTags = async (
-  filter: FilterQuery<TagDocument> = {},
-  tagFindOptions: ManyTagsFindOptions
-) => {
-  const {
-    limit = 50,
-    skip = 1,
-    sort = { createdAt: -1 },
-    select = { __v: 0 },
-  } = tagFindOptions;
+export const getTags = async (filter: FilterQuery<TagDocument> = {}, tagFindOptions: ManyTagsFindOptions) => {
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = tagFindOptions;
 
   try {
     const tags = await Tag.find(filter)
@@ -39,9 +31,7 @@ export const getTagsCount = async (filter: FilterQuery<TagDocument> = {}) => {
   return await Tag.countDocuments(filter);
 };
 
-export const createTag = async (
-  createData: TagCreateData | TagCreateData[]
-) => {
+export const createTag = async (createData: TagCreateData | TagCreateData[]) => {
   try {
     const createdTag = await Tag.create(createData);
 
@@ -55,13 +45,10 @@ export const createTag = async (
   }
 };
 
-export const updateTags = async (
-  filter: FilterQuery<TagDocument> = {},
-  updateData: UpdateQuery<TagUpdateData>
-) => {
+export const updateTags = async (filter: FilterQuery<TagDocument> = {}, updateData: UpdateQuery<TagUpdateData>) => {
   try {
     await Tag.updateMany(filter, updateData, {
-      new: true,
+      new: true
     });
   } catch (err) {
     logger.error(`Error occured while updating many tags. ${err}`);
@@ -69,13 +56,10 @@ export const updateTags = async (
   }
 };
 
-export const updateTagById = async (
-  id: string,
-  updateData: UpdateQuery<TagUpdateData>
-) => {
+export const updateTagById = async (id: string, updateData: UpdateQuery<TagUpdateData>) => {
   try {
     const updatedTag = await Tag.findByIdAndUpdate(id, updateData, {
-      new: true,
+      new: true
     });
 
     const tag = checkExistResource(updatedTag, `Tag with id(${id})`);
@@ -94,14 +78,11 @@ export const deleteTagById = async (id: string) => {
       getTriggersCount(filter),
       getChatCommandsCount(filter),
       getTimersCount(filter),
-      getMessageCategoriesCount(filter),
+      getMessageCategoriesCount(filter)
     ]);
 
     if (countTagsInDocs.reduce((a, b) => a + b) > 0) {
-      throw new AppError(
-        409,
-        `Tag with id(${id}) is used somewhere else, cannot delete`
-      );
+      throw new AppError(409, `Tag with id(${id}) is used somewhere else, cannot delete`);
     }
 
     const deletedTag = await Tag.findByIdAndDelete(id);
@@ -115,10 +96,7 @@ export const deleteTagById = async (id: string) => {
   }
 };
 
-export const getTagById = async (
-  id: string,
-  filter: FilterQuery<TagDocument> = {}
-) => {
+export const getTagById = async (id: string, filter: FilterQuery<TagDocument> = {}) => {
   try {
     const foundTag = await Tag.findById(id, filter);
 

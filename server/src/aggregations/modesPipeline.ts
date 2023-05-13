@@ -6,11 +6,11 @@ const tagsPipeline: PipelineStage[] = [
       from: "tags",
       localField: "tag",
       foreignField: "_id",
-      as: "tag_info",
-    },
+      as: "tag_info"
+    }
   },
   // Unwind the tag_info array to access the fields of the tag document
-  { $unwind: "$tag_info" },
+  { $unwind: "$tag_info" }
 ];
 
 const moodsPipeline: PipelineStage[] = [
@@ -19,11 +19,11 @@ const moodsPipeline: PipelineStage[] = [
       from: "moods",
       localField: "mood",
       foreignField: "_id",
-      as: "mood_info",
-    },
+      as: "mood_info"
+    }
   },
   // Unwind the mood_info array to access the fields of the tag document
-  { $unwind: "$mood_info" },
+  { $unwind: "$mood_info" }
 ];
 
 export const modesPipeline: PipelineStage[] = [
@@ -31,7 +31,7 @@ export const modesPipeline: PipelineStage[] = [
   ...moodsPipeline,
   {
     $match: {
-      $and: [{ "tag_info.enabled": true }, { "mood_info.enabled": true }],
-    },
-  },
+      $and: [{ "tag_info.enabled": true }, { "mood_info.enabled": true }]
+    }
+  }
 ];

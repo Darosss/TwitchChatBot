@@ -2,18 +2,9 @@ import HeadHandler from "./HeadHandler";
 import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
 import { EventSubWsListener } from "@twurple/eventsub-ws";
 import { Server } from "socket.io";
-import type {
-  ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData,
-  RewardData,
-} from "@socket";
+import type { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData, RewardData } from "@socket";
 import { eventsubLogger } from "@utils/loggerUtil";
-import {
-  createStreamSession,
-  updateCurrentStreamSession,
-} from "@services/streamSessions";
+import { createStreamSession, updateCurrentStreamSession } from "@services/streamSessions";
 import { createRedemption } from "@services/redemptions";
 import { createUserIfNotExist } from "@services/users";
 import retryWithCatch from "@utils/retryWithCatchUtil";
@@ -25,22 +16,14 @@ import { alertSoundPrefix } from "@configs/globalVariables";
 
 interface EventSubHandlerOptions {
   apiClient: ApiClient;
-  socketIO: Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
-  >;
+  socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
   authorizedUser: HelixPrivilegedUser;
 }
 
 class EventSubHandler extends HeadHandler {
   private static instance: EventSubHandler;
   private listener: EventSubWsListener;
-  private redemptionQue: [
-    RewardData,
-    { audioBuffer: Buffer; duration: number }
-  ][] = [];
+  private redemptionQue: [RewardData, { audioBuffer: Buffer; duration: number }][] = [];
   private isAlertPlaying = false;
   private constructor(options: EventSubHandlerOptions) {
     super(options.socketIO, options.apiClient, options.authorizedUser);
@@ -49,10 +32,8 @@ class EventSubHandler extends HeadHandler {
 
   public static getInstance(options: EventSubHandlerOptions): EventSubHandler {
     if (!EventSubHandler.instance) {
-      console.log("nie ma instancji");
       EventSubHandler.instance = new EventSubHandler(options);
     } else {
-      console.log("jest instancja uypdate");
       EventSubHandler.instance.updateOptions(options);
     }
     return EventSubHandler.instance;
@@ -63,161 +44,117 @@ class EventSubHandler extends HeadHandler {
     const { apiClient, authorizedUser } = options;
     this.updateProperties(apiClient, authorizedUser);
     this.listener = new EventSubWsListener({ apiClient: options.apiClient });
-    console.log("***********UPDATE EVENT SUB", authorizedUser.name);
     this.init();
   }
 
   private async subscribeToStreamOfflineEvents() {
-    await this.listener.subscribeToStreamOfflineEvents(
-      this.authorizedUser.id,
-      async (e) => {
-        eventsubLogger.info(`${e.broadcasterDisplayName} just went offline`);
-        await updateCurrentStreamSession({ sessionEnd: new Date() });
-      }
-    );
+    await this.listener.subscribeToStreamOfflineEvents(this.authorizedUser.id, async (e) => {
+      eventsubLogger.info(`${e.broadcasterDisplayName} just went offline`);
+      await updateCurrentStreamSession({ sessionEnd: new Date() });
+    });
   }
 
   private async subscribeToChannelUpdateEvents() {
-    await this.listener.subscribeToChannelUpdateEvents(
-      this.authorizedUser.id,
-      async (e) => {
-        eventsubLogger.info(`Stream details has been updated`);
-        const timestamp = Date.now();
-        try {
-          await updateCurrentStreamSession({
-            $set: {
-              [`categories.${timestamp}`]: e.categoryName,
-              [`sessionTitles.${timestamp}`]: e.streamTitle,
-            },
-          });
-        } catch (err) {
-          eventsubLogger.info(err); //todo add error
-        }
+    await this.listener.subscribeToChannelUpdateEvents(this.authorizedUser.id, async (e) => {
+      eventsubLogger.info(`Stream details has been updated`);
+      const timestamp = Date.now();
+      try {
+        await updateCurrentStreamSession({
+          $set: {
+            [`categories.${timestamp}`]: e.categoryName,
+            [`sessionTitles.${timestamp}`]: e.streamTitle
+          }
+        });
+      } catch (err) {
+        eventsubLogger.info(err); //todo add error
       }
-    );
+    });
   }
 
-  private async createStreamSessionHelper(
-    startDate: Date,
-    title: string,
-    category: string
-  ) {
+  private async createStreamSessionHelper(startDate: Date, title: string, category: string) {
     const timestampUpdateStream = startDate.getTime().toString();
 
     const newSession = await createStreamSession({
       sessionStart: startDate,
       sessionTitles: new Map([[timestampUpdateStream, title]]),
-      categories: new Map([[timestampUpdateStream, category]]),
+      categories: new Map([[timestampUpdateStream, category]])
     });
 
     return newSession;
   }
 
   private async subscribeToStreamOnlineEvents() {
-    await this.listener.subscribeToStreamOnlineEvents(
-      this.authorizedUser.id,
-      async (e) => {
-        eventsubLogger.info(`${e.broadcasterDisplayName} just went live!`);
-        const stream = await retryWithCatch(() => e.getStream());
+    await this.listener.subscribeToStreamOnlineEvents(this.authorizedUser.id, async (e) => {
+      eventsubLogger.info(`${e.broadcasterDisplayName} just went live!`);
+      const stream = await retryWithCatch(() => e.getStream());
 
-        const newStreamSession = await this.createStreamSessionHelper(
-          e.startDate || new Date(), // Because twitch goes wild
-          stream?.title || "", // Because twitch goes wild
-          stream?.gameName || "" // Because twitch goes wild
-        );
-      }
-    );
+      await this.createStreamSessionHelper(
+        e.startDate || new Date(), // Because twitch goes wild...sometimes
+        stream?.title || "", // Because twitch goes wild...sometimes
+        stream?.gameName || "" // Because twitch goes wild...sometimes
+      );
+    });
   }
 
   private async subscribeToChannelRedemptionAddEvents() {
-    await this.listener.subscribeToChannelRedemptionAddEvents(
-      this.authorizedUser.id,
-      async (e) => {
-        const {
-          rewardId,
-          userId,
-          userName,
-          userDisplayName,
-          redeemedAt,
-          rewardTitle,
-          rewardCost,
-        } = e;
+    await this.listener.subscribeToChannelRedemptionAddEvents(this.authorizedUser.id, async (e) => {
+      const { rewardId, userId, userName, userDisplayName, redeemedAt, rewardTitle, rewardCost } = e;
 
-        const user = await createUserIfNotExist(
-          { twitchId: userId },
-          {
-            twitchId: userId,
-            username: userDisplayName,
-            twitchName: userName,
-            privileges: 0,
-          }
-        );
-
-        const reward = await e.getReward();
-
-        const rewardData = {
-          userId: user?._id,
-          rewardId: rewardId,
+      const user = await createUserIfNotExist(
+        { twitchId: userId },
+        {
           twitchId: userId,
-          userName: userName,
-          userDisplayName: userDisplayName,
-          redemptionDate: redeemedAt,
-          rewardTitle: rewardTitle,
-          rewardCost: rewardCost,
-          rewardImage: reward.getImageUrl(4),
-        };
-
-        try {
-          await createRedemption(rewardData);
-        } catch (err) {
-          eventsubLogger.info(
-            `Couldn't save redemption ${rewardTitle} from ${userName}`
-          );
+          username: userDisplayName,
+          twitchName: userName,
+          privileges: 0
         }
+      );
 
-        eventsubLogger.info(
-          `${e.userDisplayName} just took redemption! ${rewardTitle}`
-        );
+      const reward = await e.getReward();
 
-        const alertSoundPath = path.join(alertSoundsPath, rewardTitle) + ".mp3";
-        let alertSoundFileBuffer: Buffer;
+      const rewardData = {
+        userId: user?._id,
+        rewardId: rewardId,
+        twitchId: userId,
+        userName: userName,
+        userDisplayName: userDisplayName,
+        redemptionDate: redeemedAt,
+        rewardTitle: rewardTitle,
+        rewardCost: rewardCost,
+        rewardImage: reward.getImageUrl(4)
+      };
 
-        if (!rewardTitle.startsWith(alertSoundPrefix)) return;
-
-        try {
-          alertSoundFileBuffer = fs.readFileSync(
-            path.join(alertSoundsPath, rewardTitle) + ".mp3"
-          );
-        } catch (err) {
-          if (err instanceof Error) {
-            eventsubLogger.info(
-              `Error occured while trying to get mp3 file for redemptions. ${err.message}`
-            );
-          }
-          return;
-        }
-
-        const alertSoundDurationSec = await getMp3AudioDuration(alertSoundPath);
-
-        this.addSoundToAlertQue(
-          rewardData,
-          alertSoundFileBuffer,
-          alertSoundDurationSec
-        );
-        this.startAlertSounds();
+      try {
+        await createRedemption(rewardData);
+      } catch (err) {
+        eventsubLogger.info(`Couldn't save redemption ${rewardTitle} from ${userName}`);
       }
-    );
+
+      eventsubLogger.info(`${e.userDisplayName} just took redemption! ${rewardTitle}`);
+
+      const alertSoundPath = path.join(alertSoundsPath, rewardTitle) + ".mp3";
+      let alertSoundFileBuffer: Buffer;
+
+      if (!rewardTitle.startsWith(alertSoundPrefix)) return;
+
+      try {
+        alertSoundFileBuffer = fs.readFileSync(path.join(alertSoundsPath, rewardTitle) + ".mp3");
+      } catch (err) {
+        if (err instanceof Error) {
+          eventsubLogger.info(`Error occured while trying to get mp3 file for redemptions. ${err.message}`);
+        }
+        return;
+      }
+
+      const alertSoundDurationSec = await getMp3AudioDuration(alertSoundPath);
+
+      this.addSoundToAlertQue(rewardData, alertSoundFileBuffer, alertSoundDurationSec);
+      this.startAlertSounds();
+    });
   }
 
-  private addSoundToAlertQue(
-    rewardData: RewardData,
-    soundBuffer: Buffer,
-    soundDuration: number
-  ) {
-    this.redemptionQue.push([
-      rewardData,
-      { audioBuffer: soundBuffer, duration: soundDuration },
-    ]);
+  private addSoundToAlertQue(rewardData: RewardData, soundBuffer: Buffer, soundDuration: number) {
+    this.redemptionQue.push([rewardData, { audioBuffer: soundBuffer, duration: soundDuration }]);
   }
 
   private startAlertSounds(delay = 0) {
@@ -230,11 +167,7 @@ class EventSubHandler extends HeadHandler {
       }
       this.isAlertPlaying = true;
 
-      this.socketIO.emit(
-        "onRedemption",
-        firstAlert[0],
-        firstAlert[1].audioBuffer
-      );
+      this.socketIO.emit("onRedemption", firstAlert[0], firstAlert[1].audioBuffer);
 
       setTimeout(() => {
         this.isAlertPlaying = false;

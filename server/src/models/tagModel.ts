@@ -4,7 +4,7 @@ import { TagDocument } from "./types";
 
 const TagSchema: Schema<TagDocument> = new Schema(
   {
-    ...baseChatFeaturesFields,
+    ...baseChatFeaturesFields
   },
   { timestamps: true }
 );

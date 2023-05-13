@@ -1,19 +1,13 @@
-import Express, { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import {
   RequestParams,
   RequestQueryLatestEldestMsgs,
   RequestQueryMessage,
   RequestQueryUser,
-  RequestRedemptionQuery,
+  RequestRedemptionQuery
 } from "@types";
 import { filterUsersByUrlParams } from "./filters/usersFilter";
-import {
-  getUserById,
-  getUserCount,
-  getUsers,
-  updateUserById,
-  UserUpdateData,
-} from "@services/users";
+import { getUserById, getUserCount, getUsers, updateUserById, UserUpdateData } from "@services/users";
 
 import { filterMessagesByUrlParams } from "./filters/messagesFilter";
 import { getMessages, getMessagesCount } from "@services/messages";
@@ -21,23 +15,14 @@ import { getMessages, getMessagesCount } from "@services/messages";
 import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
 import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
 
-export const getUsersList = async (
-  req: Request<{}, {}, {}, RequestQueryUser>,
-  res: Response,
-  next: NextFunction
-) => {
-  const {
-    page = 1,
-    limit = 50,
-    sortBy = "lastSeen",
-    sortOrder = "desc",
-  } = req.query;
+export const getUsersList = async (req: Request<{}, {}, {}, RequestQueryUser>, res: Response, next: NextFunction) => {
+  const { page = 1, limit = 50, sortBy = "lastSeen", sortOrder = "desc" } = req.query;
   const searchFilter = filterUsersByUrlParams(req.query);
   try {
     const users = await getUsers(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 }
     });
 
     const count = await getUserCount(searchFilter);
@@ -46,18 +31,14 @@ export const getUsersList = async (
       data: users,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const getUsersProfile = async (
-  req: Request<RequestParams, {}, {}, {}>,
-  res: Response,
-  next: NextFunction
-) => {
+export const getUsersProfile = async (req: Request<RequestParams, {}, {}, {}>, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
   try {
@@ -93,17 +74,14 @@ export const getUserMessages = async (
   const { id } = req.params;
   const { page = 1, limit = 50 } = req.query;
 
-  const searchFilter = Object.assign(
-    { owner: id },
-    await filterMessagesByUrlParams(req.query)
-  );
+  const searchFilter = Object.assign({ owner: id }, await filterMessagesByUrlParams(req.query));
 
   try {
     const messages = await getMessages(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
       sort: { date: -1 },
-      select: { __v: 0 },
+      select: { __v: 0 }
     });
     const count = await getMessagesCount(searchFilter);
 
@@ -111,7 +89,7 @@ export const getUserMessages = async (
       data: messages,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
@@ -126,16 +104,13 @@ export const getUserRedemptions = async (
   const { id } = req.params;
   const { page = 1, limit = 50 } = req.query;
 
-  const searchFilter = Object.assign(
-    { userId: id },
-    filterRedemptionsByUrlParams(req.query)
-  );
+  const searchFilter = Object.assign({ userId: id }, filterRedemptionsByUrlParams(req.query));
 
   try {
     const redemptions = await getRedemptions(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      sort: { redemptionDate: -1 },
+      sort: { redemptionDate: -1 }
     });
 
     const count = await getRedemptionsCount(searchFilter);
@@ -144,7 +119,7 @@ export const getUserRedemptions = async (
       data: redemptions,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
@@ -165,7 +140,7 @@ export const getLatestEldestUserMessages = async (
       {
         limit: Number(limit),
         sort: { date: 1 },
-        select: { __v: 0 },
+        select: { __v: 0 }
       }
     );
     const latestMessages = await getMessages(
@@ -173,12 +148,12 @@ export const getLatestEldestUserMessages = async (
       {
         limit: Number(limit),
         sort: { date: -1 },
-        select: { __v: 0 },
+        select: { __v: 0 }
       }
     );
 
     return res.status(200).send({
-      data: { firstMessages: firstMessages, latestMessages: latestMessages },
+      data: { firstMessages: firstMessages, latestMessages: latestMessages }
     });
   } catch (err) {
     next(err);

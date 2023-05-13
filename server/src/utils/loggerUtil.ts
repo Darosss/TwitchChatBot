@@ -15,14 +15,14 @@ export const logger = winston.createLogger({
   defaultMeta: { service: "user-service" },
   transports: [
     new winston.transports.File({ filename: "logs/error.log", level: "error" }),
-    new winston.transports.File({ filename: "logs/combined.log" }),
-  ],
+    new winston.transports.File({ filename: "logs/combined.log" })
+  ]
 });
 
 if (!isProduction) {
   logger.add(
     new winston.transports.Console({
-      format: loggerFormat,
+      format: loggerFormat
     })
   );
 }
@@ -34,14 +34,14 @@ const streamLoggerFormat = printf(({ message, timestamp }) => {
 const streamLoggerDefaults = {
   timestampFormat: "YYYY-MM-DD HH:mm:ss",
   datePattern: "YYYY-MM-DD",
-  folder: `../data`,
+  folder: `../data`
 };
 
 const optionsLoggers = (fileName: string) => {
   return {
     format: combine(
       winston.format.timestamp({
-        format: streamLoggerDefaults.timestampFormat,
+        format: streamLoggerDefaults.timestampFormat
       }),
       winston.format.prettyPrint(),
       streamLoggerFormat
@@ -49,29 +49,23 @@ const optionsLoggers = (fileName: string) => {
     level: "debug",
     transports: [
       new DailyRotateFile({
-        filename: path.join(
-          __dirname,
-          `${streamLoggerDefaults.folder}/%DATE%/${fileName}.log`
-        ),
+        filename: path.join(__dirname, `${streamLoggerDefaults.folder}/%DATE%/${fileName}.log`),
         datePattern: streamLoggerDefaults.datePattern,
-        level: "info",
+        level: "info"
       }),
       new DailyRotateFile({
-        filename: path.join(
-          __dirname,
-          `${streamLoggerDefaults.folder}/%DATE%/${fileName}-debug.log`
-        ),
+        filename: path.join(__dirname, `${streamLoggerDefaults.folder}/%DATE%/${fileName}-debug.log`),
         datePattern: streamLoggerDefaults.datePattern,
-        level: "debug",
+        level: "debug"
       }),
       ...(!isProduction
         ? [
             new winston.transports.Console({
-              format: streamLoggerFormat,
-            }),
+              format: streamLoggerFormat
+            })
           ]
-        : []),
-    ],
+        : [])
+    ]
   };
 };
 

@@ -1,26 +1,13 @@
-import { UserModel, UserDocument } from "@models/types";
+import { UserDocument } from "@models/types";
 import { User } from "@models/userModel";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
-import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
+import { handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
 import { FilterQuery, UpdateQuery } from "mongoose";
-import {
-  ManyUsersFindOptions,
-  UserCreateData,
-  UserFindOptions,
-  UserUpdateData,
-} from "./types";
+import { ManyUsersFindOptions, UserCreateData, UserFindOptions, UserUpdateData } from "./types";
 
-export const getUsers = async (
-  filter: FilterQuery<UserDocument> = {},
-  userFindOptions: ManyUsersFindOptions
-) => {
-  const {
-    limit = 50,
-    skip = 1,
-    sort = {},
-    select = { __v: 0 },
-  } = userFindOptions;
+export const getUsers = async (filter: FilterQuery<UserDocument> = {}, userFindOptions: ManyUsersFindOptions) => {
+  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 } } = userFindOptions;
 
   try {
     const users = await User.find(filter)
@@ -36,10 +23,7 @@ export const getUsers = async (
   }
 };
 
-export const getOneUser = async (
-  filter: FilterQuery<UserDocument> = {},
-  userFindOptions: UserFindOptions
-) => {
+export const getOneUser = async (filter: FilterQuery<UserDocument> = {}, userFindOptions: UserFindOptions) => {
   const { select = { __v: 0 } } = userFindOptions;
   try {
     const userFiltered = await User.findOne(filter).select(select);
@@ -53,10 +37,7 @@ export const getOneUser = async (
   }
 };
 
-export const getUserById = async (
-  id: string,
-  userFindOptions: UserFindOptions
-) => {
+export const getUserById = async (id: string, userFindOptions: UserFindOptions) => {
   const { select = { __v: 0 } } = userFindOptions;
   try {
     const userById = await User.findById(id).select(select);
@@ -70,13 +51,10 @@ export const getUserById = async (
   }
 };
 
-export const updateUserById = async (
-  id: string,
-  userUpdateData: UpdateQuery<UserUpdateData>
-) => {
+export const updateUserById = async (id: string, userUpdateData: UpdateQuery<UserUpdateData>) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(id, userUpdateData, {
-      new: true,
+      new: true
     });
 
     const user = checkExistResource(updatedUser, "User");
@@ -99,19 +77,15 @@ export const getUserCount = async (filter: FilterQuery<UserDocument>) => {
  * @returns {Promise<{usernames:string[], total:number}>} Promise object with usernames[] and total count of users
  */
 export const getUsernames = async (
-  limit: number = 20,
-  skip: number = 0
+  limit = 20,
+  skip = 0
 ): Promise<{ usernames: string[]; total: number } | undefined> => {
   try {
-    const users = await User.find({})
-      .select("username")
-      .limit(limit)
-      .skip(skip)
-      .exec();
+    const users = await User.find({}).select("username").limit(limit).skip(skip).exec();
 
     return {
       usernames: users.map((user) => user.username),
-      total: await User.countDocuments(),
+      total: await User.countDocuments()
     };
   } catch (err) {
     logger.error(`Error occured while getting users usernames. ${err}`);
@@ -126,19 +100,15 @@ export const getUsernames = async (
  * @returns {Promise<{twitchNames:string[], total:number}>} Promise object with twitchNames[] and total count of users
  */
 export const getTwitchNames = async (
-  limit: number = 20,
-  skip: number = 0
+  limit = 20,
+  skip = 0
 ): Promise<{ twitchNames: string[]; total: number } | undefined> => {
   try {
-    const users = await User.find({})
-      .select("twitchName")
-      .limit(limit)
-      .skip(skip)
-      .exec();
+    const users = await User.find({}).select("twitchName").limit(limit).skip(skip).exec();
 
     return {
-      twitchNames: users.map((user) => user.twitchName!),
-      total: await User.countDocuments(),
+      twitchNames: users.map((user) => user.twitchName || "undefinedTwitchName"),
+      total: await User.countDocuments()
     };
   } catch (err) {
     logger.error(`Error occured while getting users twitch names. ${err}`);
@@ -161,10 +131,7 @@ export const createUser = async (userData: UserCreateData) => {
   }
 };
 
-export const createUserIfNotExist = async (
-  userFilter: FilterQuery<UserDocument>,
-  userData: UserCreateData
-) => {
+export const createUserIfNotExist = async (userFilter: FilterQuery<UserDocument>, userData: UserCreateData) => {
   const userExist = await isUserInDB(userFilter);
   if (userExist) return userExist;
 
@@ -178,13 +145,10 @@ export const createUserIfNotExist = async (
   }
 };
 
-export const updateUser = async (
-  filter: FilterQuery<UserDocument>,
-  updateData: UpdateQuery<UserUpdateData>
-) => {
+export const updateUser = async (filter: FilterQuery<UserDocument>, updateData: UpdateQuery<UserUpdateData>) => {
   try {
     const updatedUser = await User.findOneAndUpdate(filter, updateData, {
-      new: true,
+      new: true
     });
 
     const user = checkExistResource(updatedUser, "User");
@@ -201,8 +165,8 @@ export const getFollowersCount = async (startDate?: Date, endDate?: Date) => {
     const followersCount = await getUserCount({
       ...(startDate &&
         endDate && {
-          follower: { $gte: startDate, $lt: endDate },
-        }),
+          follower: { $gte: startDate, $lt: endDate }
+        })
     });
     return followersCount;
   } catch (err) {

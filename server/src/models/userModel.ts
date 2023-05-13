@@ -13,7 +13,7 @@ const UserSchema: Schema<UserDocument> = new Schema(
     lastSeen: { type: Date, default: Date.now },
     points: { type: Number, default: 0 },
     watchTime: { type: Number, default: 0 },
-    messageCount: { type: Number, default: 0 },
+    messageCount: { type: Number, default: 0 }
   },
   { timestamps: true }
 );

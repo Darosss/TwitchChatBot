@@ -5,16 +5,16 @@ import type {
   InterServerEvents,
   SocketData,
   AudioYTDataInfo,
-  AudioYTData,
+  AudioYTData
 } from "@socket";
 import { MusicConfigs } from "@models/types";
-import { google, youtube_v3 } from "googleapis";
 import moment from "moment";
 import MusicHeadHandler from "./MusicHeadHandler";
 import { shuffleArray } from "@utils/arraysOperationUtiil";
 import { SongProperties } from "./types";
 import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";
 import { isValidUrl } from "@utils/stringsOperationsUtil";
+import YoutubeApiHandler from "./YoutubeAPIHandler";
 
 interface PlaylistDetails {
   id: string;
@@ -23,34 +23,23 @@ interface PlaylistDetails {
 }
 
 class MusicYTHandler extends MusicHeadHandler {
-  private youtube: youtube_v3.Youtube;
+  private readonly youtubeAPIHandler: YoutubeApiHandler;
   private maxSongDuration = 60 * 10; // 10min; TODO: add to configs
   private playlistDetails: PlaylistDetails = {
     id: "",
     name: "",
-    count: 0,
+    count: 0
   };
   constructor(
-    socketIO: Server<
-      ClientToServerEvents,
-      ServerToClientEvents,
-      InterServerEvents,
-      SocketData
-    >,
+    socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     sayInAuthorizedChannel: (message: string) => void,
     configs: MusicConfigs
   ) {
     super(socketIO, sayInAuthorizedChannel, configs, "audioYT");
-    this.youtube = google.youtube({
-      version: "v3",
-      auth: process.env.YOUTUBE_API_KEY_V3,
-    });
+    this.youtubeAPIHandler = new YoutubeApiHandler();
   }
 
-  protected async addSongToQue(
-    song: SongProperties,
-    requester = ""
-  ): Promise<void> {
+  protected async addSongToQue(song: SongProperties, requester = ""): Promise<void> {
     try {
       const { id, name, duration } = song;
       this.musicQue.push([
@@ -61,8 +50,8 @@ class MusicYTHandler extends MusicHeadHandler {
           duration: duration,
           currentTime: 0,
           requester: requester,
-          volume: this.volume,
-        },
+          volume: this.volume
+        }
       ]);
     } catch (err) {
       console.error("Error occured while trying adding song to que", err);
@@ -85,25 +74,20 @@ class MusicYTHandler extends MusicHeadHandler {
 
   //TODO: add possibility to take more than 50 items of playlist
   private async addVideosFromCurrentPlaylistIntoSongsList() {
-    const videosIds = await this.getYoutubePlaylistItemsById(
+    const videosIds = await this.youtubeAPIHandler.getYoutubePlaylistVideosIds(
       this.playlistDetails.id,
       this.playlistDetails.count
     );
     if (videosIds.length <= 0) return;
 
-    const videosDetails = await this.getYoutubeVideosById(videosIds);
+    const videosDetails = await this.getYoutubeVideosDetailsById(videosIds);
 
     if (videosDetails) {
-      this.clientSay(
-        `Loaded ${videosDetails.length} songs from ${this.playlistDetails.name} playlist into que.`
-      );
+      this.clientSay(`Loaded ${videosDetails.length} songs from ${this.playlistDetails.name} playlist into que.`);
       this.songsList = videosDetails;
     }
   }
-  public async loadNewSongs(
-    idOrFolderName: string,
-    shuffle = false
-  ): Promise<void> {
+  public async loadNewSongs(idOrFolderName: string, shuffle = false): Promise<void> {
     const playlistId = this.checkValidationOfUrlPlaylist(idOrFolderName);
     if (!playlistId) return;
 
@@ -138,7 +122,7 @@ class MusicYTHandler extends MusicHeadHandler {
   public getAudioInfo(): AudioYTDataInfo | undefined {
     const songsInQue: [string, string][] = [];
 
-    this.musicQue.forEach(([id, audioProps]) => {
+    this.musicQue.forEach(([, audioProps]) => {
       songsInQue.push([audioProps.name, audioProps.requester || ""]);
     });
     const info: AudioYTDataInfo = {
@@ -147,7 +131,7 @@ class MusicYTHandler extends MusicHeadHandler {
       currentTime: this.getCurrentTimeSong(),
       songsInQue: songsInQue,
       isPlaying: this.isPlaying,
-      volume: this.volume,
+      volume: this.volume
     };
     return info;
   }
@@ -157,130 +141,55 @@ class MusicYTHandler extends MusicHeadHandler {
       const currentTimeSong = this.getCurrentTimeSong();
       return {
         ...this.currentSong,
-        currentTime: currentTimeSong,
+        currentTime: currentTimeSong
       };
     }
   }
 
-  private async getYoutubePlaylistItemsById(
-    id: string,
-    maxResults = 20
-  ): Promise<string[]> {
+  private async getYoutubePlaylistDetailsById(id: string): Promise<PlaylistDetails | undefined> {
     try {
-      const foundPlaylistItems = await this.youtube.playlistItems.list({
-        part: ["id", "snippet", "status"],
-        playlistId: id,
-        maxResults: maxResults,
-      });
+      const foundPlaylist = await this.youtubeAPIHandler.getYoutubePlaylistById(id);
 
-      const playlistItems = foundPlaylistItems.data.items;
-      if (!playlistItems) return [];
+      if (!foundPlaylist) return;
 
-      const videosIds = playlistItems.map((item) => {
-        const privacyStatus = item.status?.privacyStatus;
-        const videoId = item.snippet?.resourceId?.videoId;
+      const details: PlaylistDetails = {
+        id: foundPlaylist.id || "",
+        name: foundPlaylist.snippet?.title || "",
+        count: foundPlaylist.contentDetails?.itemCount || 0
+      };
 
-        if (videoId && privacyStatus === "public") return videoId;
-        return "";
-      });
-
-      return videosIds;
-    } catch (err) {
-      console.error(err);
-
-      this.clientSay("Playlist isn't a playlist? Clueless");
-      return [];
-    }
-  }
-
-  private async getYoutubePlaylistDetailsById(
-    id: string
-  ): Promise<PlaylistDetails | undefined> {
-    try {
-      const foundPlaylist = await this.youtube.playlists.list({
-        part: ["id", "snippet", "contentDetails"],
-        id: [id],
-        maxResults: 1,
-      });
-
-      const items = foundPlaylist.data.items!;
-
-      if (items!.length > 0) {
-        const details: PlaylistDetails = {
-          id: items[0].id!,
-          name: items[0].snippet!.title || "",
-          count: items[0].contentDetails!.itemCount || 0,
-        };
-
-        return details;
-      }
+      return details;
     } catch (err) {
       console.error(err);
     }
   }
 
   private async setCurrentPlaylistNameById(playlistId: string) {
-    const playlistDetails = await this.getYoutubePlaylistDetailsById(
-      playlistId
-    );
+    const playlistDetails = await this.getYoutubePlaylistDetailsById(playlistId);
 
     if (!playlistDetails) return;
     this.playlistDetails = playlistDetails;
   }
 
-  private async getYoutubeVideosById(
-    ids: string[]
-  ): Promise<SongProperties[] | undefined> {
-    const videoDetails = await this.youtube.videos.list({
-      part: ["contentDetails", "snippet"],
-      id: ids,
+  private async getYoutubeVideosDetailsById(ids: string[]): Promise<SongProperties[] | undefined> {
+    const videoDetails = await this.youtubeAPIHandler.getYoutubeVideosById(ids);
+
+    if (!videoDetails) return;
+
+    const foundedVideos = videoDetails?.map<SongProperties>((item) => {
+      return {
+        id: item.id || "",
+        name: item.snippet?.title || "",
+        duration: moment.duration(item.contentDetails?.duration || 0).asSeconds()
+      };
     });
 
-    const foundedVideos = videoDetails.data.items?.map<SongProperties>(
-      (item) => {
-        return {
-          id: item.id || "",
-          name: item.snippet!.title || "",
-          duration: moment.duration(item.contentDetails!.duration).asSeconds(),
-        };
-      }
-    );
-
-    const filter = foundedVideos?.filter((item) => {
+    // in case where id and name === "" filter;
+    const filteredVideos = foundedVideos?.filter((item) => {
       if (item.id.length > 0 && item.name.length > 0) return true;
     });
 
-    return filter;
-  }
-
-  private async getYoutubeSearchItemsIds(
-    opts: youtube_v3.Params$Resource$Search$List
-  ): Promise<string[] | undefined> {
-    const {
-      part = ["snippet"],
-      q,
-      maxResults = 1,
-      videoCategoryId = "10",
-    } = opts;
-    const searchResult = await this.youtube.search.list({
-      part: part,
-      q: q,
-      type: ["video"],
-      videoEmbeddable: "true",
-      videoCategoryId: videoCategoryId,
-      maxResults: maxResults,
-    });
-
-    const items = searchResult.data.items;
-
-    const videosIds = items?.map((item) => {
-      const videoId = item.id?.videoId;
-
-      if (videoId) return videoId;
-      return "";
-    });
-
-    return videosIds;
+    return filteredVideos;
   }
 
   public override pausePlayer() {
@@ -292,9 +201,7 @@ class MusicYTHandler extends MusicHeadHandler {
   }
 
   private checkIfUserHasAnySongInRequest(user: string) {
-    const atLeastOne = this.songRequestList.some(
-      ([username]) => username === user
-    );
+    const atLeastOne = this.songRequestList.some(([username]) => username === user);
     return atLeastOne;
   }
 
@@ -307,16 +214,9 @@ class MusicYTHandler extends MusicHeadHandler {
 
     const remainingTime = this.getRemainingTimeToRequestedSong(username);
 
-    this.clientSay(
-      `@${username}, your song (${this.getNextUserSongName(
-        username
-      )}) will be in ~${remainingTime}`
-    );
+    this.clientSay(`@${username}, your song (${this.getNextUserSongName(username)}) will be in ~${remainingTime}`);
   }
-  private async addRequestedSongToPlayer(
-    username: string,
-    song: SongProperties
-  ) {
+  private async addRequestedSongToPlayer(username: string, song: SongProperties) {
     const { id } = song;
     if (!this.isAlreadySongInQue(id)) {
       this.songRequestList.push([username, song]);
@@ -350,9 +250,7 @@ class MusicYTHandler extends MusicHeadHandler {
       return this.clientSay(`@${username}, couldn't find any similar songs`);
     } else if (foundSong.duration > this.maxSongDuration) {
       return this.clientSay(
-        `@${username}, your song is too long. It exceeds ${convertSecondsToMS(
-          this.maxSongDuration
-        )} minutes`
+        `@${username}, your song is too long. It exceeds ${convertSecondsToMS(this.maxSongDuration)} minutes`
       );
     }
     const added = await this.addRequestedSongToPlayer(username, foundSong);
@@ -362,22 +260,18 @@ class MusicYTHandler extends MusicHeadHandler {
       return;
     }
 
-    this.clientSay(
-      `@${username}, your song is already in que, request something else`
-    );
+    this.clientSay(`@${username}, your song is already in que, request something else`);
   }
 
-  private async searchForRequestedSong(
-    searchQuery: string
-  ): Promise<SongProperties | undefined> {
-    const searchedItem = await this.getYoutubeSearchItemsIds({
+  private async searchForRequestedSong(searchQuery: string): Promise<SongProperties | undefined> {
+    const searchedItem = await this.youtubeAPIHandler.getYoutubeSearchVideosIds({
       q: searchQuery,
-      maxResults: 1,
+      maxResults: 1
     });
 
     if (!searchedItem) return;
 
-    const videoDetails = await this.getYoutubeVideosById(searchedItem);
+    const videoDetails = await this.getYoutubeVideosDetailsById(searchedItem);
 
     if (videoDetails) return videoDetails[0];
   }
@@ -391,16 +285,14 @@ class MusicYTHandler extends MusicHeadHandler {
     if (this.haveUserMoreSongsThanRequestLimit(username)) {
       this.clientSay(
         `@${username}, you have already reached song request limit. Wait for them to finish.
-        Your song (${this.getNextUserSongName(
-          username
-        )})will be in ~${this.getRemainingTimeToRequestedSong(username)}`
+        Your song (${this.getNextUserSongName(username)})will be in ~${this.getRemainingTimeToRequestedSong(username)}`
       );
       return true;
     }
   }
 
   private haveUserMoreSongsThanRequestLimit(username: string) {
-    let count: { [key: string]: number } = this.songRequestList.reduce(
+    const count: { [key: string]: number } = this.songRequestList.reduce(
       (acc: { [key: string]: number }, [username]) => {
         acc[username] = (acc[username] || 0) + 1;
         return acc;
@@ -411,9 +303,7 @@ class MusicYTHandler extends MusicHeadHandler {
     return count[username] >= this.configs.maxSongRequestByUser;
   }
   private getNextUserSongName(user: string) {
-    const foundedRequest = this.songRequestList.find(
-      ([username]) => username === user
-    );
+    const foundedRequest = this.songRequestList.find(([username]) => username === user);
     if (foundedRequest) return foundedRequest[1].name;
 
     return "No next song, something went wrong Kappa";
@@ -423,7 +313,7 @@ class MusicYTHandler extends MusicHeadHandler {
     let totalDuration = 0;
 
     totalDuration += this.getRemainingTimeOfCurrentSong();
-    this.musicQue.every(([id, audioProps]) => {
+    this.musicQue.every(([, audioProps]) => {
       if (audioProps.requester !== username) {
         totalDuration += audioProps.duration;
         return true;

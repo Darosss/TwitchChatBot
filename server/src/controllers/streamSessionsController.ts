@@ -1,10 +1,5 @@
-import Express, { Request, Response, NextFunction } from "express";
-import {
-  RequestParams,
-  RequestQueryMessage,
-  RequestQuerySession,
-  RequestRedemptionQuery,
-} from "@types";
+import { Request, Response, NextFunction } from "express";
+import { RequestParams, RequestQueryMessage, RequestQuerySession, RequestRedemptionQuery } from "@types";
 import { filterSessionByUrlParams } from "./filters/sessionFilter";
 import {
   getCurrentStreamSession,
@@ -12,31 +7,27 @@ import {
   getStreamSessions,
   getStreamSessionsCount,
   getStreamSessionById,
-  getLatestStreamSession,
+  getLatestStreamSession
 } from "@services/streamSessions";
 import { getMessages, getMessagesCount } from "@services/messages";
 import { filterMessagesByUrlParams } from "./filters/messagesFilter";
 import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
 import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
+import { AppError } from "@utils/ErrorHandlerUtil";
 
 export const getStreamSessionsList = async (
   req: Request<{}, {}, {}, RequestQuerySession>,
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    page = 1,
-    limit = 50,
-    sortBy = "sessionStart",
-    sortOrder = "desc",
-  } = req.query;
+  const { page = 1, limit = 50, sortBy = "sessionStart", sortOrder = "desc" } = req.query;
 
   const searchFilter = filterSessionByUrlParams(req.query);
   try {
     const streamSessions = await getStreamSessions(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 }
     });
 
     const count = await getStreamSessionsCount(searchFilter);
@@ -45,43 +36,35 @@ export const getStreamSessionsList = async (
       data: streamSessions,
       totalPages: Math.ceil(count / Number(limit)),
       count: Number(count),
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const getCurrentSession = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getCurrentSession = async (req: Request, res: Response, next: NextFunction) => {
   try {
     let streamSession = await getCurrentStreamSession({});
 
     if (!streamSession) streamSession = await getLatestStreamSession({});
 
     res.status(200).send({
-      data: streamSession,
+      data: streamSession
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const getSessionById = async (
-  req: Request<RequestParams, {}, {}, {}>,
-  res: Response,
-  next: NextFunction
-) => {
+export const getSessionById = async (req: Request<RequestParams, {}, {}, {}>, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
   try {
     const streamSession = await getStreamSessionById(id, {});
 
     return res.status(200).send({
-      data: streamSession,
+      data: streamSession
     });
   } catch (err) {
     next(err);
@@ -97,17 +80,18 @@ export const getSessionStatisticsById = async (
 
   try {
     const streamSession = await getStreamSessionById(id, {});
+    if (streamSession) {
+      const sessionStatstics = await getStreamSessionStatistics(streamSession, {
+        limitMostUsedWords: 10,
+        limitTopMessageUsers: 10,
+        limitTopRedemptionsUsers: 10,
+        limitViewers: 0
+      });
 
-    const sessionStatstics = await getStreamSessionStatistics(streamSession!, {
-      limitMostUsedWords: 10,
-      limitTopMessageUsers: 10,
-      limitTopRedemptionsUsers: 10,
-      limitViewers: 0,
-    });
-
-    res.status(200).send({
-      data: sessionStatstics,
-    });
+      return res.status(200).send({
+        data: sessionStatstics
+      });
+    }
   } catch (err) {
     next(err);
   }
@@ -130,8 +114,8 @@ export const getCurrentSessionMessages = async (
       {
         date: {
           $gte: streamSession?.sessionStart,
-          $lte: streamSession?.sessionEnd,
-        },
+          $lte: streamSession?.sessionEnd
+        }
       },
       await filterMessagesByUrlParams(req.query)
     );
@@ -140,7 +124,7 @@ export const getCurrentSessionMessages = async (
       limit: Number(limit),
       skip: Number(page),
       sort: { date: -1 },
-      select: { __v: 0 },
+      select: { __v: 0 }
     });
 
     const count = await getMessagesCount(searchFilter);
@@ -148,7 +132,7 @@ export const getCurrentSessionMessages = async (
       data: messages,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
@@ -172,15 +156,15 @@ export const getCurrentSessionRedemptions = async (
       {
         redemptionDate: {
           $gte: streamSession?.sessionStart,
-          $lte: streamSession?.sessionEnd,
-        },
+          $lte: streamSession?.sessionEnd
+        }
       },
       filterRedemptionsByUrlParams(req.query)
     );
     const redemptions = await getRedemptions(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      sort: { redemptionDate: -1 },
+      sort: { redemptionDate: -1 }
     });
 
     const count = await getRedemptionsCount(searchFilter);
@@ -189,32 +173,25 @@ export const getCurrentSessionRedemptions = async (
       data: redemptions,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const getCurrentSessionStatistics = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getCurrentSessionStatistics = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let streamSession = await getCurrentStreamSession({});
+    const streamSession = (await getCurrentStreamSession({})) || (await getLatestStreamSession({}));
 
-    if (!streamSession) {
-      streamSession = await getLatestStreamSession({});
+    if (streamSession) {
+      const sessionStatstics = await getStreamSessionStatistics(streamSession, {});
+      return res.status(200).send({
+        data: sessionStatstics
+      });
     }
 
-    const sessionStatstics = await getStreamSessionStatistics(
-      streamSession!,
-      {}
-    );
-    res.status(200).send({
-      data: sessionStatstics,
-    });
+    throw new AppError(404, "Not found any sessions");
   } catch (err) {
     next(err);
   }
@@ -235,8 +212,8 @@ export const getSessionMessages = async (
       {
         date: {
           $gte: session?.sessionStart,
-          $lte: session?.sessionEnd,
-        },
+          $lte: session?.sessionEnd
+        }
       },
       await filterMessagesByUrlParams(req.query)
     );
@@ -245,7 +222,7 @@ export const getSessionMessages = async (
       limit: Number(limit),
       skip: Number(page),
       sort: { date: -1 },
-      select: { __v: 0 },
+      select: { __v: 0 }
     });
 
     const count = await getMessagesCount(searchFilter);
@@ -253,7 +230,7 @@ export const getSessionMessages = async (
       data: messages,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
@@ -275,15 +252,15 @@ export const getSessionRedemptions = async (
       {
         redemptionDate: {
           $gte: session?.sessionStart,
-          $lte: session?.sessionEnd,
-        },
+          $lte: session?.sessionEnd
+        }
       },
       filterRedemptionsByUrlParams(req.query)
     );
     const redemptions = await getRedemptions(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      sort: { redemptionDate: -1 },
+      sort: { redemptionDate: -1 }
     });
 
     const count = await getRedemptionsCount(searchFilter);
@@ -292,7 +269,7 @@ export const getSessionRedemptions = async (
       data: redemptions,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);

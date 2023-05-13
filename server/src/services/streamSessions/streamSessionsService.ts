@@ -1,10 +1,6 @@
 import { StreamSession } from "@models/streamSessionModel";
 import { StreamSessionModel, StreamSessionDocument } from "@models/types";
-import {
-  getMostActiveUsersByMsgs,
-  getMostUsedWord,
-  getMessagesCountByDate,
-} from "@services/messages";
+import { getMostActiveUsersByMsgs, getMostUsedWord, getMessagesCountByDate } from "@services/messages";
 import { getMostActiveUsersByRedemptions } from "@services/redemptions";
 import { getFollowersCount } from "@services/users";
 import { checkExistResource } from "@utils/checkExistResourceUtil";
@@ -17,19 +13,14 @@ import {
   ManyStreamSessionsFindOptions,
   StreamSessionCreateData,
   StreamSessionFindOptions,
-  StreamSessionOptionalData,
+  StreamSessionOptionalData
 } from "./types/";
 
 export const getStreamSessions = async (
   filter: FilterQuery<StreamSessionDocument> = {},
   streamSessionFindOptions: ManyStreamSessionsFindOptions
 ) => {
-  const {
-    limit = 50,
-    skip = 1,
-    sort = { createdAt: -1 },
-    select = { __v: 0 },
-  } = streamSessionFindOptions;
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = streamSessionFindOptions;
   try {
     const streamSessions = await StreamSession.find(filter)
       .limit(limit * 1)
@@ -44,36 +35,22 @@ export const getStreamSessions = async (
   }
 };
 
-export const getStreamSessionById = async (
-  id: string,
-  streamSessionFindOptions: StreamSessionFindOptions
-) => {
+export const getStreamSessionById = async (id: string, streamSessionFindOptions: StreamSessionFindOptions) => {
   const { select = { __v: 0 } } = streamSessionFindOptions;
 
   try {
-    const foundStreamSession = await StreamSession.findById(id)
-      .select(select)
-      .populate("events.user");
+    const foundStreamSession = await StreamSession.findById(id).select(select).populate("events.user");
 
-    const streamSession = checkExistResource(
-      foundStreamSession,
-      `Stream session with id(${id})`
-    );
+    const streamSession = checkExistResource(foundStreamSession, `Stream session with id(${id})`);
 
     return streamSession;
   } catch (err) {
-    logger.error(
-      `Error occured while getting stream session by id(${id}). ${err}`
-    );
+    logger.error(`Error occured while getting stream session by id(${id}). ${err}`);
     handleAppError(err);
   }
 };
 
-export const getStreamSessionStatisticsById = async (id: string) => {};
-
-export const getCurrentStreamSession = async (
-  streamSessionFindOptions: StreamSessionFindOptions
-) => {
+export const getCurrentStreamSession = async (streamSessionFindOptions: StreamSessionFindOptions) => {
   const { select = { __v: 0 } } = streamSessionFindOptions;
 
   const currentDate = new Date();
@@ -81,12 +58,9 @@ export const getCurrentStreamSession = async (
     $and: [
       { sessionStart: { $lte: currentDate } },
       {
-        $or: [
-          { sessionEnd: { $gte: currentDate } },
-          { sessionEnd: { $exists: false } },
-        ],
-      },
-    ],
+        $or: [{ sessionEnd: { $gte: currentDate } }, { sessionEnd: { $exists: false } }]
+      }
+    ]
   };
   try {
     const streamSession = await StreamSession.findOne(filter)
@@ -102,18 +76,14 @@ export const getCurrentStreamSession = async (
   }
 };
 
-export const updateCurrentStreamSession = async (
-  updateData: UpdateQuery<StreamSessionOptionalData>
-) => {
+export const updateCurrentStreamSession = async (updateData: UpdateQuery<StreamSessionOptionalData>) => {
   const currentStreamSession = await getCurrentStreamSession({});
 
   if (!currentStreamSession) return null;
   try {
-    const updatedStreamSession = await StreamSession.findByIdAndUpdate(
-      currentStreamSession.id,
-      updateData,
-      { new: true }
-    );
+    const updatedStreamSession = await StreamSession.findByIdAndUpdate(currentStreamSession.id, updateData, {
+      new: true
+    });
 
     return updatedStreamSession;
   } catch (err) {
@@ -122,9 +92,7 @@ export const updateCurrentStreamSession = async (
   }
 };
 
-export const getLatestStreamSession = async (
-  streamSessionFindOptions: StreamSessionFindOptions
-) => {
+export const getLatestStreamSession = async (streamSessionFindOptions: StreamSessionFindOptions) => {
   const { select = { __v: 0 } } = streamSessionFindOptions;
 
   try {
@@ -134,10 +102,7 @@ export const getLatestStreamSession = async (
       .select(select)
       .populate("events.user");
 
-    const streamSession = checkExistResource(
-      foundStreamSession,
-      "Stream session"
-    );
+    const streamSession = checkExistResource<StreamSessionDocument>(foundStreamSession, "Stream session");
 
     return streamSession;
   } catch (err) {
@@ -151,32 +116,19 @@ export const getStreamSessionStatistics = async (
   options: StreamSessionStatisticOptions
 ) => {
   const { sessionStart, sessionEnd, viewers } = session;
-  const {
-    limitTopRedemptionsUsers = 3,
-    limitMostUsedWords = 3,
-    limitTopMessageUsers = 3,
-    limitViewers = 10,
-  } = options;
+  const { limitTopRedemptionsUsers = 3, limitMostUsedWords = 3, limitTopMessageUsers = 3, limitViewers = 10 } = options;
 
   const viewersPeeks = new Map(getLastNItemsFromMap(viewers, limitViewers));
 
   const messagesCount = await getMessagesCountByDate(sessionStart, sessionEnd);
-  const topActiveUsersByMsgs = await getMostActiveUsersByMsgs(
-    limitTopMessageUsers,
-    sessionStart,
-    sessionEnd
-  );
+  const topActiveUsersByMsgs = await getMostActiveUsersByMsgs(limitTopMessageUsers, sessionStart, sessionEnd);
   const topActiveUsersByRedemptions = await getMostActiveUsersByRedemptions(
     limitTopRedemptionsUsers,
     sessionStart,
     sessionEnd
   );
 
-  const topUsedWords = await getMostUsedWord(
-    limitMostUsedWords,
-    sessionStart,
-    sessionEnd
-  );
+  const topUsedWords = await getMostUsedWord(limitMostUsedWords, sessionStart, sessionEnd);
 
   const followersSession = await getFollowersCount(sessionStart, sessionEnd);
 
@@ -186,19 +138,15 @@ export const getStreamSessionStatistics = async (
     topRedemptionsUsers: topActiveUsersByRedemptions,
     topUsedWords: topUsedWords,
     followersCount: followersSession,
-    viewers: Object.fromEntries(viewersPeeks),
+    viewers: Object.fromEntries(viewersPeeks)
   };
 };
 
-export const getStreamSessionsCount = async (
-  filter: FilterQuery<StreamSessionDocument> = {}
-) => {
+export const getStreamSessionsCount = async (filter: FilterQuery<StreamSessionDocument> = {}) => {
   return await StreamSession.countDocuments(filter);
 };
 
-export const createStreamSession = async (
-  streamSessionData: StreamSessionCreateData
-) => {
+export const createStreamSession = async (streamSessionData: StreamSessionCreateData) => {
   try {
     const streamSession = await StreamSession.create(streamSessionData);
     return streamSession;
@@ -208,18 +156,11 @@ export const createStreamSession = async (
   }
 };
 
-export const updateStreamSessionById = async (
-  id: string,
-  updateData: UpdateQuery<StreamSessionOptionalData>
-) => {
+export const updateStreamSessionById = async (id: string, updateData: UpdateQuery<StreamSessionOptionalData>) => {
   try {
-    const streamSession = await StreamSession.findByIdAndUpdate(
-      id,
-      updateData,
-      {
-        new: true,
-      }
-    );
+    const streamSession = await StreamSession.findByIdAndUpdate(id, updateData, {
+      new: true
+    });
     return streamSession;
   } catch (err) {
     console.error(err);

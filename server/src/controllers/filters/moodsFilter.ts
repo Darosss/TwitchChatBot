@@ -1,14 +1,13 @@
-import { MoodModel } from "@models/types";
 import { RequestSearch } from "@types";
 
-export const filterMoodsByUrlParams = (params: RequestSearch<MoodModel>) => {
+export const filterMoodsByUrlParams = (params: RequestSearch) => {
   const { search_name } = params;
   const filterName = {
-    ...(search_name && { name: { $regex: search_name, $options: "i" } }),
+    ...(search_name && { name: { $regex: search_name, $options: "i" } })
   };
 
   const searchFilter = {
-    $and: [filterName],
+    $and: [filterName]
   };
   return searchFilter;
 };

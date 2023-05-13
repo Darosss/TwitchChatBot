@@ -1,20 +1,18 @@
 import { RequestQueryMessageCategories } from "@types";
 
-export const filterMessageCategoriesByUrlParams = async (
-  params: RequestQueryMessageCategories
-) => {
+export const filterMessageCategoriesByUrlParams = async (params: RequestQueryMessageCategories) => {
   const { category, messages } = params;
 
   const filterCategory = {
-    ...(category && { category: { $regex: category, $options: "i" } }),
+    ...(category && { category: { $regex: category, $options: "i" } })
   };
 
   const filterMessages = {
-    ...(messages && { messages: { $regex: messages, $options: "i" } }),
+    ...(messages && { messages: { $regex: messages, $options: "i" } })
   };
 
   const searchFilter = {
-    $and: [filterCategory, filterMessages],
+    $and: [filterCategory, filterMessages]
   };
   return searchFilter;
 };

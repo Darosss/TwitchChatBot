@@ -8,6 +8,7 @@ declare global {
       BACKEND_PORT: string;
       CLIENT_ID: string;
       CLIENT_SECRET: string;
+      YOUTUBE_API_KEY_V3: string;
       ENCRYPTION_KEY: string;
       REDIRECT_URL: string;
       DATABASE_CONNECT_URL: string;

@@ -1,10 +1,10 @@
-import Express, { Router } from "express";
+import { Router } from "express";
 import {
   getOverlaysList,
   addNewOverlay,
   editOverlayById,
   removeOverlayById,
-  getOverlayById,
+  getOverlayById
 } from "@controllers/overlaysController";
 const overlayRouter = Router();
 

@@ -1,3 +1,2 @@
 import { ConfigModel } from "@models/types";
-export interface ConfigUpdateData
-  extends Partial<Omit<ConfigModel, "_id" | "createdAt" | "updatedAt">> {}
+export type ConfigUpdateData = Partial<Omit<ConfigModel, "_id" | "createdAt" | "updatedAt">>;

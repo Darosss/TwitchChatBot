@@ -1,4 +1,4 @@
-import express, { Express } from "express";
+import { Express } from "express";
 import auth from "./authRoute";
 import chatCommandsRouter from "./chatCommandsRoute";
 import configsRouter from "./configsRoute";

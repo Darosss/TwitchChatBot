@@ -9,7 +9,7 @@ import {
   ManyMessageCategoriesFindOptions,
   MessageCategoryCreateData,
   MessageCategoryData,
-  MessageCategoryFindOptions,
+  MessageCategoryFindOptions
 } from "./types";
 import { randomWithMax } from "@utils/randomNumbersUtil";
 import { getLeastMessagePipeline } from "@aggregations/messageCategoriesPipeline";
@@ -18,13 +18,7 @@ export const getMessageCategories = async (
   filter: FilterQuery<MessageCategoryModel> = {},
   categoriesFindOptions: ManyMessageCategoriesFindOptions
 ) => {
-  const {
-    limit = 50,
-    skip = 1,
-    sort = {},
-    select = { __v: 0 },
-    populateSelect,
-  } = categoriesFindOptions;
+  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 }, populateSelect } = categoriesFindOptions;
   try {
     const categories = await MessageCategory.find(filter)
       .limit(limit * 1)
@@ -40,28 +34,19 @@ export const getMessageCategories = async (
   }
 };
 
-export const getMessageCategoriesCount = async (
-  filter: FilterQuery<MessageCategoryModel>
-) => {
+export const getMessageCategoriesCount = async (filter: FilterQuery<MessageCategoryModel>) => {
   const count = await MessageCategory.countDocuments(filter);
   return count;
 };
 
-export const getMessageCategoryById = async (
-  id: string,
-  categoryFindOptions: MessageCategoryFindOptions
-) => {
+export const getMessageCategoryById = async (id: string, categoryFindOptions: MessageCategoryFindOptions) => {
   const { select = { __v: 0 }, populateSelect } = categoryFindOptions;
   try {
-    const foundCategory = await MessageCategory.findById(id)
-      .select(select)
-      .populate(populateSelect);
+    const foundCategory = await MessageCategory.findById(id).select(select).populate(populateSelect);
 
     return foundCategory;
   } catch (err) {
-    logger.error(
-      `Error occured while getting message category with id(${id}). ${err}`
-    );
+    logger.error(`Error occured while getting message category with id(${id}). ${err}`);
     handleAppError(err);
   }
 };
@@ -70,34 +55,23 @@ export const getMessagesByCategory = async (category: string) => {
   try {
     const foundCategory = await MessageCategory.findOne({ category: category });
 
-    const messageCategory = checkExistResource(
-      foundCategory,
-      `Message category ${category}`
-    );
+    const messageCategory = checkExistResource(foundCategory, `Message category ${category}`);
 
     return messageCategory.messages;
   } catch (err) {
-    logger.error(
-      `Error occured while getting messages from category ${category}: ${err}`
-    );
+    logger.error(`Error occured while getting messages from category ${category}: ${err}`);
     handleAppError(err);
   }
 };
 
-export const getRandomCategoryMessage = async (
-  modesEnabled: boolean = false
-) => {
+export const getRandomCategoryMessage = async (modesEnabled = false) => {
   try {
-    const pipeline: PipelineStage[] = [
-      { $match: { enabled: true } },
-      { $sample: { size: 1 } },
-    ];
+    const pipeline: PipelineStage[] = [{ $match: { enabled: true } }, { $sample: { size: 1 } }];
 
     if (modesEnabled) {
       pipeline.unshift(...modesPipeline);
     }
-    const foundMessageCategory =
-      await MessageCategory.aggregate<MessageCategoryDocument>(pipeline);
+    const foundMessageCategory = await MessageCategory.aggregate<MessageCategoryDocument>(pipeline);
 
     if (foundMessageCategory.length > 0) {
       return foundMessageCategory[0];
@@ -109,22 +83,17 @@ export const getRandomCategoryMessage = async (
   }
 };
 
-export const getRandomMessageFromCategory = async (
-  messageCategory: MessageCategoryModel
-) => {
+export const getRandomMessageFromCategory = async (messageCategory: MessageCategoryModel) => {
   const { messages } = messageCategory;
   return messages[randomWithMax(messages.length)];
 };
 
-export const getLeastUsedMessagesFromMessageCategory = async (
-  id: string,
-  divideMessagesBy = 3
-): Promise<string[]> => {
+export const getLeastUsedMessagesFromMessageCategory = async (id: string, divideMessagesBy = 3): Promise<string[]> => {
   const categorySortedMsgs = await MessageCategory.aggregate<{
     leastUsedMessages: string[];
   }>([
     {
-      $match: { _id: new mongoose.Types.ObjectId(id) },
+      $match: { _id: new mongoose.Types.ObjectId(id) }
     },
     ...getLeastMessagePipeline(divideMessagesBy),
     {
@@ -134,11 +103,11 @@ export const getLeastUsedMessagesFromMessageCategory = async (
           $map: {
             input: "$leastUsedMessages",
             as: "tuple",
-            in: { $arrayElemAt: ["$$tuple", 0] },
-          },
-        },
-      },
-    },
+            in: { $arrayElemAt: ["$$tuple", 0] }
+          }
+        }
+      }
+    }
   ]);
 
   if (categorySortedMsgs.length > 0) {
@@ -149,7 +118,7 @@ export const getLeastUsedMessagesFromMessageCategory = async (
 };
 
 export const getLeastMessagesFromEnabledCategories = async (
-  modesEnabled: boolean = false,
+  modesEnabled = false,
   divideMessagesBy = 3
 ): Promise<[string, string][]> => {
   const pipeline: PipelineStage[] = [
@@ -162,22 +131,22 @@ export const getLeastMessagesFromEnabledCategories = async (
           $map: {
             input: "$leastUsedMessages",
             as: "tuple",
-            in: [{ $arrayElemAt: ["$$tuple", 0] }, "$_id"],
-          },
-        },
-      },
+            in: [{ $arrayElemAt: ["$$tuple", 0] }, "$_id"]
+          }
+        }
+      }
     },
     {
       $group: {
         _id: null,
-        leastUsedMessages: { $push: "$leastUsedMessages" },
-      },
+        leastUsedMessages: { $push: "$leastUsedMessages" }
+      }
     },
     {
       $project: {
-        leastUsedMessages: { $concatArrays: "$leastUsedMessages" },
-      },
-    },
+        leastUsedMessages: { $concatArrays: "$leastUsedMessages" }
+      }
+    }
   ];
 
   if (modesEnabled) {
@@ -194,12 +163,10 @@ export const getLeastMessagesFromEnabledCategories = async (
   }
 };
 
-export const createMessageCategories = async (
-  messageCategoryData: MessageCategoryCreateData
-) => {
-  let modifiedCategoryData: MessageCategoryData = {
+export const createMessageCategories = async (messageCategoryData: MessageCategoryCreateData) => {
+  const modifiedCategoryData: MessageCategoryData = {
     ...messageCategoryData,
-    messages: messageCategoryData.messages.map((msg) => [msg, 0]),
+    messages: messageCategoryData.messages.map((msg) => [msg, 0])
   };
   try {
     const messageCategory = await MessageCategory.create(modifiedCategoryData);
@@ -210,16 +177,10 @@ export const createMessageCategories = async (
   }
 };
 
-export const updateMessageCategoryById = async (
-  id: string,
-  updateData: UpdateQuery<MessageCategoryCreateData>
-) => {
-  let updateMessages = updateData.messages as string[];
+export const updateMessageCategoryById = async (id: string, updateData: UpdateQuery<MessageCategoryCreateData>) => {
+  const updateMessages = updateData.messages as string[];
   try {
-    const newMessages = await compareUpdateMessagesWithExisting(
-      id,
-      updateMessages
-    );
+    const newMessages = await compareUpdateMessagesWithExisting(id, updateMessages);
 
     const updatedMessageCategory = await MessageCategory.findByIdAndUpdate(
       id,
@@ -227,32 +188,23 @@ export const updateMessageCategoryById = async (
       { new: true }
     );
 
-    const messageCategory = checkExistResource(
-      updatedMessageCategory,
-      `Message category with id(${id})`
-    );
+    const messageCategory = checkExistResource(updatedMessageCategory, `Message category with id(${id})`);
 
     return messageCategory;
   } catch (err) {
-    logger.error(
-      `Error occured while editing message category by id(${id}). ${err}`
-    );
+    logger.error(`Error occured while editing message category by id(${id}). ${err}`);
     handleAppError(err);
   }
 };
 
-export const findCategoryAndUpdateMessageUse = async (
-  id: string,
-  word: string
-) => {
-  console.log("updating");
+export const findCategoryAndUpdateMessageUse = async (id: string, word: string) => {
   const updatedCategory = await MessageCategory.findOneAndUpdate(
     { _id: id, "messages.0": { $exists: true } },
     { $inc: { "messages.$[elem].1": 1 } },
     {
       arrayFilters: [{ "elem.0": word }],
       useFindAndModify: false,
-      new: true,
+      new: true
     }
   );
   return updatedCategory;
@@ -262,24 +214,16 @@ export const deleteMessageCategory = async (id: string) => {
   try {
     const deletedMessageCategory = await MessageCategory.findByIdAndDelete(id);
 
-    const messageCategory = checkExistResource(
-      deletedMessageCategory,
-      `Message category with id(${id})`
-    );
+    const messageCategory = checkExistResource(deletedMessageCategory, `Message category with id(${id})`);
 
     return messageCategory;
   } catch (err) {
-    logger.error(
-      `Error occured while deleting message category by id(${id}). ${err}`
-    );
+    logger.error(`Error occured while deleting message category by id(${id}). ${err}`);
     handleAppError(err);
   }
 };
 
-const compareUpdateMessagesWithExisting = async (
-  id: string,
-  updateMessages: string[]
-) => {
+const compareUpdateMessagesWithExisting = async (id: string, updateMessages: string[]) => {
   const existingCategory = await getMessageCategoryById(id, {});
   const existingMessages = existingCategory?.messages;
   if (!existingCategory || !existingMessages) return;

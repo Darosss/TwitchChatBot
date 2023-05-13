@@ -1,4 +1,4 @@
-import Express, { Router } from "express";
+import { Router } from "express";
 import { getRedemptionsList } from "@controllers/redemptionsController";
 import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
 

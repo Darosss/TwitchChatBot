@@ -1,12 +1,12 @@
 import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
-import Express, { Router } from "express";
+import { Router } from "express";
 
 import {
   getAffixesList,
   addNewAffix,
   // getAffixById,
   editAffixById,
-  deleteAffix,
+  deleteAffix
 } from "@controllers/affixesController";
 import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
 

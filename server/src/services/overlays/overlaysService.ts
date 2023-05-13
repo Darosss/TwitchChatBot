@@ -4,23 +4,13 @@ import { checkExistResource } from "@utils/checkExistResourceUtil";
 import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
 import { logger } from "@utils/loggerUtil";
 import { FilterQuery, UpdateQuery } from "mongoose";
-import {
-  OverlayCreateData,
-  OverlaysFindOptions,
-  OverlayUpdateData,
-  ManyOverlaysFindOptions,
-} from "./types/";
+import { OverlayCreateData, OverlaysFindOptions, OverlayUpdateData, ManyOverlaysFindOptions } from "./types/";
 
 export const getOverlays = async (
   filter: FilterQuery<OverlayDocument> = {},
   overlayFindOptions: ManyOverlaysFindOptions
 ) => {
-  const {
-    limit = 50,
-    skip = 1,
-    sort = { createdAt: -1 },
-    select = { __v: 0 },
-  } = overlayFindOptions;
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = overlayFindOptions;
 
   try {
     const overlay = await Overlay.find(filter)
@@ -36,15 +26,11 @@ export const getOverlays = async (
   }
 };
 
-export const getOverlaysCount = async (
-  filter: FilterQuery<OverlayDocument> = {}
-) => {
+export const getOverlaysCount = async (filter: FilterQuery<OverlayDocument> = {}) => {
   return await Overlay.countDocuments(filter);
 };
 
-export const createOverlay = async (
-  createData: OverlayCreateData | OverlayCreateData[]
-) => {
+export const createOverlay = async (createData: OverlayCreateData | OverlayCreateData[]) => {
   try {
     const createdOverlay = await Overlay.create(createData);
 
@@ -59,10 +45,7 @@ export const createOverlay = async (
   }
 };
 
-export const getOverlayById = async (
-  id: string,
-  overlayFindOptions: OverlaysFindOptions
-) => {
+export const getOverlayById = async (id: string, overlayFindOptions: OverlaysFindOptions) => {
   const { select = { __v: 0 } } = overlayFindOptions;
 
   try {
@@ -77,19 +60,13 @@ export const getOverlayById = async (
   }
 };
 
-export const updateOverlayById = async (
-  id: string,
-  updateData: UpdateQuery<OverlayUpdateData>
-) => {
+export const updateOverlayById = async (id: string, updateData: UpdateQuery<OverlayUpdateData>) => {
   try {
     const updatedOverlay = await Overlay.findByIdAndUpdate(id, updateData, {
-      new: true,
+      new: true
     });
 
-    const overlay = checkExistResource(
-      updatedOverlay,
-      `Overlay with id(${id})`
-    );
+    const overlay = checkExistResource(updatedOverlay, `Overlay with id(${id})`);
 
     return overlay;
   } catch (err) {
@@ -102,10 +79,7 @@ export const deleteOverlayById = async (id: string) => {
   try {
     const deletedOverlay = await Overlay.findByIdAndDelete(id);
 
-    const overlay = checkExistResource(
-      deletedOverlay,
-      `Overlay with id(${id})`
-    );
+    const overlay = checkExistResource(deletedOverlay, `Overlay with id(${id})`);
 
     return overlay;
   } catch (err) {

@@ -1,4 +1,4 @@
-import Express, { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { RequestCommandsQuery, RequestParams } from "@types";
 import { filterCommandsByUrlParams } from "./filters/commandsFilter";
 import {
@@ -8,7 +8,7 @@ import {
   getChatCommandsCount,
   updateChatCommandById,
   ChatCommandCreateData,
-  ChatCommandUpdateData,
+  ChatCommandUpdateData
 } from "@services/chatCommands";
 
 export const getChatCommandsList = async (
@@ -16,12 +16,7 @@ export const getChatCommandsList = async (
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    page = 1,
-    limit = 25,
-    sortBy = "createdAt",
-    sortOrder = "desc",
-  } = req.query;
+  const { page = 1, limit = 25, sortBy = "createdAt", sortOrder = "desc" } = req.query;
 
   const searchFilter = filterCommandsByUrlParams(req.query);
   try {
@@ -30,9 +25,9 @@ export const getChatCommandsList = async (
       skip: Number(page),
       populateSelect: [
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
-        { path: "mood", select: { _id: 1, name: 1, enabled: 1 } },
+        { path: "mood", select: { _id: 1, name: 1, enabled: 1 } }
       ],
-      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 }
     });
 
     const count = await getChatCommandsCount(searchFilter);
@@ -40,7 +35,7 @@ export const getChatCommandsList = async (
       data: chatCommands,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
-      currentPage: Number(page),
+      currentPage: Number(page)
     });
   } catch (err) {
     next(err);
@@ -52,16 +47,7 @@ export const addNewCommand = async (
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    name,
-    description,
-    enabled,
-    aliases,
-    messages,
-    privilege,
-    tag,
-    mood,
-  } = req.body;
+  const { name, description, enabled, aliases, messages, privilege, tag, mood } = req.body;
 
   try {
     const newChatCommand = await createChatCommand({
@@ -72,12 +58,10 @@ export const addNewCommand = async (
       tag: tag,
       mood: mood,
       messages: messages,
-      privilege: privilege,
+      privilege: privilege
     });
 
-    return res
-      .status(201)
-      .send({ message: "Added successfully", chatCommand: newChatCommand });
+    return res.status(201).send({ message: "Added successfully", chatCommand: newChatCommand });
   } catch (err) {
     next(err);
   }
@@ -89,16 +73,7 @@ export const editChatCommandById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const {
-    name,
-    description,
-    enabled,
-    aliases,
-    messages,
-    privilege,
-    tag,
-    mood,
-  } = req.body;
+  const { name, description, enabled, aliases, messages, privilege, tag, mood } = req.body;
 
   try {
     const updatedChatCommand = await updateChatCommandById(id, {
@@ -109,31 +84,25 @@ export const editChatCommandById = async (
       tag: tag,
       mood: mood,
       messages: messages,
-      privilege: privilege,
+      privilege: privilege
     });
 
     return res.status(200).send({
       message: "Updated successfully",
-      chatCommand: updatedChatCommand,
+      chatCommand: updatedChatCommand
     });
   } catch (err) {
     next(err);
   }
 };
 
-export const deleteCommandById = async (
-  req: Request<RequestParams, {}, {}, {}>,
-  res: Response,
-  next: NextFunction
-) => {
+export const deleteCommandById = async (req: Request<RequestParams, {}, {}, {}>, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
   try {
-    const deletedChatCommand = await deleteChatCommandById(id);
+    await deleteChatCommandById(id);
 
-    return res
-      .status(200)
-      .send({ message: "Chat command deleted successfully" });
+    return res.status(200).send({ message: "Chat command deleted successfully" });
   } catch (err) {
     next(err);
   }

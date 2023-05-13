@@ -1,12 +1,8 @@
-import Express, { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { getConfigs, updateConfigs, ConfigUpdateData } from "@services/configs";
 import { configDefaults } from "@defaults/configsDefaults";
 
-export const getConfigsList = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const getConfigsList = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const configs = await getConfigs();
 
@@ -16,11 +12,7 @@ export const getConfigsList = async (
   }
 };
 
-export const editConfigs = async (
-  req: Request<{}, {}, ConfigUpdateData, {}>,
-  res: Response,
-  next: NextFunction
-) => {
+export const editConfigs = async (req: Request<{}, {}, ConfigUpdateData, {}>, res: Response, next: NextFunction) => {
   const {
     commandsConfigs,
     timersConfigs,
@@ -29,11 +21,11 @@ export const editConfigs = async (
     pointsConfigs,
     loyaltyConfigs,
     musicConfigs,
-    headConfigs,
+    headConfigs
   } = req.body;
 
   try {
-    const config = await updateConfigs({
+    await updateConfigs({
       commandsConfigs: commandsConfigs,
       timersConfigs: timersConfigs,
       chatGamesConfigs: chatGamesConfigs,
@@ -41,7 +33,7 @@ export const editConfigs = async (
       pointsConfigs: pointsConfigs,
       musicConfigs: musicConfigs,
       loyaltyConfigs: loyaltyConfigs,
-      headConfigs: headConfigs,
+      headConfigs: headConfigs
     });
     return res.status(200).send({ message: "Updated successfully" });
   } catch (err) {
@@ -49,17 +41,11 @@ export const editConfigs = async (
   }
 };
 
-export const resetConfigsToDefaults = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const resetConfigsToDefaults = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const configs = await updateConfigs(configDefaults);
+    await updateConfigs(configDefaults);
 
-    return res
-      .status(200)
-      .send({ message: "Configs reset to default successfully" });
+    return res.status(200).send({ message: "Configs reset to default successfully" });
   } catch (err) {
     next(err);
   }

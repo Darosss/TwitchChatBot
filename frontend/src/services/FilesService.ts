@@ -7,7 +7,6 @@ export const useGetFoldersList = () => {
 };
 
 export const useGetFolderMp3Files = (folderName: string) => {
-  console.log("test service");
   return useAxiosCustom<ResponseData<string[]>>({
     url: `/files/audio/${folderName}`,
     manual: true,

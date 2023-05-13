@@ -4,21 +4,12 @@ import { ApiClient, HelixChatChatter, HelixPrivilegedUser } from "@twurple/api";
 import { getBaseLog } from "@utils/getBaseLogUtil";
 import removeDifferenceFromSet from "@utils/removeDifferenceSetUtil";
 
-import type {
-  ClientToServerEvents,
-  InterServerEvents,
-  ServerToClientEvents,
-  SocketData,
-} from "@socket";
+import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";
 import { Server } from "socket.io";
 
 import retryWithCatch from "@utils/retryWithCatchUtil";
 import HeadHandler from "./HeadHandler";
-import {
-  LoyaltyConfigs,
-  PointsConfigs,
-  StreamSessionModel,
-} from "@models/types";
+import { LoyaltyConfigs, PointsConfigs, StreamSessionModel } from "@models/types";
 import { watcherLogger } from "@utils/loggerUtil";
 
 interface LoyaltyConfigsHandler extends LoyaltyConfigs, PointsConfigs {}
@@ -30,12 +21,7 @@ class LoyaltyHandler extends HeadHandler {
   private checkChattersTimeout: NodeJS.Timeout | undefined;
   constructor(
     twitchApi: ApiClient,
-    socketIO: Server<
-      ClientToServerEvents,
-      ServerToClientEvents,
-      InterServerEvents,
-      SocketData
-    >,
+    socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     authorizedUser: HelixPrivilegedUser,
     configs: LoyaltyConfigsHandler
   ) {
@@ -62,42 +48,31 @@ class LoyaltyHandler extends HeadHandler {
 
   private async getStreamChatters() {
     const listOfChatters = await retryWithCatch(() =>
-      this.twitchApi.chat.getChatters(
-        this.authorizedUser.id,
-        this.authorizedUser.id
-      )
+      this.twitchApi.chat.getChatters(this.authorizedUser.id, this.authorizedUser.id)
     );
 
     return listOfChatters;
   }
 
   private async checkWatchersLogic(userId: string, userName: string) {
-    const { watch: watchIncr, watchMultipler: watchMult } =
-      this.configs.pointsIncrement;
+    const { watch: watchIncr, watchMultipler: watchMult } = this.configs.pointsIncrement;
 
     this.currentSession = await updateCurrentStreamSession({
       $inc: {
-        [`watchers.${userName}`]: this.configs.intervalCheckChatters,
-      },
+        [`watchers.${userName}`]: this.configs.intervalCheckChatters
+      }
     });
     if (!this.currentSession) return;
 
     const viewerWatchTime = this.currentSession.watchers?.get(userName);
     const multipler =
-      getBaseLog(
-        watchMult,
-        viewerWatchTime
-          ? viewerWatchTime / this.configs.intervalCheckChatters
-          : 1
-      ) + 1;
+      getBaseLog(watchMult, viewerWatchTime ? viewerWatchTime / this.configs.intervalCheckChatters : 1) + 1;
 
     const pointsWithMultip = watchIncr * multipler;
     watcherLogger.info(
       `${userName} is watching(${Math.round(
         Number(viewerWatchTime) / 60
-      )}min) adding points ${watchIncr} * ${multipler.toFixed(
-        3
-      )} = ${pointsWithMultip.toFixed(3)}`
+      )}min) adding points ${watchIncr} * ${multipler.toFixed(3)} = ${pointsWithMultip.toFixed(3)}`
     );
 
     await this.updateWatcherStatistics(userId, pointsWithMultip);
@@ -106,9 +81,7 @@ class LoyaltyHandler extends HeadHandler {
   private async checkUserFollow(user: HelixChatChatter) {
     const twitchUser = await retryWithCatch(() => user.getUser());
 
-    const follow = await retryWithCatch(() =>
-      twitchUser.getFollowTo(this.authorizedUser.id)
-    );
+    const follow = await retryWithCatch(() => twitchUser.getFollowTo(this.authorizedUser.id));
 
     return follow?.followDate;
   }
@@ -124,8 +97,8 @@ class LoyaltyHandler extends HeadHandler {
     this.currentSession = await updateCurrentStreamSession({
       $push: {
         // events: [userId, event],
-        events: { user: userId, name: event },
-      },
+        events: { user: userId, name: event }
+      }
     });
   }
 
@@ -142,7 +115,7 @@ class LoyaltyHandler extends HeadHandler {
           username: userDisplayName,
           twitchId: userId,
           twitchName: userName,
-          privileges: 0,
+          privileges: 0
         }
       );
 
@@ -157,7 +130,7 @@ class LoyaltyHandler extends HeadHandler {
         this.socketIO.emit("userJoinTwitchChat", {
           eventDate: new Date(),
           eventName: "Join chat",
-          user: userDB,
+          user: userDB
         });
       }
 
@@ -177,7 +150,7 @@ class LoyaltyHandler extends HeadHandler {
         this.socketIO.emit("userJoinTwitchChat", {
           eventDate: new Date(),
           eventName: "Left chat",
-          user: userDB,
+          user: userDB
         });
       }
     }
@@ -204,7 +177,7 @@ class LoyaltyHandler extends HeadHandler {
     const updateData = {
       $inc: { points: value, watchTime: this.configs.intervalCheckChatters },
       // add points by message,       count messages
-      $set: { lastSeen: new Date() },
+      $set: { lastSeen: new Date() }
       // set last seen to new Date()
     };
 

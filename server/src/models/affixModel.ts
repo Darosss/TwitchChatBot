@@ -3,7 +3,7 @@ import {
   prefixChanceField,
   prefixesField,
   suffixChanceField,
-  suffixesField,
+  suffixesField
 } from "@utils/commonSchemaFieldsUtil";
 import { Model, model, Schema } from "mongoose";
 import { AffixDocument } from "./types";
@@ -14,7 +14,7 @@ const AffixSchema: Schema<AffixDocument> = new Schema(
     ...suffixChanceField,
     ...prefixChanceField,
     ...prefixesField,
-    ...suffixesField,
+    ...suffixesField
   },
   { timestamps: true }
 );
