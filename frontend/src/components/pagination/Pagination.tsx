@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import usePagination, { DOTS } from "@hooks/usePaginationHook";
 import classnames from "classnames";
@@ -21,6 +21,7 @@ export default function Pagination(props: {
     localStorageName,
     15
   );
+  const [currentPageLoc, setCurrentPageLoc] = useState<number>(currentPage);
 
   const onPageChangeSearchParam = (value: string) => {
     setSearchParams((prevState) => {
@@ -34,14 +35,27 @@ export default function Pagination(props: {
       prevState.set("limit", String(pageSizeT));
       return prevState;
     });
-  }, [pageSizeT, setSearchParams]);
+    // Unnecessary rendering
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageSizeT]);
 
   useEffect(() => {
+    const checkIfPageIsTooBigAndSet = () => {
+      if (!paginationRange) return;
+
+      if (currentPageLoc > paginationRange.length) {
+        setCurrentPageLoc(Number(paginationRange[paginationRange.length - 1]));
+      }
+    };
+
+    checkIfPageIsTooBigAndSet();
     setSearchParams((prevState) => {
-      prevState.set("page", String(currentPage));
+      prevState.set("page", String(currentPageLoc));
       return prevState;
     });
-  }, [currentPage, setSearchParams]);
+    // Unnecessary rendering
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPageLoc]);
 
   const paginationRange = usePagination(
     totalCount,
@@ -57,11 +71,6 @@ export default function Pagination(props: {
         className="page-size common-button primary-button"
         value={pageSizeT}
         onChange={(e) => {
-          setSearchParams((prevState) => {
-            prevState.set("limit", e.target.value);
-            return prevState;
-          });
-
           setPageSize(Number(e.target.value));
         }}
       >
