@@ -14,9 +14,8 @@
   .message-categories-btn-wrapper {
     button {
       height: 4vh;
-      font-size: 1.2vmin;
+      font-size: 1vmin;
       margin: 0.1rem;
-
       .button-category-name {
         color: var(--info-bg-color);
       }
@@ -25,7 +24,9 @@
       display: flex;
 
       & > div {
-        flex: 1 1 49%;
+        flex: 1;
+        max-width: 50%;
+
         * {
           width: 96%;
         }
