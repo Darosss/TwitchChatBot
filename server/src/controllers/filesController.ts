@@ -142,7 +142,7 @@ const storageAlertSound = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const { title } = req.body;
-    const fileName = alertSoundPrefix + title + ".mp3";
+    const fileName = title.startsWith(alertSoundPrefix) ? title + ".mp3" : `${alertSoundPrefix}${title}.mp3`;
     cb(null, fileName);
   }
 });
