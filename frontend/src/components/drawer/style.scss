@@ -4,6 +4,11 @@
   margin: 0;
   padding: 0;
 
+  div.drawer-children-wrapper {
+    overflow-x: hidden;
+    height: 100%;
+  }
+
   button {
     &.btn-drawer {
       height: 100%;
