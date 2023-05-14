@@ -68,30 +68,28 @@ export default function AudioFoldersList() {
       <div className="audio-folders-list-wrapper">
         {folders.map((folder, index) => {
           return (
-            <div key={index}>
-              <button
-                onClick={() => handleOnClickChangeFolder(folder)}
-                className={`common-button ${
-                  folder === folderName ? "primary-button" : "danger-button"
-                }`}
-              >
-                {folder}
-              </button>
-            </div>
+            <button
+              key={index}
+              onClick={() => handleOnClickChangeFolder(folder)}
+              className={`common-button ${
+                folder === folderName ? "primary-button" : "danger-button"
+              }`}
+            >
+              {folder}
+            </button>
           );
         })}
-        {folderName ? (
-          <button
-            onClick={() => {
-              emitLoadSongs();
-            }}
-            className="load-folder-btn common-button danger-button"
-          >
-            Load {folderName}
-          </button>
-        ) : null}
       </div>
-
+      {folderName ? (
+        <button
+          onClick={() => {
+            emitLoadSongs();
+          }}
+          className="load-folder-btn common-button primary-button"
+        >
+          Load {folderName}
+        </button>
+      ) : null}
       <div className="mp3-files-wrapper">
         {mp3Data?.data.map((mp3, index) => {
           return (
