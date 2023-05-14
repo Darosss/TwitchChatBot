@@ -10,6 +10,7 @@ import MessagesWindow from "./messageWindow";
 import {
   initialLayoutWidgets,
   initialToolboxWidgets,
+  widgetsKeys,
 } from "src/layout/initialLayoutWidgets";
 import { useParams } from "react-router-dom";
 import { useEditWidgetById, useGetWidgetById } from "@services/WidgetsService";
@@ -21,14 +22,14 @@ import RewardsWindow from "./rewardsWindow";
 import { HelmetTitle } from "@components/componentWithTitle";
 
 const components = new Map([
-  ["stream-chat", StreamChat],
-  ["stream-chatters", StreamChatters],
-  ["stream-notifications", StreamNotifications],
-  ["stream-statistics", StreamStatistics],
-  ["messages-window", MessagesWindow],
-  ["stream-modes", StreamModes],
-  ["music-player", MusicPlayer],
-  ["rewards-window", RewardsWindow],
+  [widgetsKeys.streamChat, StreamChat],
+  [widgetsKeys.streamChatters, StreamChatters],
+  [widgetsKeys.streamNotifications, StreamNotifications],
+  [widgetsKeys.streamStatistics, StreamStatistics],
+  [widgetsKeys.messagesWindow, MessagesWindow],
+  [widgetsKeys.streamModes, StreamModes],
+  [widgetsKeys.musicPlayer, MusicPlayer],
+  [widgetsKeys.rewardsWindow, RewardsWindow],
 ]);
 
 export default function StreamEvents(params: { editor?: boolean }) {

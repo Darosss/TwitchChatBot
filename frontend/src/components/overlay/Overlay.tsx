@@ -5,6 +5,7 @@ import Redemptions from "./redemptions";
 import {
   initialLayoutOverlays,
   initialToolboxOverlays,
+  overlaysKeys,
 } from "src/layout/initialLayoutOverlays";
 import { useParams } from "react-router-dom";
 import { getInitialCurrentBreakpoint } from "@utils/layoutBreakpoints";
@@ -18,9 +19,9 @@ import YoutubePlayerVideo from "./youtubePlayerVideo";
 import { HelmetTitle } from "@components/componentWithTitle";
 
 const components = new Map([
-  ["overlay-redemptions", Redemptions],
-  ["overlay-music-player", MusicPlayer],
-  ["overlay-youtube-music-player", YoutubePlayerVideo],
+  [overlaysKeys.overlayMusicPlayer, Redemptions],
+  [overlaysKeys.overlayMusicPlayer, MusicPlayer],
+  [overlaysKeys.overlayYoutubeMusicPlayer, YoutubePlayerVideo],
 ]);
 
 export default function Overlay(params: { editor?: boolean }) {
