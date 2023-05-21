@@ -334,4 +334,4 @@ Distributed under the MIT License. See `LICENSE.md` for more information.
 
 Darosss - daroinf12@gmail.com
 
-Project Link: [https://github.com/Darosss/TwitchChatBot](https://github.com/Darosss/ChatApplication)
+Project Link: [https://github.com/Darosss/TwitchChatBot](https://github.com/Darosss/TwitchChatBot)
