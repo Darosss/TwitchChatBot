@@ -1,5 +1,5 @@
 import HeadHandler from "./HeadHandler";
-import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
+import { ApiClient } from "@twurple/api";
 import { EventSubWsListener } from "@twurple/eventsub-ws";
 import { Server } from "socket.io";
 import type { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData, RewardData } from "@socket";
@@ -13,11 +13,12 @@ import { alertSoundsPath } from "@configs/globalPaths";
 import path from "path";
 import { getMp3AudioDuration } from "@utils/filesManipulateUtil";
 import { alertSoundPrefix } from "@configs/globalVariables";
+import { AuthorizedUserData } from "./types";
 
 interface EventSubHandlerOptions {
   apiClient: ApiClient;
   socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
-  authorizedUser: HelixPrivilegedUser;
+  authorizedUser: AuthorizedUserData;
 }
 
 class EventSubHandler extends HeadHandler {
@@ -48,14 +49,14 @@ class EventSubHandler extends HeadHandler {
   }
 
   private async subscribeToStreamOfflineEvents() {
-    await this.listener.subscribeToStreamOfflineEvents(this.authorizedUser.id, async (e) => {
+    this.listener.onStreamOffline(this.authorizedUser.id, async (e) => {
       eventsubLogger.info(`${e.broadcasterDisplayName} just went offline`);
       await updateCurrentStreamSession({ sessionEnd: new Date() });
     });
   }
 
   private async subscribeToChannelUpdateEvents() {
-    await this.listener.subscribeToChannelUpdateEvents(this.authorizedUser.id, async (e) => {
+    this.listener.onChannelUpdate(this.authorizedUser.id, async (e) => {
       eventsubLogger.info(`Stream details has been updated`);
       const timestamp = Date.now();
       try {
@@ -84,7 +85,7 @@ class EventSubHandler extends HeadHandler {
   }
 
   private async subscribeToStreamOnlineEvents() {
-    await this.listener.subscribeToStreamOnlineEvents(this.authorizedUser.id, async (e) => {
+    this.listener.onStreamOnline(this.authorizedUser.id, async (e) => {
       eventsubLogger.info(`${e.broadcasterDisplayName} just went live!`);
       const stream = await retryWithCatch(() => e.getStream());
 
@@ -97,8 +98,8 @@ class EventSubHandler extends HeadHandler {
   }
 
   private async subscribeToChannelRedemptionAddEvents() {
-    await this.listener.subscribeToChannelRedemptionAddEvents(this.authorizedUser.id, async (e) => {
-      const { rewardId, userId, userName, userDisplayName, redeemedAt, rewardTitle, rewardCost } = e;
+    this.listener.onChannelRedemptionAdd(this.authorizedUser.id, async (e) => {
+      const { rewardId, userId, userName, userDisplayName, redemptionDate, rewardTitle, rewardCost } = e;
 
       const user = await createUserIfNotExist(
         { twitchId: userId },
@@ -118,7 +119,7 @@ class EventSubHandler extends HeadHandler {
         twitchId: userId,
         userName: userName,
         userDisplayName: userDisplayName,
-        redemptionDate: redeemedAt,
+        redemptionDate: redemptionDate,
         rewardTitle: rewardTitle,
         rewardCost: rewardCost,
         rewardImage: reward.getImageUrl(4)
@@ -183,11 +184,11 @@ class EventSubHandler extends HeadHandler {
   }
 
   public async start() {
-    await this.listener.start();
+    this.listener.start();
   }
 
   public async stop() {
-    await this.listener.stop();
+    this.listener.stop();
   }
 
   public async init() {
