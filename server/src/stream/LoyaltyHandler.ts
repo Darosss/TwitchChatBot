@@ -1,6 +1,6 @@
 import { updateCurrentStreamSession } from "@services/streamSessions";
 import { createUserIfNotExist, isUserInDB, updateUser } from "@services/users";
-import { ApiClient, HelixChatChatter, HelixPrivilegedUser } from "@twurple/api";
+import { ApiClient, HelixChatChatter } from "@twurple/api";
 import { getBaseLog } from "@utils/getBaseLogUtil";
 import removeDifferenceFromSet from "@utils/removeDifferenceSetUtil";
 
@@ -11,6 +11,7 @@ import retryWithCatch from "@utils/retryWithCatchUtil";
 import HeadHandler from "./HeadHandler";
 import { LoyaltyConfigs, PointsConfigs, StreamSessionModel } from "@models/types";
 import { watcherLogger } from "@utils/loggerUtil";
+import { AuthorizedUserData } from "./types";
 
 interface LoyaltyConfigsHandler extends LoyaltyConfigs, PointsConfigs {}
 
@@ -22,7 +23,7 @@ class LoyaltyHandler extends HeadHandler {
   constructor(
     twitchApi: ApiClient,
     socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
-    authorizedUser: HelixPrivilegedUser,
+    authorizedUser: AuthorizedUserData,
     configs: LoyaltyConfigsHandler
   ) {
     super(socketIO, twitchApi, authorizedUser);
@@ -110,7 +111,7 @@ class LoyaltyHandler extends HeadHandler {
       usersNow.add(userName);
 
       const userDB = await createUserIfNotExist(
-        { twitchName: userName },
+        { twitchId: userId },
         {
           username: userDisplayName,
           twitchId: userId,
