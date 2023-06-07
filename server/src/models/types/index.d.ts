@@ -178,6 +178,7 @@ export interface AuthModel {
   expiresIn: number;
   obtainmentTimestamp: number;
   scope: string[];
+  userId: string;
 }
 
 export type AuthDocument = AuthModel & Document;
