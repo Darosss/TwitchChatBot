@@ -9,9 +9,10 @@ const AuthSchema: Schema<AuthDocument> = new Schema(
     ivAccessToken: { type: Buffer },
     refreshToken: { type: String, required: true },
     ivRefreshToken: { type: Buffer },
-    expiresIn: { type: Number, require: true, default: 0 },
+    expiresIn: { type: Number, required: true, default: 0 },
     obtainmentTimestamp: { type: Number, required: true, default: 0 },
-    scope: [String]
+    scope: [String],
+    userId: { type: String }
   },
   {
     capped: { size: 100000, max: 1 }

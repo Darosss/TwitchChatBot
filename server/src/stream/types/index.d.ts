@@ -19,3 +19,8 @@ export type MusicPlayerCommands =
   | "next"
   | "load"
   | "volume";
+
+export interface AuthorizedUserData {
+  id: string;
+  name: string;
+}

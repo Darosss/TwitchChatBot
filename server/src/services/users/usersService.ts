@@ -126,7 +126,7 @@ export const createUser = async (userData: UserCreateData) => {
     const user = await User.create(userData);
     return user;
   } catch (err) {
-    logger.error(`Error occured while getting users twitch names. ${err}`);
+    logger.error(`Error occured while create user. ${err}`);
     handleAppError(err);
   }
 };

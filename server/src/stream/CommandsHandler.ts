@@ -1,5 +1,5 @@
 import HeadHandler from "./HeadHandler";
-import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
+import { ApiClient } from "@twurple/api";
 import { ChatCommandModel, CommandsConfigs, HeadConfigs, UserModel } from "@models/types";
 import {
   getChatCommands,
@@ -12,7 +12,7 @@ import { randomWithMax } from "@utils/randomNumbersUtil";
 import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";
 import { Server } from "socket.io";
 import MusicYTHandler from "./MusicYTHandler";
-import { MusicPlayerCommands } from "./types";
+import { AuthorizedUserData, MusicPlayerCommands } from "./types";
 
 type CommandsHandlerConfigs = CommandsConfigs & Pick<HeadConfigs, "permissionLevels">;
 
@@ -27,7 +27,7 @@ class CommandsHandler extends HeadHandler {
   constructor(
     twitchApi: ApiClient,
     socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
-    authorizedUser: HelixPrivilegedUser,
+    authorizedUser: AuthorizedUserData,
     musicHandler: MusicYTHandler,
     configs: CommandsHandlerConfigs
   ) {

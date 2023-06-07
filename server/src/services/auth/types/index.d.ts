@@ -1,7 +1,7 @@
-export interface AuthCreateData {
-  accessToken: string | null;
-  refreshToken: string | null;
-  expiresIn?: number | null;
-  obtainmentTimestamp?: number;
+import { AuthModel } from "@models/types";
+
+export interface AuthCreateData
+  extends Pick<AuthModel, "accessToken" | "refreshToken" | "expiresIn" | "obtainmentTimestamp" | "scope"> {
   scope?: string[];
+  userId?: string;
 }

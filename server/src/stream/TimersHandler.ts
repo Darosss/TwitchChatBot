@@ -1,5 +1,5 @@
 import HeadHandler from "./HeadHandler";
-import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
+import { ApiClient } from "@twurple/api";
 import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";
 import { Server } from "socket.io";
 import {
@@ -13,6 +13,7 @@ import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
 import { TimerModel, TimersConfigs, UserModel } from "@models/types";
 import { timerLogger } from "@utils/loggerUtil";
 import { getEnabledSuffixesAndPrefixes, getMultiperEnabledAfixesChances } from "@services/affixes";
+import { AuthorizedUserData } from "./types";
 
 class TimersHandler extends HeadHandler {
   private configs: TimersConfigs;
@@ -24,7 +25,7 @@ class TimersHandler extends HeadHandler {
   constructor(
     twitchApi: ApiClient,
     socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
-    authorizedUser: HelixPrivilegedUser,
+    authorizedUser: AuthorizedUserData,
     configs: TimersConfigs,
     clientSay: (message: string) => void
   ) {

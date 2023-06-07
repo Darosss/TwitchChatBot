@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiClient } from "@twurple/api";
-import { createNewAuth, getAuthToken } from "@services/auth";
+import { createNewAuth, getAuthToken, removeAuthToken } from "@services/auth";
 import { getConfigs } from "@services/configs";
-import { RefreshingAuthProvider } from "@twurple/auth";
+import { RefreshingAuthProvider, getTokenInfo } from "@twurple/auth";
 import ClientTmiHandler from "../stream/TwitchTmiHandler";
 import StreamHandler from "../stream/StreamHandler";
 import { getTwitchAuthUrl } from "../auth/auth";
@@ -19,27 +19,39 @@ const authorizationTwitch = async (req: Request, res: Response, next: NextFuncti
   const decryptedAccessToken = decryptToken(tokenDB.accessToken, tokenDB.ivAccessToken, encryptionKey);
   const decryptedRefreshToken = decryptToken(tokenDB.refreshToken, tokenDB.ivRefreshToken, encryptionKey);
 
-  const authProvider = new RefreshingAuthProvider(
-    {
-      clientId,
-      clientSecret,
-      onRefresh: async (newTokenData) => {
-        await createNewAuth(newTokenData);
-      }
-    },
-    {
-      ...tokenDB,
-      accessToken: decryptedAccessToken,
-      refreshToken: decryptedRefreshToken
+  const authProvider = new RefreshingAuthProvider({
+    clientId,
+    clientSecret,
+    onRefresh: async (userId, newTokenData) => {
+      const { accessToken, refreshToken, expiresIn, obtainmentTimestamp, scope } = newTokenData;
+      await createNewAuth({
+        accessToken: accessToken,
+        refreshToken: refreshToken || "",
+        expiresIn: expiresIn || 0,
+        obtainmentTimestamp: obtainmentTimestamp,
+        scope: scope,
+        userId: userId
+      });
     }
-  );
+  });
+
+  await authProvider.addUserForToken({
+    accessToken: decryptedAccessToken,
+    refreshToken: decryptedRefreshToken,
+    expiresIn: tokenDB.expiresIn,
+    obtainmentTimestamp: tokenDB.obtainmentTimestamp
+  });
 
   try {
+    const tokeninfo = await getTokenInfo(decryptedAccessToken);
+    // Pretty sure it's always string so null assertion
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const authorizedUser = { id: tokeninfo.userId!, name: tokeninfo.userName! };
     const twitchApi = new ApiClient({ authProvider });
-    const authorizedUser = await twitchApi.users.getMe();
+
     const configDB = await getConfigs();
 
-    if (!authorizedUser || !configDB) {
+    if (!authorizedUser.id || !authorizedUser.name || !configDB) {
       throw Error("Something went wrong, try login again");
     }
 
@@ -52,7 +64,7 @@ const authorizationTwitch = async (req: Request, res: Response, next: NextFuncti
     StreamHandler.getInstance({
       twitchApi: twitchApi,
       config: configDB,
-      authorizedUser: authorizedUser,
+      authorizedUser: { id: authorizedUser.id, name: authorizedUser.name },
       socketIO: req.io,
       clientTmi: clientTmi
     });
@@ -61,7 +73,7 @@ const authorizationTwitch = async (req: Request, res: Response, next: NextFuncti
 
     return next();
   } catch (err) {
-    // await removeAuthToken();
+    await removeAuthToken();
     if (err instanceof Error) {
       res.status(400).send({ message: "Something went wrong. Please log in again" });
       logger.error(`Error occured while using ApiClient ${err}`);

@@ -1,4 +1,4 @@
-import { ApiClient, HelixPrivilegedUser } from "@twurple/api";
+import { ApiClient } from "@twurple/api";
 import { ConfigDocument, UserModel } from "@models/types";
 import { ConfigDefaults } from "@defaults/types";
 import { configDefaults } from "@defaults/configsDefaults";
@@ -32,18 +32,19 @@ import ClientTmiHandler from "./TwitchTmiHandler";
 import { botId } from "@configs/envVariables";
 import { removeAuthToken } from "@services/auth";
 import MusicYTHandler from "./MusicYTHandler";
+import { AuthorizedUserData } from "./types";
 interface StreamHandlerOptions {
   config: ConfigDocument;
   twitchApi: ApiClient;
   socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
-  authorizedUser: HelixPrivilegedUser;
+  authorizedUser: AuthorizedUserData;
   clientTmi: ClientTmiHandler;
 }
 
 class StreamHandler {
   private static instance: StreamHandler;
   private twitchApi: ApiClient;
-  private authorizedUser: HelixPrivilegedUser;
+  private authorizedUser: AuthorizedUserData;
   private socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
 
   private clientTmi: ClientTmiHandler;
