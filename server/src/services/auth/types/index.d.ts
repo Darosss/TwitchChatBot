@@ -1,7 +1,8 @@
 export interface AuthCreateData {
-  accessToken: string | null;
-  refreshToken: string | null;
-  expiresIn?: number | null;
-  obtainmentTimestamp?: number;
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  obtainmentTimestamp: number;
   scope?: string[];
+  userId?: string;
 }
