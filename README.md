@@ -332,6 +332,6 @@ Distributed under the MIT License. See `LICENSE.md` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-Darosss - daroinf12@gmail.com
+Darosss - darosss12@proton.me
 
 Project Link: [https://github.com/Darosss/TwitchChatBot](https://github.com/Darosss/TwitchChatBot)
