@@ -43,7 +43,7 @@ export default function Pagination(props: {
     const checkIfPageIsTooBigAndSet = () => {
       if (!paginationRange) return;
 
-      if (currentPageLoc > paginationRange.length) {
+      if (currentPageLoc - 1 > paginationRange.length) {
         setCurrentPageLoc(Number(paginationRange[paginationRange.length - 1]));
       }
     };
