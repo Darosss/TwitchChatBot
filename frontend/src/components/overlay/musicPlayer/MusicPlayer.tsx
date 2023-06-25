@@ -5,8 +5,8 @@ import {
   AudioStreamDataInfo,
   AudioStreamData,
 } from "@context/socket";
-import { convertSecondsToMS } from "@utils/convertSecondsToMS";
-import ProgressBar from "@ramonak/react-progress-bar";
+import SongProgress from "../SongProgress";
+
 export default function MusicPlayer() {
   const socket = useContext(SocketContext);
   const [songName, setSongName] = useState("");
@@ -15,25 +15,6 @@ export default function MusicPlayer() {
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [audioData, setAudioData] = useState<AudioStreamDataInfo>();
 
-  const showCurrentSongProgress = () => {
-    const [maxMinutes, maxSeconds] = convertSecondsToMS(songDuration);
-    const [currMinutes, currSeconds] = convertSecondsToMS(currentTime);
-
-    return (
-      <>
-        <ProgressBar
-          completed={currentTime}
-          maxCompleted={songDuration}
-          customLabel={` ${currMinutes}:${currSeconds} / ${maxMinutes}:${maxSeconds}`}
-          labelAlignment="outside"
-          labelSize="100%"
-          width={"70%"}
-          height="1rem"
-          bgColor={"lightblue"}
-        />
-      </>
-    );
-  };
   useEffect(() => {
     let source: AudioBufferSourceNode | null = null;
     let gain: GainNode | null = null;
@@ -149,7 +130,10 @@ export default function MusicPlayer() {
             <div className="music-player-song-name">{songName}</div>
           </div>
           <div className="music-player-song-duration">
-            {showCurrentSongProgress()}
+            <SongProgress
+              songDuration={songDuration}
+              currentTime={currentTime}
+            />
           </div>
         </>
       )}
