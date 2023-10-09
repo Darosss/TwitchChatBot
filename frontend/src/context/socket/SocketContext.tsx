@@ -68,15 +68,3 @@ export const useSocketContext = (): Required<SocketContexType> => {
   //Know that values are not null
   return socketContext as Required<SocketContexType>;
 };
-
-export const SocketContextProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}): JSX.Element => {
-  return (
-    <SocketContext.Provider value={socketConn}>
-      {children}
-    </SocketContext.Provider>
-  );
-};
