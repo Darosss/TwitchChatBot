@@ -11,16 +11,19 @@ import {
   useDeleteTrigger,
   TriggerCreateData,
 } from "@services/TriggerService";
-import { socketEmitRefreshTriggers } from "@context/socket";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import { useGetAllModes } from "@utils/getListModes";
 import TriggersData from "./TriggersData";
 import TriggerModalData from "./TriggerModalData";
 import { DispatchAction } from "./types";
+import { useSocketContext } from "@context/socket";
 
 export default function TriggersList() {
   const [showModal, setShowModal] = useState(false);
+  const {
+    emits: { refreshTriggers: emitRefreshTriggers },
+  } = useSocketContext();
 
   const [editingTrigger, setEditingTrigger] = useState("");
   const [triggerIdDelete, setTriggerIdDelete] = useState<string | null>(null);
@@ -58,7 +61,7 @@ export default function TriggersList() {
 
   const onSubmitModalCreate = () => {
     fetchCreateTrigger().then(() => {
-      socketEmitRefreshTriggers();
+      emitRefreshTriggers();
       addNotification("Success", "Trigger created successfully", "success");
       refetchData();
       setShowModal(false);
@@ -67,7 +70,7 @@ export default function TriggersList() {
 
   const onSubmitModalEdit = () => {
     fetchEditTrigger().then(() => {
-      socketEmitRefreshTriggers();
+      emitRefreshTriggers();
       addNotification("Success", "Trigger edited successfully", "success");
       refetchData();
       handleOnHideModal();

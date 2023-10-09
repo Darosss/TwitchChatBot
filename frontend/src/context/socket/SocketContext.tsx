@@ -1,32 +1,72 @@
-import React from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { io, Socket } from "socket.io-client";
-import { ServerToClientEvents, ClientToServerEvents } from "./types";
-import { viteBackendUrl } from "src/configs/envVariables";
-export const socketConn = io(viteBackendUrl) as Socket<
+import {
   ServerToClientEvents,
-  ClientToServerEvents
->;
+  ClientToServerEvents,
+  SocketContexType,
+} from "./types";
+import { viteBackendUrl } from "src/configs/envVariables";
+import { getSocketEmitsFunctions } from "./emits";
+import { getSocketEventsFunctions } from "./events";
 
-export const SocketContext = React.createContext<
-  Socket<ServerToClientEvents, ClientToServerEvents>
->({} as Socket<ServerToClientEvents, ClientToServerEvents>);
+export const SocketContext = React.createContext<SocketContexType | null>(null);
 
-socketConn.on("forceReconnect", () => {
-  socketConn.disconnect();
+export const SocketContextProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}): JSX.Element => {
+  const socketConn = io(viteBackendUrl) as Socket<
+    ServerToClientEvents,
+    ClientToServerEvents
+  >;
+  const emits = useMemo<SocketContexType["emits"]>(() => {
+    if (!socketConn) return;
 
-  socketConn.connect();
-});
+    return getSocketEmitsFunctions(socketConn);
+  }, [socketConn]);
 
-export const socketEmitRefreshTriggers = () => {
-  socketConn.emit("refreshTriggers");
+  const events = useMemo<SocketContexType["events"]>(() => {
+    if (!socketConn) return;
+
+    return getSocketEventsFunctions(socketConn);
+  }, [socketConn]);
+
+  useEffect(() => {
+    if (!socketConn || !events) return;
+
+    events.forceReconnect.on(() => {
+      socketConn.disconnect();
+
+      socketConn.connect();
+    });
+
+    return () => {
+      events.forceReconnect.off();
+    };
+  }, [socketConn, events]);
+
+  return (
+    <SocketContext.Provider value={{ emits, events }}>
+      {children}
+    </SocketContext.Provider>
+  );
 };
 
-export const socketEmitRefreshTimers = () => {
-  socketConn.emit("refreshTimers");
-};
+export const useSocketContext = (): Required<SocketContexType> => {
+  const socketContext = useContext(SocketContext);
 
-export const socketEmitRefreshCommands = () => {
-  socketConn.emit("refreshCommands");
+  if (!socketContext) {
+    throw new Error(
+      "useSocketContext must be used within a SocketContextProvider"
+    );
+  }
+
+  if (!socketContext.emits || !socketContext.events)
+    throw new Error("Socket connection isn't initialized");
+
+  //Know that values are not null
+  return socketContext as Required<SocketContexType>;
 };
 
 export const SocketContextProvider = ({

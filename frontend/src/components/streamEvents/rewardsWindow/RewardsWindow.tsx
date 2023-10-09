@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "react-notifications-component/dist/theme.css";
 
 import Modal from "@components/modal";
-import { SocketContext, CustomRewardData } from "@context/socket";
+import { CustomRewardData, useSocketContext } from "@context/socket";
 import { addNotification } from "@utils/getNotificationValues";
 import useFileUpload from "@hooks/useFileUpload";
 import { useGetAlertSoundsMp3Names } from "@services/FilesService";
@@ -10,7 +10,7 @@ import { useDeleteAlertSound } from "@services/FilesService";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 
 export default function MessagesWindow() {
-  const socket = useContext(SocketContext);
+  const socketContext = useSocketContext();
   const [showModal, setShowModal] = useState(false);
   const [alertSounds, setAlertSounds] = useState<CustomRewardData[]>();
 
@@ -58,42 +58,57 @@ export default function MessagesWindow() {
   }, [mp3AlertSounds]);
 
   useEffect(() => {
-    socket.on("getCustomRewards", (rewards) => {
+    const {
+      emits: { getCustomRewards: emitGetCustomRewards },
+      events: { getCustomRewards },
+    } = socketContext;
+    getCustomRewards.on((rewards) => {
       setAlertSounds(rewards);
     });
 
-    socket.emit("getCustomRewards");
+    emitGetCustomRewards();
 
     return () => {
-      socket.off("getCustomRewards");
+      getCustomRewards.off();
     };
-  }, [socket]);
+  }, [socketContext]);
 
-  const emitRemoveAlertSoundReward = (id: string, name: string) => {
-    if (window.confirm(`Are you sure to delete custom reward: ${name}`)) {
-      socket.emit("deleteCustomReward", id, (succes) => {
-        if (!succes) {
+  const emitRemoveAlertSoundReward = useCallback(
+    (id: string, name: string) => {
+      const {
+        emits: { deleteCustomReward, getCustomRewards },
+      } = socketContext;
+      if (window.confirm(`Are you sure to delete custom reward: ${name}`)) {
+        deleteCustomReward(id, (succes) => {
+          if (!succes) {
+            addNotification(
+              "Can't remove",
+              "Custom reward couldn't be removed",
+              "danger"
+            );
+            return;
+          }
+
           addNotification(
-            "Can't remove",
-            "Custom reward couldn't be removed",
-            "danger"
+            "Removed",
+            "Custom reward removed successfully",
+            "success"
           );
-          return;
-        }
 
-        addNotification(
-          "Removed",
-          "Custom reward removed successfully",
-          "success"
-        );
+          setAlertSoundNameDelete(name);
+        });
 
-        setAlertSoundNameDelete(name);
-      });
-      socket.emit("getCustomRewards");
-    }
-  };
+        getCustomRewards();
+      }
+    },
+    [socketContext]
+  );
 
-  const emitCreateAlertSoundReward = () => {
+  const emitCreateAlertSoundReward = useCallback(() => {
+    if (!title || !fileList) return;
+    const {
+      emits: { getCustomRewards, createCustomReward },
+    } = socketContext;
     if (fileList && fileList.length <= 0) {
       addNotification(
         "No sound",
@@ -102,39 +117,34 @@ export default function MessagesWindow() {
       );
       return;
     }
-    socket.emit(
-      "createCustomReward",
-      { title: title, cost: cost },
-      (success) => {
-        if (!success) {
-          addNotification(
-            "Error",
-            "Custom reward couldn't be created",
-            "danger"
-          );
-          return;
-        }
-
-        handleFileUpload(
-          {
-            fileList: fileList,
-            bodySingleFileName: { bodyName: "title", value: title },
-          },
-          "alertSound"
-        );
-
-        addNotification(
-          "Success",
-          "Custom reward created successfully",
-          "success"
-        );
+    createCustomReward({ title: title, cost: cost }, (success) => {
+      if (!success) {
+        addNotification("Error", "Custom reward couldn't be created", "danger");
+        return;
       }
-    );
 
-    socket.emit("getCustomRewards");
-  };
+      handleFileUpload(
+        {
+          fileList: fileList,
+          bodySingleFileName: { bodyName: "title", value: title },
+        },
+        "alertSound"
+      );
 
-  const emitEditAlertSoundReward = () => {
+      addNotification(
+        "Success",
+        "Custom reward created successfully",
+        "success"
+      );
+    });
+
+    getCustomRewards();
+  }, [socketContext, cost, fileList, handleFileUpload, title]);
+
+  const emitEditAlertSoundReward = useCallback(() => {
+    const {
+      emits: { updateCustomReward },
+    } = socketContext;
     if (fileList && fileList.length <= 0) {
       addNotification(
         "No sound",
@@ -143,8 +153,7 @@ export default function MessagesWindow() {
       );
       return;
     }
-    socket.emit(
-      "updateCustomReward",
+    updateCustomReward(
       editingAlertSound,
       { title: title, cost: cost },
       (success) => {
@@ -172,7 +181,14 @@ export default function MessagesWindow() {
         );
       }
     );
-  };
+  }, [
+    socketContext,
+    cost,
+    editingAlertSound,
+    fileList,
+    handleFileUpload,
+    title,
+  ]);
 
   const onSubmitModalCreate = () => {
     emitCreateAlertSoundReward();

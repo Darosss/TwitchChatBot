@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo } from "react";
-import { SocketContext, AudioYTDataInfo } from "@context/socket";
-import { useContext, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { AudioYTDataInfo, useSocketContext } from "@context/socket";
+import { useState } from "react";
 import SterringButtons from "./SterringButtonsPlayer";
 import TabButton from "./TabButton";
 import AudioInformation from "./AudioInformation";
@@ -19,7 +19,7 @@ interface TabButtonsListMemo {
 let SONG_COUNT_TIMER: NodeJS.Timer | undefined;
 
 export default function YTMusicPlayer() {
-  const socket = useContext(SocketContext);
+  const socketContext = useSocketContext();
   const [activeTab, setActiveTab] = useState<AvailableTabs>("information");
   const [audioData, setAudioData] = useState<AudioYTDataInfo>({
     name: "",
@@ -31,6 +31,10 @@ export default function YTMusicPlayer() {
   });
 
   useEffect(() => {
+    const {
+      emits: { getAudioYTInfo: emitGetAudioYTInfo },
+      events: { getAudioYTInfo, audioStop },
+    } = socketContext;
     const onGetAudioYTInfo = (cb: AudioYTDataInfo) => {
       setAudioData(cb);
       clearInterval(SONG_COUNT_TIMER);
@@ -49,57 +53,52 @@ export default function YTMusicPlayer() {
       }
     };
 
-    socket.on("getAudioYTInfo", (cb) => {
+    getAudioYTInfo.on((cb) => {
       onGetAudioYTInfo(cb);
     });
 
-    socket.emit("getAudioYTInfo", (cb) => {
+    emitGetAudioYTInfo((cb) => {
       onGetAudioYTInfo(cb);
     });
 
-    socket.on("audioStop", () => {
+    audioStop.on(() => {
       setAudioData((prevState) => ({ ...prevState, isPlaying: false }));
     });
 
     return () => {
-      socket.off("audioStop");
-      socket.off("getAudioYTInfo");
+      audioStop.off();
+      getAudioYTInfo.off();
       clearInterval(SONG_COUNT_TIMER);
     };
-  }, [socket]);
+  }, [socketContext]);
 
-  const emitNextYoutubeSong = () => {
-    socket.emit("musicYTNext");
-  };
-
-  const toggleYTPlayPause = () => {
+  const toggleYTPlayPause = useCallback(() => {
+    const {
+      emits: { musicYTPause, musicYTPlay },
+    } = socketContext;
     if (audioData.isPlaying) {
-      socket.emit("musicYTPause");
+      musicYTPlay();
     } else {
-      socket.emit("musicYTPlay");
+      musicYTPause();
     }
     setAudioData((prevState) => ({
       ...prevState,
       isPlaying: !prevState.isPlaying,
     }));
-  };
-
-  const emitChangeYTVolume = (e: number) => {
-    socket.emit("changeYTVolume", e);
-  };
+  }, [socketContext, audioData]);
 
   const generateMusicPlayerContext = () => {
     switch (activeTab) {
       case "information":
+        const {
+          emits: { changeYTVolume },
+        } = socketContext;
         return (
           <AudioInformation<AudioYTDataInfo>
             audioData={audioData}
             setAudioData={setAudioData}
-            onChangeVolumeFn={emitChangeYTVolume}
-            eventsNames={{
-              audioInfo: "getAudioYTInfo",
-              audioStop: "musicYTStop",
-            }}
+            onChangeVolumeFn={(volume) => changeYTVolume(volume)}
+            youtubePlayer={true}
           />
         );
       case "playlists":
@@ -134,7 +133,7 @@ export default function YTMusicPlayer() {
       <div>
         <SterringButtons
           playing={audioData.isPlaying}
-          onNextSongFn={emitNextYoutubeSong}
+          onNextSongFn={() => socketContext.emits.musicYTNext()}
           togglePlayPauseFn={toggleYTPlayPause}
         />
       </div>

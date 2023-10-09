@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
-  SocketContext,
   AudioStreamDataInfo,
   AudioStreamData,
+  useSocketContext,
 } from "@context/socket";
 import SongProgress from "../SongProgress";
 
 export default function MusicPlayer() {
-  const socket = useContext(SocketContext);
+  const socketContext = useSocketContext();
   const [songName, setSongName] = useState("");
   const [songDuration, setSongDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -16,6 +16,7 @@ export default function MusicPlayer() {
   const [audioData, setAudioData] = useState<AudioStreamDataInfo>();
 
   useEffect(() => {
+    const { emits, events } = socketContext;
     let source: AudioBufferSourceNode | null = null;
     let gain: GainNode | null = null;
     let timer: NodeJS.Timer | undefined;
@@ -81,13 +82,13 @@ export default function MusicPlayer() {
       });
     };
 
-    socket.on("audio", (data) => {
+    events.audio.on((data) => {
       onGetAudioSoundData(data);
     });
 
-    socket.on("audioStop", () => musicStop());
+    events.audioStop.on(() => musicStop());
 
-    socket.on("changeVolume", (volume) => {
+    events.changeVolume.on((volume) => {
       changeVolumeGain(volume);
     });
 
@@ -95,30 +96,30 @@ export default function MusicPlayer() {
       setShowPlaylist((prevShow) => !prevShow);
     }, 20000);
 
-    socket.on("getAudioInfo", (data) => {
+    events.getAudioInfo.on((data) => {
       setAudioData(data);
     });
 
-    socket.emit("getAudioInfo", (cb) => {
+    emits.getAudioInfo((cb) => {
       setAudioData(cb);
     });
 
-    socket.emit("getAudioStreamData", (isPlaying, cb) => {
+    emits.getAudioStreamData((isPlaying, cb) => {
       if (!isPlaying) return;
 
       onGetAudioSoundData(cb);
     });
 
     return () => {
-      socket.off("audio");
-      socket.off("audioStop");
-      socket.off("getAudioInfo");
-      socket.off("changeVolume");
+      events.audio.off();
+      events.audioStop.off();
+      events.getAudioInfo.off();
+      events.changeVolume.off();
 
       clearInterval(intervalContentId);
       musicStop();
     };
-  }, [socket]);
+  }, [socketContext]);
 
   return (
     <div className="music-player-wrapper">

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { SocketContext, socketConn } from "@context/socket";
+import { SocketContextProvider } from "@context/socket";
 import SideBar from "@components/sideBar";
 
 import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
@@ -24,7 +24,7 @@ import ComponentWithTitle from "@components/componentWithTitle";
 
 function App() {
   return (
-    <SocketContext.Provider value={socketConn}>
+    <SocketContextProvider>
       <HelmetProvider>
         <BrowserRouter>
           <div className="main">
@@ -71,7 +71,7 @@ function App() {
           </div>
         </BrowserRouter>
       </HelmetProvider>
-    </SocketContext.Provider>
+    </SocketContextProvider>
   );
 }
 

@@ -1,5 +1,5 @@
 import React, {
-  useContext,
+  useCallback,
   useEffect,
   useReducer,
   useRef,
@@ -8,12 +8,12 @@ import React, {
 
 import { Message as MessageType } from "@services/MessageService";
 import Message from "@components/message";
-import { SocketContext } from "@context/socket";
+import { useSocketContext } from "@context/socket";
 import { addNotification } from "@utils/getNotificationValues";
 import { useGetCurrentSessionMessages } from "@services/StreamSessionService";
 
 export default function StreamChat() {
-  const socket = useContext(SocketContext);
+  const socketContext = useSocketContext();
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
@@ -41,14 +41,20 @@ export default function StreamChat() {
     chatToBottom();
   }, [data]);
 
-  const sendMessage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const sendMessage = useCallback(() => {
+    const {
+      emits: { messageClient },
+    } = socketContext;
     addNotification("Message sent", messageToSend, "success");
-    socket.emit("messageClient", messageToSend);
+    messageClient(messageToSend);
     chatToBottom();
-  };
+  }, [socketContext, messageToSend]);
 
   useEffect(() => {
-    socket.on("messageServer", (date, username, message) => {
+    const {
+      events: { messageServer },
+    } = socketContext;
+    messageServer.on((date, username, message) => {
       setMessages((prevMessages) => {
         const newMessages = { ...prevMessages };
         newMessages[Math.random() * 100] = {
@@ -64,9 +70,9 @@ export default function StreamChat() {
     });
 
     return () => {
-      socket.off("messageServer");
+      messageServer.off();
     };
-  }, [socket]);
+  }, [socketContext]);
 
   return (
     <div id="stream-chat" className="stream-chat">
@@ -109,7 +115,7 @@ export default function StreamChat() {
       </div>
       <div className="stream-chat-send-message-btn">
         <button
-          onClick={(e) => sendMessage(e)}
+          onClick={() => sendMessage()}
           className="stream-chat-btn-send-message"
         >
           SEND

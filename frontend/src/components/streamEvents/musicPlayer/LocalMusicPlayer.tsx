@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import UploadMp3Form from "./UploadMp3Form";
 import AudioFoldersList from "./AudioFoldersList";
 import AudioFolderCreate from "./AudioFolderCreate";
-import { SocketContext, AudioStreamDataInfo } from "@context/socket";
-import { useContext, useState } from "react";
+import { AudioStreamDataInfo, useSocketContext } from "@context/socket";
+import { useState } from "react";
 import SterringButtons from "./SterringButtonsPlayer";
 import TabButton from "./TabButton";
 import AudioInformation from "./AudioInformation";
@@ -20,7 +20,7 @@ interface TabButtonsListMemo {
 }
 
 export default function LocalMusicPlayer() {
-  const socket = useContext(SocketContext);
+  const socketContext = useSocketContext();
   const [audioData, setAudioData] = useState<AudioStreamDataInfo>({
     name: "",
     duration: 0,
@@ -33,35 +33,32 @@ export default function LocalMusicPlayer() {
 
   const [activeTab, setActiveTab] = useState<AvailableTabs>("information");
 
-  const toggleLocalPlayPause = () => {
+  const toggleLocalPlayPause = useCallback(() => {
+    const {
+      emits: { musicPause, musicPlay },
+    } = socketContext;
     if (audioData.isPlaying) {
-      socket.emit("musicPause");
+      musicPause();
     } else {
-      socket.emit("musicPlay");
+      musicPlay();
     }
     setAudioData((prevState) => ({
       ...prevState,
       isPlaying: !prevState.isPlaying,
     }));
-  };
-
-  const emitNextLocalSong = () => {
-    socket.emit("musicNext");
-  };
-
-  const emitChangeLocalVolume = (e: number) => {
-    socket.emit("changeVolume", e);
-  };
+  }, [socketContext, audioData]);
 
   const generateMusicPlayerContext = () => {
     switch (activeTab) {
       case "information":
+        const {
+          emits: { changeVolume },
+        } = socketContext;
         return (
           <AudioInformation<AudioStreamDataInfo>
             audioData={audioData}
             setAudioData={setAudioData}
-            onChangeVolumeFn={emitChangeLocalVolume}
-            eventsNames={{ audioInfo: "getAudioInfo", audioStop: "audioStop" }}
+            onChangeVolumeFn={(volume) => changeVolume(volume)}
           />
         );
       case "upload":
@@ -103,7 +100,7 @@ export default function LocalMusicPlayer() {
       <div>
         <SterringButtons
           playing={audioData.isPlaying}
-          onNextSongFn={emitNextLocalSong}
+          onNextSongFn={() => socketContext.emits.musicNext()}
           togglePlayPauseFn={toggleLocalPlayPause}
         />
       </div>

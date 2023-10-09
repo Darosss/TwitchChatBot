@@ -1,13 +1,10 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
-  SocketContext,
   AudioStreamDataInfo,
   AudioYTDataInfo,
+  useSocketContext,
 } from "@context/socket";
 import { convertSecondsToMS } from "@utils/convertSecondsToMS";
-
-type EventNamesAudioInfo = "getAudioInfo" | "getAudioYTInfo";
-type EventNamesAudioStop = "audioStop" | "musicYTStop";
 
 interface AudioInformationProps<
   T extends AudioYTDataInfo | AudioStreamDataInfo
@@ -15,19 +12,14 @@ interface AudioInformationProps<
   audioData: T;
   setAudioData: React.Dispatch<React.SetStateAction<T>>;
   onChangeVolumeFn: (volume: number) => void;
-  eventsNames: {
-    audioInfo: EventNamesAudioInfo;
-    audioStop: EventNamesAudioStop;
-  };
+  youtubePlayer?: boolean;
 }
 
 export default function AudioInformation<
   T extends AudioYTDataInfo | AudioStreamDataInfo
 >(props: AudioInformationProps<T>) {
-  const socket = useContext(SocketContext);
-  const { audioData, setAudioData, onChangeVolumeFn, eventsNames } = props;
-
-  const { audioInfo, audioStop } = eventsNames;
+  const socketContext = useSocketContext();
+  const { audioData, setAudioData, onChangeVolumeFn, youtubePlayer } = props;
 
   const showCurrentSongProgress = () => {
     const [maxMinutes, maxSeconds] = convertSecondsToMS(
@@ -44,7 +36,11 @@ export default function AudioInformation<
     );
   };
   useEffect(() => {
+    console.log("AUDIO INFORMATION HOW MUCH RENDER");
     let SONG_COUNT_TIMER: NodeJS.Timer | undefined;
+    const {
+      events: { audioStop, getAudioInfo, getAudioYTInfo },
+    } = socketContext;
 
     const countSongTime = (time: number, duration: number) => {
       setAudioData((prevState) => ({ ...prevState, currentTime: time }));
@@ -65,24 +61,31 @@ export default function AudioInformation<
       }, 1000);
     };
 
-    socket.on(audioInfo, (data: any) => {
-      onGetAudioYTInfo(data as T);
-    });
+    //getAudioYTInfo
+    //musicYTStop
+    if (youtubePlayer) {
+      getAudioYTInfo.on((data) => {
+        onGetAudioYTInfo(data as T);
+      });
+    } else {
+      getAudioInfo.on((data) => {
+        onGetAudioYTInfo(data as T);
+      });
+    }
 
-    socket.emit(audioInfo, (cb: any) => {
-      onGetAudioYTInfo(cb as T);
-    });
-
-    socket.on(audioStop, () => {
+    // as i know there is only audioStop for both local / yt
+    audioStop.on(() => {
       setAudioData((prevState) => ({ ...prevState, isPlaying: false }));
     });
 
     return () => {
-      socket.off(audioInfo);
-      socket.off(audioStop);
+      if (youtubePlayer) getAudioYTInfo.off();
+      else getAudioInfo.off();
+
+      audioStop.off();
       clearInterval(SONG_COUNT_TIMER);
     };
-  }, [audioInfo, audioStop, setAudioData, socket]);
+  }, [setAudioData, socketContext, youtubePlayer]);
 
   if (!audioData || !audioData.songsInQue) return <></>;
   return (
