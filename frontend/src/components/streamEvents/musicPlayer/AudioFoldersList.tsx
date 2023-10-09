@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { SocketContext } from "@context/socket";
+import React, { useCallback, useEffect, useState } from "react";
+import { useSocketContext } from "@context/socket";
 import {
   useDeleteMp3File,
   useGetFolderMp3Files,
@@ -8,7 +8,7 @@ import {
 import { addNotification } from "@utils/getNotificationValues";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 export default function AudioFoldersList() {
-  const socket = useContext(SocketContext);
+  const socketContext = useSocketContext();
   const [folderName, setFolderName] = useState("");
   const [fileNameToDelete, setFileNameToDelete] = useState<string | null>(null);
 
@@ -21,10 +21,6 @@ export default function AudioFoldersList() {
     folderName,
     fileNameToDelete || ""
   );
-
-  const emitLoadSongs = () => {
-    socket.emit("loadSongs", folderName);
-  };
 
   const handleOnClickChangeFolder = (folder: string) => {
     setFolderName(folder);
@@ -54,10 +50,14 @@ export default function AudioFoldersList() {
   }, [folderName]);
 
   useEffect(() => {
-    socket.emit("getAudioInfo", (cb) => {
+    const {
+      emits: { getAudioInfo },
+    } = socketContext;
+
+    getAudioInfo((cb) => {
       setFolderName(cb.currentFolder);
     });
-  }, [socket]);
+  }, [socketContext]);
 
   if (!foldersData) return <> No folders.</>;
 
@@ -83,7 +83,7 @@ export default function AudioFoldersList() {
       {folderName ? (
         <button
           onClick={() => {
-            emitLoadSongs();
+            socketContext.emits.loadSongs(folderName);
           }}
           className="load-folder-btn common-button primary-button"
         >

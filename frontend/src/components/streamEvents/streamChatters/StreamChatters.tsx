@@ -1,19 +1,23 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 
-import { SocketContext } from "@context/socket";
+import { useSocketContext } from "@context/socket";
 import { DateTooltip } from "@components/dateTooltip";
 
 export default function StreamChatters() {
   const LIMIT_LAST_CHATTERS = 14;
 
-  const socket = useContext(SocketContext);
+  const socketContext = useSocketContext();
 
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const [lastChatters, setLastChatters] = useState(new Map<string, Date>());
 
   useEffect(() => {
-    socket?.on("messageServer", (date, username, message) => {
+    const {
+      events: { messageServer },
+    } = socketContext;
+
+    messageServer.on((date, username, message) => {
       setLastChatters((prevState) => {
         prevState.set(username, date);
 
@@ -38,9 +42,9 @@ export default function StreamChatters() {
     });
 
     return () => {
-      socket.off("messageServer");
+      messageServer.off();
     };
-  }, [socket]);
+  }, [socketContext]);
 
   return (
     <div id="stream-last-chatters" className="stream-last-chatters">

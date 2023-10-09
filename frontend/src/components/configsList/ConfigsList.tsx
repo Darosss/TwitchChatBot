@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import PreviousPage from "@components/previousPage";
 import {
@@ -14,7 +14,7 @@ import {
   MusicConfigs,
   useResetConfigs,
 } from "@services/ConfigService";
-import { SocketContext } from "@context/socket";
+import { useSocketContext } from "@context/socket";
 import { addNotification } from "@utils/getNotificationValues";
 import {
   chatGamesConfigsInitial,
@@ -36,7 +36,9 @@ import MusicConfigsWrapper from "./MusicConfigs";
 import HeadConfigsWrapper from "./HeadConfigs";
 
 export default function ConfigsList() {
-  const socket = useContext(SocketContext);
+  const {
+    emits: { saveConfigs },
+  } = useSocketContext();
 
   const [showEdit, setShowEdit] = useState(false);
 
@@ -106,7 +108,7 @@ export default function ConfigsList() {
   const onClickEditConfig = () => {
     setShowEdit(false);
     fetchEditConfig().then(() => {
-      socket.emit("saveConfigs");
+      saveConfigs();
       refetchConfigsData();
       addNotification("Succes", "Configs edited succesfully", "success");
     });
@@ -116,7 +118,7 @@ export default function ConfigsList() {
     if (window.confirm("Are you sure you want reset configs to defaults?")) {
       resetConfigsToDefaults().then(() => {
         refetchConfigsData();
-        socket.emit("saveConfigs");
+        saveConfigs();
       });
     }
   };

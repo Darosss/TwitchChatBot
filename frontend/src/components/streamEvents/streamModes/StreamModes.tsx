@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { SocketContext } from "@context/socket";
+import { useSocketContext } from "@context/socket";
 import { useGetAllModes } from "@utils/getListModes";
 import { useEditTag } from "@services/TagService";
 import { useEditAffix } from "@services/AffixService";
@@ -8,7 +8,9 @@ import { useEditMood } from "@services/MoodService";
 import { addNotification } from "@utils/getNotificationValues";
 
 export default function StreamModes() {
-  const socket = useContext(SocketContext);
+  const {
+    emits: { changeModes },
+  } = useSocketContext();
 
   const [tagToUpdate, setTagToUpdate] = useState<[string, boolean]>([
     "",
@@ -42,33 +44,33 @@ export default function StreamModes() {
 
     fetchEditTag().then(() => {
       refetchTags();
-      socket.emit("changeModes");
+      changeModes();
       setTagToUpdate(["", false]);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tagToUpdate]);
+  }, [tagToUpdate, changeModes]);
 
   useEffect(() => {
     if (!affixToUpdate[0]) return;
 
     fetchAffixEdit().then(() => {
       refetchAffixes();
-      socket.emit("changeModes");
+      changeModes();
       setAffixToUpdate(["", false]);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [affixToUpdate]);
+  }, [affixToUpdate, changeModes]);
 
   useEffect(() => {
     if (!moodToUpdate[0]) return;
 
     fetchMoodEdit().then(() => {
       refetchMoods();
-      socket.emit("changeModes");
+      changeModes();
       setMoodToUpdate(["", false]);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [moodToUpdate]);
+  }, [moodToUpdate, changeModes]);
 
   if (!modes) return <> Loading...</>;
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "react-notifications-component/dist/theme.css";
 
 import {
@@ -6,11 +6,11 @@ import {
   useIncrementUsesCategoryById,
 } from "@services/MessageCategoriesService";
 import Modal from "@components/modal";
-import { SocketContext } from "@context/socket";
+import { useSocketContext } from "@context/socket";
 import { addNotification } from "@utils/getNotificationValues";
 
 export default function MessagesWindow() {
-  const socket = useContext(SocketContext);
+  const socketContext = useSocketContext();
   const [showModal, setShowModal] = useState(false);
 
   const [currentMessages, setCurrentMessages] = useState<string[]>([]);
@@ -27,10 +27,6 @@ export default function MessagesWindow() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIdCategory, messageTosend]);
-
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
-  const { data: msgCateg } = data;
 
   const getRandomMessage = (id: string) => {
     const documents = findMessagesCategoryByCurrCat(id);
@@ -64,14 +60,24 @@ export default function MessagesWindow() {
     sendMessage(randomMessage);
   };
 
-  const sendMessage = (message: string) => {
-    socket?.emit("messageClient", message);
-  };
+  const sendMessage = useCallback(
+    (message: string) => {
+      const {
+        emits: { messageClient },
+      } = socketContext;
+      messageClient(message);
+    },
+    [socketContext]
+  );
 
   const handleOnCloseModal = () => {
     setShowModal(false);
     setCurrentIdCategory("");
   };
+
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading!</>;
+  const { data: msgCateg } = data;
 
   return (
     <>

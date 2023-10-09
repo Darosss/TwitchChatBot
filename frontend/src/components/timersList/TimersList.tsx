@@ -11,7 +11,7 @@ import {
   useDeleteTimer,
   TimerCreateData,
 } from "@services/TimerService";
-import { socketEmitRefreshTimers } from "@context/socket";
+import { useSocketContext } from "@context/socket";
 import { handleActionOnChangeState } from "@utils/handleDeleteApi";
 import { addNotification } from "@utils/getNotificationValues";
 import { useGetAllModes } from "@utils/getListModes";
@@ -21,6 +21,10 @@ import TimerModalData from "./TimerModalData";
 
 export default function TimersList() {
   const [showModal, setShowModal] = useState(false);
+
+  const {
+    emits: { refreshTimers: emitRefreshTimers },
+  } = useSocketContext();
 
   const [editingTimer, setEditingTimer] = useState("");
   const [timerIdDelete, setTimerIdDelete] = useState<string | null>(null);
@@ -55,7 +59,7 @@ export default function TimersList() {
 
   const onSubmitModalCreate = () => {
     fetchCreateTimer().then(() => {
-      socketEmitRefreshTimers();
+      emitRefreshTimers();
       addNotification("Success", "Timer created successfully", "success");
       refetchData();
       setShowModal(false);
@@ -64,7 +68,7 @@ export default function TimersList() {
 
   const onSubmitModalEdit = () => {
     fetchEditTimer().then(() => {
-      socketEmitRefreshTimers();
+      emitRefreshTimers();
       addNotification("Success", "Timer edited successfully", "success");
       refetchData();
       handleOnHideModal();
