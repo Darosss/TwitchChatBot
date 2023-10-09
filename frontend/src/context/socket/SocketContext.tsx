@@ -28,3 +28,15 @@ export const socketEmitRefreshTimers = () => {
 export const socketEmitRefreshCommands = () => {
   socketConn.emit("refreshCommands");
 };
+
+export const SocketContextProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}): JSX.Element => {
+  return (
+    <SocketContext.Provider value={socketConn}>
+      {children}
+    </SocketContext.Provider>
+  );
+};
