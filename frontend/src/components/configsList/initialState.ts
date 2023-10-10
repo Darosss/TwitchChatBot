@@ -1,4 +1,4 @@
-import { TriggersConfigs } from "@services/ConfigService";
+import { ConfigUpdateData, TriggersConfigs } from "@services/ConfigService";
 import { LoyaltyConfigs } from "@services/ConfigService";
 import { CommandsConfigs } from "@services/ConfigService";
 import { MusicConfigs } from "@services/ConfigService";
@@ -55,4 +55,15 @@ export const musicConfigsInitial: MusicConfigs = {
   songRequest: false,
   maxAutoQueSize: 0,
   maxSongRequestByUser: 0,
+};
+
+export const configsInitialState: ConfigUpdateData = {
+  commandsConfigs: commandsConfigsInitial,
+  timersConfigs: timersConfigsInitial,
+  triggersConfigs: triggersConfigsInitial,
+  chatGamesConfigs: chatGamesConfigsInitial,
+  pointsConfigs: pointsConfigsInitial,
+  loyaltyConfigs: loyaltyConfigsInitial,
+  musicConfigs: musicConfigsInitial,
+  headConfigs: headConfigsInitial,
 };
