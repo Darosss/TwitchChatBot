@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { Message as MessageType } from "@services/MessageService";
 import Message from "@components/message";
@@ -12,16 +6,18 @@ import { useSocketContext } from "@context/socket";
 import { addNotification } from "@utils/getNotificationValues";
 import { useGetCurrentSessionMessages } from "@services/StreamSessionService";
 
+interface LocalMessage {
+  date: Date;
+  username: string;
+  message: string;
+}
+
 export default function StreamChat() {
   const socketContext = useSocketContext();
   const messagesRef = useRef<HTMLDivElement | null>(null);
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
-  const [messagesDB, setMessagesDB] = useState<MessageType[]>();
-
-  const [messages, setMessages] = useState<{
-    [index: string]: { date: Date; username: string; message: string };
-  }>();
+  const [messagesDB, setMessagesDB] = useState<MessageType[]>([]);
+  const [messages, setMessages] = useState<LocalMessage[]>([]);
 
   const [messageToSend, setMessageToSend] = useState("");
 
@@ -29,8 +25,9 @@ export default function StreamChat() {
 
   const chatToBottom = () => {
     setTimeout(() => {
-      if (messagesRef.current)
-        messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+      if (!messagesRef.current) return;
+
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }, 100);
   };
 
@@ -55,17 +52,11 @@ export default function StreamChat() {
       events: { messageServer },
     } = socketContext;
     messageServer.on((date, username, message) => {
-      setMessages((prevMessages) => {
-        const newMessages = { ...prevMessages };
-        newMessages[Math.random() * 100] = {
-          date: date,
-          username: username,
-          message: message,
-        };
-        return newMessages;
-      });
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { date, username, message },
+      ]);
 
-      forceUpdate();
       chatToBottom();
     });
 
@@ -78,33 +69,29 @@ export default function StreamChat() {
     <div id="stream-chat" className="stream-chat">
       <div className="widget-header chat-header">STREAM CHAT</div>
       <div className="stream-chat-messages" ref={messagesRef}>
-        {messagesDB
-          ? messagesDB.map((msg, index) => {
-              return (
-                <Message
-                  key={index}
-                  date={msg.date}
-                  username={msg.ownerUsername}
-                  message={msg.message}
-                  tooltip={false}
-                />
-              );
-            })
-          : null}
+        {messagesDB.map((msg, index) => {
+          return (
+            <Message
+              key={index}
+              date={msg.date}
+              username={msg.ownerUsername}
+              message={msg.message}
+              tooltip={false}
+            />
+          );
+        })}
 
-        {messages
-          ? [...Object.values(messages)].map((message, index) => {
-              return (
-                <Message
-                  key={index}
-                  date={message.date}
-                  username={message.username}
-                  message={message.message}
-                  tooltip={false}
-                />
-              );
-            })
-          : null}
+        {messages.map((message, index) => {
+          return (
+            <Message
+              key={index}
+              date={message.date}
+              username={message.username}
+              message={message.message}
+              tooltip={false}
+            />
+          );
+        })}
       </div>
       <div className="stream-chat-send-message-textarea">
         <textarea
