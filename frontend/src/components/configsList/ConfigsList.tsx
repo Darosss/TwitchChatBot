@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import PreviousPage from "@components/previousPage";
-import {
-  useGetConfigs,
-  useEditConfig,
-  useResetConfigs,
-} from "@services/ConfigService";
-import { useSocketContext } from "@context/socket";
-import { addNotification } from "@utils/getNotificationValues";
+import { useGetConfigs } from "@services/ConfigService";
 import CommandsConfigsWrapper from "./CommandsConfigs";
 import TimersConfigsWrapper from "./TimersConfigs";
 import ChatGamesConfigsWrapper from "./ChatGamesConfigs";
@@ -18,14 +12,11 @@ import MusicConfigsWrapper from "./MusicConfigs";
 import HeadConfigsWrapper from "./HeadConfigs";
 import { useConfigsContext } from "./ConfigsContext";
 import { ConfigsDispatchActionType } from "./types";
+import EditConfigs from "./EditConfigs";
 
 export default function ConfigsList() {
   const {
-    emits: { saveConfigs },
-  } = useSocketContext();
-
-  const {
-    configState: [configsState, dispatchConfigState],
+    configState: [, dispatchConfigState],
   } = useConfigsContext();
 
   const [showEdit, setShowEdit] = useState(false);
@@ -37,10 +28,6 @@ export default function ConfigsList() {
     refetchData: refetchConfigsData,
   } = useGetConfigs();
 
-  const { refetchData: resetConfigsToDefaults } = useResetConfigs();
-
-  const { refetchData: fetchEditConfig } = useEditConfig(configsState);
-
   useEffect(() => {
     if (!data) return;
 
@@ -50,57 +37,23 @@ export default function ConfigsList() {
     });
   }, [data, dispatchConfigState]);
 
-  const onClickEditConfig = () => {
-    setShowEdit(false);
-    fetchEditConfig().then(() => {
-      saveConfigs();
-      refetchConfigsData();
-      addNotification("Success", "Configs edited succesfully", "success");
-    });
-  };
-
-  const onClickResetConfigs = () => {
-    if (window.confirm("Are you sure you want reset configs to defaults?")) {
-      resetConfigsToDefaults().then(() => {
-        refetchConfigsData();
-        saveConfigs();
-      });
-    }
-  };
-
   if (error) return <>There is an error.</>;
   if (!data || loading) return <>Someting went wrong</>;
   return (
     <>
       <PreviousPage />
-      <div>
-        <button
-          className="common-button primary-button"
-          onClick={() => {
-            setShowEdit((prevState) => {
-              return !prevState;
-            });
-          }}
-        >
-          Edit
-        </button>
-        {showEdit ? (
-          <>
-            <button
-              className="common-button danger-button"
-              onClick={() => onClickEditConfig()}
-            >
-              Save
-            </button>
-            <button
-              className="common-button danger-button"
-              onClick={() => onClickResetConfigs()}
-            >
-              Reset to defaults
-            </button>
-          </>
-        ) : null}
-      </div>
+      <EditConfigs
+        showEdit={showEdit}
+        onClickShowEdit={() => setShowEdit(!showEdit)}
+        onClickSaveConfigs={() => {
+          refetchConfigsData();
+          setShowEdit(!showEdit);
+        }}
+        onClickDefaultConfigs={() => {
+          refetchConfigsData();
+          setShowEdit(!showEdit);
+        }}
+      />
       <div className="configs-list-wrapper">
         <div className="configs-section-wrapper">
           <div className="configs-section-header">Commands options </div>
