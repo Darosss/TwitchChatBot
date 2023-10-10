@@ -4,28 +4,10 @@ import PreviousPage from "@components/previousPage";
 import {
   useGetConfigs,
   useEditConfig,
-  TimersConfigs,
-  CommandsConfigs,
-  ChatGamesConfigs,
-  TriggersConfigs,
-  PointsConfigs,
-  LoyaltyConfigs,
-  HeadConfigs,
-  MusicConfigs,
   useResetConfigs,
 } from "@services/ConfigService";
 import { useSocketContext } from "@context/socket";
 import { addNotification } from "@utils/getNotificationValues";
-import {
-  chatGamesConfigsInitial,
-  commandsConfigsInitial,
-  headConfigsInitial,
-  loyaltyConfigsInitial,
-  musicConfigsInitial,
-  pointsConfigsInitial,
-  timersConfigsInitial,
-  triggersConfigsInitial,
-} from "./initialState";
 import CommandsConfigsWrapper from "./CommandsConfigs";
 import TimersConfigsWrapper from "./TimersConfigs";
 import ChatGamesConfigsWrapper from "./ChatGamesConfigs";
@@ -34,32 +16,19 @@ import PointsConfigsWrapper from "./PointsConfigs";
 import LoyaltyConfigsWrapper from "./LoyaltyConfigs";
 import MusicConfigsWrapper from "./MusicConfigs";
 import HeadConfigsWrapper from "./HeadConfigs";
+import { useConfigsContext } from "./ConfigsContext";
+import { ConfigsDispatchActionType } from "./types";
 
 export default function ConfigsList() {
   const {
     emits: { saveConfigs },
   } = useSocketContext();
 
-  const [showEdit, setShowEdit] = useState(false);
+  const {
+    configState: [configsState, dispatchConfigState],
+  } = useConfigsContext();
 
-  const [commandsCfg, setCommandsCfg] = useState<CommandsConfigs>(
-    commandsConfigsInitial
-  );
-  const [timersCfg, setTimersCfg] =
-    useState<TimersConfigs>(timersConfigsInitial);
-  const [chatGamesCfg, setChatGamesCfg] = useState<ChatGamesConfigs>(
-    chatGamesConfigsInitial
-  );
-  const [triggersCfg, setTriggersCfg] = useState<TriggersConfigs>(
-    triggersConfigsInitial
-  );
-  const [pointsCfg, setPointsCfg] =
-    useState<PointsConfigs>(pointsConfigsInitial);
-  const [loyaltyCfg, setLoyaltyCfg] = useState<LoyaltyConfigs>(
-    loyaltyConfigsInitial
-  );
-  const [musicCfg, setMusicCfg] = useState<MusicConfigs>(musicConfigsInitial);
-  const [headCfg, setHeadCfg] = useState<HeadConfigs>(headConfigsInitial);
+  const [showEdit, setShowEdit] = useState(false);
 
   const {
     data,
@@ -70,47 +39,23 @@ export default function ConfigsList() {
 
   const { refetchData: resetConfigsToDefaults } = useResetConfigs();
 
-  const { refetchData: fetchEditConfig } = useEditConfig({
-    commandsConfigs: commandsCfg,
-    timersConfigs: timersCfg,
-    chatGamesConfigs: chatGamesCfg,
-    triggersConfigs: triggersCfg,
-    pointsConfigs: pointsCfg,
-    loyaltyConfigs: loyaltyCfg,
-    musicConfigs: musicCfg,
-    headConfigs: headCfg,
-  });
+  const { refetchData: fetchEditConfig } = useEditConfig(configsState);
 
   useEffect(() => {
     if (!data) return;
-    const {
-      commandsConfigs,
-      timersConfigs,
-      chatGamesConfigs,
-      triggersConfigs,
-      pointsConfigs,
-      loyaltyConfigs,
-      musicConfigs,
-      headConfigs,
-    } = data;
-    setCommandsCfg(commandsConfigs);
-    setTimersCfg(timersConfigs);
-    setChatGamesCfg(chatGamesConfigs);
-    setTriggersCfg(triggersConfigs);
-    setPointsCfg(pointsConfigs);
-    setLoyaltyCfg(loyaltyConfigs);
-    setMusicCfg(musicConfigs);
-    setHeadCfg(headConfigs);
-  }, [data]);
 
-  const setConfigStates = () => {};
+    dispatchConfigState({
+      type: ConfigsDispatchActionType.SET_STATE,
+      payload: data,
+    });
+  }, [data, dispatchConfigState]);
 
   const onClickEditConfig = () => {
     setShowEdit(false);
     fetchEditConfig().then(() => {
       saveConfigs();
       refetchConfigsData();
-      addNotification("Succes", "Configs edited succesfully", "success");
+      addNotification("Success", "Configs edited succesfully", "success");
     });
   };
 
@@ -132,7 +77,6 @@ export default function ConfigsList() {
         <button
           className="common-button primary-button"
           onClick={() => {
-            setConfigStates();
             setShowEdit((prevState) => {
               return !prevState;
             });
@@ -160,59 +104,35 @@ export default function ConfigsList() {
       <div className="configs-list-wrapper">
         <div className="configs-section-wrapper">
           <div className="configs-section-header">Commands options </div>
-          <CommandsConfigsWrapper
-            commandsState={[commandsCfg, setCommandsCfg]}
-            showEdit={showEdit}
-          />
+          <CommandsConfigsWrapper showEdit={showEdit} />
         </div>
         <div className="configs-section-wrapper">
           <div className="configs-section-header">Timers configs</div>
-          <TimersConfigsWrapper
-            timersState={[timersCfg, setTimersCfg]}
-            showEdit={showEdit}
-          />
+          <TimersConfigsWrapper showEdit={showEdit} />
         </div>
         <div className="configs-section-wrapper">
           <div className="configs-section-header">Chat games configs</div>
-          <ChatGamesConfigsWrapper
-            chatGamesState={[chatGamesCfg, setChatGamesCfg]}
-            showEdit={showEdit}
-          />
+          <ChatGamesConfigsWrapper showEdit={showEdit} />
         </div>
         <div className="configs-section-wrapper">
           <div className="configs-section-header">Triggers configs</div>
-          <TriggersConfigsWrapper
-            triggersState={[triggersCfg, setTriggersCfg]}
-            showEdit={showEdit}
-          />
+          <TriggersConfigsWrapper showEdit={showEdit} />
         </div>
         <div className="configs-section-wrapper">
           <div className="configs-section-header">Points configs</div>
-          <PointsConfigsWrapper
-            pointsState={[pointsCfg, setPointsCfg]}
-            showEdit={showEdit}
-          />
+          <PointsConfigsWrapper showEdit={showEdit} />
         </div>
         <div className="configs-section-wrapper">
           <div className="configs-section-header">Loyalty configs</div>
-          <LoyaltyConfigsWrapper
-            loyaltyState={[loyaltyCfg, setLoyaltyCfg]}
-            showEdit={showEdit}
-          />
+          <LoyaltyConfigsWrapper showEdit={showEdit} />
         </div>
         <div className="configs-section-wrapper">
           <div className="configs-section-header">Music configs</div>
-          <MusicConfigsWrapper
-            musicState={[musicCfg, setMusicCfg]}
-            showEdit={showEdit}
-          />
+          <MusicConfigsWrapper showEdit={showEdit} />
         </div>
         <div className="configs-section-wrapper">
           <div className="configs-section-header">Head configs</div>
-          <HeadConfigsWrapper
-            headState={[headCfg, setHeadCfg]}
-            showEdit={showEdit}
-          />
+          <HeadConfigsWrapper showEdit={showEdit} />
         </div>
       </div>
     </>
