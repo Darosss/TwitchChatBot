@@ -92,9 +92,10 @@ export default function ConfigsList() {
       />
 
       <div className="configs-list-tab-list-wrapper">
-        {Object.values(ConfigsListTabNames).map((tabName) => {
+        {Object.values(ConfigsListTabNames).map((tabName, idx) => {
           return (
             <button
+              key={idx}
               className={`${
                 currentTab === tabName ? "primary-button" : "danger-button"
               }`}
