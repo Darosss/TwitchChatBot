@@ -14,12 +14,26 @@ import { useConfigsContext } from "./ConfigsContext";
 import { ConfigsDispatchActionType } from "./types";
 import EditConfigs from "./EditConfigs";
 
+enum ConfigsListTabNames {
+  HEAD = "Head options",
+  COMMANDS = "Commands options",
+  TIMERS = "Timers options",
+  CHAT_GAMES = "Chat games options",
+  TRIGGERS = "Triggers options",
+  POINTS = "Points options",
+  LOYALTY = "Loyalty options",
+  MUSIC = "Music options",
+}
+
 export default function ConfigsList() {
   const {
     configState: [, dispatchConfigState],
   } = useConfigsContext();
 
   const [showEdit, setShowEdit] = useState(false);
+  const [currentTab, setCurrentTab] = useState<ConfigsListTabNames>(
+    ConfigsListTabNames.HEAD
+  );
 
   const {
     data,
@@ -39,6 +53,28 @@ export default function ConfigsList() {
 
   if (error) return <>There is an error.</>;
   if (!data || loading) return <>Someting went wrong</>;
+
+  const renderTabComponent = () => {
+    switch (currentTab) {
+      case ConfigsListTabNames.COMMANDS:
+        return <CommandsConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.TIMERS:
+        return <TimersConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.CHAT_GAMES:
+        return <ChatGamesConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.TRIGGERS:
+        return <TriggersConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.POINTS:
+        return <PointsConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.LOYALTY:
+        return <LoyaltyConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.MUSIC:
+        return <MusicConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.HEAD:
+        return <HeadConfigsWrapper showEdit={showEdit} />;
+    }
+  };
+
   return (
     <>
       <PreviousPage />
@@ -54,38 +90,25 @@ export default function ConfigsList() {
           setShowEdit(!showEdit);
         }}
       />
+
+      <div className="configs-list-tab-list-wrapper">
+        {Object.values(ConfigsListTabNames).map((tabName) => {
+          return (
+            <button
+              className={`${
+                currentTab === tabName ? "primary-button" : "danger-button"
+              }`}
+              onClick={() => setCurrentTab(tabName)}
+            >
+              {tabName}
+            </button>
+          );
+        })}
+      </div>
       <div className="configs-list-wrapper">
         <div className="configs-section-wrapper">
-          <div className="configs-section-header">Commands options </div>
-          <CommandsConfigsWrapper showEdit={showEdit} />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Timers configs</div>
-          <TimersConfigsWrapper showEdit={showEdit} />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Chat games configs</div>
-          <ChatGamesConfigsWrapper showEdit={showEdit} />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Triggers configs</div>
-          <TriggersConfigsWrapper showEdit={showEdit} />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Points configs</div>
-          <PointsConfigsWrapper showEdit={showEdit} />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Loyalty configs</div>
-          <LoyaltyConfigsWrapper showEdit={showEdit} />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Music configs</div>
-          <MusicConfigsWrapper showEdit={showEdit} />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Head configs</div>
-          <HeadConfigsWrapper showEdit={showEdit} />
+          <div className="configs-section-header">{currentTab} </div>
+          {renderTabComponent()}
         </div>
       </div>
     </>
