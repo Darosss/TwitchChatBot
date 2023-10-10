@@ -46,7 +46,7 @@ export default function EditConfigs({
   };
 
   return (
-    <div>
+    <div className="edit-configs-wrapper">
       <button
         className="common-button primary-button"
         onClick={() => onClickShowEdit()}
