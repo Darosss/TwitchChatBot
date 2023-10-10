@@ -11,7 +11,7 @@ import { addNotification } from "@utils/getNotificationValues";
 import CommandsConfigsWrapper from "./CommandsConfigs";
 import TimersConfigsWrapper from "./TimersConfigs";
 import ChatGamesConfigsWrapper from "./ChatGamesConfigs";
-import TriggersConfigsWrapper from "./TriggersConfigs.tsx";
+import TriggersConfigsWrapper from "./TriggersConfigs";
 import PointsConfigsWrapper from "./PointsConfigs";
 import LoyaltyConfigsWrapper from "./LoyaltyConfigs";
 import MusicConfigsWrapper from "./MusicConfigs";
