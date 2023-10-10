@@ -1,6 +1,6 @@
-import { TriggerCreateData } from "@services/TriggerService";
+import { TriggerCreateData, TriggerMode } from "@services/TriggerService";
 
-type DispatchAction =
+export type DispatchAction =
   | { type: "SET_NAME"; payload: string }
   | { type: "SET_CHANCE"; payload: number }
   | { type: "SET_ENABLED"; payload?: boolean }
