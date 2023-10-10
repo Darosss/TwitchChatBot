@@ -1,65 +1,39 @@
 import React, { useEffect, useState } from "react";
 
 import PreviousPage from "@components/previousPage";
-import {
-  useGetConfigs,
-  useEditConfig,
-  TimersConfigs,
-  CommandsConfigs,
-  ChatGamesConfigs,
-  TriggersConfigs,
-  PointsConfigs,
-  LoyaltyConfigs,
-  HeadConfigs,
-  MusicConfigs,
-  useResetConfigs,
-} from "@services/ConfigService";
-import { useSocketContext } from "@context/socket";
-import { addNotification } from "@utils/getNotificationValues";
-import {
-  chatGamesConfigsInitial,
-  commandsConfigsInitial,
-  headConfigsInitial,
-  loyaltyConfigsInitial,
-  musicConfigsInitial,
-  pointsConfigsInitial,
-  timersConfigsInitial,
-  triggersConfigsInitial,
-} from "./initialState";
+import { useGetConfigs } from "@services/ConfigService";
 import CommandsConfigsWrapper from "./CommandsConfigs";
 import TimersConfigsWrapper from "./TimersConfigs";
 import ChatGamesConfigsWrapper from "./ChatGamesConfigs";
-import TriggersConfigsWrapper from "./TriggersConfigs.tsx";
+import TriggersConfigsWrapper from "./TriggersConfigs";
 import PointsConfigsWrapper from "./PointsConfigs";
 import LoyaltyConfigsWrapper from "./LoyaltyConfigs";
 import MusicConfigsWrapper from "./MusicConfigs";
 import HeadConfigsWrapper from "./HeadConfigs";
+import { useConfigsContext } from "./ConfigsContext";
+import { ConfigsDispatchActionType } from "./types";
+import EditConfigs from "./EditConfigs";
+
+enum ConfigsListTabNames {
+  HEAD = "Head options",
+  COMMANDS = "Commands options",
+  TIMERS = "Timers options",
+  CHAT_GAMES = "Chat games options",
+  TRIGGERS = "Triggers options",
+  POINTS = "Points options",
+  LOYALTY = "Loyalty options",
+  MUSIC = "Music options",
+}
 
 export default function ConfigsList() {
   const {
-    emits: { saveConfigs },
-  } = useSocketContext();
+    configState: [, dispatchConfigState],
+  } = useConfigsContext();
 
   const [showEdit, setShowEdit] = useState(false);
-
-  const [commandsCfg, setCommandsCfg] = useState<CommandsConfigs>(
-    commandsConfigsInitial
+  const [currentTab, setCurrentTab] = useState<ConfigsListTabNames>(
+    ConfigsListTabNames.HEAD
   );
-  const [timersCfg, setTimersCfg] =
-    useState<TimersConfigs>(timersConfigsInitial);
-  const [chatGamesCfg, setChatGamesCfg] = useState<ChatGamesConfigs>(
-    chatGamesConfigsInitial
-  );
-  const [triggersCfg, setTriggersCfg] = useState<TriggersConfigs>(
-    triggersConfigsInitial
-  );
-  const [pointsCfg, setPointsCfg] =
-    useState<PointsConfigs>(pointsConfigsInitial);
-  const [loyaltyCfg, setLoyaltyCfg] = useState<LoyaltyConfigs>(
-    loyaltyConfigsInitial
-  );
-  const [musicCfg, setMusicCfg] = useState<MusicConfigs>(musicConfigsInitial);
-  const [headCfg, setHeadCfg] = useState<HeadConfigs>(headConfigsInitial);
 
   const {
     data,
@@ -68,151 +42,73 @@ export default function ConfigsList() {
     refetchData: refetchConfigsData,
   } = useGetConfigs();
 
-  const { refetchData: resetConfigsToDefaults } = useResetConfigs();
-
-  const { refetchData: fetchEditConfig } = useEditConfig({
-    commandsConfigs: commandsCfg,
-    timersConfigs: timersCfg,
-    chatGamesConfigs: chatGamesCfg,
-    triggersConfigs: triggersCfg,
-    pointsConfigs: pointsCfg,
-    loyaltyConfigs: loyaltyCfg,
-    musicConfigs: musicCfg,
-    headConfigs: headCfg,
-  });
-
   useEffect(() => {
     if (!data) return;
-    const {
-      commandsConfigs,
-      timersConfigs,
-      chatGamesConfigs,
-      triggersConfigs,
-      pointsConfigs,
-      loyaltyConfigs,
-      musicConfigs,
-      headConfigs,
-    } = data;
-    setCommandsCfg(commandsConfigs);
-    setTimersCfg(timersConfigs);
-    setChatGamesCfg(chatGamesConfigs);
-    setTriggersCfg(triggersConfigs);
-    setPointsCfg(pointsConfigs);
-    setLoyaltyCfg(loyaltyConfigs);
-    setMusicCfg(musicConfigs);
-    setHeadCfg(headConfigs);
-  }, [data]);
 
-  const setConfigStates = () => {};
-
-  const onClickEditConfig = () => {
-    setShowEdit(false);
-    fetchEditConfig().then(() => {
-      saveConfigs();
-      refetchConfigsData();
-      addNotification("Succes", "Configs edited succesfully", "success");
+    dispatchConfigState({
+      type: ConfigsDispatchActionType.SET_STATE,
+      payload: data,
     });
-  };
-
-  const onClickResetConfigs = () => {
-    if (window.confirm("Are you sure you want reset configs to defaults?")) {
-      resetConfigsToDefaults().then(() => {
-        refetchConfigsData();
-        saveConfigs();
-      });
-    }
-  };
+  }, [data, dispatchConfigState]);
 
   if (error) return <>There is an error.</>;
   if (!data || loading) return <>Someting went wrong</>;
+
+  const renderTabComponent = () => {
+    switch (currentTab) {
+      case ConfigsListTabNames.COMMANDS:
+        return <CommandsConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.TIMERS:
+        return <TimersConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.CHAT_GAMES:
+        return <ChatGamesConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.TRIGGERS:
+        return <TriggersConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.POINTS:
+        return <PointsConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.LOYALTY:
+        return <LoyaltyConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.MUSIC:
+        return <MusicConfigsWrapper showEdit={showEdit} />;
+      case ConfigsListTabNames.HEAD:
+        return <HeadConfigsWrapper showEdit={showEdit} />;
+    }
+  };
+
   return (
     <>
       <PreviousPage />
-      <div>
-        <button
-          className="common-button primary-button"
-          onClick={() => {
-            setConfigStates();
-            setShowEdit((prevState) => {
-              return !prevState;
-            });
-          }}
-        >
-          Edit
-        </button>
-        {showEdit ? (
-          <>
+      <EditConfigs
+        showEdit={showEdit}
+        onClickShowEdit={() => setShowEdit(!showEdit)}
+        onClickSaveConfigs={() => {
+          refetchConfigsData();
+          setShowEdit(!showEdit);
+        }}
+        onClickDefaultConfigs={() => {
+          refetchConfigsData();
+          setShowEdit(!showEdit);
+        }}
+      />
+
+      <div className="configs-list-tab-list-wrapper">
+        {Object.values(ConfigsListTabNames).map((tabName) => {
+          return (
             <button
-              className="common-button danger-button"
-              onClick={() => onClickEditConfig()}
+              className={`${
+                currentTab === tabName ? "primary-button" : "danger-button"
+              }`}
+              onClick={() => setCurrentTab(tabName)}
             >
-              Save
+              {tabName}
             </button>
-            <button
-              className="common-button danger-button"
-              onClick={() => onClickResetConfigs()}
-            >
-              Reset to defaults
-            </button>
-          </>
-        ) : null}
+          );
+        })}
       </div>
       <div className="configs-list-wrapper">
         <div className="configs-section-wrapper">
-          <div className="configs-section-header">Commands options </div>
-          <CommandsConfigsWrapper
-            commandsState={[commandsCfg, setCommandsCfg]}
-            showEdit={showEdit}
-          />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Timers configs</div>
-          <TimersConfigsWrapper
-            timersState={[timersCfg, setTimersCfg]}
-            showEdit={showEdit}
-          />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Chat games configs</div>
-          <ChatGamesConfigsWrapper
-            chatGamesState={[chatGamesCfg, setChatGamesCfg]}
-            showEdit={showEdit}
-          />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Triggers configs</div>
-          <TriggersConfigsWrapper
-            triggersState={[triggersCfg, setTriggersCfg]}
-            showEdit={showEdit}
-          />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Points configs</div>
-          <PointsConfigsWrapper
-            pointsState={[pointsCfg, setPointsCfg]}
-            showEdit={showEdit}
-          />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Loyalty configs</div>
-          <LoyaltyConfigsWrapper
-            loyaltyState={[loyaltyCfg, setLoyaltyCfg]}
-            showEdit={showEdit}
-          />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Music configs</div>
-          <MusicConfigsWrapper
-            musicState={[musicCfg, setMusicCfg]}
-            showEdit={showEdit}
-          />
-        </div>
-        <div className="configs-section-wrapper">
-          <div className="configs-section-header">Head configs</div>
-          <HeadConfigsWrapper
-            headState={[headCfg, setHeadCfg]}
-            showEdit={showEdit}
-          />
+          <div className="configs-section-header">{currentTab} </div>
+          {renderTabComponent()}
         </div>
       </div>
     </>

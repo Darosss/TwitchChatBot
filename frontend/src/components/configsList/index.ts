@@ -1,4 +1,4 @@
 import "./style.scss";
-import ConfigsList from "./ConfigsList";
+import HeadConfigsList from "./HeadConfigsList";
 
-export default ConfigsList;
+export default HeadConfigsList;

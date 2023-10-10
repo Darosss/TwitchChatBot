@@ -2,57 +2,57 @@ import ConfigInput from "./ConfigInput";
 import { useConfigsContext } from "./ConfigsContext";
 import { ConfigsDispatchActionType, ConfigsWrapperSharedProps } from "./types";
 
-const DISPATCH_TYPE = ConfigsDispatchActionType.SET_CHAT_GAMES;
+const DISPATCH_TYPE = ConfigsDispatchActionType.SET_TRIGGERS;
 
-export default function ChatGamesConfigsWrapper({
+export default function TriggersConfigsWrapper({
   showEdit,
 }: ConfigsWrapperSharedProps) {
   const {
-    configState: [{ chatGamesConfigs }, dispatch],
+    configState: [{ triggersConfigs }, dispatch],
   } = useConfigsContext();
 
   return (
     <>
       <ConfigInput
-        optionName="Max time active user"
+        optionName="Random message chance"
         setState={(e) =>
           dispatch({
             type: DISPATCH_TYPE,
             payload: {
-              ...chatGamesConfigs,
-              activeUserTimeDelay: e.target.valueAsNumber,
+              ...triggersConfigs,
+              randomMessageChance: e.target.valueAsNumber,
             },
           })
         }
-        value={chatGamesConfigs.activeUserTimeDelay}
+        value={triggersConfigs.randomMessageChance}
         showEdit={showEdit}
       />
       <ConfigInput
-        optionName="Chat games interval delay"
+        optionName="Prefix chances"
         setState={(e) =>
           dispatch({
             type: DISPATCH_TYPE,
             payload: {
-              ...chatGamesConfigs,
-              chatGamesIntervalDelay: e.target.valueAsNumber,
+              ...triggersConfigs,
+              prefixChance: e.target.valueAsNumber,
             },
           })
         }
-        value={chatGamesConfigs.chatGamesIntervalDelay}
+        value={triggersConfigs.prefixChance}
         showEdit={showEdit}
       />
       <ConfigInput
-        optionName="Minimum active users threshhold"
+        optionName="Sufix chances"
         setState={(e) =>
           dispatch({
             type: DISPATCH_TYPE,
             payload: {
-              ...chatGamesConfigs,
-              minActiveUsersThreshold: e.target.valueAsNumber,
+              ...triggersConfigs,
+              suffixChance: e.target.valueAsNumber,
             },
           })
         }
-        value={chatGamesConfigs.minActiveUsersThreshold}
+        value={triggersConfigs.suffixChance}
         showEdit={showEdit}
       />
     </>

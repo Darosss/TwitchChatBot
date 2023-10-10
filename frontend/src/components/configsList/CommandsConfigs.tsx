@@ -1,23 +1,28 @@
-import { CommandsConfigs } from "@services/ConfigService";
 import ConfigInput from "./ConfigInput";
-export default function CommandsConfigsWrapper(props: {
-  commandsState: [
-    CommandsConfigs,
-    React.Dispatch<React.SetStateAction<CommandsConfigs>>
-  ];
-  showEdit: boolean;
-}) {
-  const { commandsState, showEdit } = props;
-  const [commandsConfigs, setCommandsConfigs] = commandsState;
+import { useConfigsContext } from "./ConfigsContext";
+import { ConfigsDispatchActionType, ConfigsWrapperSharedProps } from "./types";
+
+const DISPATCH_TYPE = ConfigsDispatchActionType.SET_COMMANDS;
+
+export default function CommandsConfigsWrapper({
+  showEdit,
+}: ConfigsWrapperSharedProps) {
+  const {
+    configState: [{ commandsConfigs }, dispatch],
+  } = useConfigsContext();
+
   return (
     <>
       <ConfigInput
         optionName="Commands prefix"
         setState={(e) =>
-          setCommandsConfigs((prevState) => ({
-            ...prevState,
-            commandsPrefix: e.target.value,
-          }))
+          dispatch({
+            type: DISPATCH_TYPE,
+            payload: {
+              ...commandsConfigs,
+              commandsPrefix: e.target.value,
+            },
+          })
         }
         value={commandsConfigs.commandsPrefix}
         showEdit={showEdit}

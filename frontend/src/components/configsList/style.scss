@@ -36,3 +36,28 @@
     }
   }
 }
+
+.edit-configs-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 5%;
+
+  & > button {
+    flex-grow: 1;
+    max-width: 20dvw;
+  }
+}
+
+.configs-list-tab-list-wrapper {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: row;
+  margin-right: 1%;
+
+  & > button {
+    padding: 1rem;
+    margin: 0.1rem;
+    flex-grow: 1;
+  }
+}
