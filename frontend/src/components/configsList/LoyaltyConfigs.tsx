@@ -1,23 +1,28 @@
-import { LoyaltyConfigs } from "@services/ConfigService";
 import ConfigInput from "./ConfigInput";
-export default function LoyaltyConfigsWrapper(props: {
-  loyaltyState: [
-    LoyaltyConfigs,
-    React.Dispatch<React.SetStateAction<LoyaltyConfigs>>
-  ];
-  showEdit: boolean;
-}) {
-  const { loyaltyState, showEdit } = props;
-  const [loyaltyConfigs, setLoyaltyConfigs] = loyaltyState;
+import { useConfigsContext } from "./ConfigsContext";
+import { ConfigsDispatchActionType, ConfigsWrapperSharedProps } from "./types";
+
+const DISPATCH_TYPE = ConfigsDispatchActionType.SET_LOYALTY;
+
+export default function LoyaltyConfigsWrapper({
+  showEdit,
+}: ConfigsWrapperSharedProps) {
+  const {
+    configState: [{ loyaltyConfigs }, dispatch],
+  } = useConfigsContext();
+
   return (
     <>
       <ConfigInput
         optionName="Interval check chatters delay"
         setState={(e) =>
-          setLoyaltyConfigs((prevState) => ({
-            ...prevState,
-            intervalCheckChatters: e.target.valueAsNumber,
-          }))
+          dispatch({
+            type: DISPATCH_TYPE,
+            payload: {
+              ...loyaltyConfigs,
+              intervalCheckChatters: e.target.valueAsNumber,
+            },
+          })
         }
         value={loyaltyConfigs.intervalCheckChatters}
         showEdit={showEdit}
