@@ -1,32 +1,26 @@
 import React from "react";
 
-import UrlParamsInput from "@components/urlParamsInputs";
+import UrlParamsInput, { FilterBarInput } from "@components/urlParamsInputs";
 
 export default function FilterBarMessages() {
   return (
     <div className="filter-messages-wrapper">
       <UrlParamsInput>
-        <input
-          {...{ queryparam: "search_name" }}
+        <FilterBarInput
+          queryparam="search_name"
           type="search"
-          placeholder={"Message contains"}
-        ></input>
-        <input
-          {...{ queryparam: "owner" }}
+          placeholder="Message contains"
+        />
+        <FilterBarInput
+          queryparam="owner"
           type="search"
-          placeholder={"Owner of message"}
-        ></input>
+          placeholder="Owner of message"
+        />
         <div>
           <label> Date [start / end]</label>
           <div>
-            <input
-              {...{ queryparam: "start_date" }}
-              type="datetime-local"
-            ></input>
-            <input
-              {...{ queryparam: "end_date" }}
-              type="datetime-local"
-            ></input>
+            <FilterBarInput queryparam="start_date" type="datetime-local" />
+            <FilterBarInput queryparam="end_date" type="datetime-local" />
           </div>
         </div>
       </UrlParamsInput>
