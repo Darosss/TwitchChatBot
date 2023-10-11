@@ -2,7 +2,7 @@ import ChangeTheme from "@components/changeTheme";
 import { HelmetTitle } from "@components/componentWithTitle";
 import Message, { MessageProps } from "@components/message";
 import { routes } from "@routes/routesList";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const chatMessages = [
@@ -49,7 +49,6 @@ export default function Home() {
 
 function ChatBackground() {
   const [messages, setMessages] = useState<MessageProps[]>([]);
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   useEffect(() => {
     let chatTimeout: NodeJS.Timeout;
@@ -76,9 +75,8 @@ function ChatBackground() {
             username: `Chat bot`,
             message: getRandomFromChatMessages(),
           });
-          return prevState;
+          return [...prevState];
         });
-        forceUpdate();
         timeoutChatMessage();
       }, chatMessageIndex * getRandomDelay());
     };

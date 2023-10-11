@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useSocketContext } from "@context/socket";
 import StreamSessionEvents from "@components/streamSessionEvents";
@@ -8,8 +8,6 @@ export default function StreamNotifications() {
   const LIMIT_NOTIFICATIONS = 5;
 
   const socketContext = useSocketContext();
-
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const [userNotif, setUserNotif] = useState<SessionEvents[]>([]);
 
@@ -26,16 +24,15 @@ export default function StreamNotifications() {
           createdAt: eventAndUser.eventDate,
           updatedAt: eventAndUser.eventDate,
         });
-        return prevState;
+        return [...prevState];
       });
 
       if (userNotif?.length > LIMIT_NOTIFICATIONS) {
         setUserNotif((prevState) => {
           prevState.pop();
-          return prevState;
+          return [...prevState];
         });
       }
-      forceUpdate();
     });
 
     return () => {
