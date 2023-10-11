@@ -11,7 +11,7 @@ export function MessageRoutes() {
           element={
             <ComponentWithTitle
               title="Messages"
-              Component={<MessagesList messages="all" />}
+              component={<MessagesList messages="all" />}
             />
           }
         />

@@ -15,7 +15,7 @@ export function StreamSessionRoutes() {
           element={
             <ComponentWithTitle
               title="Stream session"
-              Component={<StreamSessions />}
+              component={<StreamSessions />}
             />
           }
         />
@@ -24,7 +24,7 @@ export function StreamSessionRoutes() {
           element={
             <ComponentWithTitle
               title="Stream session profile"
-              Component={<StreamSessionDetail />}
+              component={<StreamSessionDetail />}
             />
           }
         />
@@ -33,7 +33,7 @@ export function StreamSessionRoutes() {
           element={
             <ComponentWithTitle
               title="Stream session messages"
-              Component={<MessagesList messages="session" />}
+              component={<MessagesList messages="session" />}
             />
           }
         />
@@ -42,7 +42,7 @@ export function StreamSessionRoutes() {
           element={
             <ComponentWithTitle
               title="Stream session redemptions"
-              Component={<RedemptionsList redemptions="session" />}
+              component={<RedemptionsList redemptions="session" />}
             />
           }
         />

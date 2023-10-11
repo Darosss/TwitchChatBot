@@ -12,7 +12,7 @@ export function EventRoutes() {
           element={
             <ComponentWithTitle
               title="Events"
-              Component={<StreamEventsLayouts />}
+              component={<StreamEventsLayouts />}
             />
           }
         />

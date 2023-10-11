@@ -12,22 +12,22 @@ export function ModesRoutes() {
         <Route
           index
           element={
-            <ComponentWithTitle title="Modes" Component={<ModesList />} />
+            <ComponentWithTitle title="Modes" component={<ModesList />} />
           }
         />
         <Route
           path="moods"
-          element={<ComponentWithTitle title="Moods" Component={<Moods />} />}
+          element={<ComponentWithTitle title="Moods" component={<Moods />} />}
         />
         <Route
           path="affixes"
           element={
-            <ComponentWithTitle title="Affixes" Component={<Affixes />} />
+            <ComponentWithTitle title="Affixes" component={<Affixes />} />
           }
         />
         <Route
           path="tags"
-          element={<ComponentWithTitle title="Tags" Component={<Tags />} />}
+          element={<ComponentWithTitle title="Tags" component={<Tags />} />}
         />
         <Route path="*" element={<>Not found</>} />
       </Route>

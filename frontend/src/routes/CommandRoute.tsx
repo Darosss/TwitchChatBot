@@ -11,7 +11,7 @@ export function CommandRoutes() {
           element={
             <ComponentWithTitle
               title="Chat commands"
-              Component={<CommandsList />}
+              component={<CommandsList />}
             />
           }
         />

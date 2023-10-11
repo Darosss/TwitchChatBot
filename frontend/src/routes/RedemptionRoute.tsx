@@ -10,7 +10,7 @@ export function RedemptionRoutes() {
           element={
             <ComponentWithTitle
               title="Redemptions"
-              Component={<RedemptionsList redemptions="all" />}
+              component={<RedemptionsList redemptions="all" />}
             />
           }
         />
@@ -19,7 +19,7 @@ export function RedemptionRoutes() {
           element={
             <ComponentWithTitle
               title="User redemptions"
-              Component={<RedemptionsList redemptions="user" />}
+              component={<RedemptionsList redemptions="user" />}
             />
           }
         />
@@ -28,7 +28,7 @@ export function RedemptionRoutes() {
           element={
             <ComponentWithTitle
               title="Stream session redemptions"
-              Component={<RedemptionsList redemptions="session" />}
+              component={<RedemptionsList redemptions="session" />}
             />
           }
         />
