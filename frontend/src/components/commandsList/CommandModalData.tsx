@@ -29,7 +29,7 @@ export default function CommandModalData(props: {
         <button
           onClick={() => dispatch({ type: "SET_ENABLED" })}
           className={`${
-            !true ? "danger-button" : "primary-button"
+            !state.enabled ? "danger-button" : "primary-button"
           } common-button`}
         >
           {state.enabled.toString()}
