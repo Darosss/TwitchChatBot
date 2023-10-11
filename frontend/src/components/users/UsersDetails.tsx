@@ -7,33 +7,24 @@ interface UsersDetailsProps {
   users: User[];
 }
 
+interface UserSortByDataType {
+  buttonText: string;
+  sortBy: keyof User;
+}
+
 export default function UsersDetails({ users }: UsersDetailsProps) {
   return (
     <table id="table-users-list">
       <thead>
         <tr>
-          <th>
-            <SortByParamsButton buttonText="Username" sortBy="username" />
-          </th>
-          <th>Achievements</th>
-          <th>
-            <SortByParamsButton buttonText="Watch" sortBy="watchTime" />
-          </th>
-          <th>
-            <SortByParamsButton buttonText="Last seen" sortBy="lastSeen" />
-          </th>
-          <th>
-            <SortByParamsButton buttonText="Created" sortBy="createdAt" />
-          </th>
-          <th>
-            <SortByParamsButton
-              buttonText="Message count"
-              sortBy="messageCount"
-            />
-          </th>
-          <th>
-            <SortByParamsButton buttonText="Points" sortBy="points" />
-          </th>
+          {userSortByData.map((data, idx) => (
+            <th>
+              <SortByParamsButton
+                buttonText={data.buttonText}
+                sortBy={data.sortBy}
+              />
+            </th>
+          ))}
         </tr>
       </thead>
 
@@ -85,3 +76,30 @@ export default function UsersDetails({ users }: UsersDetailsProps) {
     </table>
   );
 }
+
+const userSortByData: UserSortByDataType[] = [
+  {
+    buttonText: "Username",
+    sortBy: "username",
+  },
+  {
+    buttonText: "Watch",
+    sortBy: "watchTime",
+  },
+  {
+    buttonText: "Last seen",
+    sortBy: "lastSeen",
+  },
+  {
+    buttonText: "Created at",
+    sortBy: "createdAt",
+  },
+  {
+    buttonText: "Messages count",
+    sortBy: "messageCount",
+  },
+  {
+    buttonText: "Points",
+    sortBy: "points",
+  },
+];
