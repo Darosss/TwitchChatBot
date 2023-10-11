@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
-import { addNotification } from "@utils/getNotificationValues";
+import { handleActionOnChangeState } from "@utils";
+import { addNotification } from "@utils";
 import { Link } from "react-router-dom";
 import {
   initialLayoutOverlays,

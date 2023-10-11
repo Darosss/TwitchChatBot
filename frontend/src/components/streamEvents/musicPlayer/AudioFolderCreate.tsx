@@ -4,8 +4,8 @@ import {
   useDeleteAudioFolder,
   useGetFoldersList,
 } from "@services/FilesService";
-import { addNotification } from "@utils/getNotificationValues";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
+import { addNotification } from "@utils";
+import { handleActionOnChangeState } from "@utils";
 
 export default function AudioFolderCreate() {
   const [folderName, setFolderName] = useState("");

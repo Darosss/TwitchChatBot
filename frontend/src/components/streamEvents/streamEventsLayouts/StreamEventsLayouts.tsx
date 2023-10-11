@@ -9,8 +9,8 @@ import {
   initialLayoutWidgets,
   initialToolboxWidgets,
 } from "src/layout/initialLayoutWidgets";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
-import { addNotification } from "@utils/getNotificationValues";
+import { handleActionOnChangeState } from "@utils";
+import { addNotification } from "@utils";
 import CardboxWrapper from "@components/cardboxWrapper";
 import {
   CardboxInput,

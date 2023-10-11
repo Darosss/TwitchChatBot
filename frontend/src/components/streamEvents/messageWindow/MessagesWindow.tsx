@@ -7,7 +7,7 @@ import {
 } from "@services/MessageCategoriesService";
 import Modal from "@components/modal";
 import { useSocketContext } from "@context/socket";
-import { addNotification } from "@utils/getNotificationValues";
+import { addNotification } from "@utils";
 
 export default function MessagesWindow() {
   const socketContext = useSocketContext();

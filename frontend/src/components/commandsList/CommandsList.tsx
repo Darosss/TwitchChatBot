@@ -3,7 +3,7 @@ import FilterBarCommands from "./filterBarCommands";
 import Modal from "@components/modal";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
+import { handleActionOnChangeState } from "@utils";
 import {
   useGetCommands,
   useEditCommand,
@@ -12,8 +12,8 @@ import {
   ChatCommand,
   ChatCommandCreateData,
 } from "@services/ChatCommandService";
-import { addNotification } from "@utils/getNotificationValues";
-import { useGetAllModes } from "@utils/getListModes";
+import { addNotification } from "@utils";
+import { useGetAllModes } from "@utils";
 import { DispatchAction } from "./types";
 import CommandsData from "./CommandsData";
 import CommandModalData from "./CommandModalData";

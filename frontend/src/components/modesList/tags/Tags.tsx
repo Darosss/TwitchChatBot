@@ -9,8 +9,8 @@ import {
   useDeleteTag,
   Tag,
 } from "@services/TagService";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
-import { addNotification } from "@utils/getNotificationValues";
+import { handleActionOnChangeState } from "@utils";
+import { addNotification } from "@utils";
 import FilterBarModes from "../filterBarModes";
 import ModalDataWrapper from "@components/modalDataWrapper";
 

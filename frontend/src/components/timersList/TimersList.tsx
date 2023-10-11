@@ -12,9 +12,9 @@ import {
   TimerCreateData,
 } from "@services/TimerService";
 import { useSocketContext } from "@context/socket";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
-import { addNotification } from "@utils/getNotificationValues";
-import { useGetAllModes } from "@utils/getListModes";
+import { handleActionOnChangeState } from "@utils";
+import { addNotification } from "@utils";
+import { useGetAllModes } from "@utils";
 import { DispatchAction } from "./types";
 import TimersData from "./TimersData";
 import TimerModalData from "./TimerModalData";

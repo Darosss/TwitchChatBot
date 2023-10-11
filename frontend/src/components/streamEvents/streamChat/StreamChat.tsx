@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Message as MessageType } from "@services/MessageService";
 import Message from "@components/message";
 import { useSocketContext } from "@context/socket";
-import { addNotification } from "@utils/getNotificationValues";
+import { addNotification } from "@utils";
 import { useGetCurrentSessionMessages } from "@services/StreamSessionService";
 
 interface LocalMessage {

@@ -1,9 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";
-import {
-  getDefaultBreakpoints,
-  getDefaultCols,
-} from "@utils/layoutBreakpoints";
+import { getDefaultBreakpoints, getDefaultCols } from "@utils";
 import LayoutDrawerBar from "./LayoutDrawerBar";
 
 type LayoutState = [

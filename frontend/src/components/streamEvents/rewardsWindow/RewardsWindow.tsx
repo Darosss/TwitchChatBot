@@ -3,11 +3,11 @@ import "react-notifications-component/dist/theme.css";
 
 import Modal from "@components/modal";
 import { CustomRewardData, useSocketContext } from "@context/socket";
-import { addNotification } from "@utils/getNotificationValues";
+import { addNotification } from "@utils";
 import useFileUpload from "@hooks/useFileUpload";
 import { useGetAlertSoundsMp3Names } from "@services/FilesService";
 import { useDeleteAlertSound } from "@services/FilesService";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
+import { handleActionOnChangeState } from "@utils";
 
 export default function MessagesWindow() {
   const socketContext = useSocketContext();

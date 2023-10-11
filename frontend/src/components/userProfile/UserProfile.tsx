@@ -8,7 +8,7 @@ import {
   useGetLatestEldestMsgs,
   useGetUser,
 } from "@services/UserService";
-import { addNotification } from "@utils/getNotificationValues";
+import { addNotification } from "@utils";
 import { DateTooltip } from "@components/dateTooltip";
 import { HelmetTitle } from "@components/componentWithTitle";
 

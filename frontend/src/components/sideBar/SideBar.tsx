@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { Link, LinkProps } from "react-router-dom";
-import resetWindowScroll from "@utils/resetScroll";
+import { resetWindowScroll } from "@utils";
 import { useGetAuthorizeUrl } from "@services/AuthService";
 import DrawerBar from "@components/drawer";
 import { routes } from "@routes/routesList";

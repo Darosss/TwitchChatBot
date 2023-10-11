@@ -4,7 +4,7 @@ import {
   AudioYTDataInfo,
   useSocketContext,
 } from "@context/socket";
-import { convertSecondsToMS } from "@utils/convertSecondsToMS";
+import { convertSecondsToMS } from "@utils";
 
 interface AudioInformationProps<
   T extends AudioYTDataInfo | AudioStreamDataInfo

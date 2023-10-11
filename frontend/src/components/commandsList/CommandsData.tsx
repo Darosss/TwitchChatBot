@@ -1,5 +1,5 @@
 import React from "react";
-import { generateEnabledDisabledDiv } from "@utils/generateEnabledDisabledDiv";
+import { generateEnabledDisabledDiv } from "@utils";
 import { DateTooltip } from "@components/dateTooltip";
 import {
   TableDataWrapper,

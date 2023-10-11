@@ -1,5 +1,5 @@
 import { useResetConfigs, useEditConfig } from "@services/ConfigService";
-import { addNotification } from "@utils/getNotificationValues";
+import { addNotification } from "@utils";
 import { ConfigsWrapperSharedProps } from "./types";
 import { useConfigsContext } from "./ConfigsContext";
 import { useSocketContext } from "@context/socket";

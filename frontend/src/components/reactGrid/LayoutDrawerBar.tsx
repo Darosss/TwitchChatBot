@@ -1,6 +1,6 @@
 import DrawerBar from "@components/drawer";
 import PreviousPage from "@components/previousPage";
-import { addNotification } from "@utils/getNotificationValues";
+import { addNotification } from "@utils";
 
 interface LayoutDrawerBarProps<T> {
   layoutName: string;

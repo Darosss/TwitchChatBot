@@ -11,9 +11,9 @@ import {
   useDeleteTrigger,
   TriggerCreateData,
 } from "@services/TriggerService";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
-import { addNotification } from "@utils/getNotificationValues";
-import { useGetAllModes } from "@utils/getListModes";
+import { handleActionOnChangeState } from "@utils";
+import { addNotification } from "@utils";
+import { useGetAllModes } from "@utils";
 import TriggersData from "./TriggersData";
 import TriggerModalData from "./TriggerModalData";
 import { DispatchAction } from "./types";

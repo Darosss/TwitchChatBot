@@ -1,5 +1,5 @@
 import React from "react";
-import { convertSecondsToMS } from "@utils/convertSecondsToMS";
+import { convertSecondsToMS } from "@utils";
 import ProgressBar, { ProgressBarProps } from "@ramonak/react-progress-bar";
 
 interface SongProgressProps {

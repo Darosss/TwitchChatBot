@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useFileUpload from "@hooks/useFileUpload";
-import { addNotification } from "@utils/getNotificationValues";
+import { addNotification } from "@utils";
 import ProgressBar from "@ramonak/react-progress-bar";
 import { useGetFoldersList } from "@services/FilesService";
 export default function UploadMp3Form() {

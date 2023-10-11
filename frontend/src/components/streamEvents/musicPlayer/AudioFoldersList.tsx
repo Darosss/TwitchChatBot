@@ -5,8 +5,8 @@ import {
   useGetFolderMp3Files,
   useGetFoldersList,
 } from "@services/FilesService";
-import { addNotification } from "@utils/getNotificationValues";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
+import { addNotification } from "@utils";
+import { handleActionOnChangeState } from "@utils";
 export default function AudioFoldersList() {
   const socketContext = useSocketContext();
   const [folderName, setFolderName] = useState("");
