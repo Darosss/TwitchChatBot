@@ -2,12 +2,17 @@ import React, { Children, useEffect, useRef, useState } from "react";
 
 const SLIDE_DELAY = 9999;
 
-export default function Slideshow(props: {
+interface SlideshowProps {
   children?: React.ReactNode;
   className?: string;
   styleWrapper?: React.CSSProperties;
-}) {
-  const { children, className = "", styleWrapper = { width: "50vw" } } = props;
+}
+
+export default function Slideshow({
+  children,
+  className = "",
+  styleWrapper = { width: "50vw" },
+}: SlideshowProps) {
   const arrayChildren = Children.toArray(children);
 
   const [index, setIndex] = useState(0);
@@ -60,19 +65,21 @@ export default function Slideshow(props: {
           }}
         >
           <div className="slide">
-            {arrayChildren.map((children, indx) => {
-              return <React.Fragment key={indx}>{children}</React.Fragment>;
-            })}
+            {arrayChildren.map((children, index) => (
+              <React.Fragment key={index}>{children}</React.Fragment>
+            ))}
           </div>
         </div>
 
         <div className="slideshow-dots">
-          {arrayChildren.map((_, idx) => (
+          {arrayChildren.map((_, arrayChildrenIndex) => (
             <div
-              key={idx}
-              className={`slideshow-dot${index === idx ? " active" : ""}`}
+              key={arrayChildrenIndex}
+              className={`slideshow-dot${
+                index === arrayChildrenIndex ? " active" : ""
+              }`}
               onClick={() => {
-                setIndex(idx);
+                setIndex(arrayChildrenIndex);
               }}
             ></div>
           ))}

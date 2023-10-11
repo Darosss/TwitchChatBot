@@ -3,18 +3,23 @@ import { Helmet } from "react-helmet-async";
 
 interface ComponentWithTitleProps {
   title: string;
-  Component: JSX.Element;
+  component: JSX.Element;
 }
 
-export default function ComponentWithTitle(props: ComponentWithTitleProps) {
+type HemletTitleProps = Pick<ComponentWithTitleProps, "title">;
+
+export default function ComponentWithTitle({
+  title,
+  component,
+}: ComponentWithTitleProps) {
   return (
     <>
-      <HelmetTitle title={props.title} />
-      {props.Component}
+      <HelmetTitle title={title} />
+      {component}
     </>
   );
 }
 
-export function HelmetTitle(props: Pick<ComponentWithTitleProps, "title">) {
-  return <Helmet title={props.title + " | Twitch ChatBot"}></Helmet>;
+export function HelmetTitle({ title }: HemletTitleProps) {
+  return <Helmet title={title + " | Twitch ChatBot"}></Helmet>;
 }

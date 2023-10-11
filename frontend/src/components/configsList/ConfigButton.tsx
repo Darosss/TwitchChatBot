@@ -1,10 +1,16 @@
-export default function ConfigButton(props: {
+interface ConfigButtonProps {
   optionName: string;
   setState: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   value: Boolean;
   showEdit: boolean;
-}) {
-  const { optionName, setState, value, showEdit = false } = props;
+}
+
+export default function ConfigButton({
+  optionName,
+  setState,
+  value,
+  showEdit = false,
+}: ConfigButtonProps) {
   const button = () => {
     return (
       <button

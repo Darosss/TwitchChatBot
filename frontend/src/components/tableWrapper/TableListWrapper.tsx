@@ -1,11 +1,14 @@
 import React from "react";
 
-export default function TableListWrapper(props: {
+interface TableListWrapperProps {
   theadChildren: React.ReactNode;
   tbodyChildren: React.ReactNode;
-}) {
-  const { theadChildren, tbodyChildren } = props;
+}
 
+export default function TableListWrapper({
+  theadChildren,
+  tbodyChildren,
+}: TableListWrapperProps) {
   return (
     <div className="table-list-wrapper">
       <table className="table-list">

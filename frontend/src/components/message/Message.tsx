@@ -10,9 +10,12 @@ export interface MessageProps {
   tooltip?: boolean;
 }
 
-export default function Message(props: MessageProps) {
-  const { date, username, message, tooltip = true } = props;
-
+export default function Message({
+  date,
+  username,
+  message,
+  tooltip = true,
+}: MessageProps) {
   return (
     <div className="chat-wrapper">
       <div className="chat-message">

@@ -4,13 +4,17 @@ import { AllModesReturn, generateSelectModes } from "@utils/getListModes";
 import { DispatchAction } from "./types";
 import ModalDataWrapper from "@components/modalDataWrapper";
 
-export default function TimerModalData(props: {
+interface TimerModalDataProps {
   state: TimerCreateData;
   dispatch: React.Dispatch<DispatchAction>;
   modes: AllModesReturn;
-}) {
-  const { state, dispatch, modes } = props;
-  const { tags, moods } = modes;
+}
+
+export default function TimerModalData({
+  state,
+  dispatch,
+  modes: { tags, moods },
+}: TimerModalDataProps) {
   return (
     <ModalDataWrapper>
       <div>Name</div>

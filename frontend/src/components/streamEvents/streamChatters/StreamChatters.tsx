@@ -45,21 +45,19 @@ export default function StreamChatters() {
   return (
     <div id="stream-last-chatters" className="stream-last-chatters">
       <div className="widget-header"> Last chatters </div>
-      {[...lastChatters.keys()].map((chatter, index) => {
-        return (
-          <div
-            className={`user-chatter ${
-              index + 1 === LIMIT_LAST_CHATTERS ? "limit" : ""
-            }`}
-            key={chatter + lastChatters.get(chatter)}
-          >
-            <div className="user-chatter-username">{chatter}</div>
-            <div className="user-chatter-last-seen">
-              <DateTooltip date={lastChatters.get(chatter) || new Date()} />
-            </div>
+      {[...lastChatters.keys()].map((chatter, index) => (
+        <div
+          className={`user-chatter ${
+            index + 1 === LIMIT_LAST_CHATTERS ? "limit" : ""
+          }`}
+          key={index}
+        >
+          <div className="user-chatter-username">{chatter}</div>
+          <div className="user-chatter-last-seen">
+            <DateTooltip date={lastChatters.get(chatter) || new Date()} />
           </div>
-        );
-      })}
+        </div>
+      ))}
     </div>
   );
 }

@@ -4,13 +4,17 @@ import { DispatchAction } from "./types";
 import { MessageCategoryCreateData } from "@services/MessageCategoriesService";
 import ModalDataWrapper from "@components/modalDataWrapper";
 
-export default function CategoriesModalData(props: {
+interface CategoriesModalDataProps {
   state: MessageCategoryCreateData;
   dispatch: React.Dispatch<DispatchAction>;
   modes: AllModesReturn;
-}) {
-  const { state, dispatch, modes } = props;
-  const { tags, moods } = modes;
+}
+
+export default function CategoriesModalData({
+  state,
+  dispatch,
+  modes: { tags, moods },
+}: CategoriesModalDataProps) {
   return (
     <ModalDataWrapper>
       <div>Name</div>

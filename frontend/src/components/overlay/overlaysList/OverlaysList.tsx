@@ -78,30 +78,28 @@ export default function OverlaysList() {
             Create
           </button>
         </CardboxInput>
-        {overlays.map((overlay, index) => {
-          return (
-            <CardboxItem
-              title={overlay.name}
-              onClickX={() => {
-                setLayoutIdDelete(overlay._id);
-              }}
-              key={index}
+        {overlays.map((overlay, index) => (
+          <CardboxItem
+            title={overlay.name}
+            onClickX={() => {
+              setLayoutIdDelete(overlay._id);
+            }}
+            key={index}
+          >
+            <Link
+              className="common-button primary-button"
+              to={`${overlay._id}`}
             >
-              <Link
-                className="common-button primary-button"
-                to={`${overlay._id}`}
-              >
-                Show
-              </Link>
-              <Link
-                className="common-button primary-button"
-                to={`${overlay._id}/editor`}
-              >
-                Edit
-              </Link>
-            </CardboxItem>
-          );
-        })}
+              Show
+            </Link>
+            <Link
+              className="common-button primary-button"
+              to={`${overlay._id}/editor`}
+            >
+              Edit
+            </Link>
+          </CardboxItem>
+        ))}
       </CardboxWrapper>
     </>
   );

@@ -26,15 +26,13 @@ export default function Home() {
       </div>
       <div className="home-content">
         <div className="home-content-tiles">
-          {routes.map((route, index) => {
-            return (
-              <div key={index}>
-                <Link to={route.path} className="common-button primary-button">
-                  {route.label}
-                </Link>
-              </div>
-            );
-          })}
+          {routes.map((route, index) => (
+            <div key={index}>
+              <Link to={route.path} className="common-button primary-button">
+                {route.label}
+              </Link>
+            </div>
+          ))}
         </div>
         <ChatBackground />
       </div>
@@ -88,18 +86,16 @@ function ChatBackground() {
 
   return (
     <div className="home-chat-bg prevent-select">
-      {messages.map((message, index) => {
-        return (
-          <div key={index} className="typewriter">
-            <Message
-              date={message.date}
-              username={message.username}
-              message={message.message}
-              tooltip={false}
-            />
-          </div>
-        );
-      })}
+      {messages.map((message, index) => (
+        <div key={index} className="typewriter">
+          <Message
+            date={message.date}
+            username={message.username}
+            message={message.message}
+            tooltip={false}
+          />
+        </div>
+      ))}
     </div>
   );
 }

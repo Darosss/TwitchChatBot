@@ -66,19 +66,17 @@ export default function AudioFoldersList() {
   return (
     <div className="audio-files-list-wrapper">
       <div className="audio-folders-list-wrapper">
-        {folders.map((folder, index) => {
-          return (
-            <button
-              key={index}
-              onClick={() => handleOnClickChangeFolder(folder)}
-              className={`common-button ${
-                folder === folderName ? "primary-button" : "danger-button"
-              }`}
-            >
-              {folder}
-            </button>
-          );
-        })}
+        {folders.map((folder, index) => (
+          <button
+            key={index}
+            onClick={() => handleOnClickChangeFolder(folder)}
+            className={`common-button ${
+              folder === folderName ? "primary-button" : "danger-button"
+            }`}
+          >
+            {folder}
+          </button>
+        ))}
       </div>
       {folderName ? (
         <button
@@ -91,21 +89,19 @@ export default function AudioFoldersList() {
         </button>
       ) : null}
       <div className="mp3-files-wrapper">
-        {mp3Data?.data.map((mp3, index) => {
-          return (
-            <div key={index} className="mp3-file list-with-x-buttons">
-              <div>
-                <button
-                  onClick={() => setFileNameToDelete(mp3)}
-                  className="common-button danger-button"
-                >
-                  x
-                </button>
-              </div>
-              <div> {mp3} </div>
+        {mp3Data?.data.map((mp3, index) => (
+          <div key={index} className="mp3-file list-with-x-buttons">
+            <div>
+              <button
+                onClick={() => setFileNameToDelete(mp3)}
+                className="common-button danger-button"
+              >
+                x
+              </button>
             </div>
-          );
-        })}
+            <div> {mp3} </div>
+          </div>
+        ))}
       </div>
     </div>
   );

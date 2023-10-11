@@ -2,14 +2,21 @@ import React, { useEffect } from "react";
 import Drawer from "react-modern-drawer";
 import "react-modern-drawer/dist/index.css";
 
-export default function DrawerBar(props: {
+interface DrawerBarProps {
   children?: React.ReactNode;
   direction: "left" | "right" | "top" | "bottom";
   size?: string | number;
   sticky?: boolean;
   overlay?: boolean;
-}) {
-  const { children, direction, size, sticky, overlay } = props;
+}
+
+export default function DrawerBar({
+  children,
+  direction,
+  size,
+  sticky,
+  overlay,
+}: DrawerBarProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [wrapperStyle, setWrapperStyle] = React.useState<React.CSSProperties>();
   const [btnStyle, setBtnStyle] = React.useState<React.CSSProperties>();

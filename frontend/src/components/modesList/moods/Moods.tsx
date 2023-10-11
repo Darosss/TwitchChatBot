@@ -111,24 +111,22 @@ export default function Moods() {
             </button>
           </div>
         </div>
-        {data.map((mood, index) => {
-          return (
-            <div key={index} className="mode-item">
-              <button
-                onClick={() => handleOnEdit(mood)}
-                className="common-button primary-button edit-mode-button"
-              >
-                {mood.name}
-              </button>
-              <button
-                onClick={() => setMoodIdDelete(mood._id)}
-                className="common-button danger-button remove-mode-btn"
-              >
-                X
-              </button>
-            </div>
-          );
-        })}
+        {data.map((mood, index) => (
+          <div key={index} className="mode-item">
+            <button
+              onClick={() => handleOnEdit(mood)}
+              className="common-button primary-button edit-mode-button"
+            >
+              {mood.name}
+            </button>
+            <button
+              onClick={() => setMoodIdDelete(mood._id)}
+              className="common-button danger-button remove-mode-btn"
+            >
+              X
+            </button>
+          </div>
+        ))}
       </div>
       <div className="table-list-pagination">
         <Pagination

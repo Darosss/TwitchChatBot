@@ -1,9 +1,16 @@
-export default function CardboxWrapper(props: {
+interface CardboxCommonProps {
   title: string;
   children: React.ReactNode;
-}) {
-  const { title, children } = props;
+}
 
+interface CardboxItemProps extends CardboxCommonProps {
+  onClickX: () => void | unknown;
+}
+
+export default function CardboxWrapper({
+  title,
+  children,
+}: CardboxCommonProps) {
   return (
     <div className="cardbox-wrapper">
       <div className="cardbox-header">{title}</div>
@@ -12,12 +19,7 @@ export default function CardboxWrapper(props: {
   );
 }
 
-export function CardboxItem(props: {
-  title: string;
-  children: React.ReactNode;
-  onClickX: () => void | unknown;
-}) {
-  const { title, children, onClickX } = props;
+export function CardboxItem({ title, children, onClickX }: CardboxItemProps) {
   return (
     <>
       <div className="cardbox-item">
@@ -34,11 +36,7 @@ export function CardboxItem(props: {
   );
 }
 
-export function CardboxInput(props: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  const { title, children } = props;
+export function CardboxInput({ title, children }: CardboxCommonProps) {
   return (
     <>
       <div className="cardbox-item cardbox-input">

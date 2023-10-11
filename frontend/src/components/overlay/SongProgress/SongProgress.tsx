@@ -7,8 +7,11 @@ interface SongProgressProps {
   currentTime: number;
   progressBarProps?: Partial<ProgressBarProps>;
 }
-export default function SongProgress(props: SongProgressProps) {
-  const { songDuration, currentTime, progressBarProps } = props;
+export default function SongProgress({
+  songDuration,
+  currentTime,
+  progressBarProps,
+}: SongProgressProps) {
   const [maxMinutes, maxSeconds] = convertSecondsToMS(songDuration);
   const [currMinutes, currSeconds] = convertSecondsToMS(currentTime);
 

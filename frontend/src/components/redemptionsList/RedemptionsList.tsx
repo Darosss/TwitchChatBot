@@ -11,20 +11,25 @@ import { useGetUserRedemptions } from "@services/UserService";
 import { DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
 
+interface RedemptionsListProps {
+  redemptions: "all" | "session" | "user";
+}
+
 interface RedemptionsDetailProps {
   redemptions: Redemption[];
 }
 
-export default function RedemptionsList(props: {
-  redemptions: "all" | "session" | "user";
-}) {
-  const { redemptions } = props;
+interface RedemptionsProps {
+  redemptionsData: PaginationData<Redemption>;
+}
 
+export default function RedemptionsList({ redemptions }: RedemptionsListProps) {
   switch (redemptions) {
     case "user":
       return <RedemptionsUser />;
     case "session":
       return <RedemptionsSession />;
+    case "all":
     default:
       return <RedemptionsAll />;
   }
@@ -79,31 +84,28 @@ const RedemptionsDetails = ({ redemptions }: RedemptionsDetailProps) => (
     </thead>
 
     <tbody>
-      {redemptions.map((redemption) => {
-        return (
-          <tr key={redemption._id}>
-            <td className="redemptions-list-name">{redemption.rewardTitle}</td>
-            <td>
-              <Link to={`/users/${redemption.userId}`}>
-                {redemption.userName}
-              </Link>
-            </td>
-            <td className="redemptions-list-date">
-              <DateTooltip date={redemption.redemptionDate} />
-            </td>
-            <td>{redemption.rewardCost}</td>
-            <td>{redemption.message}</td>
-          </tr>
-        );
-      })}
+      {redemptions.map((redemption, index) => (
+        <tr key={index}>
+          <td className="redemptions-list-name">{redemption.rewardTitle}</td>
+          <td>
+            <Link to={`/users/${redemption.userId}`}>
+              {redemption.userName}
+            </Link>
+          </td>
+          <td className="redemptions-list-date">
+            <DateTooltip date={redemption.redemptionDate} />
+          </td>
+          <td>{redemption.rewardCost}</td>
+          <td>{redemption.message}</td>
+        </tr>
+      ))}
     </tbody>
   </table>
 );
 
-const Redemptions = (props: {
-  redemptionsData: PaginationData<Redemption>;
-}) => {
-  const { data, currentPage, count } = props.redemptionsData;
+const Redemptions = ({
+  redemptionsData: { data, count, currentPage },
+}: RedemptionsProps) => {
   return (
     <>
       <PreviousPage />

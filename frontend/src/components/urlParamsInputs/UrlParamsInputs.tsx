@@ -2,6 +2,10 @@ import React, { useEffect, useRef } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
+interface UrlParamsInputProps {
+  children: React.ReactNode;
+}
+
 /**
  * @param {ReactElement} props - react element props
  * @param {React.ReactNode} props.children - inputs, select or sth should have 'queryparam' custom parameter
@@ -11,12 +15,10 @@ import { useSearchParams } from "react-router-dom";
  * </UrlParamsInputs>```
  * @returns - children wrapped in UrlParamsInputs which now they change UrlSearchParam
  */
-export default function UrlParamsInput(props: {
-  children: React.ReactNode;
-}): JSX.Element {
+export default function UrlParamsInput({
+  children,
+}: UrlParamsInputProps): JSX.Element {
   const CUSTOM_PARAMETER = "queryparam";
-
-  const { children } = props;
 
   const [searchParams, setSearchParams] = useSearchParams();
 

@@ -43,11 +43,9 @@ export default function SideBar() {
         <li>
           <ChangeTheme />
         </li>
-        {routes.map((route) => {
-          return (
-            <NavLink key={route.path} to={route.path} label={route.label} />
-          );
-        })}
+        {routes.map((route, index) => (
+          <NavLink key={index} to={route.path} label={route.label} />
+        ))}
 
         <li>
           <a

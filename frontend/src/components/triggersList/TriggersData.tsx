@@ -9,18 +9,19 @@ import {
 } from "@components/tableWrapper";
 import SortByParamsButton from "@components/SortByParamsButton";
 
-export default function TriggersData(props: {
+interface TriggersDataProps {
   data: Trigger[];
   handleOnShowEditModal: (trigger: Trigger) => void;
   handleOnShowCreateModal: (trigger?: Trigger) => void;
   setTriggerIdDelete: React.Dispatch<React.SetStateAction<string | null>>;
-}) {
-  const {
-    data,
-    handleOnShowCreateModal,
-    handleOnShowEditModal,
-    setTriggerIdDelete,
-  } = props;
+}
+
+export default function TriggersData({
+  data,
+  handleOnShowCreateModal,
+  handleOnShowEditModal,
+  setTriggerIdDelete,
+}: TriggersDataProps) {
   return (
     <>
       <TableListWrapper
@@ -52,10 +53,10 @@ export default function TriggersData(props: {
             <th>Messages</th>
           </tr>
         }
-        tbodyChildren={data.map((trigger) => {
+        tbodyChildren={data.map((trigger, index) => {
           const { tag, mood } = trigger;
           return (
-            <tr key={trigger._id}>
+            <tr key={index}>
               <td>
                 <div>
                   <button
@@ -111,16 +112,16 @@ export default function TriggersData(props: {
               </td>
               <td>
                 <TableItemsListWrapper>
-                  {trigger.words.map((word, index) => {
-                    return <div key={index}>{word}</div>;
-                  })}
+                  {trigger.words.map((word, index) => (
+                    <div key={index}>{word}</div>
+                  ))}
                 </TableItemsListWrapper>
               </td>
               <td>
                 <TableItemsListWrapper>
-                  {trigger.messages.map((message, index) => {
-                    return <div key={index}>{message}</div>;
-                  })}
+                  {trigger.messages.map((message, index) => (
+                    <div key={index}>{message}</div>
+                  ))}
                 </TableItemsListWrapper>
               </td>
               <td></td>

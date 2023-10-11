@@ -44,11 +44,8 @@ export default function MessagesWindow() {
     setShowModal(true);
   };
 
-  const findMessagesCategoryByCurrCat = (id: string) => {
-    return msgCateg
-      .find(({ _id }) => _id === id)
-      ?.messages.map((msg) => msg[0]);
-  };
+  const findMessagesCategoryByCurrCat = (id: string) =>
+    msgCateg.find(({ _id }) => _id === id)?.messages.map((msg) => msg[0]);
 
   const handleOnClickRandomMessage = (id: string) => {
     setCurrentIdCategory(id);
@@ -84,42 +81,36 @@ export default function MessagesWindow() {
       <div className="prepared-messages-window">
         <div className="widget-header"> Prepared Messages </div>
         <div className="message-categories-btn-wrapper">
-          {msgCateg.map((category, index) => {
-            return (
-              <div key={index} className="message-section-btn-wrapper">
-                <div>
-                  <button
-                    className={`${
-                      category.enabled ? "primary-button" : "danger-button"
-                    } common-button`}
-                    onClick={() => {
-                      handleOnClickRandomMessage(category._id);
-                    }}
-                  >
-                    <div>Send random</div>
-                    <span className="button-category-name">
-                      {category.name}
-                    </span>
-                  </button>
-                </div>
-                <div>
-                  <button
-                    className={`${
-                      category.enabled ? "primary-button" : "danger-button"
-                    } common-button`}
-                    onClick={() => {
-                      handleOnClickCategory(category._id);
-                    }}
-                  >
-                    <div>Show</div>
-                    <span className="button-category-name">
-                      {category.name}
-                    </span>
-                  </button>
-                </div>
+          {msgCateg.map((category, index) => (
+            <div key={index} className="message-section-btn-wrapper">
+              <div>
+                <button
+                  className={`${
+                    category.enabled ? "primary-button" : "danger-button"
+                  } common-button`}
+                  onClick={() => {
+                    handleOnClickRandomMessage(category._id);
+                  }}
+                >
+                  <div>Send random</div>
+                  <span className="button-category-name">{category.name}</span>
+                </button>
               </div>
-            );
-          })}
+              <div>
+                <button
+                  className={`${
+                    category.enabled ? "primary-button" : "danger-button"
+                  } common-button`}
+                  onClick={() => {
+                    handleOnClickCategory(category._id);
+                  }}
+                >
+                  <div>Show</div>
+                  <span className="button-category-name">{category.name}</span>
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
       <Modal
@@ -133,19 +124,17 @@ export default function MessagesWindow() {
         show={showModal}
       >
         <div className="modal-prepared-messages">
-          {currentMessages.map((message, index) => {
-            return (
-              <button
-                className="primary-button common-button"
-                key={index}
-                onClick={() => {
-                  sendMessage(message);
-                }}
-              >
-                {message}
-              </button>
-            );
-          })}
+          {currentMessages.map((message, index) => (
+            <button
+              className="primary-button common-button"
+              key={index}
+              onClick={() => {
+                sendMessage(message);
+              }}
+            >
+              {message}
+            </button>
+          ))}
         </div>
       </Modal>
     </>

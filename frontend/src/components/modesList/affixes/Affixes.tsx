@@ -115,24 +115,22 @@ export default function Affixes() {
             </button>
           </div>
         </div>
-        {data.map((affix, index) => {
-          return (
-            <div key={index} className="mode-item">
-              <button
-                onClick={() => handleOnEdit(affix)}
-                className="common-button primary-button edit-mode-button"
-              >
-                {affix.name}
-              </button>
-              <button
-                onClick={() => setAffixIdDelete(affix._id)}
-                className="common-button danger-button remove-mode-btn"
-              >
-                X
-              </button>
-            </div>
-          );
-        })}
+        {data.map((affix, index) => (
+          <div key={index} className="mode-item">
+            <button
+              onClick={() => handleOnEdit(affix)}
+              className="common-button primary-button edit-mode-button"
+            >
+              {affix.name}
+            </button>
+            <button
+              onClick={() => setAffixIdDelete(affix._id)}
+              className="common-button danger-button remove-mode-btn"
+            >
+              X
+            </button>
+          </div>
+        ))}
       </div>
       <div className="table-list-pagination">
         <Pagination

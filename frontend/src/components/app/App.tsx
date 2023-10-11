@@ -43,7 +43,7 @@ function App() {
                   element={
                     <ComponentWithTitle
                       title="Overlays"
-                      Component={<OverlayList />}
+                      component={<OverlayList />}
                     />
                   }
                 />

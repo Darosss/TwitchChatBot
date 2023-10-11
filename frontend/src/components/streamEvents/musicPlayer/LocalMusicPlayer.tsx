@@ -105,16 +105,14 @@ export default function LocalMusicPlayer() {
         />
       </div>
       <div className="music-player-tabs-wrapper">
-        {TabButonsList.map((item, index) => {
-          return (
-            <TabButton<AvailableTabs>
-              key={index}
-              tab={item.tab}
-              activeTabState={[activeTab, setActiveTab]}
-              onChangeTabFn={item.onChangeTabFn}
-            />
-          );
-        })}
+        {TabButonsList.map((item, index) => (
+          <TabButton<AvailableTabs>
+            key={index}
+            tab={item.tab}
+            activeTabState={[activeTab, setActiveTab]}
+            onChangeTabFn={item.onChangeTabFn}
+          />
+        ))}
       </div>
       <div className="tab-containter">{generateMusicPlayerContext()}</div>
     </>

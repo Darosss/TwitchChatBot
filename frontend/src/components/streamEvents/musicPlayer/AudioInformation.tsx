@@ -17,9 +17,13 @@ interface AudioInformationProps<
 
 export default function AudioInformation<
   T extends AudioYTDataInfo | AudioStreamDataInfo
->(props: AudioInformationProps<T>) {
+>({
+  audioData,
+  setAudioData,
+  onChangeVolumeFn,
+  youtubePlayer,
+}: AudioInformationProps<T>) {
   const socketContext = useSocketContext();
-  const { audioData, setAudioData, onChangeVolumeFn, youtubePlayer } = props;
 
   const showCurrentSongProgress = () => {
     const [maxMinutes, maxSeconds] = convertSecondsToMS(
@@ -114,15 +118,12 @@ export default function AudioInformation<
         <div>{audioData.name}</div>
         <div> {showCurrentSongProgress()} </div>
         <div className="audio-playlist-wrapper">
-          {[...audioData.songsInQue].map((song, index) => {
-            const [songName, requester] = song;
-            return (
-              <div key={index} className="audio-playlist-audio-list">
-                <div>{songName}</div>
-                <div>{`${requester ? `${requester}` : `default`}`}</div>
-              </div>
-            );
-          })}
+          {[...audioData.songsInQue].map(([songName, requester], index) => (
+            <div key={index} className="audio-playlist-audio-list">
+              <div>{songName}</div>
+              <div>{`${requester ? `${requester}` : `default`}`}</div>
+            </div>
+          ))}
         </div>
       </div>
     </>

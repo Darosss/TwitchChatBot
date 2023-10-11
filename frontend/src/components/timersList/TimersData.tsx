@@ -9,18 +9,19 @@ import {
 } from "@components/tableWrapper";
 import SortByParamsButton from "@components/SortByParamsButton";
 
-export default function TimersData(props: {
+interface TimersDataProps {
   data: Timer[];
   handleOnShowEditModal: (timer: Timer) => void;
   handleOnShowCreateModal: (timer?: Timer) => void;
   setTimerIdToDelete: React.Dispatch<React.SetStateAction<string | null>>;
-}) {
-  const {
-    data,
-    handleOnShowCreateModal,
-    handleOnShowEditModal,
-    setTimerIdToDelete,
-  } = props;
+}
+
+export default function TimersData({
+  data,
+  handleOnShowCreateModal,
+  handleOnShowEditModal,
+  setTimerIdToDelete,
+}: TimersDataProps) {
   return (
     <>
       <TableListWrapper
@@ -60,10 +61,10 @@ export default function TimersData(props: {
             <th>Messages</th>
           </tr>
         }
-        tbodyChildren={data.map((timer, idx) => {
+        tbodyChildren={data.map((timer, index) => {
           const { tag, mood } = timer;
           return (
-            <tr key={idx}>
+            <tr key={index}>
               <td>
                 <div>
                   <button
@@ -121,9 +122,9 @@ export default function TimersData(props: {
               </td>
               <td>
                 <TableItemsListWrapper>
-                  {timer.messages.map((message, index) => {
-                    return <div key={index}>{message}</div>;
-                  })}
+                  {timer.messages.map((message, index) => (
+                    <div key={index}>{message}</div>
+                  ))}
                 </TableItemsListWrapper>
               </td>
             </tr>

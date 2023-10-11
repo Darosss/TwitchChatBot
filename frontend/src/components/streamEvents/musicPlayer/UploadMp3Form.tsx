@@ -31,19 +31,17 @@ export default function UploadMp3Form() {
         <div className="upload-folder-buttons-wrapper">
           <div>Upload to:</div>
           <div className="upload-folder-buttons">
-            {folders.map((folder, index) => {
-              return (
-                <button
-                  className={`common-button ${
-                    folderName === folder ? "primary-button" : "danger-button"
-                  }`}
-                  key={index}
-                  onClick={() => setFolderName(folder)}
-                >
-                  {folder}
-                </button>
-              );
-            })}
+            {folders.map((folder, index) => (
+              <button
+                className={`common-button ${
+                  folderName === folder ? "primary-button" : "danger-button"
+                }`}
+                key={index}
+                onClick={() => setFolderName(folder)}
+              >
+                {folder}
+              </button>
+            ))}
           </div>
         </div>
         {folderName ? (
@@ -66,8 +64,8 @@ export default function UploadMp3Form() {
         <div className="upload-files-list">
           {fileList ? (
             <ul>
-              {[...fileList].map((file, i) => (
-                <li key={i}>
+              {[...fileList].map((file, index) => (
+                <li key={index}>
                   {file.name} - {file.type}
                 </li>
               ))}

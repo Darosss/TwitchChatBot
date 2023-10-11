@@ -5,16 +5,21 @@ import classnames from "classnames";
 import { useSearchParams } from "react-router-dom";
 import useLocalStorage from "@hooks/useLocalStorageHook";
 
-export default function Pagination(props: {
+interface PaginationProps {
   totalCount: number;
   siblingCount: number;
   currentPage: number;
   localStorageName: string;
   className: string;
-}) {
-  const { totalCount, siblingCount, currentPage, localStorageName, className } =
-    props;
+}
 
+export default function Pagination({
+  totalCount,
+  siblingCount,
+  currentPage,
+  localStorageName,
+  className,
+}: PaginationProps) {
   const [, setSearchParams] = useSearchParams();
 
   const [pageSizeT, setPageSize] = useLocalStorage<number>(
@@ -153,7 +158,7 @@ export default function Pagination(props: {
           // Render our Page Pills
           return (
             <li
-              key={pageNumber}
+              key={index}
               className={classnames("pagination-item", {
                 selected: pageNumber === currentPage,
               })}

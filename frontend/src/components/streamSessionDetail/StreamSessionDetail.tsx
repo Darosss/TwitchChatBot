@@ -53,31 +53,27 @@ export default function StreamSessionDetail() {
         <div className="detail-section-wrapper-big">
           <div>
             <div className="section-name">Titles</div>
-            {Object.keys(data.sessionTitles).map((timestamp, index) => {
-              return (
-                <div key={index} className="session-big-data-wrapper">
-                  <div>
-                    <DateTooltip date={Number(timestamp)} />
-                  </div>
-                  <div> {data.sessionTitles[timestamp]}</div>
+            {Object.keys(data.sessionTitles).map((timestamp, index) => (
+              <div key={index} className="session-big-data-wrapper">
+                <div>
+                  <DateTooltip date={Number(timestamp)} />
                 </div>
-              );
-            })}
+                <div> {data.sessionTitles[timestamp]}</div>
+              </div>
+            ))}
           </div>
         </div>
         <div className="detail-section-wrapper-big">
           <div>
             <div className="section-name">Categories</div>
-            {Object.keys(data.categories).map((timestamp, index) => {
-              return (
-                <div key={index} className="session-big-data-wrapper">
-                  <div>
-                    <DateTooltip date={Number(timestamp)} />
-                  </div>
-                  <div> {data.categories[timestamp]}</div>
+            {Object.keys(data.categories).map((timestamp, index) => (
+              <div key={index} className="session-big-data-wrapper">
+                <div>
+                  <DateTooltip date={Number(timestamp)} />
                 </div>
-              );
-            })}
+                <div> {data.categories[timestamp]}</div>
+              </div>
+            ))}
           </div>
         </div>
 

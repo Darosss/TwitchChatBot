@@ -104,14 +104,12 @@ export function TopUsersMessages({ users }: TopUsersMessagesProps) {
         <div className="statistic-long">User</div>
         <div className="statistic-short">Count</div>
       </div>
-      {users?.map((user, index) => {
-        return (
-          <div key={index} className="stats-wrapper">
-            <div className="statistic-long"> {user.username}</div>
-            <div className="statistic-short"> {user.messageCount}</div>
-          </div>
-        );
-      })}
+      {users?.map((user, index) => (
+        <div key={index} className="stats-wrapper">
+          <div className="statistic-long"> {user.username}</div>
+          <div className="statistic-short"> {user.messageCount}</div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -126,15 +124,13 @@ export function MostRedemptions({ users }: TopRedemptionProps) {
         <div className="statistic-short">Cost</div>
       </div>
 
-      {users?.map((user, index) => {
-        return (
-          <div key={index} className="stats-wrapper">
-            <div className="statistic-long"> {user.username}</div>
-            <div className="statistic-short"> {user.redemptionsCount}</div>
-            <div className="statistic-short"> {user.redemptionsCost}</div>
-          </div>
-        );
-      })}
+      {users?.map((user, index) => (
+        <div key={index} className="stats-wrapper">
+          <div className="statistic-long"> {user.username}</div>
+          <div className="statistic-short"> {user.redemptionsCount}</div>
+          <div className="statistic-short"> {user.redemptionsCost}</div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -147,14 +143,12 @@ export function MostUsedWords({ words }: TopUsedWordsProps) {
         <div className="statistic-long">Word</div>
         <div className="statistic-short"> Count</div>
       </div>
-      {words.map((word, index) => {
-        return (
-          <div key={index} className="stats-wrapper">
-            <div className="statistic-long">{word._id}</div>
-            <div className="statistic-short">{word.count}</div>
-          </div>
-        );
-      })}
+      {words.map((word, index) => (
+        <div key={index} className="stats-wrapper">
+          <div className="statistic-long">{word._id}</div>
+          <div className="statistic-short">{word.count}</div>
+        </div>
+      ))}
     </div>
   );
 }

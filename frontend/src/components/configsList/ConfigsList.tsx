@@ -92,19 +92,17 @@ export default function ConfigsList() {
       />
 
       <div className="configs-list-tab-list-wrapper">
-        {Object.values(ConfigsListTabNames).map((tabName, idx) => {
-          return (
-            <button
-              key={idx}
-              className={`${
-                currentTab === tabName ? "primary-button" : "danger-button"
-              }`}
-              onClick={() => setCurrentTab(tabName)}
-            >
-              {tabName}
-            </button>
-          );
-        })}
+        {Object.values(ConfigsListTabNames).map((tabName, index) => (
+          <button
+            key={index}
+            className={`${
+              currentTab === tabName ? "primary-button" : "danger-button"
+            }`}
+            onClick={() => setCurrentTab(tabName)}
+          >
+            {tabName}
+          </button>
+        ))}
       </div>
       <div className="configs-list-wrapper">
         <div className="configs-section-wrapper">

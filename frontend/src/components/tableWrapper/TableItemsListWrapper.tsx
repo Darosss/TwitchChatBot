@@ -1,9 +1,11 @@
 import React from "react";
 
-export default function TableItemsListWrapper(props: {
+interface TableItemsListWrapperProps {
   children: React.ReactNode;
-}) {
-  const { children } = props;
+}
 
+export default function TableItemsListWrapper({
+  children,
+}: TableItemsListWrapperProps) {
   return <div className="table-items-list-wrapper">{children}</div>;
 }

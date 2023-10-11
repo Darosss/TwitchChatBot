@@ -142,23 +142,23 @@ export default function MusicPlayer() {
   );
 }
 
-function SongsPlaylist(props: { songs: [string, string][] }) {
-  const { songs } = props;
+interface SongsPlaylistProps {
+  songs: [string, string][];
+}
+
+function SongsPlaylist({ songs }: SongsPlaylistProps) {
   return (
     <div className="music-player-playlist prevent-select">
       <div className="music-player-playlist-songs">
-        {songs.map((song, index) => {
-          const [songName, requester] = song;
-          return (
-            <div key={index} className="music-player-playlist-song-wrapper">
-              <div className="music-player-playlist-index">{index + 1}. </div>
-              <div className="music-player-playlist-song-name">{songName} </div>
-              <div className="music-player-playlist-requester">
-                {requester || "default"}
-              </div>
+        {songs.map(([songName, requester], index) => (
+          <div key={index} className="music-player-playlist-song-wrapper">
+            <div className="music-player-playlist-index">{index + 1}. </div>
+            <div className="music-player-playlist-song-name">{songName} </div>
+            <div className="music-player-playlist-requester">
+              {requester || "default"}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -9,18 +9,19 @@ import {
 import { ChatCommand } from "@services/ChatCommandService";
 import SortByParamsButton from "@components/SortByParamsButton";
 
-export default function CommandsData(props: {
+interface CommandsDataProps {
   data: ChatCommand[];
   handleOnShowEditModal: (trigger: ChatCommand) => void;
   handleOnShowCreateModal: (trigger?: ChatCommand) => void;
   setCommandIdDelete: React.Dispatch<React.SetStateAction<string | null>>;
-}) {
-  const {
-    data,
-    handleOnShowCreateModal,
-    handleOnShowEditModal,
-    setCommandIdDelete,
-  } = props;
+}
+
+export default function CommandsData({
+  data,
+  handleOnShowCreateModal,
+  handleOnShowEditModal,
+  setCommandIdDelete,
+}: CommandsDataProps) {
   return (
     <>
       <TableListWrapper
@@ -51,16 +52,14 @@ export default function CommandsData(props: {
             <th>Messages</th>
           </tr>
         }
-        tbodyChildren={data.map((command) => {
+        tbodyChildren={data.map((command, index) => {
           const { tag, mood } = command;
           return (
-            <tr key={command._id}>
+            <tr key={index}>
               <td>
                 <button
                   className="common-button primary-button"
-                  onClick={() => {
-                    handleOnShowCreateModal(command);
-                  }}
+                  onClick={() => handleOnShowCreateModal(command)}
                 >
                   Duplicate
                 </button>
@@ -105,16 +104,16 @@ export default function CommandsData(props: {
 
               <td>
                 <TableItemsListWrapper>
-                  {command.aliases.map((alias, index) => {
-                    return <div key={index}>{alias}</div>;
-                  })}
+                  {command.aliases.map((alias, index) => (
+                    <div key={index}>{alias}</div>
+                  ))}
                 </TableItemsListWrapper>
               </td>
               <td>
                 <TableItemsListWrapper>
-                  {command.messages.map((message, index) => {
-                    return <div key={index}>{message}</div>;
-                  })}
+                  {command.messages.map((message, index) => (
+                    <div key={index}>{message}</div>
+                  ))}
                 </TableItemsListWrapper>
               </td>
             </tr>

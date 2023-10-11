@@ -4,13 +4,17 @@ import { AllModesReturn, generateSelectModes } from "@utils/getListModes";
 import { DispatchAction } from "./types";
 import ModalDataWrapper from "@components/modalDataWrapper/ModalDataWrapper";
 
-export default function TriggerModalData(props: {
+interface TriggerModalDataProps {
   state: TriggerCreateData;
   dispatch: React.Dispatch<DispatchAction>;
   modes: AllModesReturn;
-}) {
-  const { state, dispatch, modes } = props;
-  const { tags, moods } = modes;
+}
+
+export default function TriggerModalData({
+  state,
+  dispatch,
+  modes: { tags, moods },
+}: TriggerModalDataProps) {
   return (
     <ModalDataWrapper>
       <div>Name</div>
@@ -60,13 +64,11 @@ export default function TriggerModalData(props: {
           }
         >
           {(["ALL", "STARTS-WITH", "WHOLE-WORD"] as TriggerMode[]).map(
-            (modeTrigger, index) => {
-              return (
-                <option key={index} value={modeTrigger}>
-                  {modeTrigger}
-                </option>
-              );
-            }
+            (modeTrigger, index) => (
+              <option key={index} value={modeTrigger}>
+                {modeTrigger}
+              </option>
+            )
           )}
         </select>
       </div>

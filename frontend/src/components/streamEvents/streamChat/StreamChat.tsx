@@ -69,29 +69,25 @@ export default function StreamChat() {
     <div id="stream-chat" className="stream-chat">
       <div className="widget-header chat-header">STREAM CHAT</div>
       <div className="stream-chat-messages" ref={messagesRef}>
-        {messagesDB.map((msg, index) => {
-          return (
-            <Message
-              key={index}
-              date={msg.date}
-              username={msg.ownerUsername}
-              message={msg.message}
-              tooltip={false}
-            />
-          );
-        })}
+        {messagesDB.map((msg, index) => (
+          <Message
+            key={index}
+            date={msg.date}
+            username={msg.ownerUsername}
+            message={msg.message}
+            tooltip={false}
+          />
+        ))}
 
-        {messages.map((message, index) => {
-          return (
-            <Message
-              key={index}
-              date={message.date}
-              username={message.username}
-              message={message.message}
-              tooltip={false}
-            />
-          );
-        })}
+        {messages.map((message, index) => (
+          <Message
+            key={index}
+            date={message.date}
+            username={message.username}
+            message={message.message}
+            tooltip={false}
+          />
+        ))}
       </div>
       <div className="stream-chat-send-message-textarea">
         <textarea

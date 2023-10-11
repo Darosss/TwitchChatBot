@@ -238,41 +238,39 @@ export default function MessagesWindow() {
             New alert sound
           </button>
         </div>
-        {alertSounds?.map((reward, index) => {
-          return (
-            <div
-              key={index}
-              style={{
-                background: `${
-                  isAlertSoundMp3OnServer(reward.title) ? "green" : "red"
-                }`,
-              }}
-            >
-              <div>{reward.title}</div>
-              <div>{reward.cost}</div>
-              <div>
-                <button
-                  onClick={() => {
-                    handleOnShowEditModal(reward);
-                  }}
-                  className="common-button primary-button"
-                >
-                  Edit
-                </button>
-              </div>
-              <div>
-                <button
-                  onClick={() => {
-                    emitRemoveAlertSoundReward(reward.id, reward.title);
-                  }}
-                  className="common-button danger-button"
-                >
-                  X
-                </button>
-              </div>
+        {alertSounds?.map((reward, index) => (
+          <div
+            key={index}
+            style={{
+              background: `${
+                isAlertSoundMp3OnServer(reward.title) ? "green" : "red"
+              }`,
+            }}
+          >
+            <div>{reward.title}</div>
+            <div>{reward.cost}</div>
+            <div>
+              <button
+                onClick={() => {
+                  handleOnShowEditModal(reward);
+                }}
+                className="common-button primary-button"
+              >
+                Edit
+              </button>
             </div>
-          );
-        })}
+            <div>
+              <button
+                onClick={() => {
+                  emitRemoveAlertSoundReward(reward.id, reward.title);
+                }}
+                className="common-button danger-button"
+              >
+                X
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
       <Modal

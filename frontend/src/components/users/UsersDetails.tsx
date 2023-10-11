@@ -17,8 +17,8 @@ export default function UsersDetails({ users }: UsersDetailsProps) {
     <table id="table-users-list">
       <thead>
         <tr>
-          {userSortByData.map((data, idx) => (
-            <th key={idx}>
+          {userSortByData.map((data, index) => (
+            <th key={index}>
               <SortByParamsButton
                 buttonText={data.buttonText}
                 sortBy={data.sortBy}
@@ -30,47 +30,48 @@ export default function UsersDetails({ users }: UsersDetailsProps) {
 
       <tbody>
         {users.map(
-          ({
-            _id,
-            username,
-            lastSeen,
-            createdAt,
-            messageCount,
-            points,
-            watchTime,
-          }) => {
-            return (
-              <tr key={_id}>
-                <td className="users-list-username">
-                  <Link to={`./${_id}`}> {username}</Link>
-                </td>
-                <td className="users-list-achievements"></td>
-                <td className="users-list-watch-time">
-                  {Math.floor(Number(watchTime) / 60)} min
-                </td>
-                <td className="users-list-date">
-                  {lastSeen ? (
-                    <div className="users-list-date-div">
-                      <DateTooltip date={lastSeen} />
-                    </div>
-                  ) : null}
-                </td>
-                <td className="users-list-date">
-                  {createdAt ? (
-                    <div className="users-list-date-div">
-                      <DateTooltip date={createdAt} />
-                    </div>
-                  ) : null}
-                </td>
-                <td className="users-list-message-count">
-                  {messageCount?.toLocaleString()}
-                </td>
-                <td className="users-list-points">
-                  {points ? Math.round(points) : null}
-                </td>
-              </tr>
-            );
-          }
+          (
+            {
+              _id,
+              username,
+              lastSeen,
+              createdAt,
+              messageCount,
+              points,
+              watchTime,
+            },
+            index
+          ) => (
+            <tr key={index}>
+              <td className="users-list-username">
+                <Link to={`./${_id}`}> {username}</Link>
+              </td>
+              <td className="users-list-achievements"></td>
+              <td className="users-list-watch-time">
+                {Math.floor(Number(watchTime) / 60)} min
+              </td>
+              <td className="users-list-date">
+                {lastSeen ? (
+                  <div className="users-list-date-div">
+                    <DateTooltip date={lastSeen} />
+                  </div>
+                ) : null}
+              </td>
+              <td className="users-list-date">
+                {createdAt ? (
+                  <div className="users-list-date-div">
+                    <DateTooltip date={createdAt} />
+                  </div>
+                ) : null}
+              </td>
+              <td className="users-list-message-count">
+                {messageCount?.toLocaleString()}
+              </td>
+              <td className="users-list-points">
+                {points ? Math.round(points) : null}
+              </td>
+            </tr>
+          )
         )}
       </tbody>
     </table>

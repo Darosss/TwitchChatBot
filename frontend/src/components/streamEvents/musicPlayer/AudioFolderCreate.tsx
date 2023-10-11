@@ -48,21 +48,19 @@ export default function AudioFolderCreate() {
         </button>
       </div>
       <div className="folders-create-list">
-        {foldersData?.data.map((folder, index) => {
-          return (
-            <div key={index} className="folder-file list-with-x-buttons">
-              <div>
-                <button
-                  onClick={() => setFolderToDelete(folder)}
-                  className="common-button danger-button"
-                >
-                  x
-                </button>
-              </div>
-              <div> {folder} </div>
+        {foldersData?.data.map((folder, index) => (
+          <div key={index} className="folder-file list-with-x-buttons">
+            <div>
+              <button
+                onClick={() => setFolderToDelete(folder)}
+                className="common-button danger-button"
+              >
+                x
+              </button>
             </div>
-          );
-        })}
+            <div> {folder} </div>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -125,10 +125,3 @@ export default function MusicPlayer() {
     </div>
   );
 }
-
-// function SongsPlaylist(props: { songs: [string, string][] }) {
-//   const { songs } = props;
-//   return <div> Playlist</div>;
-// }
-
-//TODO: when widget is < 500 px show only name, <= 1000 show name + progress

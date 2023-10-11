@@ -15,16 +15,21 @@ interface MessagesDetailsProp {
   messages: Message[];
 }
 
-export default function MessagesList(props: {
-  messages: "all" | "session" | "user";
-}) {
-  const { messages } = props;
+interface MessagesListProps {
+  messages: "user" | "session" | "all";
+}
 
+interface MessagesProps {
+  messagesData: PaginationData<Message>;
+}
+
+export default function MessagesList({ messages }: MessagesListProps) {
   switch (messages) {
-    case "user":
-      return <MessagesUser />;
     case "session":
       return <MessagesSession />;
+    case "user":
+      return <MessagesUser />;
+    case "all":
     default:
       return <MessagesAll />;
   }
@@ -71,31 +76,30 @@ const MessagesDetails = ({ messages }: MessagesDetailsProp) => (
     </thead>
 
     <tbody>
-      {messages.map((message) => {
-        return (
-          <tr key={message._id + new Date()}>
-            <td className="message-time">
-              <div className="message-time-div">
-                <DateTooltip date={message.date} />
-              </div>
-            </td>
+      {messages.map((message, index) => (
+        <tr key={index}>
+          <td className="message-time">
+            <div className="message-time-div">
+              <DateTooltip date={message.date} />
+            </div>
+          </td>
 
-            <td className="message-username">
-              <Link to={`/users/${message.owner._id}`}>
-                <div>{message.owner.username}</div>
-              </Link>
-            </td>
-            <td className="message" colSpan={4}>
-              <div> {message.message}</div>
-            </td>
-          </tr>
-        );
-      })}
+          <td className="message-username">
+            <Link to={`/users/${message.owner._id}`}>
+              <div>{message.owner.username}</div>
+            </Link>
+          </td>
+          <td className="message" colSpan={4}>
+            <div> {message.message}</div>
+          </td>
+        </tr>
+      ))}
     </tbody>
   </table>
 );
-const Messages = (props: { messagesData: PaginationData<Message> }) => {
-  const { data, currentPage, count } = props.messagesData;
+const Messages = ({
+  messagesData: { data, currentPage, count },
+}: MessagesProps) => {
   return (
     <>
       <PreviousPage />

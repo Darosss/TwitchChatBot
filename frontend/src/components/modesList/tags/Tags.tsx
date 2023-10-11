@@ -101,24 +101,22 @@ export default function Tags() {
             </button>
           </div>
         </div>
-        {data.map((tag, index) => {
-          return (
-            <div key={index} className="mode-item">
-              <button
-                onClick={() => handleOnEdit(tag)}
-                className="common-button primary-button edit-mode-button"
-              >
-                {tag.name}
-              </button>
-              <button
-                onClick={() => setTagIdDelete(tag._id)}
-                className="common-button danger-button remove-mode-btn"
-              >
-                X
-              </button>
-            </div>
-          );
-        })}
+        {data.map((tag, index) => (
+          <div key={index} className="mode-item">
+            <button
+              onClick={() => handleOnEdit(tag)}
+              className="common-button primary-button edit-mode-button"
+            >
+              {tag.name}
+            </button>
+            <button
+              onClick={() => setTagIdDelete(tag._id)}
+              className="common-button danger-button remove-mode-btn"
+            >
+              X
+            </button>
+          </div>
+        ))}
       </div>
       <div className="table-list-pagination">
         <Pagination

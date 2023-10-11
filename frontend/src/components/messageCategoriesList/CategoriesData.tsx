@@ -8,18 +8,19 @@ import {
 import { MessageCategory } from "@services/MessageCategoriesService";
 import SortByParamsButton from "@components/SortByParamsButton";
 
-export default function CategoriesData(props: {
+interface CategoriesDataProps {
   data: MessageCategory[];
   handleOnShowEditModal: (category: MessageCategory) => void;
   handleOnShowCreateModal: (category?: MessageCategory) => void;
   setCategoryIdToDelete: React.Dispatch<React.SetStateAction<string | null>>;
-}) {
-  const {
-    data,
-    handleOnShowCreateModal,
-    handleOnShowEditModal,
-    setCategoryIdToDelete,
-  } = props;
+}
+
+export default function CategoriesData({
+  data,
+  handleOnShowCreateModal,
+  handleOnShowEditModal,
+  setCategoryIdToDelete,
+}: CategoriesDataProps) {
   return (
     <>
       <TableListWrapper
@@ -44,10 +45,10 @@ export default function CategoriesData(props: {
             <th>Messages</th>
           </tr>
         }
-        tbodyChildren={data.map((category, idx) => {
+        tbodyChildren={data.map((category, index) => {
           const { tag, mood } = category;
           return (
-            <tr key={idx}>
+            <tr key={index}>
               <td>
                 <div>
                   <button
@@ -93,13 +94,11 @@ export default function CategoriesData(props: {
               </td>
               <td>
                 <TableItemsListWrapper>
-                  {category.messages.map((message, index) => {
-                    return (
-                      <div key={index}>
-                        {message[0]} - uses: {message[1]}
-                      </div>
-                    );
-                  })}
+                  {category.messages.map((message, index) => (
+                    <div key={index}>
+                      {message[0]} - uses: {message[1]}
+                    </div>
+                  ))}
                 </TableItemsListWrapper>
               </td>
             </tr>
