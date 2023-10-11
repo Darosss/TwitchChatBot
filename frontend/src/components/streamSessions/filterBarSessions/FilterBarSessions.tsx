@@ -1,35 +1,30 @@
 import React from "react";
-import UrlParamsInput from "@components/urlParamsInputs";
+import UrlParamsInput, { FilterBarInput } from "@components/urlParamsInputs";
 
 export default function FilterBarSessions() {
   return (
     <div className="filter-users-wrapper">
       <UrlParamsInput>
-        <input
-          {...{ queryparam: "search_name" }}
+        <FilterBarInput
+          queryparam="search_name"
           type="search"
-          placeholder={"Title"}
-        ></input>
-
-        <input
-          {...{ queryparam: "tags" }}
+          placeholder="Title"
+        />
+        <FilterBarInput queryparam="tags" type="search" placeholder="Tags" />
+        <FilterBarInput
+          queryparam="categories"
           type="search"
-          placeholder={"Tags"}
-        ></input>
-        <input
-          {...{ queryparam: "categories" }}
-          type="search"
-          placeholder={"Categories"}
-        ></input>
+          placeholder="Categories"
+        />
         <div>
           <label>Session date [start / end ] </label>
           <div>
-            <input
-              {...{ queryparam: "start_date" }}
+            <FilterBarInput
               id="start-seen"
+              queryparam="start_date"
               type="date"
-            ></input>
-            <input {...{ queryparam: "end_date" }} type="date"></input>
+            />
+            <FilterBarInput queryparam="end_date" type="date" />
           </div>
         </div>
       </UrlParamsInput>
