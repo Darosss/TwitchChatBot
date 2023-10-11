@@ -18,7 +18,7 @@ export default function UsersDetails({ users }: UsersDetailsProps) {
       <thead>
         <tr>
           {userSortByData.map((data, idx) => (
-            <th>
+            <th key={idx}>
               <SortByParamsButton
                 buttonText={data.buttonText}
                 sortBy={data.sortBy}
@@ -81,6 +81,10 @@ const userSortByData: UserSortByDataType[] = [
   {
     buttonText: "Username",
     sortBy: "username",
+  },
+  {
+    buttonText: "Achievements",
+    sortBy: "_id", //TODO: when achievements will be added.
   },
   {
     buttonText: "Watch",
