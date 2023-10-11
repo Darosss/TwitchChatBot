@@ -5,7 +5,10 @@ import { useSearchParams } from "react-router-dom";
 /**
  * @param {ReactElement} props - react element props
  * @param {React.ReactNode} props.children - inputs, select or sth should have 'queryparam' custom parameter
- * @example <UrlParamsInputs><input type="text" queryparam="search_name"/></UrlParamsInputs>
+ * @example ```
+ * <UrlParamsInputs>
+ *     <FilterBarInput queryparam="search_name" type="search" placeholder="Username"/>
+ * </UrlParamsInputs>```
  * @returns - children wrapped in UrlParamsInputs which now they change UrlSearchParam
  */
 export default function UrlParamsInput(props: {
