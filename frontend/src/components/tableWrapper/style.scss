@@ -5,6 +5,13 @@ $tr-height: 30vh;
     display: flex;
     flex: content;
   }
+
+  .table-list th > div {
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 5dvh;
+    overflow-x: hidden;
+  }
 }
 
 .table-list td:not(:first-child) {
@@ -61,7 +68,7 @@ $tr-height: 30vh;
 
 .table-items-list-wrapper {
   font-size: 1.7vmin;
-  width: 25vw;
+  min-width: 25vw;
   height: $tr-height;
   max-height: $tr-height;
   display: flex;
@@ -69,7 +76,7 @@ $tr-height: 30vh;
   flex-wrap: wrap;
 
   & > div {
-    flex: 0 0 49%;
+    flex: 1 0 49%;
     min-height: 25%;
     max-height: 25%;
     overflow: auto;
