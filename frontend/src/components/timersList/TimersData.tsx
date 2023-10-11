@@ -35,7 +35,7 @@ export default function TimersData(props: {
                 New
               </button>
             </th>
-            <th colSpan={5}>
+            <th>
               <div>
                 <SortByParamsButton buttonText="Name" sortBy="name" />
                 <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
@@ -60,25 +60,21 @@ export default function TimersData(props: {
             <th>Messages</th>
           </tr>
         }
-        tbodyChildren={data.map((timer) => {
+        tbodyChildren={data.map((timer, idx) => {
           const { tag, mood } = timer;
           return (
-            <tr key={timer._id}>
+            <tr key={idx}>
               <td>
                 <div>
                   <button
                     className="common-button primary-button"
-                    onClick={() => {
-                      handleOnShowCreateModal(timer);
-                    }}
+                    onClick={() => handleOnShowCreateModal(timer)}
                   >
                     Duplicate
                   </button>
                   <button
                     className="common-button primary-button"
-                    onClick={() => {
-                      handleOnShowEditModal(timer);
-                    }}
+                    onClick={() => handleOnShowEditModal(timer)}
                   >
                     Edit
                   </button>
@@ -90,7 +86,7 @@ export default function TimersData(props: {
                   </button>
                 </div>
               </td>
-              <td colSpan={5}>
+              <td>
                 <TableDataWrapper>
                   <div>Name: </div>
                   <div>{timer.name}</div>
@@ -130,7 +126,6 @@ export default function TimersData(props: {
                   })}
                 </TableItemsListWrapper>
               </td>
-              <td></td>
             </tr>
           );
         })}

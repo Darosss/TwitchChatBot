@@ -34,7 +34,7 @@ export default function CategoriesData(props: {
                 New
               </button>
             </th>
-            <th colSpan={5}>
+            <th>
               <div>
                 <SortByParamsButton buttonText="Name" sortBy="name" />
                 <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
@@ -44,10 +44,10 @@ export default function CategoriesData(props: {
             <th>Messages</th>
           </tr>
         }
-        tbodyChildren={data.map((category) => {
+        tbodyChildren={data.map((category, idx) => {
           const { tag, mood } = category;
           return (
-            <tr key={category._id}>
+            <tr key={idx}>
               <td>
                 <div>
                   <button
@@ -74,7 +74,7 @@ export default function CategoriesData(props: {
                   </button>
                 </div>
               </td>
-              <td colSpan={5}>
+              <td>
                 <TableDataWrapper>
                   <div>Name</div>
                   <div>{category.name}</div>
@@ -102,7 +102,6 @@ export default function CategoriesData(props: {
                   })}
                 </TableItemsListWrapper>
               </td>
-              <td></td>
             </tr>
           );
         })}

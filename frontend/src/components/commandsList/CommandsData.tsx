@@ -35,7 +35,7 @@ export default function CommandsData(props: {
                 New
               </button>
             </th>
-            <th colSpan={5}>
+            <th>
               <div>
                 <SortByParamsButton buttonText="Name" sortBy="name" />
                 <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
@@ -77,7 +77,7 @@ export default function CommandsData(props: {
                   Delete
                 </button>
               </td>
-              <td colSpan={5}>
+              <td>
                 <TableDataWrapper>
                   <div>Name: </div>
                   <div>{command.name}</div>
