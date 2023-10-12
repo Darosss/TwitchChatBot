@@ -4,7 +4,7 @@ import { Link, LinkProps } from "react-router-dom";
 import { resetWindowScroll } from "@utils";
 import { useGetAuthorizeUrl } from "@services";
 import DrawerBar from "@components/drawer";
-import { routes } from "@routes/routesList";
+import { routes } from "@routes";
 import ChangeTheme from "@components/changeTheme";
 import { useSocketContext } from "@context/socket";
 

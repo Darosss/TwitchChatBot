@@ -1,7 +1,7 @@
 import ChangeTheme from "@components/changeTheme";
 import { HelmetTitle } from "@components/componentWithTitle";
 import Message, { MessageProps } from "@components/message";
-import { routes } from "@routes/routesList";
+import { routes } from "@routes";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
