@@ -33,7 +33,7 @@ class LoyaltyHandler extends HeadHandler {
 
   private async init() {
     this.checkChattersTimeout = setInterval(async () => {
-      await this.checkChatters(/* id */);
+      await this.checkChatters();
     }, this.configs.intervalCheckChatters * 1000);
   }
 
@@ -48,9 +48,7 @@ class LoyaltyHandler extends HeadHandler {
   }
 
   private async getStreamChatters() {
-    const listOfChatters = await retryWithCatch(() =>
-      this.twitchApi.chat.getChatters(this.authorizedUser.id, this.authorizedUser.id)
-    );
+    const listOfChatters = await retryWithCatch(() => this.twitchApi.chat.getChatters(this.authorizedUser.id));
 
     return listOfChatters;
   }
@@ -80,11 +78,11 @@ class LoyaltyHandler extends HeadHandler {
   }
 
   private async checkUserFollow(user: HelixChatChatter) {
-    const twitchUser = await retryWithCatch(() => user.getUser());
+    const follower = await retryWithCatch(() =>
+      this.twitchApi.channels.getChannelFollowers(this.authorizedUser.id, user.userId)
+    );
 
-    const follow = await retryWithCatch(() => twitchUser.getFollowTo(this.authorizedUser.id));
-
-    return follow?.followDate;
+    return follower?.data?.at(0)?.followDate;
   }
 
   private async updateFollowerStatus(users: HelixChatChatter[]) {
@@ -157,7 +155,7 @@ class LoyaltyHandler extends HeadHandler {
     }
   }
 
-  private async checkChatters(/* broadcasterId: string */) {
+  private async checkChatters() {
     const listOfChatters = await this.getStreamChatters();
 
     const { data: chatters } = listOfChatters;
