@@ -21,21 +21,22 @@ const authorizationTwitch = async (req: Request, res: Response, next: NextFuncti
 
   const authProvider = new RefreshingAuthProvider({
     clientId,
-    clientSecret,
-    onRefresh: async (userId, newTokenData) => {
-      const { accessToken, refreshToken, expiresIn, obtainmentTimestamp, scope } = newTokenData;
-      await createNewAuth({
-        accessToken: accessToken,
-        refreshToken: refreshToken || "",
-        expiresIn: expiresIn || 0,
-        obtainmentTimestamp: obtainmentTimestamp,
-        scope: scope,
-        userId: userId
-      });
-    }
+    clientSecret
   });
 
-  await authProvider.addUserForToken({
+  authProvider.onRefresh(async (userId, newTokenData) => {
+    const { accessToken, refreshToken, expiresIn, obtainmentTimestamp, scope } = newTokenData;
+    await createNewAuth({
+      accessToken: accessToken,
+      refreshToken: refreshToken || "",
+      expiresIn: expiresIn || 0,
+      obtainmentTimestamp: obtainmentTimestamp,
+      scope: scope,
+      userId: userId
+    });
+  });
+
+  authProvider.addUserForToken({
     accessToken: decryptedAccessToken,
     refreshToken: decryptedRefreshToken,
     expiresIn: tokenDB.expiresIn,
