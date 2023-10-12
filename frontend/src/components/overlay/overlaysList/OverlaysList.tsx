@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
-import { addNotification } from "@utils/getNotificationValues";
+import { handleActionOnChangeState } from "@utils";
+import { addNotification } from "@utils";
 import { Link } from "react-router-dom";
 import {
   initialLayoutOverlays,
@@ -10,7 +10,7 @@ import {
   useCreateOverlay,
   useGetOverlays,
   useRemoveOverlayById,
-} from "@services/OverlayService";
+} from "@services";
 import CardboxWrapper, {
   CardboxInput,
   CardboxItem,
@@ -78,30 +78,28 @@ export default function OverlaysList() {
             Create
           </button>
         </CardboxInput>
-        {overlays.map((overlay, index) => {
-          return (
-            <CardboxItem
-              title={overlay.name}
-              onClickX={() => {
-                setLayoutIdDelete(overlay._id);
-              }}
-              key={index}
+        {overlays.map((overlay, index) => (
+          <CardboxItem
+            title={overlay.name}
+            onClickX={() => {
+              setLayoutIdDelete(overlay._id);
+            }}
+            key={index}
+          >
+            <Link
+              className="common-button primary-button"
+              to={`${overlay._id}`}
             >
-              <Link
-                className="common-button primary-button"
-                to={`${overlay._id}`}
-              >
-                Show
-              </Link>
-              <Link
-                className="common-button primary-button"
-                to={`${overlay._id}/editor`}
-              >
-                Edit
-              </Link>
-            </CardboxItem>
-          );
-        })}
+              Show
+            </Link>
+            <Link
+              className="common-button primary-button"
+              to={`${overlay._id}/editor`}
+            >
+              Edit
+            </Link>
+          </CardboxItem>
+        ))}
       </CardboxWrapper>
     </>
   );

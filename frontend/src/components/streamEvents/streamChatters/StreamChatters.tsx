@@ -1,19 +1,21 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { SocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 import { DateTooltip } from "@components/dateTooltip";
 
 export default function StreamChatters() {
   const LIMIT_LAST_CHATTERS = 14;
 
-  const socket = useContext(SocketContext);
-
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const socketContext = useSocketContext();
 
   const [lastChatters, setLastChatters] = useState(new Map<string, Date>());
 
   useEffect(() => {
-    socket?.on("messageServer", (date, username, message) => {
+    const {
+      events: { messageServer },
+    } = socketContext;
+
+    messageServer.on((date, username) => {
       setLastChatters((prevState) => {
         prevState.set(username, date);
 
@@ -33,33 +35,29 @@ export default function StreamChatters() {
 
         return newState;
       });
-
-      forceUpdate();
     });
 
     return () => {
-      socket.off("messageServer");
+      messageServer.off();
     };
-  }, [socket]);
+  }, [socketContext]);
 
   return (
     <div id="stream-last-chatters" className="stream-last-chatters">
       <div className="widget-header"> Last chatters </div>
-      {[...lastChatters.keys()].map((chatter, index) => {
-        return (
-          <div
-            className={`user-chatter ${
-              index + 1 === LIMIT_LAST_CHATTERS ? "limit" : ""
-            }`}
-            key={chatter + lastChatters.get(chatter)}
-          >
-            <div className="user-chatter-username">{chatter}</div>
-            <div className="user-chatter-last-seen">
-              <DateTooltip date={lastChatters.get(chatter) || new Date()} />
-            </div>
+      {[...lastChatters.keys()].map((chatter, index) => (
+        <div
+          className={`user-chatter ${
+            index + 1 === LIMIT_LAST_CHATTERS ? "limit" : ""
+          }`}
+          key={index}
+        >
+          <div className="user-chatter-username">{chatter}</div>
+          <div className="user-chatter-last-seen">
+            <DateTooltip date={lastChatters.get(chatter) || new Date()} />
           </div>
-        );
-      })}
+        </div>
+      ))}
     </div>
   );
 }

@@ -1,20 +1,21 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { SocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 import StreamSessionEvents from "@components/streamSessionEvents";
-import { SessionEvents } from "@services/StreamSessionService";
+import { SessionEvents } from "@services";
 
 export default function StreamNotifications() {
   const LIMIT_NOTIFICATIONS = 5;
 
-  const socket = useContext(SocketContext);
-
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const socketContext = useSocketContext();
 
   const [userNotif, setUserNotif] = useState<SessionEvents[]>([]);
 
   useEffect(() => {
-    socket?.on("userJoinTwitchChat", (eventAndUser) => {
+    const {
+      events: { userJoinTwitchChat },
+    } = socketContext;
+    userJoinTwitchChat.on((eventAndUser) => {
       setUserNotif((prevState) => {
         prevState.unshift({
           _id: eventAndUser.eventDate.toString() + Date.now(),
@@ -23,22 +24,21 @@ export default function StreamNotifications() {
           createdAt: eventAndUser.eventDate,
           updatedAt: eventAndUser.eventDate,
         });
-        return prevState;
+        return [...prevState];
       });
 
       if (userNotif?.length > LIMIT_NOTIFICATIONS) {
         setUserNotif((prevState) => {
           prevState.pop();
-          return prevState;
+          return [...prevState];
         });
       }
-      forceUpdate();
     });
 
     return () => {
-      socket.off("userJoinTwitchChat");
+      userJoinTwitchChat.off();
     };
-  }, [socket, userNotif]);
+  }, [socketContext, userNotif]);
 
   return <StreamSessionEvents sessionEvents={userNotif} />;
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { convertSecondsToMS } from "@utils/convertSecondsToMS";
+import { convertSecondsToMS } from "@utils";
 import ProgressBar, { ProgressBarProps } from "@ramonak/react-progress-bar";
 
 interface SongProgressProps {
@@ -7,8 +7,11 @@ interface SongProgressProps {
   currentTime: number;
   progressBarProps?: Partial<ProgressBarProps>;
 }
-export default function SongProgress(props: SongProgressProps) {
-  const { songDuration, currentTime, progressBarProps } = props;
+export default function SongProgress({
+  songDuration,
+  currentTime,
+  progressBarProps,
+}: SongProgressProps) {
   const [maxMinutes, maxSeconds] = convertSecondsToMS(songDuration);
   const [currMinutes, currSeconds] = convertSecondsToMS(currentTime);
 

@@ -7,3 +7,5 @@ export type {
   CustomRewardData,
   AudioStreamData,
 } from "@socketTypes";
+
+export type * from "./types";

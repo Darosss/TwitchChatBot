@@ -1,9 +1,11 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-import { SocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 
 export default function Redemptions() {
-  const socket = useContext(SocketContext);
+  const {
+    events: { onRedemption },
+  } = useSocketContext();
   const redemptionRef = useRef<HTMLDivElement>(null);
 
   const [redemptionInfo, setRedemptionInfo] = useState("");
@@ -13,7 +15,7 @@ export default function Redemptions() {
   useEffect(() => {
     let source: AudioBufferSourceNode | null = null;
 
-    socket.on("onRedemption", (data, audioBuffer) => {
+    onRedemption.on((data, audioBuffer) => {
       const { rewardTitle, userDisplayName, rewardImage } = data;
 
       setRedemptionImg(rewardImage);
@@ -45,9 +47,9 @@ export default function Redemptions() {
     });
 
     return () => {
-      socket.off("onRedemption");
+      onRedemption.off();
     };
-  }, [socket]);
+  }, [onRedemption]);
 
   if (showRedemption)
     return (

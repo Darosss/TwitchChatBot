@@ -1,16 +1,20 @@
 import React from "react";
-import { AllModesReturn, generateSelectModes } from "@utils/getListModes";
+import { AllModesReturn, generateSelectModes } from "@utils";
 import { DispatchAction } from "./types";
 import ModalDataWrapper from "@components/modalDataWrapper/ModalDataWrapper";
-import { ChatCommandCreateData } from "@services/ChatCommandService";
+import { ChatCommandCreateData } from "@services";
 
-export default function CommandModalData(props: {
+interface CommandModalDataProps {
   state: ChatCommandCreateData;
   dispatch: React.Dispatch<DispatchAction>;
   modes: AllModesReturn;
-}) {
-  const { state, dispatch, modes } = props;
-  const { tags, moods } = modes;
+}
+
+export default function CommandModalData({
+  state,
+  dispatch,
+  modes: { tags, moods },
+}: CommandModalDataProps) {
   return (
     <ModalDataWrapper>
       <div>Name </div>
@@ -29,12 +33,13 @@ export default function CommandModalData(props: {
         <button
           onClick={() => dispatch({ type: "SET_ENABLED" })}
           className={`${
-            !true ? "danger-button" : "primary-button"
+            !state.enabled ? "danger-button" : "primary-button"
           } common-button`}
         >
           {state.enabled.toString()}
         </button>
       </div>
+
       <div>Tag</div>
       <div>
         {generateSelectModes(

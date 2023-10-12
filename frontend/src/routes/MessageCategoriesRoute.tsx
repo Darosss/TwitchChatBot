@@ -11,7 +11,7 @@ export function MessageCategoriesRoute() {
           element={
             <ComponentWithTitle
               title="Message categories"
-              Component={<MessageCategoriesList />}
+              component={<MessageCategoriesList />}
             />
           }
         />

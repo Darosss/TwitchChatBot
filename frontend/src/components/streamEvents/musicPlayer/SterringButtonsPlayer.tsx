@@ -5,8 +5,11 @@ interface SterringButtonsProps {
   togglePlayPauseFn: () => void;
   onNextSongFn: () => void;
 }
-export default function SterringButtons(props: SterringButtonsProps) {
-  const { playing, togglePlayPauseFn, onNextSongFn } = props;
+export default function SterringButtons({
+  playing,
+  togglePlayPauseFn,
+  onNextSongFn,
+}: SterringButtonsProps) {
   return (
     <div className="music-player-sterring-wrapper">
       <button

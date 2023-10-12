@@ -1,14 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { SocketContext } from "@context/socket";
-import { useGetAllModes } from "@utils/getListModes";
-import { useEditTag } from "@services/TagService";
-import { useEditAffix } from "@services/AffixService";
-import { useEditMood } from "@services/MoodService";
-import { addNotification } from "@utils/getNotificationValues";
+import { useSocketContext } from "@context";
+import { useGetAllModes } from "@utils";
+import { useEditTag } from "@services";
+import { useEditAffix } from "@services";
+import { useEditMood } from "@services";
+import { addNotification } from "@utils";
 
 export default function StreamModes() {
-  const socket = useContext(SocketContext);
+  const {
+    emits: { changeModes },
+  } = useSocketContext();
 
   const [tagToUpdate, setTagToUpdate] = useState<[string, boolean]>([
     "",
@@ -42,33 +44,33 @@ export default function StreamModes() {
 
     fetchEditTag().then(() => {
       refetchTags();
-      socket.emit("changeModes");
+      changeModes();
       setTagToUpdate(["", false]);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tagToUpdate]);
+  }, [tagToUpdate, changeModes]);
 
   useEffect(() => {
     if (!affixToUpdate[0]) return;
 
     fetchAffixEdit().then(() => {
       refetchAffixes();
-      socket.emit("changeModes");
+      changeModes();
       setAffixToUpdate(["", false]);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [affixToUpdate]);
+  }, [affixToUpdate, changeModes]);
 
   useEffect(() => {
     if (!moodToUpdate[0]) return;
 
     fetchMoodEdit().then(() => {
       refetchMoods();
-      socket.emit("changeModes");
+      changeModes();
       setMoodToUpdate(["", false]);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [moodToUpdate]);
+  }, [moodToUpdate, changeModes]);
 
   if (!modes) return <> Loading...</>;
 
@@ -84,22 +86,20 @@ export default function StreamModes() {
             <div className="stream-modes-section-name">
               <button className="common-button secondary-button">Tags </button>
             </div>
-            {tags?.map((tag, index) => {
-              return (
-                <div key={index}>
-                  <button
-                    className={`common-button ${
-                      tag.enabled ? "primary-button" : "danger-button"
-                    }`}
-                    onClick={() => {
-                      setTagToUpdate([tag._id, !tag.enabled]);
-                    }}
-                  >
-                    {tag.name}
-                  </button>
-                </div>
-              );
-            })}
+            {tags?.map((tag, index) => (
+              <div key={index}>
+                <button
+                  className={`common-button ${
+                    tag.enabled ? "primary-button" : "danger-button"
+                  }`}
+                  onClick={() => {
+                    setTagToUpdate([tag._id, !tag.enabled]);
+                  }}
+                >
+                  {tag.name}
+                </button>
+              </div>
+            ))}
           </div>
           <div className="stream-modes-section">
             <div className="stream-modes-section-name">
@@ -132,44 +132,40 @@ export default function StreamModes() {
               </button>
             </div>
 
-            {affixes?.map((affix, index) => {
-              return (
-                <div key={index}>
-                  <button
-                    className={`common-button ${
-                      affix.enabled ? "primary-button" : "danger-button"
-                    }`}
-                    onClick={() => {
-                      setAffixToUpdate([affix._id, !affix.enabled]);
-                    }}
-                  >
-                    {affix.name}
-                  </button>
-                </div>
-              );
-            })}
+            {affixes?.map((affix, index) => (
+              <div key={index}>
+                <button
+                  className={`common-button ${
+                    affix.enabled ? "primary-button" : "danger-button"
+                  }`}
+                  onClick={() => {
+                    setAffixToUpdate([affix._id, !affix.enabled]);
+                  }}
+                >
+                  {affix.name}
+                </button>
+              </div>
+            ))}
           </div>
           <div className="stream-modes-section">
             <div className="stream-modes-section-name">
               <button className="common-button secondary-button">Moods</button>
             </div>
 
-            {moods?.map((mood, index) => {
-              return (
-                <div key={index}>
-                  <button
-                    className={`common-button ${
-                      mood.enabled ? "primary-button" : "danger-button"
-                    }`}
-                    onClick={() => {
-                      setMoodToUpdate([mood._id, !mood.enabled]);
-                    }}
-                  >
-                    {mood.name}
-                  </button>
-                </div>
-              );
-            })}
+            {moods?.map((mood, index) => (
+              <div key={index}>
+                <button
+                  className={`common-button ${
+                    mood.enabled ? "primary-button" : "danger-button"
+                  }`}
+                  onClick={() => {
+                    setMoodToUpdate([mood._id, !mood.enabled]);
+                  }}
+                >
+                  {mood.name}
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       </div>

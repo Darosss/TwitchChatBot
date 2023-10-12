@@ -1,22 +1,21 @@
-import "./style.css";
 import React from "react";
 
-import UrlParamsInput from "@components/urlParamsInputs";
+import UrlParamsInput, { FilterBarInput } from "@components/urlParamsInputs";
 
 export default function filterBarCategories() {
   return (
     <div className="filter-message-categories-wrapper">
       <UrlParamsInput>
-        <input
-          {...{ queryparam: "category" }}
+        <FilterBarInput
+          queryparam="category"
           type="search"
-          placeholder={"Category contains"}
-        ></input>
-        <input
-          {...{ queryparam: "messages" }}
+          placeholder="Category contains"
+        />
+        <FilterBarInput
+          queryparam="messages"
           type="search"
-          placeholder={"Messages contains"}
-        ></input>
+          placeholder="Messages contain"
+        />
       </UrlParamsInput>
     </div>
   );

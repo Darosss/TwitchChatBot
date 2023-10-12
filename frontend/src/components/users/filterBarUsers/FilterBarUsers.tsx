@@ -1,42 +1,38 @@
-import "./style.css";
 import React from "react";
 
-import UrlParamsInput from "@components/urlParamsInputs";
+import UrlParamsInput, { FilterBarInput } from "@components/urlParamsInputs";
 
 export default function FilterBarUsers() {
   return (
     <UrlParamsInput>
-      <input
-        {...{ queryparam: "search_name" }}
+      <FilterBarInput
+        queryparam="search_name"
         type="search"
-        placeholder={"Username"}
-      ></input>
+        placeholder="Username"
+      />
 
-      <input
-        {...{ queryparam: "privilege" }}
+      <FilterBarInput
+        queryparam="privilege"
         type="number"
-        placeholder={"Search by privilege"}
-      ></input>
+        placeholder="Search by privilege"
+      />
+
       <div>
         <label>Last seen [start / end]</label>
         <div>
-          <input
-            {...{ queryparam: "seen_start" }}
-            id="start-seen"
+          <FilterBarInput id="start-seen" queryparam="seen_start" type="date" />
+          <FilterBarInput
+            id="seen_end-seen"
+            queryparam="seen_start"
             type="date"
-          ></input>
-          <input {...{ queryparam: "seen_end" }} type="date"></input>
+          />
         </div>
       </div>
       <div>
         <label>Created [start / end]</label>
         <div>
-          <input
-            {...{ queryparam: "created_start" }}
-            id="start-seen"
-            type="date"
-          ></input>
-          <input {...{ queryparam: "created_end" }} type="date"></input>
+          <FilterBarInput queryparam="created_start" type="date" />
+          <FilterBarInput queryparam="created_end" type="date" />
         </div>
       </div>
     </UrlParamsInput>

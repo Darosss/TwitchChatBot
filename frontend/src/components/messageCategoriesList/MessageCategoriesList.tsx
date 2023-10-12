@@ -10,13 +10,13 @@ import {
   useGetMessageCategories,
   MessageCategory,
   MessageCategoryCreateData,
-} from "@services/MessageCategoriesService";
+} from "@services";
 import Modal from "@components/modal";
 import FilterBarCategories from "./filterBarCategories";
-import { addNotification } from "@utils/getNotificationValues";
-import { useGetAllModes } from "@utils/getListModes";
+import { addNotification } from "@utils";
+import { useGetAllModes } from "@utils";
 import { DispatchAction } from "./types";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
+import { handleActionOnChangeState } from "@utils";
 import CategoriesData from "./CategoriesData";
 import CategoriesModalData from "./CategoriesModalData";
 

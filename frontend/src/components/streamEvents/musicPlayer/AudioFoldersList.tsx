@@ -1,14 +1,14 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { SocketContext } from "@context/socket";
+import React, { useCallback, useEffect, useState } from "react";
+import { useSocketContext } from "@context";
 import {
   useDeleteMp3File,
   useGetFolderMp3Files,
   useGetFoldersList,
-} from "@services/FilesService";
-import { addNotification } from "@utils/getNotificationValues";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
+} from "@services";
+import { addNotification } from "@utils";
+import { handleActionOnChangeState } from "@utils";
 export default function AudioFoldersList() {
-  const socket = useContext(SocketContext);
+  const socketContext = useSocketContext();
   const [folderName, setFolderName] = useState("");
   const [fileNameToDelete, setFileNameToDelete] = useState<string | null>(null);
 
@@ -21,10 +21,6 @@ export default function AudioFoldersList() {
     folderName,
     fileNameToDelete || ""
   );
-
-  const emitLoadSongs = () => {
-    socket.emit("loadSongs", folderName);
-  };
 
   const handleOnClickChangeFolder = (folder: string) => {
     setFolderName(folder);
@@ -54,10 +50,14 @@ export default function AudioFoldersList() {
   }, [folderName]);
 
   useEffect(() => {
-    socket.emit("getAudioInfo", (cb) => {
+    const {
+      emits: { getAudioInfo },
+    } = socketContext;
+
+    getAudioInfo((cb) => {
       setFolderName(cb.currentFolder);
     });
-  }, [socket]);
+  }, [socketContext]);
 
   if (!foldersData) return <> No folders.</>;
 
@@ -66,24 +66,22 @@ export default function AudioFoldersList() {
   return (
     <div className="audio-files-list-wrapper">
       <div className="audio-folders-list-wrapper">
-        {folders.map((folder, index) => {
-          return (
-            <button
-              key={index}
-              onClick={() => handleOnClickChangeFolder(folder)}
-              className={`common-button ${
-                folder === folderName ? "primary-button" : "danger-button"
-              }`}
-            >
-              {folder}
-            </button>
-          );
-        })}
+        {folders.map((folder, index) => (
+          <button
+            key={index}
+            onClick={() => handleOnClickChangeFolder(folder)}
+            className={`common-button ${
+              folder === folderName ? "primary-button" : "danger-button"
+            }`}
+          >
+            {folder}
+          </button>
+        ))}
       </div>
       {folderName ? (
         <button
           onClick={() => {
-            emitLoadSongs();
+            socketContext.emits.loadSongs(folderName);
           }}
           className="load-folder-btn common-button primary-button"
         >
@@ -91,21 +89,19 @@ export default function AudioFoldersList() {
         </button>
       ) : null}
       <div className="mp3-files-wrapper">
-        {mp3Data?.data.map((mp3, index) => {
-          return (
-            <div key={index} className="mp3-file list-with-x-buttons">
-              <div>
-                <button
-                  onClick={() => setFileNameToDelete(mp3)}
-                  className="common-button danger-button"
-                >
-                  x
-                </button>
-              </div>
-              <div> {mp3} </div>
+        {mp3Data?.data.map((mp3, index) => (
+          <div key={index} className="mp3-file list-with-x-buttons">
+            <div>
+              <button
+                onClick={() => setFileNameToDelete(mp3)}
+                className="common-button danger-button"
+              >
+                x
+              </button>
             </div>
-          );
-        })}
+            <div> {mp3} </div>
+          </div>
+        ))}
       </div>
     </div>
   );

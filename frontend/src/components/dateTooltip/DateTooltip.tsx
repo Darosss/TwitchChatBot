@@ -1,12 +1,22 @@
 import React from "react";
 import moment from "moment";
 
-export function DateTooltip(props: {
+interface DateTooltipCommonProps {
   date: moment.MomentInput;
-  suffix?: boolean;
-}) {
-  const { date, suffix = true } = props;
+}
 
+interface DateTooltipProps extends DateTooltipCommonProps {
+  suffix?: boolean;
+}
+
+interface DateDifferenceProps {
+  dateStart: Date;
+  dateEnd: Date;
+  format?: moment.unitOfTime.Diff;
+  precise?: boolean;
+}
+
+export function DateTooltip({ date, suffix }: DateTooltipProps) {
   return (
     <div className="tooltip">
       <span className="tooltip-default">{moment(date).fromNow(!suffix)}</span>
@@ -17,12 +27,7 @@ export function DateTooltip(props: {
   );
 }
 
-export function DateTimeTooltip(props: {
-  date: moment.MomentInput;
-  suffix?: boolean;
-}) {
-  const { date } = props;
-
+export function DateTimeTooltip({ date }: DateTooltipCommonProps) {
   return (
     <div className="tooltip">
       <span className="tooltip-default">{moment(date).format("HH:mm:ss")}</span>
@@ -33,13 +38,12 @@ export function DateTimeTooltip(props: {
   );
 }
 
-export function DateDifference(props: {
-  dateStart: Date;
-  dateEnd: Date;
-  format?: moment.unitOfTime.Diff;
-  precise?: boolean;
-}) {
-  const { dateStart, dateEnd, format = "m", precise = true } = props;
+export function DateDifference({
+  dateStart,
+  dateEnd,
+  format = "m",
+  precise = true,
+}: DateDifferenceProps) {
   return (
     <div className="tooltip">
       <span className="tooltip-default">

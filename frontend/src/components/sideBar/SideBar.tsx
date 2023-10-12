@@ -1,33 +1,41 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Link, LinkProps } from "react-router-dom";
-import resetWindowScroll from "@utils/resetScroll";
-import { useGetAuthorizeUrl } from "@services/AuthService";
+import { resetWindowScroll } from "@utils";
+import { useGetAuthorizeUrl } from "@services";
 import DrawerBar from "@components/drawer";
-import { routes } from "@routes/routesList";
+import { routes } from "@routes";
 import ChangeTheme from "@components/changeTheme";
-import { SocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 
 interface NavLinkProps extends LinkProps {
   label: string;
 }
 
 export default function SideBar() {
-  const socket = useContext(SocketContext);
   const { data: authData, error } = useGetAuthorizeUrl();
+  const {
+    emits: { logout: emitLogout },
+    events: { sendLoggedUserInfo },
+  } = useSocketContext();
 
   const [loggedUser, setLoggedUser] = useState<string>("");
 
   const handleOnLogoutButton = () => {
-    socket.emit("logout");
+    emitLogout();
   };
 
   useEffect(() => {
-    socket.on("sendLoggedUserInfo", (username) => setLoggedUser(username));
+    if (!sendLoggedUserInfo) return;
+
+    sendLoggedUserInfo.on((username) => {
+      setLoggedUser(username);
+    });
+
     return () => {
-      socket.off("sendLoggedUserInfo");
+      sendLoggedUserInfo.off();
     };
-  }, [socket]);
+  }, [sendLoggedUserInfo]);
 
   return (
     <DrawerBar direction={"right"} size={"15vw"} overlay={true}>
@@ -35,11 +43,9 @@ export default function SideBar() {
         <li>
           <ChangeTheme />
         </li>
-        {routes.map((route) => {
-          return (
-            <NavLink key={route.path} to={route.path} label={route.label} />
-          );
-        })}
+        {routes.map((route, index) => (
+          <NavLink key={index} to={route.path} label={route.label} />
+        ))}
 
         <li>
           <a

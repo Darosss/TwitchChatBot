@@ -1,16 +1,15 @@
-import "./style.css";
 import React from "react";
-import UrlParamsInput from "@components/urlParamsInputs";
+import UrlParamsInput, { FilterBarInput } from "@components/urlParamsInputs";
 
 export default function FilterBarCommands() {
   return (
     <div className="filter-commands-wrapper">
       <UrlParamsInput>
-        <input
-          {...{ queryparam: "search_name" }}
+        <FilterBarInput
+          queryparam="search_name"
           type="search"
-          placeholder={"Mode name"}
-        ></input>
+          placeholder="Mode name"
+        />
       </UrlParamsInput>
     </div>
   );

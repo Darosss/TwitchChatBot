@@ -1,26 +1,27 @@
 import React from "react";
-import { generateEnabledDisabledDiv } from "@utils/generateEnabledDisabledDiv";
+import { generateEnabledDisabledDiv } from "@utils";
 import { DateTooltip } from "@components/dateTooltip";
 import {
   TableDataWrapper,
   TableItemsListWrapper,
   TableListWrapper,
 } from "@components/tableWrapper";
-import { ChatCommand } from "@services/ChatCommandService";
+import { ChatCommand } from "@services";
 import SortByParamsButton from "@components/SortByParamsButton";
 
-export default function CommandsData(props: {
+interface CommandsDataProps {
   data: ChatCommand[];
   handleOnShowEditModal: (trigger: ChatCommand) => void;
   handleOnShowCreateModal: (trigger?: ChatCommand) => void;
   setCommandIdDelete: React.Dispatch<React.SetStateAction<string | null>>;
-}) {
-  const {
-    data,
-    handleOnShowCreateModal,
-    handleOnShowEditModal,
-    setCommandIdDelete,
-  } = props;
+}
+
+export default function CommandsData({
+  data,
+  handleOnShowCreateModal,
+  handleOnShowEditModal,
+  setCommandIdDelete,
+}: CommandsDataProps) {
   return (
     <>
       <TableListWrapper
@@ -35,7 +36,7 @@ export default function CommandsData(props: {
                 New
               </button>
             </th>
-            <th colSpan={5}>
+            <th>
               <div>
                 <SortByParamsButton buttonText="Name" sortBy="name" />
                 <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
@@ -51,16 +52,14 @@ export default function CommandsData(props: {
             <th>Messages</th>
           </tr>
         }
-        tbodyChildren={data.map((command) => {
+        tbodyChildren={data.map((command, index) => {
           const { tag, mood } = command;
           return (
-            <tr key={command._id}>
+            <tr key={index}>
               <td>
                 <button
                   className="common-button primary-button"
-                  onClick={() => {
-                    handleOnShowCreateModal(command);
-                  }}
+                  onClick={() => handleOnShowCreateModal(command)}
                 >
                   Duplicate
                 </button>
@@ -77,7 +76,7 @@ export default function CommandsData(props: {
                   Delete
                 </button>
               </td>
-              <td colSpan={5}>
+              <td>
                 <TableDataWrapper>
                   <div>Name: </div>
                   <div>{command.name}</div>
@@ -105,16 +104,16 @@ export default function CommandsData(props: {
 
               <td>
                 <TableItemsListWrapper>
-                  {command.aliases.map((alias, index) => {
-                    return <div key={index}>{alias}</div>;
-                  })}
+                  {command.aliases.map((alias, index) => (
+                    <div key={index}>{alias}</div>
+                  ))}
                 </TableItemsListWrapper>
               </td>
               <td>
                 <TableItemsListWrapper>
-                  {command.messages.map((message, index) => {
-                    return <div key={index}>{message}</div>;
-                  })}
+                  {command.messages.map((message, index) => (
+                    <div key={index}>{message}</div>
+                  ))}
                 </TableItemsListWrapper>
               </td>
             </tr>

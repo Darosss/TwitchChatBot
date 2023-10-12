@@ -6,8 +6,11 @@ interface TabButtonProps<T> {
   onChangeTabFn: () => void;
 }
 
-export default function TabButton<T = unknown>(props: TabButtonProps<T>) {
-  const { tab, onChangeTabFn, activeTabState } = props;
+export default function TabButton<T = unknown>({
+  tab,
+  onChangeTabFn,
+  activeTabState,
+}: TabButtonProps<T>) {
   const [activeTab, setActiveTab] = activeTabState;
 
   const handleOnSetActiveTab = (tab: T) => {

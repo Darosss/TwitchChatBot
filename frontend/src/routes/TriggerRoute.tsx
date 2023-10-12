@@ -9,7 +9,7 @@ export function TriggerRoutes() {
         <Route
           index
           element={
-            <ComponentWithTitle title="Triggers" Component={<TriggersList />} />
+            <ComponentWithTitle title="Triggers" component={<TriggersList />} />
           }
         />
         <Route path="*" element={<>Not found</>} />

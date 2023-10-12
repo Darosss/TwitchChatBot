@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {
-  useCreateLayout,
-  useGetWidgets,
-  useRemoveWidgetById,
-} from "@services/WidgetsService";
+import { useCreateLayout, useGetWidgets, useRemoveWidgetById } from "@services";
 import { Link } from "react-router-dom";
 import {
   initialLayoutWidgets,
   initialToolboxWidgets,
 } from "src/layout/initialLayoutWidgets";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
-import { addNotification } from "@utils/getNotificationValues";
+import { handleActionOnChangeState } from "@utils";
+import { addNotification } from "@utils";
 import CardboxWrapper from "@components/cardboxWrapper";
 import {
   CardboxInput,
@@ -83,30 +79,25 @@ export default function StreamNotifications() {
             Create
           </button>
         </CardboxInput>
-        {layouts.map((layout, index) => {
-          return (
-            <CardboxItem
-              title={layout.name}
-              onClickX={() => {
-                setLayoutIdToDelete(layout._id);
-              }}
-              key={index}
+        {layouts.map((layout, index) => (
+          <CardboxItem
+            title={layout.name}
+            onClickX={() => {
+              setLayoutIdToDelete(layout._id);
+            }}
+            key={index}
+          >
+            <Link className="common-button primary-button" to={`${layout._id}`}>
+              Show
+            </Link>
+            <Link
+              className="common-button primary-button"
+              to={`${layout._id}/editor`}
             >
-              <Link
-                className="common-button primary-button"
-                to={`${layout._id}`}
-              >
-                Show
-              </Link>
-              <Link
-                className="common-button primary-button"
-                to={`${layout._id}/editor`}
-              >
-                Edit
-              </Link>
-            </CardboxItem>
-          );
-        })}
+              Edit
+            </Link>
+          </CardboxItem>
+        ))}
       </CardboxWrapper>
     </>
   );

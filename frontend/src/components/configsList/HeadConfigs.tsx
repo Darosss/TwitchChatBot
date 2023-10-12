@@ -1,20 +1,28 @@
-import { HeadConfigs } from "@services/ConfigService";
 import ConfigInput from "./ConfigInput";
-export default function HeadConfigsWrapper(props: {
-  headState: [HeadConfigs, React.Dispatch<React.SetStateAction<HeadConfigs>>];
-  showEdit: boolean;
-}) {
-  const { headState, showEdit } = props;
-  const [headConfigs, setHeadConfigs] = headState;
+import { useConfigsContext } from "./ConfigsContext";
+import { ConfigsDispatchActionType, ConfigsWrapperSharedProps } from "./types";
+
+const DISPATCH_TYPE = ConfigsDispatchActionType.SET_HEAD;
+
+export default function HeadConfigsWrapper({
+  showEdit,
+}: ConfigsWrapperSharedProps) {
+  const {
+    configState: [{ headConfigs }, dispatch],
+  } = useConfigsContext();
+
   return (
     <>
       <ConfigInput
         optionName="Interval check viewers peek delay"
         setState={(e) =>
-          setHeadConfigs((prevState) => ({
-            ...prevState,
-            intervalCheckViewersPeek: e.target.valueAsNumber,
-          }))
+          dispatch({
+            type: DISPATCH_TYPE,
+            payload: {
+              ...headConfigs,
+              intervalCheckViewersPeek: e.target.valueAsNumber,
+            },
+          })
         }
         value={headConfigs.intervalCheckViewersPeek}
         showEdit={showEdit}
@@ -25,13 +33,16 @@ export default function HeadConfigsWrapper(props: {
       <ConfigInput
         optionName="Min"
         setState={(e) =>
-          setHeadConfigs((prevState) => ({
-            ...prevState,
-            delayBetweenMessages: {
-              ...prevState.delayBetweenMessages,
-              min: e.target.valueAsNumber,
+          dispatch({
+            type: DISPATCH_TYPE,
+            payload: {
+              ...headConfigs,
+              delayBetweenMessages: {
+                ...headConfigs.delayBetweenMessages,
+                min: e.target.valueAsNumber,
+              },
             },
-          }))
+          })
         }
         value={headConfigs.delayBetweenMessages.min}
         showEdit={showEdit}
@@ -39,13 +50,16 @@ export default function HeadConfigsWrapper(props: {
       <ConfigInput
         optionName="Max"
         setState={(e) =>
-          setHeadConfigs((prevState) => ({
-            ...prevState,
-            delayBetweenMessages: {
-              ...prevState.delayBetweenMessages,
-              max: e.target.valueAsNumber,
+          dispatch({
+            type: DISPATCH_TYPE,
+            payload: {
+              ...headConfigs,
+              delayBetweenMessages: {
+                ...headConfigs.delayBetweenMessages,
+                max: e.target.valueAsNumber,
+              },
             },
-          }))
+          })
         }
         value={headConfigs.delayBetweenMessages.max}
         showEdit={showEdit}
@@ -54,13 +68,16 @@ export default function HeadConfigsWrapper(props: {
       <ConfigInput
         optionName="Broadcaster"
         setState={(e) =>
-          setHeadConfigs((prevState) => ({
-            ...prevState,
-            permissionLevels: {
-              ...prevState.permissionLevels,
-              broadcaster: e.target.valueAsNumber,
+          dispatch({
+            type: DISPATCH_TYPE,
+            payload: {
+              ...headConfigs,
+              permissionLevels: {
+                ...headConfigs.permissionLevels,
+                broadcaster: e.target.valueAsNumber,
+              },
             },
-          }))
+          })
         }
         value={headConfigs.permissionLevels.broadcaster}
         showEdit={showEdit}
@@ -68,13 +85,16 @@ export default function HeadConfigsWrapper(props: {
       <ConfigInput
         optionName="Mod"
         setState={(e) =>
-          setHeadConfigs((prevState) => ({
-            ...prevState,
-            permissionLevels: {
-              ...prevState.permissionLevels,
-              mod: e.target.valueAsNumber,
+          dispatch({
+            type: DISPATCH_TYPE,
+            payload: {
+              ...headConfigs,
+              permissionLevels: {
+                ...headConfigs.permissionLevels,
+                mod: e.target.valueAsNumber,
+              },
             },
-          }))
+          })
         }
         value={headConfigs.permissionLevels.mod}
         showEdit={showEdit}
@@ -82,13 +102,16 @@ export default function HeadConfigsWrapper(props: {
       <ConfigInput
         optionName="Vip"
         setState={(e) =>
-          setHeadConfigs((prevState) => ({
-            ...prevState,
-            permissionLevels: {
-              ...prevState.permissionLevels,
-              vip: e.target.valueAsNumber,
+          dispatch({
+            type: DISPATCH_TYPE,
+            payload: {
+              ...headConfigs,
+              permissionLevels: {
+                ...headConfigs.permissionLevels,
+                vip: e.target.valueAsNumber,
+              },
             },
-          }))
+          })
         }
         value={headConfigs.permissionLevels.vip}
         showEdit={showEdit}
@@ -96,13 +119,16 @@ export default function HeadConfigsWrapper(props: {
       <ConfigInput
         optionName="All"
         setState={(e) =>
-          setHeadConfigs((prevState) => ({
-            ...prevState,
-            permissionLevels: {
-              ...prevState.permissionLevels,
-              all: e.target.valueAsNumber,
+          dispatch({
+            type: DISPATCH_TYPE,
+            payload: {
+              ...headConfigs,
+              permissionLevels: {
+                ...headConfigs.permissionLevels,
+                all: e.target.valueAsNumber,
+              },
             },
-          }))
+          })
         }
         value={headConfigs.permissionLevels.all}
         showEdit={showEdit}

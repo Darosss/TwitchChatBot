@@ -1,7 +1,7 @@
-import { PaginationData } from "@services/ApiService";
-import { useGetMoods, Mood } from "@services/MoodService";
-import { useGetAffixes, Affix } from "@services/AffixService";
-import { useGetTags, Tag } from "@services/TagService";
+import { PaginationData } from "@services";
+import { useGetMoods, Mood } from "@services";
+import { useGetAffixes, Affix } from "@services";
+import { useGetTags, Tag } from "@services";
 
 export interface AllModesReturn {
   tags: Tag[];

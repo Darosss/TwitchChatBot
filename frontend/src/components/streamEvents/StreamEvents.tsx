@@ -13,9 +13,9 @@ import {
   widgetsKeys,
 } from "src/layout/initialLayoutWidgets";
 import { useParams } from "react-router-dom";
-import { useEditWidgetById, useGetWidgetById } from "@services/WidgetsService";
+import { useEditWidgetById, useGetWidgetById } from "@services";
 import StreamModes from "./streamModes";
-import { getInitialCurrentBreakpoint } from "@utils/layoutBreakpoints";
+import { getInitialCurrentBreakpoint } from "@utils";
 import ReactGrid from "@components/reactGrid";
 import MusicPlayer from "./musicPlayer";
 import RewardsWindow from "./rewardsWindow";

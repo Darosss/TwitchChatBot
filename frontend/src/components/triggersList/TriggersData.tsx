@@ -1,6 +1,6 @@
 import React from "react";
-import { Trigger } from "@services/TriggerService";
-import { generateEnabledDisabledDiv } from "@utils/generateEnabledDisabledDiv";
+import { Trigger } from "@services";
+import { generateEnabledDisabledDiv } from "@utils";
 import { DateTooltip } from "@components/dateTooltip";
 import {
   TableDataWrapper,
@@ -9,18 +9,19 @@ import {
 } from "@components/tableWrapper";
 import SortByParamsButton from "@components/SortByParamsButton";
 
-export default function TriggersData(props: {
+interface TriggersDataProps {
   data: Trigger[];
   handleOnShowEditModal: (trigger: Trigger) => void;
   handleOnShowCreateModal: (trigger?: Trigger) => void;
   setTriggerIdDelete: React.Dispatch<React.SetStateAction<string | null>>;
-}) {
-  const {
-    data,
-    handleOnShowCreateModal,
-    handleOnShowEditModal,
-    setTriggerIdDelete,
-  } = props;
+}
+
+export default function TriggersData({
+  data,
+  handleOnShowCreateModal,
+  handleOnShowEditModal,
+  setTriggerIdDelete,
+}: TriggersDataProps) {
   return (
     <>
       <TableListWrapper
@@ -35,7 +36,7 @@ export default function TriggersData(props: {
                 New
               </button>
             </th>
-            <th colSpan={5}>
+            <th>
               <div>
                 <SortByParamsButton buttonText="Name" sortBy="name" />
                 <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
@@ -52,10 +53,10 @@ export default function TriggersData(props: {
             <th>Messages</th>
           </tr>
         }
-        tbodyChildren={data.map((trigger) => {
+        tbodyChildren={data.map((trigger, index) => {
           const { tag, mood } = trigger;
           return (
-            <tr key={trigger._id}>
+            <tr key={index}>
               <td>
                 <div>
                   <button
@@ -82,7 +83,7 @@ export default function TriggersData(props: {
                   </button>
                 </div>
               </td>
-              <td colSpan={5}>
+              <td>
                 <TableDataWrapper>
                   <div>Name: </div>
                   <div>{trigger.name}</div>
@@ -111,16 +112,16 @@ export default function TriggersData(props: {
               </td>
               <td>
                 <TableItemsListWrapper>
-                  {trigger.words.map((word, index) => {
-                    return <div key={index}>{word}</div>;
-                  })}
+                  {trigger.words.map((word, index) => (
+                    <div key={index}>{word}</div>
+                  ))}
                 </TableItemsListWrapper>
               </td>
               <td>
                 <TableItemsListWrapper>
-                  {trigger.messages.map((message, index) => {
-                    return <div key={index}>{message}</div>;
-                  })}
+                  {trigger.messages.map((message, index) => (
+                    <div key={index}>{message}</div>
+                  ))}
                 </TableItemsListWrapper>
               </td>
               <td></td>

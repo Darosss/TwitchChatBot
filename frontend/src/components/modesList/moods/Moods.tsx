@@ -1,5 +1,3 @@
-import "./style.css";
-
 import React, { useEffect, useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";
@@ -10,9 +8,9 @@ import {
   useCreateMood,
   useDeleteMood,
   Mood,
-} from "@services/MoodService";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
-import { addNotification } from "@utils/getNotificationValues";
+} from "@services";
+import { handleActionOnChangeState } from "@utils";
+import { addNotification } from "@utils";
 import FilterBarModes from "../filterBarModes";
 import ModalDataWrapper from "@components/modalDataWrapper";
 
@@ -113,24 +111,22 @@ export default function Moods() {
             </button>
           </div>
         </div>
-        {data.map((mood, index) => {
-          return (
-            <div key={index} className="mode-item">
-              <button
-                onClick={() => handleOnEdit(mood)}
-                className="common-button primary-button edit-mode-button"
-              >
-                {mood.name}
-              </button>
-              <button
-                onClick={() => setMoodIdDelete(mood._id)}
-                className="common-button danger-button remove-mode-btn"
-              >
-                X
-              </button>
-            </div>
-          );
-        })}
+        {data.map((mood, index) => (
+          <div key={index} className="mode-item">
+            <button
+              onClick={() => handleOnEdit(mood)}
+              className="common-button primary-button edit-mode-button"
+            >
+              {mood.name}
+            </button>
+            <button
+              onClick={() => setMoodIdDelete(mood._id)}
+              className="common-button danger-button remove-mode-btn"
+            >
+              X
+            </button>
+          </div>
+        ))}
       </div>
       <div className="table-list-pagination">
         <Pagination

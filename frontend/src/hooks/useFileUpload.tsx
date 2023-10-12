@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { viteBackendUrl } from "src/configs/envVariables";
 
-const useFileUpload = (url: string) => {
+export const useFileUpload = (url: string) => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>();
   const [success, setSuccess] = useState<any>();
@@ -63,5 +63,3 @@ const useFileUpload = (url: string) => {
     success,
   };
 };
-
-export default useFileUpload;

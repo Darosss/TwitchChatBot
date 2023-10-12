@@ -1,6 +1,6 @@
 import React from "react";
-import { Timer } from "@services/TimerService";
-import { generateEnabledDisabledDiv } from "@utils/generateEnabledDisabledDiv";
+import { Timer } from "@services";
+import { generateEnabledDisabledDiv } from "@utils";
 import { DateTooltip } from "@components/dateTooltip";
 import {
   TableDataWrapper,
@@ -9,18 +9,19 @@ import {
 } from "@components/tableWrapper";
 import SortByParamsButton from "@components/SortByParamsButton";
 
-export default function TimersData(props: {
+interface TimersDataProps {
   data: Timer[];
   handleOnShowEditModal: (timer: Timer) => void;
   handleOnShowCreateModal: (timer?: Timer) => void;
   setTimerIdToDelete: React.Dispatch<React.SetStateAction<string | null>>;
-}) {
-  const {
-    data,
-    handleOnShowCreateModal,
-    handleOnShowEditModal,
-    setTimerIdToDelete,
-  } = props;
+}
+
+export default function TimersData({
+  data,
+  handleOnShowCreateModal,
+  handleOnShowEditModal,
+  setTimerIdToDelete,
+}: TimersDataProps) {
   return (
     <>
       <TableListWrapper
@@ -35,7 +36,7 @@ export default function TimersData(props: {
                 New
               </button>
             </th>
-            <th colSpan={5}>
+            <th>
               <div>
                 <SortByParamsButton buttonText="Name" sortBy="name" />
                 <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
@@ -60,25 +61,21 @@ export default function TimersData(props: {
             <th>Messages</th>
           </tr>
         }
-        tbodyChildren={data.map((timer) => {
+        tbodyChildren={data.map((timer, index) => {
           const { tag, mood } = timer;
           return (
-            <tr key={timer._id}>
+            <tr key={index}>
               <td>
                 <div>
                   <button
                     className="common-button primary-button"
-                    onClick={() => {
-                      handleOnShowCreateModal(timer);
-                    }}
+                    onClick={() => handleOnShowCreateModal(timer)}
                   >
                     Duplicate
                   </button>
                   <button
                     className="common-button primary-button"
-                    onClick={() => {
-                      handleOnShowEditModal(timer);
-                    }}
+                    onClick={() => handleOnShowEditModal(timer)}
                   >
                     Edit
                   </button>
@@ -90,7 +87,7 @@ export default function TimersData(props: {
                   </button>
                 </div>
               </td>
-              <td colSpan={5}>
+              <td>
                 <TableDataWrapper>
                   <div>Name: </div>
                   <div>{timer.name}</div>
@@ -125,12 +122,11 @@ export default function TimersData(props: {
               </td>
               <td>
                 <TableItemsListWrapper>
-                  {timer.messages.map((message, index) => {
-                    return <div key={index}>{message}</div>;
-                  })}
+                  {timer.messages.map((message, index) => (
+                    <div key={index}>{message}</div>
+                  ))}
                 </TableItemsListWrapper>
               </td>
-              <td></td>
             </tr>
           );
         })}

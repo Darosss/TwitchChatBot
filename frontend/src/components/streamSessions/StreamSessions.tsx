@@ -3,7 +3,7 @@ import Pagination from "@components/pagination";
 import { Link } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import FilterBarSessions from "./filterBarSessions";
-import { useGetSessions } from "@services/StreamSessionService";
+import { useGetSessions } from "@services";
 import { DateDifference, DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
 
@@ -50,46 +50,42 @@ export default function StreamSessions() {
             </tr>
           </thead>
           <tbody>
-            {data.map((session) => {
-              return (
-                <tr key={session._id}>
-                  <td colSpan={3}>
-                    <div className="sessions-list-actions">
-                      <Link to={`./${session._id}/messages`}>Messages</Link>
-                      <Link to={`./${session._id}/redemptions`}>
-                        Redemptions
-                      </Link>
-                      <Link to={`/stream-sessions/${session._id}`}>
-                        Session profile
-                      </Link>
-                    </div>
-                  </td>
+            {data.map((session, index) => (
+              <tr key={index}>
+                <td colSpan={3}>
+                  <div className="sessions-list-actions">
+                    <Link to={`./${session._id}/messages`}>Messages</Link>
+                    <Link to={`./${session._id}/redemptions`}>Redemptions</Link>
+                    <Link to={`/stream-sessions/${session._id}`}>
+                      Session profile
+                    </Link>
+                  </div>
+                </td>
 
-                  <td className="sessions-list-title">
-                    {Object.values(session.sessionTitles)[0]}
-                  </td>
-                  <td className="sessions-list-date">
-                    <DateTooltip date={session.sessionStart} />
-                  </td>
-                  <td className="sessions-list-date">
-                    {session.sessionEnd ? (
-                      <DateDifference
-                        dateStart={session.sessionStart}
-                        dateEnd={session.sessionEnd}
-                        format="h"
-                      />
-                    ) : null}
-                  </td>
-                  <td className="sessions-list-date">
-                    {session.sessionEnd ? (
-                      <DateTooltip date={session.sessionEnd} />
-                    ) : null}
-                  </td>
-                  <td>{session.tags ? Object.values(session.tags) : null}</td>
-                  <td>{Object.values(session.categories)[0]}</td>
-                </tr>
-              );
-            })}
+                <td className="sessions-list-title">
+                  {Object.values(session.sessionTitles)[0]}
+                </td>
+                <td className="sessions-list-date">
+                  <DateTooltip date={session.sessionStart} />
+                </td>
+                <td className="sessions-list-date">
+                  {session.sessionEnd ? (
+                    <DateDifference
+                      dateStart={session.sessionStart}
+                      dateEnd={session.sessionEnd}
+                      format="h"
+                    />
+                  ) : null}
+                </td>
+                <td className="sessions-list-date">
+                  {session.sessionEnd ? (
+                    <DateTooltip date={session.sessionEnd} />
+                  ) : null}
+                </td>
+                <td>{session.tags ? Object.values(session.tags) : null}</td>
+                <td>{Object.values(session.categories)[0]}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

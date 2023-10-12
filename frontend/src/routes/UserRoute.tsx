@@ -11,7 +11,7 @@ export function UserRoutes() {
       <Route>
         <Route
           index
-          element={<ComponentWithTitle title="Users" Component={<Users />} />}
+          element={<ComponentWithTitle title="Users" component={<Users />} />}
         />
         <Route path=":userId" element={<UserProfile />} />
         <Route
@@ -19,7 +19,7 @@ export function UserRoutes() {
           element={
             <ComponentWithTitle
               title="User messages"
-              Component={<MessagesList messages="user" />}
+              component={<MessagesList messages="user" />}
             />
           }
         />
@@ -28,7 +28,7 @@ export function UserRoutes() {
           element={
             <ComponentWithTitle
               title="User redemptions"
-              Component={<RedemptionsList redemptions="user" />}
+              component={<RedemptionsList redemptions="user" />}
             />
           }
         />

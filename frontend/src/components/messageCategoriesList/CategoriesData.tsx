@@ -1,25 +1,26 @@
 import React from "react";
-import { generateEnabledDisabledDiv } from "@utils/generateEnabledDisabledDiv";
+import { generateEnabledDisabledDiv } from "@utils";
 import {
   TableDataWrapper,
   TableItemsListWrapper,
   TableListWrapper,
 } from "@components/tableWrapper";
-import { MessageCategory } from "@services/MessageCategoriesService";
+import { MessageCategory } from "@services";
 import SortByParamsButton from "@components/SortByParamsButton";
 
-export default function CategoriesData(props: {
+interface CategoriesDataProps {
   data: MessageCategory[];
   handleOnShowEditModal: (category: MessageCategory) => void;
   handleOnShowCreateModal: (category?: MessageCategory) => void;
   setCategoryIdToDelete: React.Dispatch<React.SetStateAction<string | null>>;
-}) {
-  const {
-    data,
-    handleOnShowCreateModal,
-    handleOnShowEditModal,
-    setCategoryIdToDelete,
-  } = props;
+}
+
+export default function CategoriesData({
+  data,
+  handleOnShowCreateModal,
+  handleOnShowEditModal,
+  setCategoryIdToDelete,
+}: CategoriesDataProps) {
   return (
     <>
       <TableListWrapper
@@ -34,7 +35,7 @@ export default function CategoriesData(props: {
                 New
               </button>
             </th>
-            <th colSpan={5}>
+            <th>
               <div>
                 <SortByParamsButton buttonText="Name" sortBy="name" />
                 <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
@@ -44,10 +45,10 @@ export default function CategoriesData(props: {
             <th>Messages</th>
           </tr>
         }
-        tbodyChildren={data.map((category) => {
+        tbodyChildren={data.map((category, index) => {
           const { tag, mood } = category;
           return (
-            <tr key={category._id}>
+            <tr key={index}>
               <td>
                 <div>
                   <button
@@ -74,7 +75,7 @@ export default function CategoriesData(props: {
                   </button>
                 </div>
               </td>
-              <td colSpan={5}>
+              <td>
                 <TableDataWrapper>
                   <div>Name</div>
                   <div>{category.name}</div>
@@ -93,16 +94,13 @@ export default function CategoriesData(props: {
               </td>
               <td>
                 <TableItemsListWrapper>
-                  {category.messages.map((message, index) => {
-                    return (
-                      <div key={index}>
-                        {message[0]} - uses: {message[1]}
-                      </div>
-                    );
-                  })}
+                  {category.messages.map((message, index) => (
+                    <div key={index}>
+                      {message[0]} - uses: {message[1]}
+                    </div>
+                  ))}
                 </TableItemsListWrapper>
               </td>
-              <td></td>
             </tr>
           );
         })}

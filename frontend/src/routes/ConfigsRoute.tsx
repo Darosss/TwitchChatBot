@@ -9,7 +9,7 @@ export function ConfigRoutes() {
         <Route
           index
           element={
-            <ComponentWithTitle title="Configs" Component={<ConfigsList />} />
+            <ComponentWithTitle title="Configs" component={<ConfigsList />} />
           }
         />
         <Route path="*" element={<>Not found</>} />

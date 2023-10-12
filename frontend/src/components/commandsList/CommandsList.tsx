@@ -3,8 +3,7 @@ import FilterBarCommands from "./filterBarCommands";
 import Modal from "@components/modal";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-import { socketEmitRefreshCommands } from "@context/socket";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
+import { handleActionOnChangeState } from "@utils";
 import {
   useGetCommands,
   useEditCommand,
@@ -12,15 +11,20 @@ import {
   useDeleteCommand,
   ChatCommand,
   ChatCommandCreateData,
-} from "@services/ChatCommandService";
-import { addNotification } from "@utils/getNotificationValues";
-import { useGetAllModes } from "@utils/getListModes";
+} from "@services";
+import { addNotification } from "@utils";
+import { useGetAllModes } from "@utils";
 import { DispatchAction } from "./types";
 import CommandsData from "./CommandsData";
 import CommandModalData from "./CommandModalData";
+import { useSocketContext } from "@context";
 
 export default function CommandsList() {
   const [showModal, setShowModal] = useState(false);
+
+  const {
+    emits: { refreshCommands: emitRefreshCommands },
+  } = useSocketContext();
 
   const [editingCommand, setEditingCommand] = useState("");
   const [commandIdDelete, setCommandIdDelete] = useState<string | null>(null);
@@ -65,7 +69,7 @@ export default function CommandsList() {
 
   const onSubmitModalCreate = () => {
     fetchCreateCommand().then(() => {
-      socketEmitRefreshCommands();
+      emitRefreshCommands();
       addNotification("Success", "Command created successfully", "success");
       refetchData();
       setShowModal(false);
@@ -74,7 +78,7 @@ export default function CommandsList() {
 
   const onSubmitModalEdit = () => {
     fetchEditCommand().then(() => {
-      socketEmitRefreshCommands();
+      emitRefreshCommands();
       addNotification("Success", "Command edited successfully", "success");
       refetchData();
       handleOnHideModal();

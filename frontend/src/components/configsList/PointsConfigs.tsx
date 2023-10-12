@@ -1,14 +1,16 @@
-import { PointsConfigs } from "@services/ConfigService";
 import ConfigInput from "./ConfigInput";
-export default function PointsConfigsWrapper(props: {
-  pointsState: [
-    PointsConfigs,
-    React.Dispatch<React.SetStateAction<PointsConfigs>>
-  ];
-  showEdit: boolean;
-}) {
-  const { pointsState, showEdit } = props;
-  const [pointsConfigs, setPointsConfigs] = pointsState;
+import { useConfigsContext } from "./ConfigsContext";
+import { ConfigsDispatchActionType, ConfigsWrapperSharedProps } from "./types";
+
+const DISPATCH_TYPE = ConfigsDispatchActionType.SET_POINTS;
+
+export default function PointsConfigsWrapper({
+  showEdit,
+}: ConfigsWrapperSharedProps) {
+  const {
+    configState: [{ pointsConfigs }, dispatch],
+  } = useConfigsContext();
+
   return (
     <>
       <div className="configs-section-inner-header">Points increment</div>
@@ -16,13 +18,16 @@ export default function PointsConfigsWrapper(props: {
       <ConfigInput
         optionName="Message"
         setState={(e) =>
-          setPointsConfigs((prevState) => ({
-            ...prevState,
-            pointsIncrement: {
-              ...prevState.pointsIncrement,
-              message: e.target.valueAsNumber,
+          dispatch({
+            type: DISPATCH_TYPE,
+            payload: {
+              ...pointsConfigs,
+              pointsIncrement: {
+                ...pointsConfigs.pointsIncrement,
+                message: e.target.valueAsNumber,
+              },
             },
-          }))
+          })
         }
         value={pointsConfigs.pointsIncrement.message}
         showEdit={showEdit}
@@ -30,13 +35,16 @@ export default function PointsConfigsWrapper(props: {
       <ConfigInput
         optionName="Watch"
         setState={(e) =>
-          setPointsConfigs((prevState) => ({
-            ...prevState,
-            pointsIncrement: {
-              ...prevState.pointsIncrement,
-              watch: e.target.valueAsNumber,
+          dispatch({
+            type: DISPATCH_TYPE,
+            payload: {
+              ...pointsConfigs,
+              pointsIncrement: {
+                ...pointsConfigs.pointsIncrement,
+                watch: e.target.valueAsNumber,
+              },
             },
-          }))
+          })
         }
         value={pointsConfigs.pointsIncrement.watch}
         showEdit={showEdit}
@@ -44,13 +52,16 @@ export default function PointsConfigsWrapper(props: {
       <ConfigInput
         optionName="Watch multipler"
         setState={(e) =>
-          setPointsConfigs((prevState) => ({
-            ...prevState,
-            pointsIncrement: {
-              ...prevState.pointsIncrement,
-              watchMultipler: e.target.valueAsNumber,
+          dispatch({
+            type: DISPATCH_TYPE,
+            payload: {
+              ...pointsConfigs,
+              pointsIncrement: {
+                ...pointsConfigs.pointsIncrement,
+                watchMultipler: e.target.valueAsNumber,
+              },
             },
-          }))
+          })
         }
         value={pointsConfigs.pointsIncrement.watchMultipler}
         showEdit={showEdit}

@@ -1,8 +1,8 @@
 import ChangeTheme from "@components/changeTheme";
 import { HelmetTitle } from "@components/componentWithTitle";
 import Message, { MessageProps } from "@components/message";
-import { routes } from "@routes/routesList";
-import React, { useEffect, useReducer, useState } from "react";
+import { routes } from "@routes";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const chatMessages = [
@@ -26,15 +26,13 @@ export default function Home() {
       </div>
       <div className="home-content">
         <div className="home-content-tiles">
-          {routes.map((route, index) => {
-            return (
-              <div key={index}>
-                <Link to={route.path} className="common-button primary-button">
-                  {route.label}
-                </Link>
-              </div>
-            );
-          })}
+          {routes.map((route, index) => (
+            <div key={index}>
+              <Link to={route.path} className="common-button primary-button">
+                {route.label}
+              </Link>
+            </div>
+          ))}
         </div>
         <ChatBackground />
       </div>
@@ -49,7 +47,6 @@ export default function Home() {
 
 function ChatBackground() {
   const [messages, setMessages] = useState<MessageProps[]>([]);
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   useEffect(() => {
     let chatTimeout: NodeJS.Timeout;
@@ -76,9 +73,8 @@ function ChatBackground() {
             username: `Chat bot`,
             message: getRandomFromChatMessages(),
           });
-          return prevState;
+          return [...prevState];
         });
-        forceUpdate();
         timeoutChatMessage();
       }, chatMessageIndex * getRandomDelay());
     };
@@ -90,18 +86,16 @@ function ChatBackground() {
 
   return (
     <div className="home-chat-bg prevent-select">
-      {messages.map((message, index) => {
-        return (
-          <div key={index} className="typewriter">
-            <Message
-              date={message.date}
-              username={message.username}
-              message={message.message}
-              tooltip={false}
-            />
-          </div>
-        );
-      })}
+      {messages.map((message, index) => (
+        <div key={index} className="typewriter">
+          <Message
+            date={message.date}
+            username={message.username}
+            message={message.message}
+            tooltip={false}
+          />
+        </div>
+      ))}
     </div>
   );
 }

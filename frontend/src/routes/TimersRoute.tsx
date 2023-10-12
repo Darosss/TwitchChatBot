@@ -7,7 +7,7 @@ export function TimersRoute() {
     <Routes>
       <Route
         element={
-          <ComponentWithTitle title="Timers" Component={<TimersList />} />
+          <ComponentWithTitle title="Timers" component={<TimersList />} />
         }
       >
         <Route path="*" element={<>Not found</>} />

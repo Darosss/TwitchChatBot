@@ -1,6 +1,6 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
-import { SocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 import YouTube, { YouTubeEvent, YouTubeProps } from "react-youtube";
 import SongProgress from "../SongProgress";
 
@@ -8,7 +8,10 @@ let progressTimer: NodeJS.Timer; // as global because clear interval doesnt work
 //FIXME: later
 
 export default function MusicPlayer() {
-  const socket = useContext(SocketContext);
+  const {
+    emits: { getAudioYTData },
+    events: { musicYTPause, audioYT, changeYTVolume },
+  } = useSocketContext();
   const [songName, setSongName] = useState("");
   const [player, setPlayer] = React.useState<YouTubeEvent | null>(null);
   const [duration, setDuration] = useState<number>(0);
@@ -27,7 +30,12 @@ export default function MusicPlayer() {
     },
     [player]
   );
-
+  const setSongInterval = () => {
+    clearInterval(progressTimer);
+    progressTimer = setInterval(() => {
+      setCurrentTime((prevTime) => prevTime + 1);
+    }, 1000);
+  };
   const handleYTChangeVolume = useCallback(
     (volume: number) => {
       if (player) player.target.setVolume(volume);
@@ -36,15 +44,15 @@ export default function MusicPlayer() {
   );
 
   useEffect(() => {
-    socket.on("musicYTPause", handleYTPause);
+    musicYTPause.on(handleYTPause);
 
     return () => {
-      socket.off("musicYTPause", handleYTPause);
+      musicYTPause.off();
     };
-  }, [handleYTPause, socket]);
+  }, [handleYTPause, musicYTPause]);
 
   useEffect(() => {
-    socket.on("audioYT", (data) => {
+    audioYT.on((data) => {
       setSongInterval();
       setCurrentTime(data.currentTime);
       setDuration(data.duration);
@@ -53,30 +61,20 @@ export default function MusicPlayer() {
     });
 
     return () => {
-      socket.off("audioYT");
+      audioYT.off();
     };
     //FIXME: later
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleYTResume, socket]);
+  }, [handleYTResume, audioYT]);
 
   useEffect(() => {
-    socket.on("changeYTVolume", (volume) => {
+    changeYTVolume.on((volume) => {
       handleYTChangeVolume(volume);
     });
 
     return () => {
-      socket.off("changeYTVolume");
+      changeYTVolume.off();
     };
-  }, [handleYTChangeVolume, socket]);
-
-  const countSongTime = () => setCurrentTime((prev) => prev + 1);
-
-  const setSongInterval = () => {
-    clearInterval(progressTimer);
-    progressTimer = setInterval(() => {
-      countSongTime();
-    }, 1000);
-  };
+  }, [handleYTChangeVolume, changeYTVolume]);
 
   useEffect(() => {
     return () => {
@@ -89,7 +87,7 @@ export default function MusicPlayer() {
   const onPlayerReady: YouTubeProps["onReady"] = (event) => {
     setPlayer(event);
 
-    socket.emit("getAudioYTData", (isPlaying, cb) => {
+    getAudioYTData((isPlaying, cb) => {
       setSongInterval();
       setCurrentTime(cb.currentTime);
       setDuration(cb.duration);
@@ -127,10 +125,3 @@ export default function MusicPlayer() {
     </div>
   );
 }
-
-// function SongsPlaylist(props: { songs: [string, string][] }) {
-//   const { songs } = props;
-//   return <div> Playlist</div>;
-// }
-
-//TODO: when widget is < 500 px show only name, <= 1000 show name + progress

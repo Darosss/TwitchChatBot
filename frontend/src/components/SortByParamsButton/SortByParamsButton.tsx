@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-export default function SortByParamsButton(props: {
+interface SortByParamsButtonProps {
   buttonText: string;
   sortBy: string;
-}) {
-  const { buttonText, sortBy } = props;
+}
 
+export default function SortByParamsButton({
+  buttonText,
+  sortBy,
+}: SortByParamsButtonProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentSearch, setCurrentSearch] = useState("");
 

@@ -2,15 +2,21 @@ import React from "react";
 
 import { createPortal } from "react-dom";
 
-export default function Modal(props: {
+interface ModalProps {
   title?: string;
   onClose: () => void;
   onSubmit: () => any;
   show?: boolean;
   children?: React.ReactNode;
-}) {
-  const { show = false, title = "Modal", onClose, onSubmit, children } = props;
+}
 
+export default function Modal({
+  show = false,
+  title = "Modal",
+  onClose,
+  onSubmit,
+  children,
+}: ModalProps) {
   return createPortal(
     <div className={`modal ${show ? "show" : ""}`} onMouseDown={onClose}>
       <div className="modal-content" onMouseDown={(e) => e.stopPropagation()}>

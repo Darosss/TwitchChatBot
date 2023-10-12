@@ -3,12 +3,8 @@ import { useParams } from "react-router-dom";
 
 import Message from "@components/message";
 import PreviousPage from "@components/previousPage";
-import {
-  useEditUser,
-  useGetLatestEldestMsgs,
-  useGetUser,
-} from "@services/UserService";
-import { addNotification } from "@utils/getNotificationValues";
+import { useEditUser, useGetLatestEldestMsgs, useGetUser } from "@services";
+import { addNotification } from "@utils";
 import { DateTooltip } from "@components/dateTooltip";
 import { HelmetTitle } from "@components/componentWithTitle";
 
@@ -129,9 +125,9 @@ export default function UserProfile() {
                 </div>
               ) : (
                 <ul>
-                  {data.notes?.map((note, index) => {
-                    return <li key={index}>{note}</li>;
-                  })}
+                  {data.notes?.map((note, index) => (
+                    <li key={index}>{note}</li>
+                  ))}
                 </ul>
               )}
             </div>
@@ -141,29 +137,25 @@ export default function UserProfile() {
           <div>
             <div className="profile-messages">
               <div className="profile-messages-header"> First messages</div>
-              {msgsData.data.firstMessages.map((msg) => {
-                return (
-                  <Message
-                    key={msg._id}
-                    date={msg.date}
-                    username={msg.owner.username}
-                    message={msg.message}
-                  />
-                );
-              })}
+              {msgsData.data.firstMessages.map((msg, index) => (
+                <Message
+                  key={index}
+                  date={msg.date}
+                  username={msg.owner.username}
+                  message={msg.message}
+                />
+              ))}
             </div>
             <div className="profile-messages">
               <div className="profile-messages-header"> Latest messages</div>
-              {msgsData.data.latestMessages.map((msg) => {
-                return (
-                  <Message
-                    key={msg._id}
-                    date={msg.date}
-                    username={msg.owner.username}
-                    message={msg.message}
-                  />
-                );
-              })}
+              {msgsData.data.latestMessages.map((msg, index) => (
+                <Message
+                  key={index}
+                  date={msg.date}
+                  username={msg.owner.username}
+                  message={msg.message}
+                />
+              ))}
             </div>
           </div>
         </div>

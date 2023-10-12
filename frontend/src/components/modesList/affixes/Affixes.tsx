@@ -1,5 +1,3 @@
-import "./style.css";
-
 import React, { useEffect, useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";
@@ -10,9 +8,9 @@ import {
   useCreateAffix,
   useDeleteAffix,
   Affix,
-} from "@services/AffixService";
-import { handleActionOnChangeState } from "@utils/handleDeleteApi";
-import { addNotification } from "@utils/getNotificationValues";
+} from "@services";
+import { handleActionOnChangeState } from "@utils";
+import { addNotification } from "@utils";
 import FilterBarModes from "../filterBarModes";
 import ModalDataWrapper from "@components/modalDataWrapper";
 
@@ -117,24 +115,22 @@ export default function Affixes() {
             </button>
           </div>
         </div>
-        {data.map((affix, index) => {
-          return (
-            <div key={index} className="mode-item">
-              <button
-                onClick={() => handleOnEdit(affix)}
-                className="common-button primary-button edit-mode-button"
-              >
-                {affix.name}
-              </button>
-              <button
-                onClick={() => setAffixIdDelete(affix._id)}
-                className="common-button danger-button remove-mode-btn"
-              >
-                X
-              </button>
-            </div>
-          );
-        })}
+        {data.map((affix, index) => (
+          <div key={index} className="mode-item">
+            <button
+              onClick={() => handleOnEdit(affix)}
+              className="common-button primary-button edit-mode-button"
+            >
+              {affix.name}
+            </button>
+            <button
+              onClick={() => setAffixIdDelete(affix._id)}
+              className="common-button danger-button remove-mode-btn"
+            >
+              X
+            </button>
+          </div>
+        ))}
       </div>
       <div className="table-list-pagination">
         <Pagination

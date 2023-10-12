@@ -1,33 +1,32 @@
-import "./style.css";
 import React from "react";
-import UrlParamsInput from "@components/urlParamsInputs";
+import UrlParamsInput, { FilterBarInput } from "@components/urlParamsInputs";
 
 export default function FilterBarCommands() {
   return (
     <div className="filter-commands-wrapper">
       <UrlParamsInput>
-        <input
-          {...{ queryparam: "search_name" }}
+        <FilterBarInput
+          queryparam="search_name"
           type="search"
-          placeholder={"Command name"}
-        ></input>
-        <input
-          {...{ queryparam: "aliases" }}
+          placeholder="Command name"
+        />
+        <FilterBarInput
+          queryparam="aliases"
           type="search"
-          placeholder={"Aliases"}
-        ></input>
-        <input
-          {...{ queryparam: "messages" }}
+          placeholder="Aliases"
+        />
+        <FilterBarInput
+          queryparam="messages"
           type="search"
-          placeholder={"Messages contains"}
-        ></input>
-        <input
-          {...{ queryparam: "privilege" }}
+          placeholder="Messages contains"
+        />
+        <FilterBarInput
+          queryparam="privilege"
           type="number"
-          placeholder={"Search by privilege"}
-        ></input>
-        <input {...{ queryparam: "start_date" }} type="datetime-local"></input>
-        <input {...{ queryparam: "end_date" }} type="datetime-local"></input>
+          placeholder="Search by privilege"
+        />
+        <FilterBarInput queryparam="start_date" type="datetime-local" />
+        <FilterBarInput queryparam="end_date" type="datetime-local" />
       </UrlParamsInput>
     </div>
   );

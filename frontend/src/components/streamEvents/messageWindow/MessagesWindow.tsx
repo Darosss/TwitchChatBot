@@ -1,16 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "react-notifications-component/dist/theme.css";
 
 import {
   useGetMessageCategories,
   useIncrementUsesCategoryById,
-} from "@services/MessageCategoriesService";
+} from "@services";
 import Modal from "@components/modal";
-import { SocketContext } from "@context/socket";
-import { addNotification } from "@utils/getNotificationValues";
+import { useSocketContext } from "@context";
+import { addNotification } from "@utils";
 
 export default function MessagesWindow() {
-  const socket = useContext(SocketContext);
+  const socketContext = useSocketContext();
   const [showModal, setShowModal] = useState(false);
 
   const [currentMessages, setCurrentMessages] = useState<string[]>([]);
@@ -28,10 +28,6 @@ export default function MessagesWindow() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIdCategory, messageTosend]);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
-  const { data: msgCateg } = data;
-
   const getRandomMessage = (id: string) => {
     const documents = findMessagesCategoryByCurrCat(id);
     if (!documents) return "";
@@ -48,11 +44,8 @@ export default function MessagesWindow() {
     setShowModal(true);
   };
 
-  const findMessagesCategoryByCurrCat = (id: string) => {
-    return msgCateg
-      .find(({ _id }) => _id === id)
-      ?.messages.map((msg) => msg[0]);
-  };
+  const findMessagesCategoryByCurrCat = (id: string) =>
+    msgCateg.find(({ _id }) => _id === id)?.messages.map((msg) => msg[0]);
 
   const handleOnClickRandomMessage = (id: string) => {
     setCurrentIdCategory(id);
@@ -64,56 +57,60 @@ export default function MessagesWindow() {
     sendMessage(randomMessage);
   };
 
-  const sendMessage = (message: string) => {
-    socket?.emit("messageClient", message);
-  };
+  const sendMessage = useCallback(
+    (message: string) => {
+      const {
+        emits: { messageClient },
+      } = socketContext;
+      messageClient(message);
+    },
+    [socketContext]
+  );
 
   const handleOnCloseModal = () => {
     setShowModal(false);
     setCurrentIdCategory("");
   };
 
+  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (!data || loading) return <>Loading!</>;
+  const { data: msgCateg } = data;
+
   return (
     <>
       <div className="prepared-messages-window">
         <div className="widget-header"> Prepared Messages </div>
         <div className="message-categories-btn-wrapper">
-          {msgCateg.map((category, index) => {
-            return (
-              <div key={index} className="message-section-btn-wrapper">
-                <div>
-                  <button
-                    className={`${
-                      category.enabled ? "primary-button" : "danger-button"
-                    } common-button`}
-                    onClick={() => {
-                      handleOnClickRandomMessage(category._id);
-                    }}
-                  >
-                    <div>Send random</div>
-                    <span className="button-category-name">
-                      {category.name}
-                    </span>
-                  </button>
-                </div>
-                <div>
-                  <button
-                    className={`${
-                      category.enabled ? "primary-button" : "danger-button"
-                    } common-button`}
-                    onClick={() => {
-                      handleOnClickCategory(category._id);
-                    }}
-                  >
-                    <div>Show</div>
-                    <span className="button-category-name">
-                      {category.name}
-                    </span>
-                  </button>
-                </div>
+          {msgCateg.map((category, index) => (
+            <div key={index} className="message-section-btn-wrapper">
+              <div>
+                <button
+                  className={`${
+                    category.enabled ? "primary-button" : "danger-button"
+                  } common-button`}
+                  onClick={() => {
+                    handleOnClickRandomMessage(category._id);
+                  }}
+                >
+                  <div>Send random</div>
+                  <span className="button-category-name">{category.name}</span>
+                </button>
               </div>
-            );
-          })}
+              <div>
+                <button
+                  className={`${
+                    category.enabled ? "primary-button" : "danger-button"
+                  } common-button`}
+                  onClick={() => {
+                    handleOnClickCategory(category._id);
+                  }}
+                >
+                  <div>Show</div>
+                  <span className="button-category-name">{category.name}</span>
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
       <Modal
@@ -127,19 +124,17 @@ export default function MessagesWindow() {
         show={showModal}
       >
         <div className="modal-prepared-messages">
-          {currentMessages.map((message, index) => {
-            return (
-              <button
-                className="primary-button common-button"
-                key={index}
-                onClick={() => {
-                  sendMessage(message);
-                }}
-              >
-                {message}
-              </button>
-            );
-          })}
+          {currentMessages.map((message, index) => (
+            <button
+              className="primary-button common-button"
+              key={index}
+              onClick={() => {
+                sendMessage(message);
+              }}
+            >
+              {message}
+            </button>
+          ))}
         </div>
       </Modal>
     </>
