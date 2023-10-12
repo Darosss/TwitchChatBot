@@ -1,10 +1,10 @@
-import { ConfigUpdateData, TriggersConfigs } from "@services/ConfigService";
-import { LoyaltyConfigs } from "@services/ConfigService";
-import { CommandsConfigs } from "@services/ConfigService";
-import { MusicConfigs } from "@services/ConfigService";
-import { PointsConfigs } from "@services/ConfigService";
-import { ChatGamesConfigs } from "@services/ConfigService";
-import { HeadConfigs, TimersConfigs } from "@services/ConfigService";
+import { ConfigUpdateData, TriggersConfigs } from "@services";
+import { LoyaltyConfigs } from "@services";
+import { CommandsConfigs } from "@services";
+import { MusicConfigs } from "@services";
+import { PointsConfigs } from "@services";
+import { ChatGamesConfigs } from "@services";
+import { HeadConfigs, TimersConfigs } from "@services";
 
 export const headConfigsInitial: HeadConfigs = {
   permissionLevels: {

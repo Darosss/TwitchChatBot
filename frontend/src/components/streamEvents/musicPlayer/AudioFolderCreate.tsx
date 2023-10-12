@@ -3,7 +3,7 @@ import {
   useCreateAudioFolder,
   useDeleteAudioFolder,
   useGetFoldersList,
-} from "@services/FilesService";
+} from "@services";
 import { addNotification } from "@utils";
 import { handleActionOnChangeState } from "@utils";
 

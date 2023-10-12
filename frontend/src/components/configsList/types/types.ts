@@ -8,7 +8,7 @@ import {
   PointsConfigs,
   TimersConfigs,
   TriggersConfigs,
-} from "@services/ConfigService";
+} from "@services";
 
 export type ConfigsDispatchAction =
   | { type: ConfigsDispatchActionType.SET_COMMANDS; payload: CommandsConfigs }

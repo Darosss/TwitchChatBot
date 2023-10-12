@@ -11,7 +11,7 @@ import {
   useDeleteCommand,
   ChatCommand,
   ChatCommandCreateData,
-} from "@services/ChatCommandService";
+} from "@services";
 import { addNotification } from "@utils";
 import { useGetAllModes } from "@utils";
 import { DispatchAction } from "./types";

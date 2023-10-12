@@ -10,10 +10,7 @@ import {
 import { useParams } from "react-router-dom";
 import { getInitialCurrentBreakpoint } from "@utils";
 import ReactGrid from "@components/reactGrid";
-import {
-  useEditOverlayById,
-  useGetOverlayById,
-} from "@services/OverlayService";
+import { useEditOverlayById, useGetOverlayById } from "@services";
 import MusicPlayer from "./musicPlayer";
 import YoutubePlayerVideo from "./youtubePlayerVideo";
 import { HelmetTitle } from "@components/componentWithTitle";

@@ -6,7 +6,7 @@ import {
   TableItemsListWrapper,
   TableListWrapper,
 } from "@components/tableWrapper";
-import { ChatCommand } from "@services/ChatCommandService";
+import { ChatCommand } from "@services";
 import SortByParamsButton from "@components/SortByParamsButton";
 
 interface CommandsDataProps {

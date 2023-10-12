@@ -10,7 +10,7 @@ import {
   useCreateTrigger,
   useDeleteTrigger,
   TriggerCreateData,
-} from "@services/TriggerService";
+} from "@services";
 import { handleActionOnChangeState } from "@utils";
 import { addNotification } from "@utils";
 import { useGetAllModes } from "@utils";

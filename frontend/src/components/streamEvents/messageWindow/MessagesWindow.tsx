@@ -4,7 +4,7 @@ import "react-notifications-component/dist/theme.css";
 import {
   useGetMessageCategories,
   useIncrementUsesCategoryById,
-} from "@services/MessageCategoriesService";
+} from "@services";
 import Modal from "@components/modal";
 import { useSocketContext } from "@context/socket";
 import { addNotification } from "@utils";

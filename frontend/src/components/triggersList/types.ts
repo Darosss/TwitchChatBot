@@ -1,4 +1,4 @@
-import { TriggerCreateData, TriggerMode } from "@services/TriggerService";
+import { TriggerCreateData, TriggerMode } from "@services";
 
 export type DispatchAction =
   | { type: "SET_NAME"; payload: string }

@@ -1,5 +1,5 @@
 import React from "react";
-import { TriggerCreateData, TriggerMode } from "@services/TriggerService";
+import { TriggerCreateData, TriggerMode } from "@services";
 import { AllModesReturn, generateSelectModes } from "@utils";
 import { DispatchAction } from "./types";
 import ModalDataWrapper from "@components/modalDataWrapper/ModalDataWrapper";

@@ -2,7 +2,7 @@ import React from "react";
 import { AllModesReturn, generateSelectModes } from "@utils";
 import { DispatchAction } from "./types";
 import ModalDataWrapper from "@components/modalDataWrapper/ModalDataWrapper";
-import { ChatCommandCreateData } from "@services/ChatCommandService";
+import { ChatCommandCreateData } from "@services";
 
 interface CommandModalDataProps {
   state: ChatCommandCreateData;

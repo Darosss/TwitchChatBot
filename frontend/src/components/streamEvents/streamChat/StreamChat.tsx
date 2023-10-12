@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { Message as MessageType } from "@services/MessageService";
+import { Message as MessageType } from "@services";
 import Message from "@components/message";
 import { useSocketContext } from "@context/socket";
 import { addNotification } from "@utils";
-import { useGetCurrentSessionMessages } from "@services/StreamSessionService";
+import { useGetCurrentSessionMessages } from "@services";
 
 interface LocalMessage {
   date: Date;

@@ -10,7 +10,7 @@ import {
   useGetMessageCategories,
   MessageCategory,
   MessageCategoryCreateData,
-} from "@services/MessageCategoriesService";
+} from "@services";
 import Modal from "@components/modal";
 import FilterBarCategories from "./filterBarCategories";
 import { addNotification } from "@utils";

@@ -4,10 +4,10 @@ import Pagination from "@components/pagination";
 import { Link, useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import FilterBarMessages from "./filterBarMessages";
-import { PaginationData } from "@services/ApiService";
-import { useGetMessages, Message } from "@services/MessageService";
-import { useGetUserMessages } from "@services/UserService";
-import { useGetSessionMessages } from "@services/StreamSessionService";
+import { PaginationData } from "@services";
+import { useGetMessages, Message } from "@services";
+import { useGetUserMessages } from "@services";
+import { useGetSessionMessages } from "@services";
 import { DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
 

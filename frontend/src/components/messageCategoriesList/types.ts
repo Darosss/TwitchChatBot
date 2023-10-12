@@ -1,4 +1,4 @@
-import { MessageCategoryCreateData } from "@services/MessageCategoriesService";
+import { MessageCategoryCreateData } from "@services";
 
 export type DispatchAction =
   | { type: "SET_NAME"; payload: string }

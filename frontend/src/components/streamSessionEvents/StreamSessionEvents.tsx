@@ -3,7 +3,7 @@ import React from "react";
 import { DateTooltip } from "@components/dateTooltip/DateTooltip";
 import moment from "moment";
 import { Link } from "react-router-dom";
-import { SessionEvents } from "@services/StreamSessionService";
+import { SessionEvents } from "@services";
 
 interface StreamSessionProps {
   sessionEvents: SessionEvents[];

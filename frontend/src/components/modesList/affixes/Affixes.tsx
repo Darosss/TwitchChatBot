@@ -8,7 +8,7 @@ import {
   useCreateAffix,
   useDeleteAffix,
   Affix,
-} from "@services/AffixService";
+} from "@services";
 import { handleActionOnChangeState } from "@utils";
 import { addNotification } from "@utils";
 import FilterBarModes from "../filterBarModes";

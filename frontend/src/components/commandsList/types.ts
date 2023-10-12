@@ -1,4 +1,4 @@
-import { ChatCommandCreateData } from "@services/ChatCommandService";
+import { ChatCommandCreateData } from "@services";
 
 export type DispatchAction =
   | { type: "SET_NAME"; payload: string }

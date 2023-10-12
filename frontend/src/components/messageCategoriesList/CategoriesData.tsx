@@ -5,7 +5,7 @@ import {
   TableItemsListWrapper,
   TableListWrapper,
 } from "@components/tableWrapper";
-import { MessageCategory } from "@services/MessageCategoriesService";
+import { MessageCategory } from "@services";
 import SortByParamsButton from "@components/SortByParamsButton";
 
 interface CategoriesDataProps {
