@@ -59,7 +59,7 @@ class StreamHandler {
   private configs: ConfigDefaults;
   private loggedIn = true;
 
-  private checkViewersInterval: NodeJS.Timer | undefined;
+  private checkViewersInterval: NodeJS.Timeout | undefined;
   private constructor(options: StreamHandlerOptions) {
     const { twitchApi, socketIO, authorizedUser, clientTmi } = options;
     this.twitchApi = twitchApi;
