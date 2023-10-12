@@ -3,3 +3,5 @@ export {
   SocketContextProvider,
   useSocketContext,
 } from "./SocketContext";
+
+export * from "./types";
