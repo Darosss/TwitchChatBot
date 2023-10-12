@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import "react-notifications-component/dist/theme.css";
 
 import Modal from "@components/modal";
-import { CustomRewardData, useSocketContext } from "@context/socket";
+import { CustomRewardData, useSocketContext } from "@context";
 import { addNotification } from "@utils";
 import useFileUpload from "@hooks/useFileUpload";
 import { useGetAlertSoundsMp3Names } from "@services";

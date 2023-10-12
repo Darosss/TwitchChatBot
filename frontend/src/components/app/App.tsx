@@ -1,6 +1,6 @@
 import React from "react";
 
-import { SocketContextProvider } from "@context/socket";
+import { SocketContextProvider } from "@context";
 import SideBar from "@components/sideBar";
 
 import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";

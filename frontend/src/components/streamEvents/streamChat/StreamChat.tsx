@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { Message as MessageType } from "@services";
 import Message from "@components/message";
-import { useSocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 import { addNotification } from "@utils";
 import { useGetCurrentSessionMessages } from "@services";
 

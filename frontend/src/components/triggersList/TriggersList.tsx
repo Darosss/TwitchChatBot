@@ -17,7 +17,7 @@ import { useGetAllModes } from "@utils";
 import TriggersData from "./TriggersData";
 import TriggerModalData from "./TriggerModalData";
 import { DispatchAction } from "./types";
-import { useSocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 
 export default function TriggersList() {
   const [showModal, setShowModal] = useState(false);

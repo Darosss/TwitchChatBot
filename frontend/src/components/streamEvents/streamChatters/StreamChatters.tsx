@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { useSocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 import { DateTooltip } from "@components/dateTooltip";
 
 export default function StreamChatters() {

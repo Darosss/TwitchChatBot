@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useSocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 import {
   useDeleteMp3File,
   useGetFolderMp3Files,
