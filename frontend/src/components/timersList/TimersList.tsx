@@ -10,8 +10,8 @@ import {
   useCreateTimer,
   useDeleteTimer,
   TimerCreateData,
-} from "@services/TimerService";
-import { useSocketContext } from "@context/socket";
+} from "@services";
+import { useSocketContext } from "@context";
 import { handleActionOnChangeState } from "@utils";
 import { addNotification } from "@utils";
 import { useGetAllModes } from "@utils";

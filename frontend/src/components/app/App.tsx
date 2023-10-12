@@ -1,26 +1,28 @@
 import React from "react";
 
-import { SocketContextProvider } from "@context/socket";
+import { SocketContextProvider } from "@context";
 import SideBar from "@components/sideBar";
 
 import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
-import { CommandRoutes } from "@routes/CommandRoute";
-import { ConfigRoutes } from "@routes/ConfigsRoute";
-import { EventRoutes } from "@routes/EventsRoute";
-import { MessageRoutes } from "@routes/MessageRoute";
-import { OverlayRoutes } from "@routes/OverlayRoute";
-import { RedemptionRoutes } from "@routes/RedemptionRoute";
-import { StreamSessionRoutes } from "@routes/StreamSessionRoute";
-import { TriggerRoutes } from "@routes/TriggerRoute";
-import { UserRoutes } from "@routes/UserRoute";
-import { MessageCategoriesRoute } from "@routes/MessageCategoriesRoute";
 import { ReactNotifications } from "react-notifications-component";
-import { TimersRoute } from "@routes/TimersRoute";
-import { ModesRoutes } from "@routes/ModeRoute";
 import { HelmetProvider } from "react-helmet-async";
 import Home from "@components/home";
 import OverlayList from "@components/overlay/overlaysList";
 import ComponentWithTitle from "@components/componentWithTitle";
+import {
+  OverlayRoutes,
+  UserRoutes,
+  MessageRoutes,
+  MessageCategoriesRoute,
+  CommandRoutes,
+  EventRoutes,
+  ModesRoutes,
+  RedemptionRoutes,
+  StreamSessionRoutes,
+  TimersRoute,
+  TriggerRoutes,
+  ConfigRoutes,
+} from "@routes";
 
 function App() {
   return (

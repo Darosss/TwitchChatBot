@@ -1,7 +1,7 @@
 import React from "react";
 import { AllModesReturn, generateSelectModes } from "@utils";
 import { DispatchAction } from "./types";
-import { MessageCategoryCreateData } from "@services/MessageCategoriesService";
+import { MessageCategoryCreateData } from "@services";
 import ModalDataWrapper from "@components/modalDataWrapper";
 
 interface CategoriesModalDataProps {

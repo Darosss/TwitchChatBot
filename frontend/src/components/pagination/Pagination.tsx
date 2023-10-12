@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import usePagination, { DOTS } from "@hooks/usePaginationHook";
+import { usePagination, DOTS, useLocalStorage } from "@hooks";
 import classnames from "classnames";
 import { useSearchParams } from "react-router-dom";
-import useLocalStorage from "@hooks/useLocalStorageHook";
 
 interface PaginationProps {
   totalCount: number;

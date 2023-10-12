@@ -10,7 +10,7 @@ import {
   useCreateOverlay,
   useGetOverlays,
   useRemoveOverlayById,
-} from "@services/OverlayService";
+} from "@services";
 import CardboxWrapper, {
   CardboxInput,
   CardboxItem,

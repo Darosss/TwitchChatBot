@@ -1,5 +1,5 @@
 import React from "react";
-import { TimerCreateData } from "@services/TimerService";
+import { TimerCreateData } from "@services";
 import { AllModesReturn, generateSelectModes } from "@utils";
 import { DispatchAction } from "./types";
 import ModalDataWrapper from "@components/modalDataWrapper";

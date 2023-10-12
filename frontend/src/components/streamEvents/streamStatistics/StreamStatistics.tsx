@@ -5,7 +5,7 @@ import {
   TopMsgsUsers,
   TopRedemptionsUsers,
   TopUsedWords,
-} from "@services/StreamSessionService";
+} from "@services";
 import LineChart from "@components/lineChart";
 import SlideShow from "@components/slideShow";
 

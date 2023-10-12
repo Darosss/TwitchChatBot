@@ -4,13 +4,12 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "types": ["vite/client", "vite-plugin-svgr/client"],
     "paths": {
-      "@libs/*": ["../libs/*"],
       "@utils": ["src/utils"],
-      "@routes/*": ["src/routes/*"],
-      "@services/*": ["src/services/*"],
+      "@routes": ["src/routes"],
+      "@services": ["src/services"],
       "@components/*": ["src/components/*"],
-      "@context/*": ["src/context/*"],
-      "@hooks/*": ["src/hooks/*"],
+      "@context": ["src/context"],
+      "@hooks": ["src/hooks"],
       "@socketTypes": ["../server/src/socketIO"]
     },
     "baseUrl": "./",

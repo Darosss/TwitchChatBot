@@ -1,7 +1,7 @@
 import React from "react";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-import { useGetUsersList } from "@services/UserService";
+import { useGetUsersList } from "@services";
 import FilterBarUsers from "./filterBarUsers";
 import UsersDetails from "./UsersDetails";
 

@@ -4,7 +4,7 @@ import {
   AudioStreamDataInfo,
   AudioStreamData,
   useSocketContext,
-} from "@context/socket";
+} from "@context";
 import SongProgress from "../SongProgress";
 
 export default function MusicPlayer() {

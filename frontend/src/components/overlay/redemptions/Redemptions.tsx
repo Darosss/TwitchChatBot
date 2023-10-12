@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { useSocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 
 export default function Redemptions() {
   const {

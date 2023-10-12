@@ -1,6 +1,6 @@
 import SortByParamsButton from "@components/SortByParamsButton";
 import { DateTooltip } from "@components/dateTooltip";
-import { User } from "@services/UserService";
+import { User } from "@services";
 import { Link } from "react-router-dom";
 
 interface UsersDetailsProps {

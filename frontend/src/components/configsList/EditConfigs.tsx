@@ -1,8 +1,8 @@
-import { useResetConfigs, useEditConfig } from "@services/ConfigService";
+import { useResetConfigs, useEditConfig } from "@services";
 import { addNotification } from "@utils";
 import { ConfigsWrapperSharedProps } from "./types";
 import { useConfigsContext } from "./ConfigsContext";
-import { useSocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 
 interface EditConfigsProps extends ConfigsWrapperSharedProps {
   onClickShowEdit: () => void;

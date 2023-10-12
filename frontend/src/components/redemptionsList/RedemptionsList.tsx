@@ -5,9 +5,9 @@ import { Link, useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import FilterBarRedemptions from "./filterBarRedemptions";
 import { useGetRedemptions, Redemption } from "src/services/RedemptionService";
-import { PaginationData } from "@services/ApiService";
-import { useGetSessionRedemptions } from "@services/StreamSessionService";
-import { useGetUserRedemptions } from "@services/UserService";
+import { PaginationData } from "@services";
+import { useGetSessionRedemptions } from "@services";
+import { useGetUserRedemptions } from "@services";
 import { DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
 

@@ -11,12 +11,12 @@ const range = (start: number, end: number) => {
   return Array.from({ length }, (_, idx) => idx + start);
 };
 
-export default function usePagination(
+export const usePagination = (
   totalCount: number,
   pageSize: number,
   siblingCount = 1,
   currentPage: number
-): (string | number)[] | undefined {
+): (string | number)[] | undefined => {
   const paginationRange = useMemo(() => {
     const totalPageCount = Math.ceil(totalCount / pageSize);
 
@@ -82,4 +82,4 @@ export default function usePagination(
   }, [totalCount, pageSize, siblingCount, currentPage]);
 
   return paginationRange;
-}
+};

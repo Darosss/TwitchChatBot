@@ -5,7 +5,7 @@ import {
   ConfigsDispatchActionType,
 } from "./types";
 import { configsInitialState } from "./initialState";
-import { ConfigUpdateData } from "@services/ConfigService";
+import { ConfigUpdateData } from "@services";
 
 export const ConfigsContext = React.createContext<ConfigsContextType | null>(
   null

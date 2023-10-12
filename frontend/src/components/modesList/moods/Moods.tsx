@@ -8,7 +8,7 @@ import {
   useCreateMood,
   useDeleteMood,
   Mood,
-} from "@services/MoodService";
+} from "@services";
 import { handleActionOnChangeState } from "@utils";
 import { addNotification } from "@utils";
 import FilterBarModes from "../filterBarModes";

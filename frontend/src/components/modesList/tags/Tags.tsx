@@ -8,7 +8,7 @@ import {
   useCreateTag,
   useDeleteTag,
   Tag,
-} from "@services/TagService";
+} from "@services";
 import { handleActionOnChangeState } from "@utils";
 import { addNotification } from "@utils";
 import FilterBarModes from "../filterBarModes";

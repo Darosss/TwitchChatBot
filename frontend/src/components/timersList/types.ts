@@ -1,4 +1,4 @@
-import { TimerCreateData } from "@services/TimerService";
+import { TimerCreateData } from "@services";
 
 export type DispatchAction =
   | { type: "SET_NAME"; payload: string }

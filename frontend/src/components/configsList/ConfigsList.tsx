@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import PreviousPage from "@components/previousPage";
-import { useGetConfigs } from "@services/ConfigService";
+import { useGetConfigs } from "@services";
 import CommandsConfigsWrapper from "./CommandsConfigs";
 import TimersConfigsWrapper from "./TimersConfigs";
 import ChatGamesConfigsWrapper from "./ChatGamesConfigs";

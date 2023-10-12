@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  useCreateLayout,
-  useGetWidgets,
-  useRemoveWidgetById,
-} from "@services/WidgetsService";
+import { useCreateLayout, useGetWidgets, useRemoveWidgetById } from "@services";
 import { Link } from "react-router-dom";
 import {
   initialLayoutWidgets,

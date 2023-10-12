@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useSocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 import {
   useDeleteMp3File,
   useGetFolderMp3Files,
   useGetFoldersList,
-} from "@services/FilesService";
+} from "@services";
 import { addNotification } from "@utils";
 import { handleActionOnChangeState } from "@utils";
 export default function AudioFoldersList() {

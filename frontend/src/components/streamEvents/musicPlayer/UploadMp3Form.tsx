@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import useFileUpload from "@hooks/useFileUpload";
+import { useFileUpload } from "@hooks";
 import { addNotification } from "@utils";
 import ProgressBar from "@ramonak/react-progress-bar";
-import { useGetFoldersList } from "@services/FilesService";
+import { useGetFoldersList } from "@services";
 export default function UploadMp3Form() {
   const [fileList, setFileList] = useState<FileList | null>(null);
   const [folderName, setFolderName] = useState("");

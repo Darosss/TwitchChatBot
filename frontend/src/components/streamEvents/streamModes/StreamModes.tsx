@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-import { useSocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 import { useGetAllModes } from "@utils";
-import { useEditTag } from "@services/TagService";
-import { useEditAffix } from "@services/AffixService";
-import { useEditMood } from "@services/MoodService";
+import { useEditTag } from "@services";
+import { useEditAffix } from "@services";
+import { useEditMood } from "@services";
 import { addNotification } from "@utils";
 
 export default function StreamModes() {

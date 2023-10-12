@@ -3,11 +3,7 @@ import { useParams } from "react-router-dom";
 
 import Message from "@components/message";
 import PreviousPage from "@components/previousPage";
-import {
-  useEditUser,
-  useGetLatestEldestMsgs,
-  useGetUser,
-} from "@services/UserService";
+import { useEditUser, useGetLatestEldestMsgs, useGetUser } from "@services";
 import { addNotification } from "@utils";
 import { DateTooltip } from "@components/dateTooltip";
 import { HelmetTitle } from "@components/componentWithTitle";

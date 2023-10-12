@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-import { useSocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 import YouTube, { YouTubeEvent, YouTubeProps } from "react-youtube";
 import SongProgress from "../SongProgress";
 

@@ -10,14 +10,14 @@ import {
   useCreateTrigger,
   useDeleteTrigger,
   TriggerCreateData,
-} from "@services/TriggerService";
+} from "@services";
 import { handleActionOnChangeState } from "@utils";
 import { addNotification } from "@utils";
 import { useGetAllModes } from "@utils";
 import TriggersData from "./TriggersData";
 import TriggerModalData from "./TriggerModalData";
 import { DispatchAction } from "./types";
-import { useSocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 
 export default function TriggersList() {
   const [showModal, setShowModal] = useState(false);

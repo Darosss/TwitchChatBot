@@ -1,5 +1,5 @@
 import React from "react";
-import { Trigger } from "@services/TriggerService";
+import { Trigger } from "@services";
 import { generateEnabledDisabledDiv } from "@utils";
 import { DateTooltip } from "@components/dateTooltip";
 import {

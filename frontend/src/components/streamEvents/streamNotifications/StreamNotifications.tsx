@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import { useSocketContext } from "@context/socket";
+import { useSocketContext } from "@context";
 import StreamSessionEvents from "@components/streamSessionEvents";
-import { SessionEvents } from "@services/StreamSessionService";
+import { SessionEvents } from "@services";
 
 export default function StreamNotifications() {
   const LIMIT_NOTIFICATIONS = 5;

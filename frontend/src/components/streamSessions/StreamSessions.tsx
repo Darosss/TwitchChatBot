@@ -3,7 +3,7 @@ import Pagination from "@components/pagination";
 import { Link } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import FilterBarSessions from "./filterBarSessions";
-import { useGetSessions } from "@services/StreamSessionService";
+import { useGetSessions } from "@services";
 import { DateDifference, DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
 
