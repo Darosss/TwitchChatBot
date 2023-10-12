@@ -1,3 +1,5 @@
-export * from "./SocketContext";
-
-export * from "./types";
+export {
+  SocketContext,
+  SocketContextProvider,
+  useSocketContext,
+} from "./SocketContext";
