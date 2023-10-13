@@ -6,9 +6,8 @@ import type { ClientToServerEvents, ServerToClientEvents, InterServerEvents, Soc
 import { eventsubLogger, retryWithCatch, getMp3AudioDuration } from "@utils";
 import { createStreamSession, updateCurrentStreamSession, createRedemption, createUserIfNotExist } from "@services";
 import fs from "fs";
-import { alertSoundsPath } from "@configs/globalPaths";
+import { alertSoundsPath, alertSoundPrefix } from "@configs";
 import path from "path";
-import { alertSoundPrefix } from "@configs/globalVariables";
 import { AuthorizedUserData } from "./types";
 
 interface EventSubHandlerOptions {

@@ -9,9 +9,8 @@ import {
   getListOfMp3InFolder,
   logger
 } from "@utils";
-import { alertSoundsPath, musicPath } from "@configs/globalPaths";
+import { alertSoundsPath, musicPath, alertSoundPrefix } from "@configs";
 import path from "path";
-import { alertSoundPrefix } from "@configs/globalVariables";
 
 const maxFilesAtOnce = 30;
 
