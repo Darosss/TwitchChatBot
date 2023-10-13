@@ -10,8 +10,7 @@ import {
   getCurrentSessionMessages,
   getCurrentSessionRedemptions
 } from "@controllers/streamSessionsController";
-import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
-import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
+import { checkSearchParams, isParamObjectId } from "@middlewares";
 
 const streamSessionsRouter = Router();
 

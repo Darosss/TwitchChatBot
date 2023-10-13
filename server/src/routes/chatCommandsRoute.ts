@@ -5,8 +5,7 @@ import {
   editChatCommandById,
   deleteCommandById
 } from "@controllers/chatCommandsController";
-import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
-import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
+import { checkSearchParams, isParamObjectId } from "@middlewares";
 
 const chatCommandsRouter = Router();
 
