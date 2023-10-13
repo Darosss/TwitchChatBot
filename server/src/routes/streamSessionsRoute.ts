@@ -9,7 +9,7 @@ import {
   getSessionRedemptions,
   getCurrentSessionMessages,
   getCurrentSessionRedemptions
-} from "@controllers/streamSessionsController";
+} from "@controllers";
 import { checkSearchParams, isParamObjectId } from "@middlewares";
 
 const streamSessionsRouter = Router();

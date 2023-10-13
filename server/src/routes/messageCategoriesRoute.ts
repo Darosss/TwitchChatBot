@@ -6,7 +6,7 @@ import {
   addNewCategory,
   deleteMessageCategoryById,
   updateUsesCategoryById
-} from "@controllers/messageCategoriesController";
+} from "@controllers";
 
 const messageCategoriesRouter = Router();
 

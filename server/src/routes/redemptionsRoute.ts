@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getRedemptionsList } from "@controllers/redemptionsController";
+import { getRedemptionsList } from "@controllers";
 import { checkSearchParams } from "@middlewares";
 
 const redemptionsRouter = Router();

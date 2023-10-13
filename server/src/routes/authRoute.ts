@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { afterTwitchAuthorization, getTwitchAuthorizeUrl } from "@controllers/authController";
+import { afterTwitchAuthorization, getTwitchAuthorizeUrl } from "@controllers";
 import { authorizationTwitch, twitchHandlersMiddleware } from "@middlewares";
 
 const auth = Router();

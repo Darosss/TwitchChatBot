@@ -1,10 +1,5 @@
 import { Router } from "express";
-import {
-  getChatCommandsList,
-  addNewCommand,
-  editChatCommandById,
-  deleteCommandById
-} from "@controllers/chatCommandsController";
+import { getChatCommandsList, addNewCommand, editChatCommandById, deleteCommandById } from "@controllers";
 import { checkSearchParams, isParamObjectId } from "@middlewares";
 
 const chatCommandsRouter = Router();

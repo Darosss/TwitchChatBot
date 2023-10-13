@@ -7,7 +7,7 @@ import {
   //   getTriggerById,
   editTriggerById,
   deleteTrigger
-} from "@controllers/triggersController";
+} from "@controllers";
 
 const triggersRouter = Router();
 

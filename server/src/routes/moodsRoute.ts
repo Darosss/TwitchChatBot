@@ -7,7 +7,7 @@ import {
   // getMoodById,
   editMoodById,
   deleteMood
-} from "@controllers/moodsController";
+} from "@controllers";
 
 const moodsRouter = Router();
 
