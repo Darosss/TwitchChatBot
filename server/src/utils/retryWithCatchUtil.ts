@@ -6,7 +6,7 @@ interface RetryWitchCatchOptions {
   errorMessage?: string;
 }
 
-const retryWithCatch = async <T = unknown>(
+export const retryWithCatch = async <T = unknown>(
   apiCall: () => Promise<T>,
   options: RetryWitchCatchOptions = {
     retryLimit: 5,
@@ -30,5 +30,3 @@ const retryWithCatch = async <T = unknown>(
   }
   throw new Error(`API call failed after ${retryLimit} retries. ${errorMessage || ""}`);
 };
-
-export default retryWithCatch;
