@@ -1,3 +1,7 @@
+import * as dotenv from "dotenv";
+import { envFilePath } from "./globalPaths";
+dotenv.config({ path: envFilePath });
+
 export const {
   HOST_FRONTEND_URL: hostFrontendURL,
   LOCAL_FRONTEND_URL: localFrontendURL,
