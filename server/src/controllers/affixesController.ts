@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestSearch } from "@types";
-import { filterAffixesByUrlParams } from "./filters/affixesFilter";
+import { filterAffixesByUrlParams } from "./filters";
 import {
   createAffix,
   deleteAffixById,
@@ -9,7 +9,7 @@ import {
   updateAffixById,
   AffixCreateData,
   AffixUpdateData
-} from "@services/affixes";
+} from "@services";
 
 export const getAffixesList = async (req: Request<{}, {}, {}, RequestSearch>, res: Response, next: NextFunction) => {
   const { page = 1, limit = 50 } = req.query;

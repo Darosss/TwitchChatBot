@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestTimerQuery } from "@types";
-import { filterTimersByUrlParams } from "./filters/timersFilter";
+import { filterTimersByUrlParams } from "./filters";
 import {
   createTimer,
   deleteTimerById,
@@ -9,7 +9,7 @@ import {
   updateTimerById,
   TimerCreateData,
   TimerUpdateData
-} from "@services/timers";
+} from "@services";
 
 export const getTimersList = async (req: Request<{}, {}, {}, RequestTimerQuery>, res: Response, next: NextFunction) => {
   const { page = 1, limit = 50, sortBy = "createdAt", sortOrder = "desc" } = req.query;
@@ -19,7 +19,7 @@ export const getTimersList = async (req: Request<{}, {}, {}, RequestTimerQuery>,
     const timers = await getTimers(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      populateSelect: [
+      populate: [
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "mood", select: { _id: 1, name: 1, enabled: 1 } }
       ],

@@ -8,13 +8,12 @@ import type {
   AudioStreamData,
   AudioStreamDataInfo
 } from "@socket";
-import { musicPath } from "@configs/globalPaths";
+import { musicPath } from "@configs";
 import path from "path";
-import { getMp3AudioDuration } from "@utils/filesManipulateUtil";
-import { MusicConfigs } from "@models/types";
+import { getMp3AudioDuration, shuffleArray } from "@utils";
+import { MusicConfigs } from "@models";
 import MusicHeadHandler from "./MusicHeadHandler";
 import { SongProperties } from "./types";
-import { shuffleArray } from "@utils/arraysOperationUtiil";
 
 class MusicStreamHandler extends MusicHeadHandler {
   private readonly formatFile: string = ".mp3";

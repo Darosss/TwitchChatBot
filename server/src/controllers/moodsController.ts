@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestSearch } from "@types";
-import { filterMoodsByUrlParams } from "./filters/moodsFilter";
+import { filterMoodsByUrlParams } from "./filters";
 import {
   createMood,
   deleteMoodById,
@@ -9,7 +9,7 @@ import {
   updateMoodById,
   MoodCreateData,
   MoodUpdateData
-} from "@services/moods";
+} from "@services";
 
 export const getMoodsList = async (req: Request<{}, {}, {}, RequestSearch>, res: Response, next: NextFunction) => {
   const { page = 1, limit = 50 } = req.query;

@@ -1,9 +1,6 @@
-import { Trigger } from "@models/triggerModel";
-import { TriggerDocument } from "@models/types";
-import { checkExistResource } from "@utils/checkExistResourceUtil";
-import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
-import { logger } from "@utils/loggerUtil";
-import { modesPipeline } from "@aggregations/modesPipeline";
+import { Trigger, TriggerDocument } from "@models";
+import { checkExistResource, AppError, handleAppError, logger } from "@utils";
+import { modesPipeline } from "../aggregations";
 import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import { ManyTriggersFindOptions, TriggerCreateData, TriggerFindOptions, TriggerUpdateData } from "./types";
 
@@ -11,14 +8,14 @@ export const getTriggers = async (
   filter: FilterQuery<TriggerDocument> = {},
   triggerFindOptions: ManyTriggersFindOptions
 ) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 }, populateSelect } = triggerFindOptions;
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 }, populate = [] } = triggerFindOptions;
 
   try {
     const trigger = await Trigger.find(filter)
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
-      .populate(populateSelect)
+      .populate(populate)
       .sort(sort);
 
     return trigger;
@@ -105,9 +102,9 @@ export const getOneTrigger = async (
   filter: FilterQuery<TriggerDocument> = {},
   triggerFindOptions: TriggerFindOptions
 ) => {
-  const { populateSelect, select = { __v: 0 } } = triggerFindOptions;
+  const { populate = [], select = { __v: 0 } } = triggerFindOptions;
   try {
-    const foundTrigger = await Trigger.findOne(filter).select(select).populate(populateSelect);
+    const foundTrigger = await Trigger.findOne(filter).select(select).populate(populate);
 
     const trigger = checkExistResource(foundTrigger, "Trigger");
 

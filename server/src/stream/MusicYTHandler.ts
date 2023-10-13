@@ -7,13 +7,11 @@ import type {
   AudioYTDataInfo,
   AudioYTData
 } from "@socket";
-import { MusicConfigs } from "@models/types";
+import { MusicConfigs } from "@models";
 import moment from "moment";
 import MusicHeadHandler from "./MusicHeadHandler";
-import { shuffleArray } from "@utils/arraysOperationUtiil";
+import { shuffleArray, convertSecondsToMS, isValidUrl } from "@utils";
 import { SongProperties } from "./types";
-import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";
-import { isValidUrl } from "@utils/stringsOperationsUtil";
 import YoutubeApiHandler from "./YoutubeAPIHandler";
 
 interface PlaylistDetails {

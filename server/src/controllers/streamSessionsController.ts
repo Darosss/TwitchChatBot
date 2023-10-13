@@ -1,19 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import { RequestParams, RequestQueryMessage, RequestQuerySession, RequestRedemptionQuery } from "@types";
-import { filterSessionByUrlParams } from "./filters/sessionFilter";
+import { filterSessionByUrlParams, filterMessagesByUrlParams, filterRedemptionsByUrlParams } from "./filters";
 import {
   getCurrentStreamSession,
   getStreamSessionStatistics,
   getStreamSessions,
   getStreamSessionsCount,
   getStreamSessionById,
-  getLatestStreamSession
-} from "@services/streamSessions";
-import { getMessages, getMessagesCount } from "@services/messages";
-import { filterMessagesByUrlParams } from "./filters/messagesFilter";
-import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
-import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
-import { AppError } from "@utils/ErrorHandlerUtil";
+  getLatestStreamSession,
+  getMessages,
+  getMessagesCount,
+  getRedemptions,
+  getRedemptionsCount
+} from "@services";
+import { AppError } from "@utils";
 
 export const getStreamSessionsList = async (
   req: Request<{}, {}, {}, RequestQuerySession>,

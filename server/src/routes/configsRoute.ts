@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getConfigsList, editConfigs, resetConfigsToDefaults } from "@controllers/configsController";
+import { getConfigsList, editConfigs, resetConfigsToDefaults } from "@controllers";
 
 const configsRouter = Router();
 

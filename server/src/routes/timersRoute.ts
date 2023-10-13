@@ -1,8 +1,7 @@
-import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
+import { isParamObjectId, checkSearchParams } from "@middlewares";
 import { Router } from "express";
 
-import { getTimersList, addNewTimer, editTimerById, deleteTimer } from "@controllers/timersController";
-import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
+import { getTimersList, addNewTimer, editTimerById, deleteTimer } from "@controllers";
 
 const timersRouter = Router();
 

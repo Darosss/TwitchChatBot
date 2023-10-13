@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestRedemptionQuery } from "@types";
-import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
-import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
+import { filterRedemptionsByUrlParams } from "./filters";
+import { getRedemptions, getRedemptionsCount } from "@services";
 
 export const getRedemptionsList = async (
   req: Request<{}, {}, {}, RequestRedemptionQuery>,

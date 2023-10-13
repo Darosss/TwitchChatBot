@@ -1,10 +1,9 @@
-import { PopulateOption } from "mongoose";
-import { SortQuery, SelectQuery } from "@services/types";
-import { MessageCategoryModel } from "@models/types";
+import { SortQuery, SelectQuery, PopulateSelect } from "@services";
+import { MessageCategoryDocument, MessageCategoryModel } from "@models";
 
 export interface MessageCategoryFindOptions {
-  select?: SelectQuery<IStreamSession>;
-  populateSelect?: PopulateOption.select;
+  select?: SelectQuery<MessageCategoryDocument>;
+  populate?: PopulateSelect;
 }
 
 export interface ManyMessageCategoriesFindOptions extends MessageCategoryFindOptions {
@@ -15,6 +14,6 @@ export interface ManyMessageCategoriesFindOptions extends MessageCategoryFindOpt
 
 export type MessageCategoryData = Omit<MessageCategoryModel, "_id" | "createdAt" | "updatedAt" | "uses">;
 
-export interface MessageCategoryCreateData extends MessageCategoryData {
+export interface MessageCategoryCreateData extends Omit<MessageCategoryData, "messages"> {
   messages: string[];
 }

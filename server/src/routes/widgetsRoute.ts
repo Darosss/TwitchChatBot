@@ -1,11 +1,5 @@
 import { Router } from "express";
-import {
-  getWidgetsList,
-  addNewWidget,
-  editWidgetById,
-  removeWidgetById,
-  getWidgetById
-} from "@controllers/widgetsController";
+import { getWidgetsList, addNewWidget, editWidgetById, removeWidgetById, getWidgetById } from "@controllers";
 const widgetsRouter = Router();
 
 widgetsRouter.get("/", getWidgetsList);

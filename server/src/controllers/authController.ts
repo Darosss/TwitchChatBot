@@ -1,4 +1,4 @@
-import { getTwitchAuthUrl } from "../auth/auth";
+import { getTwitchAuthUrl } from "../auth";
 import { Request, Response } from "express";
 
 export const afterTwitchAuthorization = async (req: Request, res: Response) => {

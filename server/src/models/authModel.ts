@@ -1,7 +1,7 @@
 import { Model, model, Schema } from "mongoose";
 import { AuthDocument } from "./types";
-import { encryptionKey } from "@configs/envVariables";
-import { encryptToken } from "@utils/tokenUtil";
+import { encryptionKey } from "@configs";
+import { encryptToken } from "@utils";
 
 const AuthSchema: Schema<AuthDocument> = new Schema(
   {

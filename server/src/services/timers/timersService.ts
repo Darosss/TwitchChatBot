@@ -1,21 +1,18 @@
-import { modesPipeline } from "@aggregations/modesPipeline";
-import { Timer } from "@models/timerModel";
-import { TimerDocument, TimerModel } from "@models/types";
-import { checkExistResource } from "@utils/checkExistResourceUtil";
-import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
-import { logger } from "@utils/loggerUtil";
+import { modesPipeline } from "../aggregations";
+import { Timer, TimerDocument, TimerModel } from "@models";
+import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import { ManyTimersFindOptions, TimerCreateData, TimerFindOptions, TimerUpdateData } from "./types";
 
 export const getTimers = async (filter: FilterQuery<TimerDocument> = {}, timerFindOptions: ManyTimersFindOptions) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 }, populateSelect } = timerFindOptions;
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 }, populate = [] } = timerFindOptions;
 
   try {
     const timer = await Timer.find(filter)
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
-      .populate(populateSelect)
+      .populate(populate)
       .sort(sort);
 
     return timer;
@@ -114,9 +111,9 @@ export const getTimerById = async (
   filter: FilterQuery<TimerDocument> = {},
   timerFindOptions: TimerFindOptions
 ) => {
-  const { select = { __v: 0 }, populateSelect } = timerFindOptions;
+  const { select = { __v: 0 }, populate = [] } = timerFindOptions;
   try {
-    const foundTimer = await Timer.findById(id, filter).select(select).populate(populateSelect);
+    const foundTimer = await Timer.findById(id, filter).select(select).populate(populate);
 
     const timer = checkExistResource(foundTimer, `Timer with id(${id})`);
 

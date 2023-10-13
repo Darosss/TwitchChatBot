@@ -1,17 +1,13 @@
 {
   "compilerOptions": {
     "paths": {
-      "@libs/*": ["../../libs/*"],
-      "@routes/*": ["routes/*"],
-      "@controllers/*": ["controllers/*"],
-      "@configs/*": ["configs/*"],
-      "@middlewares/*": ["middlewares/*"],
-      "@models/*": ["models/*"],
-      "@services/*": ["services/*"],
-      "@customTypes/*": ["@types/*"],
-      "@utils/*": ["utils/*"],
-      "@aggregations/*": ["aggregations/*"],
-      "@defaults/*": ["defaults/*"],
+      "@controllers": ["controllers"],
+      "@configs": ["configs"],
+      "@middlewares": ["middlewares"],
+      "@models": ["models"],
+      "@services": ["services"],
+      "@utils": ["utils"],
+      "@defaults": ["defaults"],
       "@socket": ["socketIO"]
     },
     "target": "es2017",

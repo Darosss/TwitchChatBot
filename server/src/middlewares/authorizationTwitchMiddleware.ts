@@ -1,11 +1,11 @@
 import { RequestQueryAuthorizationTwitch } from "@types";
-import retryWithCatch from "@utils/retryWithCatchUtil";
+import { retryWithCatch } from "@utils";
 import { NextFunction, Request, Response } from "express";
 import { AuthorizationTwitch } from "@types";
-import { createNewAuth } from "@services/auth";
-import { clientId, clientSecret, redirectUrl } from "@configs/envVariables";
+import { createNewAuth } from "@services";
+import { clientId, clientSecret, redirectUrl } from "@configs";
 
-const authorizationTwitch = async (req: Request, res: Response, next: NextFunction) => {
+export const authorizationTwitch = async (req: Request, res: Response, next: NextFunction) => {
   const { code } = req.query as unknown as RequestQueryAuthorizationTwitch;
   const authRes = await retryWithCatch(() =>
     fetch("https://id.twitch.tv/oauth2/token", {
@@ -36,5 +36,3 @@ const authorizationTwitch = async (req: Request, res: Response, next: NextFuncti
     return next();
   }
 };
-
-export default authorizationTwitch;

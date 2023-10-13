@@ -1,13 +1,12 @@
 import { Router } from "express";
-import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
+import { checkSearchParams, isParamObjectId } from "@middlewares";
 import {
   getMessageCategoriesList,
   editMessageCategoryById,
   addNewCategory,
   deleteMessageCategoryById,
   updateUsesCategoryById
-} from "@controllers/messageCategoriesController";
-import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
+} from "@controllers";
 
 const messageCategoriesRouter = Router();
 

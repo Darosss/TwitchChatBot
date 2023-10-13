@@ -1,5 +1,5 @@
-import { SortQuery, SelectQuery } from "@services/types";
-import { StreamSessionModel } from "@models/types";
+import { SortQuery, SelectQuery } from "@services";
+import { StreamSessionModel } from "@models";
 
 export interface StreamSessionFindOptions {
   select?: SelectQuery<StreamSessionModel>;

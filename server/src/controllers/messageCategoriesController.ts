@@ -6,9 +6,9 @@ import {
   createMessageCategories,
   deleteMessageCategory,
   MessageCategoryCreateData
-} from "@services/messageCategories";
+} from "@services";
 import { RequestParams, RequestQueryMessageCategories } from "@types";
-import { filterMessageCategoriesByUrlParams } from "./filters/messageCategoriesFilter";
+import { filterMessageCategoriesByUrlParams } from "./filters";
 
 export const getMessageCategoriesList = async (
   req: Request<{}, {}, {}, RequestQueryMessageCategories>,
@@ -23,7 +23,7 @@ export const getMessageCategoriesList = async (
     const categories = await getMessageCategories(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      populateSelect: [
+      populate: [
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "mood", select: { _id: 1, name: 1, enabled: 1 } }
       ],

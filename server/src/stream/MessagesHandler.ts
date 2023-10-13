@@ -1,7 +1,5 @@
-import { createMessage } from "@services/messages";
-import { MessageCreateData } from "@services/messages/types";
-import { updateUser } from "@services/users";
-import { PointsConfigs } from "@models/types";
+import { createMessage, MessageCreateData, updateUser } from "@services";
+import { PointsConfigs } from "@models";
 
 class MessagesHandler {
   private configs: PointsConfigs;

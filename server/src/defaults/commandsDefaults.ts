@@ -1,4 +1,4 @@
-import { ChatCommandCreateData } from "@services/chatCommands/types";
+import { ChatCommandCreateData } from "@services";
 
 export const getDefaultChatCommands = () => {
   const defaultCommands: ChatCommandCreateData[] = [

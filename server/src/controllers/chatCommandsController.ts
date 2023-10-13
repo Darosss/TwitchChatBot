@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestCommandsQuery, RequestParams } from "@types";
-import { filterCommandsByUrlParams } from "./filters/commandsFilter";
+import { filterCommandsByUrlParams } from "./filters";
 import {
   createChatCommand,
   deleteChatCommandById,
@@ -9,7 +9,7 @@ import {
   updateChatCommandById,
   ChatCommandCreateData,
   ChatCommandUpdateData
-} from "@services/chatCommands";
+} from "@services";
 
 export const getChatCommandsList = async (
   req: Request<{}, {}, {}, RequestCommandsQuery>,
@@ -23,7 +23,7 @@ export const getChatCommandsList = async (
     const chatCommands = await getChatCommands(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      populateSelect: [
+      populate: [
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "mood", select: { _id: 1, name: 1, enabled: 1 } }
       ],

@@ -1,12 +1,11 @@
-import { PopulateOption } from "mongoose";
-import { SortQuery, SelectQuery } from "@services/types";
-import { MessageModel } from "@models/types";
+import { SortQuery, SelectQuery, PopulateSelect } from "@services";
+import { MessageModel } from "@models";
 
 export type MessageCreateData = Omit<MessageModel, "_id">;
 
 export interface MessageFindOptions {
   select?: SelectQuery<MessageModel>;
-  populateSelect?: PopulateOption.select;
+  populate?: PopulateSelect;
 }
 
 export interface ManyMessageFindOptions extends MessageFindOptions {

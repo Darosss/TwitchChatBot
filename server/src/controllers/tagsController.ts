@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestSearch } from "@types";
-import { filterTagsByUrlParams } from "./filters/tagsFilter";
+import { filterTagsByUrlParams } from "./filters";
 import {
   createTag,
   deleteTagById,
@@ -9,7 +9,7 @@ import {
   updateTagById,
   TagCreateData,
   TagUpdateData
-} from "@services/tags";
+} from "@services";
 
 export const getTagsList = async (req: Request<{}, {}, {}, RequestSearch>, res: Response, next: NextFunction) => {
   const { page = 1, limit = 50 } = req.query;

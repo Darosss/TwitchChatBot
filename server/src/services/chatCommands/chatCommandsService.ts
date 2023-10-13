@@ -1,16 +1,13 @@
-import { modesPipeline } from "@aggregations/modesPipeline";
-import { ChatCommand } from "@models/chatCommandModel";
-import { ChatCommandDocument } from "@models/types";
-import { checkExistResource } from "@utils/checkExistResourceUtil";
-import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
-import { logger } from "@utils/loggerUtil";
+import { ChatCommand, ChatCommandDocument } from "@models";
+import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import {
   ChatCommandCreateData,
   ChatCommandsFindOptions,
   ChatCommandUpdateData,
   ManyChatCommandsFindOptions
-} from "./types/";
+} from "./types";
+import { modesPipeline } from "../aggregations";
 
 export const getChatCommands = async (
   filter: FilterQuery<ChatCommandDocument> = {},
@@ -21,7 +18,7 @@ export const getChatCommands = async (
     skip = 1,
     sort = { createdAt: -1 },
     select = { __v: 0 },
-    populateSelect
+    populate = []
   } = chatCommandsFindOptions;
 
   try {
@@ -29,7 +26,7 @@ export const getChatCommands = async (
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
-      .populate(populateSelect)
+      .populate(populate)
       .sort(sort);
 
     return chatCommands;

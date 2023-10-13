@@ -1,4 +1,4 @@
-import { youtubeApiKeyV3 } from "@configs/envVariables";
+import { youtubeApiKeyV3 } from "@configs";
 import { google, youtube_v3 } from "googleapis";
 
 class YoutubeApiHandler {

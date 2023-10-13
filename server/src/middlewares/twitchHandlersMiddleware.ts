@@ -1,16 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiClient } from "@twurple/api";
-import { createNewAuth, getAuthToken, removeAuthToken } from "@services/auth";
-import { getConfigs } from "@services/configs";
+import { createNewAuth, getAuthToken, removeAuthToken, getConfigs } from "@services";
 import { RefreshingAuthProvider, getTokenInfo } from "@twurple/auth";
 import ClientTmiHandler from "../stream/TwitchTmiHandler";
 import StreamHandler from "../stream/StreamHandler";
-import { getTwitchAuthUrl } from "../auth/auth";
-import { logger } from "@utils/loggerUtil";
-import { botPassword, botUsername, clientId, clientSecret, encryptionKey } from "@configs/envVariables";
-import { decryptToken } from "@utils/tokenUtil";
+import { getTwitchAuthUrl } from "../auth";
+import { logger, decryptToken } from "@utils";
+import { botPassword, botUsername, clientId, clientSecret, encryptionKey } from "@configs";
 
-const authorizationTwitch = async (req: Request, res: Response, next: NextFunction) => {
+export const twitchHandlersMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const tokenDB = await getAuthToken();
   if (!tokenDB) {
     const authUrl = getTwitchAuthUrl();
@@ -84,5 +82,3 @@ const authorizationTwitch = async (req: Request, res: Response, next: NextFuncti
     }
   }
 };
-
-export default authorizationTwitch;

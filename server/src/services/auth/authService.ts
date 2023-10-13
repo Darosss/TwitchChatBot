@@ -1,8 +1,6 @@
-import { AuthToken } from "@models/authModel";
+import { AuthToken } from "@models";
 import { AuthCreateData } from "./types";
-import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
-import { logger } from "@utils/loggerUtil";
-import { checkExistResource } from "@utils/checkExistResourceUtil";
+import { AppError, handleAppError, logger, checkExistResource } from "@utils";
 
 export const getAuthToken = async () => {
   try {

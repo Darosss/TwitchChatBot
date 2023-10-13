@@ -1,8 +1,5 @@
-import { UserDocument } from "@models/types";
-import { User } from "@models/userModel";
-import { checkExistResource } from "@utils/checkExistResourceUtil";
-import { handleAppError } from "@utils/ErrorHandlerUtil";
-import { logger } from "@utils/loggerUtil";
+import { UserDocument, User } from "@models";
+import { checkExistResource, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { ManyUsersFindOptions, UserCreateData, UserFindOptions, UserUpdateData } from "./types";
 
