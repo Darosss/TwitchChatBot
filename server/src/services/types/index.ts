@@ -1,4 +1,4 @@
-import { SortOrder } from "mongoose";
+import { PopulateOptions, SortOrder } from "mongoose";
 
 export type SortQuery = string | { [key: string]: SortOrder | { $meta: "textScore" } } | [string, SortOrder][] | null;
 
@@ -9,3 +9,5 @@ export type SelectQuery<T> = {
 interface AdditionalSelectQueries {
   __v: number;
 }
+
+export type PopulateSelect = PopulateOptions | (string | PopulateOptions)[];
