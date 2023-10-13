@@ -3,7 +3,7 @@ import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface TimerFindOptions {
   select?: SelectQuery<TimerModel>;
-  populateSelect?: PopulateSelect;
+  populate?: PopulateSelect;
 }
 
 export interface ManyTimersFindOptions extends TimerFindOptions {

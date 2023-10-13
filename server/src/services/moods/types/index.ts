@@ -3,7 +3,7 @@ import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface MoodFindOptions {
   select?: SelectQuery<MoodModel>;
-  populateSelect?: PopulateSelect;
+  populate?: PopulateSelect;
 }
 
 export interface ManyMoodsFindOptions extends MoodFindOptions {

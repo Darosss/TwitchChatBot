@@ -19,7 +19,7 @@ export const getTimersList = async (req: Request<{}, {}, {}, RequestTimerQuery>,
     const timers = await getTimers(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      populateSelect: [
+      populate: [
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "mood", select: { _id: 1, name: 1, enabled: 1 } }
       ],

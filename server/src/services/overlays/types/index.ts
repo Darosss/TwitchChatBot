@@ -3,7 +3,7 @@ import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface OverlaysFindOptions {
   select?: SelectQuery<OverlayModel>;
-  populateSelect?: PopulateSelect;
+  populate?: PopulateSelect;
 }
 
 export interface ManyOverlaysFindOptions extends OverlaysFindOptions {

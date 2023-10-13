@@ -3,7 +3,7 @@ import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface TriggerFindOptions {
   select?: SelectQuery<TriggerModel>;
-  populateSelect?: PopulateSelect;
+  populate?: PopulateSelect;
 }
 
 export interface ManyTriggersFindOptions extends TriggerFindOptions {

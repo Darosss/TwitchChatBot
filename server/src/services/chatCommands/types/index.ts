@@ -3,7 +3,7 @@ import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface ChatCommandsFindOptions {
   select?: SelectQuery<ChatCommandModel>;
-  populateSelect?: PopulateSelect;
+  populate?: PopulateSelect;
 }
 
 export interface ManyChatCommandsFindOptions extends ChatCommandsFindOptions {

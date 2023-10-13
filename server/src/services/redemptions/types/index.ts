@@ -3,7 +3,7 @@ import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface RedemptionFindOptions {
   select?: SelectQuery<RedemptionModel>;
-  populateSelect?: PopulateSelect;
+  populate?: PopulateSelect;
 }
 
 export interface ManyRedemptionsFindOptions extends RedemptionFindOptions {

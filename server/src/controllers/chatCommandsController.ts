@@ -23,7 +23,7 @@ export const getChatCommandsList = async (
     const chatCommands = await getChatCommands(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      populateSelect: [
+      populate: [
         { path: "tag", select: { _id: 1, name: 1, enabled: 1 } },
         { path: "mood", select: { _id: 1, name: 1, enabled: 1 } }
       ],

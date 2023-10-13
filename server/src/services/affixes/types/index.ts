@@ -3,7 +3,7 @@ import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface AffixFindOptions {
   select?: SelectQuery<AffixModel>;
-  populateSelect?: PopulateSelect;
+  populate?: PopulateSelect;
 }
 
 export interface ManyAffixesFindOptions extends AffixFindOptions {

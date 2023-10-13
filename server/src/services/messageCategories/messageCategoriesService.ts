@@ -15,13 +15,13 @@ export const getMessageCategories = async (
   filter: FilterQuery<MessageCategoryModel> = {},
   categoriesFindOptions: ManyMessageCategoriesFindOptions
 ) => {
-  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 }, populateSelect = [] } = categoriesFindOptions;
+  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 }, populate = [] } = categoriesFindOptions;
   try {
     const categories = await MessageCategory.find(filter)
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
-      .populate(populateSelect)
+      .populate(populate)
       .sort(sort);
 
     return categories;
@@ -37,9 +37,9 @@ export const getMessageCategoriesCount = async (filter: FilterQuery<MessageCateg
 };
 
 export const getMessageCategoryById = async (id: string, categoryFindOptions: MessageCategoryFindOptions) => {
-  const { select = { __v: 0 }, populateSelect = [] } = categoryFindOptions;
+  const { select = { __v: 0 }, populate = [] } = categoryFindOptions;
   try {
-    const foundCategory = await MessageCategory.findById(id).select(select).populate(populateSelect);
+    const foundCategory = await MessageCategory.findById(id).select(select).populate(populate);
 
     return foundCategory;
   } catch (err) {

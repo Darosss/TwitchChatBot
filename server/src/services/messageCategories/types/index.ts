@@ -3,7 +3,7 @@ import { MessageCategoryDocument, MessageCategoryModel } from "@models/types";
 
 export interface MessageCategoryFindOptions {
   select?: SelectQuery<MessageCategoryDocument>;
-  populateSelect?: PopulateSelect;
+  populate?: PopulateSelect;
 }
 
 export interface ManyMessageCategoriesFindOptions extends MessageCategoryFindOptions {

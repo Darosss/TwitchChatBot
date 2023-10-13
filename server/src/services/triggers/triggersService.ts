@@ -9,20 +9,14 @@ export const getTriggers = async (
   filter: FilterQuery<TriggerDocument> = {},
   triggerFindOptions: ManyTriggersFindOptions
 ) => {
-  const {
-    limit = 50,
-    skip = 1,
-    sort = { createdAt: -1 },
-    select = { __v: 0 },
-    populateSelect = []
-  } = triggerFindOptions;
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 }, populate = [] } = triggerFindOptions;
 
   try {
     const trigger = await Trigger.find(filter)
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
-      .populate(populateSelect)
+      .populate(populate)
       .sort(sort);
 
     return trigger;
@@ -109,9 +103,9 @@ export const getOneTrigger = async (
   filter: FilterQuery<TriggerDocument> = {},
   triggerFindOptions: TriggerFindOptions
 ) => {
-  const { populateSelect = [], select = { __v: 0 } } = triggerFindOptions;
+  const { populate = [], select = { __v: 0 } } = triggerFindOptions;
   try {
-    const foundTrigger = await Trigger.findOne(filter).select(select).populate(populateSelect);
+    const foundTrigger = await Trigger.findOne(filter).select(select).populate(populate);
 
     const trigger = checkExistResource(foundTrigger, "Trigger");
 
