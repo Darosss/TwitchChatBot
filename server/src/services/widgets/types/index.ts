@@ -1,10 +1,8 @@
-import { IWidget } from "@models/types";
-import { SortQuery, SelectQuery } from "@services";
-import { PopulateOption } from "mongoose";
-
+import { WidgetsDocument } from "@models/types";
+import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 export interface WidgetsFindOptions {
-  select?: SelectQuery<IWidget>;
-  populateSelect?: PopulateOption.select;
+  select?: SelectQuery<WidgetsDocument>;
+  populateSelect?: PopulateSelect;
 }
 
 export interface ManyWidgetsFindOptions extends WidgetsFindOptions {
@@ -13,6 +11,6 @@ export interface ManyWidgetsFindOptions extends WidgetsFindOptions {
   limit?: number;
 }
 
-export type WidgetCreateData = Pick<IWidget, "name" | "layout" | "toolbox">;
+export type WidgetCreateData = Pick<WidgetsDocument, "name" | "layout" | "toolbox">;
 
 export type WidgetUpdateData = Partial<WidgetCreateData>;

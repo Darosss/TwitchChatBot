@@ -1,10 +1,9 @@
 import { MoodModel } from "@models/types";
-import { PopulateOption } from "mongoose";
-import { SortQuery, SelectQuery } from "@services";
+import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface MoodFindOptions {
   select?: SelectQuery<MoodModel>;
-  populateSelect?: PopulateOption.select;
+  populateSelect?: PopulateSelect;
 }
 
 export interface ManyMoodsFindOptions extends MoodFindOptions {

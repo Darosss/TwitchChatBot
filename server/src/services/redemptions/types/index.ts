@@ -1,11 +1,9 @@
 import { RedemptionModel } from "@models/types";
-import { PopulateOption } from "mongoose";
-
-import { SortQuery, SelectQuery } from "@services";
+import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface RedemptionFindOptions {
   select?: SelectQuery<RedemptionModel>;
-  populateSelect?: PopulateOption.select;
+  populateSelect?: PopulateSelect;
 }
 
 export interface ManyRedemptionsFindOptions extends RedemptionFindOptions {

@@ -1,10 +1,9 @@
 import { OverlayModel } from "@models/types";
-import { SortQuery, SelectQuery } from "@services";
-import { PopulateOption } from "mongoose";
+import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface OverlaysFindOptions {
   select?: SelectQuery<OverlayModel>;
-  populateSelect?: PopulateOption.select;
+  populateSelect?: PopulateSelect;
 }
 
 export interface ManyOverlaysFindOptions extends OverlaysFindOptions {

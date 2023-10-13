@@ -1,10 +1,9 @@
 import { TriggerModel } from "@models/types";
-import { PopulateOption } from "mongoose";
-import { SortQuery, SelectQuery } from "@services";
+import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface TriggerFindOptions {
   select?: SelectQuery<TriggerModel>;
-  populateSelect?: PopulateOption.select;
+  populateSelect?: PopulateSelect;
 }
 
 export interface ManyTriggersFindOptions extends TriggerFindOptions {
@@ -15,6 +14,8 @@ export interface ManyTriggersFindOptions extends TriggerFindOptions {
 
 export type TriggerOptionalData = Partial<Omit<TriggerModel, "_id" | "createdAt" | "updatedAt">>;
 
-export interface TriggerCreateData extends Pick<TriggerModel, "name" | "words" | "messages">, TriggerOptionalData {}
+export interface TriggerCreateData
+  extends Pick<TriggerModel, "name" | "words" | "messages">,
+    Omit<TriggerOptionalData, "name" | "messages" | "words"> {}
 
 export interface TriggerUpdateData extends TriggerOptionalData, Partial<TriggerCreateData> {}
