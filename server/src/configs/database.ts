@@ -14,9 +14,8 @@ import mongoose, { ConnectOptions } from "mongoose";
 import { getDefaultChatCommands, getDefaultMood, getDefaultTag } from "@defaults";
 import { databaseConnectURL } from "./envVariables";
 
-const initMongoDataBase = async () => {
+export const initMongoDataBase = async () => {
   mongoose.set("strictQuery", false);
-
   try {
     await mongoose.connect(databaseConnectURL, {
       useNewUrlParser: true
@@ -68,5 +67,3 @@ const createDefaultMood = async () => {
     await createMood(moods);
   }
 };
-
-export default initMongoDataBase;

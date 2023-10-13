@@ -1,7 +1,7 @@
 import winston, { format } from "winston";
 import path from "path";
 import DailyRotateFile from "winston-daily-rotate-file";
-import { nodeEnv } from "@configs/envVariables";
+import { nodeEnv } from "@configs";
 const isProduction = nodeEnv === "production";
 const { combine, timestamp, printf } = format;
 

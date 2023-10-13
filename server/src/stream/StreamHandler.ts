@@ -18,7 +18,6 @@ import {
   createUserIfNotExist,
   UserCreateData
 } from "@services";
-
 import CommandsHandler from "./CommandsHandler";
 import TriggersHandler from "./TriggersHandler";
 import LoyaltyHandler from "./LoyaltyHandler";
@@ -27,10 +26,9 @@ import { headLogger, messageLogger, retryWithCatch } from "@utils";
 import TimersHandler from "./TimersHandler";
 import { ChatUserstate } from "tmi.js";
 import MusicStreamHandler from "./MusicStreamHandler";
-import { alertSoundPrefix } from "@configs/globalVariables";
+import { alertSoundPrefix, botId } from "@configs";
 import EventSubHandler from "./EventSubHandler";
 import ClientTmiHandler from "./TwitchTmiHandler";
-import { botId } from "@configs/envVariables";
 import MusicYTHandler from "./MusicYTHandler";
 import { AuthorizedUserData } from "./types";
 interface StreamHandlerOptions {

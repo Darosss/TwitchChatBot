@@ -1,4 +1,4 @@
-import { clientId, redirectUrl } from "@configs/envVariables";
+import { clientId, redirectUrl } from "@configs";
 
 export const getTwitchAuthUrl = () => {
   const scopes = [

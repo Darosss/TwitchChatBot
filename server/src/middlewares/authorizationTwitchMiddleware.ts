@@ -3,7 +3,7 @@ import { retryWithCatch } from "@utils";
 import { NextFunction, Request, Response } from "express";
 import { AuthorizationTwitch } from "@types";
 import { createNewAuth } from "@services";
-import { clientId, clientSecret, redirectUrl } from "@configs/envVariables";
+import { clientId, clientSecret, redirectUrl } from "@configs";
 
 const authorizationTwitch = async (req: Request, res: Response, next: NextFunction) => {
   const { code } = req.query as unknown as RequestQueryAuthorizationTwitch;

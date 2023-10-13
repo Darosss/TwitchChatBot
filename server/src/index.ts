@@ -1,12 +1,8 @@
-import * as dotenv from "dotenv";
 import "module-alias/register";
-import { envFilePath } from "@configs/globalPaths";
-dotenv.config({ path: envFilePath });
+import { initMongoDataBase, backendPort } from "@configs";
 
-import initMongoDataBase from "@configs/database";
 import expressApp from "./app";
 import { logger } from "@utils";
-import { backendPort } from "@configs/envVariables";
 
 const startServer = async () => {
   await initMongoDataBase();

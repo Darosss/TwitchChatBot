@@ -8,7 +8,7 @@ import type {
   AudioStreamData,
   AudioStreamDataInfo
 } from "@socket";
-import { musicPath } from "@configs/globalPaths";
+import { musicPath } from "@configs";
 import path from "path";
 import { getMp3AudioDuration, shuffleArray } from "@utils";
 import { MusicConfigs } from "@models";

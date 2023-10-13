@@ -6,7 +6,7 @@ import ClientTmiHandler from "../stream/TwitchTmiHandler";
 import StreamHandler from "../stream/StreamHandler";
 import { getTwitchAuthUrl } from "../auth/auth";
 import { logger, decryptToken } from "@utils";
-import { botPassword, botUsername, clientId, clientSecret, encryptionKey } from "@configs/envVariables";
+import { botPassword, botUsername, clientId, clientSecret, encryptionKey } from "@configs";
 
 const authorizationTwitch = async (req: Request, res: Response, next: NextFunction) => {
   const tokenDB = await getAuthToken();

@@ -5,7 +5,7 @@ import localSocket from "./socketIO";
 import http from "http";
 import { errorResponder, invalidPathHandler } from "@middlewares/errorHandlersMiddleware";
 import twitchHandlersMiddleware from "@middlewares/twitchHandlersMiddleware";
-import { hostFrontendURL, localFrontendURL } from "@configs/envVariables";
+import { hostFrontendURL, localFrontendURL } from "@configs";
 
 const expressApp = () => {
   const app = express();
