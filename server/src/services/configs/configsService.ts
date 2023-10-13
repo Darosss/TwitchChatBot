@@ -1,4 +1,4 @@
-import { Config } from "@models/configModel";
+import { Config } from "@models";
 import { AppError, handleAppError, logger, checkExistResource } from "@utils";
 import { UpdateQuery } from "mongoose";
 import { ConfigUpdateData } from "./types";

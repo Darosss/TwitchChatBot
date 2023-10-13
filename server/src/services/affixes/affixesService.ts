@@ -1,5 +1,4 @@
-import { Affix } from "@models/affixModel";
-import { AffixDocument } from "@models/types";
+import { Affix, AffixDocument } from "@models";
 import { getChatCommandsCount, getMessageCategoriesCount, getTimersCount, getTriggersCount } from "@services";
 import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";

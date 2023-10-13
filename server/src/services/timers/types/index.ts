@@ -1,4 +1,4 @@
-import { TimerModel } from "@models/types";
+import { TimerModel } from "@models";
 import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface TimerFindOptions {

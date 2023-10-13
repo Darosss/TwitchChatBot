@@ -9,7 +9,7 @@ import type {
   AudioYTData,
   AudioYTDataInfo
 } from "@socket";
-import { MusicConfigs } from "@models/types";
+import { MusicConfigs } from "@models";
 import moment from "moment";
 import { convertSecondsToMS } from "@utils";
 import { EmitAudioNames, SongProperties, EmitPauseMusic, EmitChangeVolumeMusic } from "./types";

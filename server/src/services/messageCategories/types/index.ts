@@ -1,5 +1,5 @@
 import { SortQuery, SelectQuery, PopulateSelect } from "@services";
-import { MessageCategoryDocument, MessageCategoryModel } from "@models/types";
+import { MessageCategoryDocument, MessageCategoryModel } from "@models";
 
 export interface MessageCategoryFindOptions {
   select?: SelectQuery<MessageCategoryDocument>;

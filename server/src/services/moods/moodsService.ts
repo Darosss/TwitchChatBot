@@ -1,5 +1,4 @@
-import { Mood } from "@models/moodModel";
-import { MoodDocument } from "@models/types";
+import { Mood, MoodDocument } from "@models";
 import { getChatCommandsCount, getMessageCategoriesCount, getTimersCount, getTriggersCount } from "@services";
 import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";

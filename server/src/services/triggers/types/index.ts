@@ -1,4 +1,4 @@
-import { TriggerModel } from "@models/types";
+import { TriggerModel } from "@models";
 import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface TriggerFindOptions {

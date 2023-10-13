@@ -11,7 +11,7 @@ import type {
 import { musicPath } from "@configs/globalPaths";
 import path from "path";
 import { getMp3AudioDuration, shuffleArray } from "@utils";
-import { MusicConfigs } from "@models/types";
+import { MusicConfigs } from "@models";
 import MusicHeadHandler from "./MusicHeadHandler";
 import { SongProperties } from "./types";
 

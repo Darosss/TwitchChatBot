@@ -1,5 +1,4 @@
-import { StreamSession } from "@models/streamSessionModel";
-import { StreamSessionModel, StreamSessionDocument } from "@models/types";
+import { StreamSession, StreamSessionModel, StreamSessionDocument } from "@models";
 import {
   getMostActiveUsersByMsgs,
   getMostUsedWord,

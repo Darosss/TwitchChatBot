@@ -1,5 +1,4 @@
-import { Widgets } from "@models/widgetsModel";
-import { WidgetsDocument } from "@models/types";
+import { Widgets, WidgetsDocument } from "@models";
 import { AppError, handleAppError, logger, checkExistResource } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { WidgetCreateData, WidgetsFindOptions, WidgetUpdateData, ManyWidgetsFindOptions } from "./types/";

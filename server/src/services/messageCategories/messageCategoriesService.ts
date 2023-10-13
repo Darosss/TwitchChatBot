@@ -1,6 +1,5 @@
 import { modesPipeline } from "@aggregations/modesPipeline";
-import { MessageCategory } from "@models/messageCategoryModel";
-import { MessageCategoryDocument, MessageCategoryModel } from "@models/types";
+import { MessageCategory, MessageCategoryDocument, MessageCategoryModel } from "@models";
 import { handleAppError, checkExistResource, logger, randomWithMax } from "@utils";
 import mongoose, { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import {

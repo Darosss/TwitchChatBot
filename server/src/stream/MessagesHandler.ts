@@ -1,5 +1,5 @@
 import { createMessage, MessageCreateData, updateUser } from "@services";
-import { PointsConfigs } from "@models/types";
+import { PointsConfigs } from "@models";
 
 class MessagesHandler {
   private configs: PointsConfigs;

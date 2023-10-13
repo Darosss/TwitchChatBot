@@ -1,5 +1,5 @@
 import { ApiClient } from "@twurple/api";
-import { ConfigDocument, UserModel } from "@models/types";
+import { ConfigDocument, UserModel } from "@models";
 import { ConfigDefaults } from "@defaults/types";
 import { configDefaults } from "@defaults/configsDefaults";
 import type {

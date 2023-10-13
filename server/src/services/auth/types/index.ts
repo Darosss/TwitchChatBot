@@ -1,4 +1,4 @@
-import { AuthModel } from "@models/types";
+import { AuthModel } from "@models";
 
 export interface AuthCreateData
   extends Pick<AuthModel, "accessToken" | "refreshToken" | "expiresIn" | "obtainmentTimestamp"> {

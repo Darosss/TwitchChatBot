@@ -1,4 +1,4 @@
-import { RedemptionModel } from "@models/types";
+import { RedemptionModel } from "@models";
 import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface RedemptionFindOptions {

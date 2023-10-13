@@ -1,5 +1,4 @@
-import { Tag } from "@models/tagModel";
-import { TagDocument } from "@models/types";
+import { Tag, TagDocument } from "@models";
 import { getChatCommandsCount, getMessageCategoriesCount, getTimersCount, getTriggersCount } from "@services";
 import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";

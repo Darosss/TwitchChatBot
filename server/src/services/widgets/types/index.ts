@@ -1,4 +1,4 @@
-import { WidgetsDocument } from "@models/types";
+import { WidgetsDocument } from "@models";
 import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 export interface WidgetsFindOptions {
   select?: SelectQuery<WidgetsDocument>;

@@ -1,6 +1,5 @@
 import { modesPipeline } from "@aggregations/modesPipeline";
-import { ChatCommand } from "@models/chatCommandModel";
-import { ChatCommandDocument } from "@models/types";
+import { ChatCommand, ChatCommandDocument } from "@models";
 import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import {

@@ -1,4 +1,4 @@
-import { AuthToken } from "@models/authModel";
+import { AuthToken } from "@models";
 import { AuthCreateData } from "./types";
 import { AppError, handleAppError, logger, checkExistResource } from "@utils";
 

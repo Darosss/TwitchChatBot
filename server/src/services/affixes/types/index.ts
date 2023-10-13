@@ -1,4 +1,4 @@
-import { AffixModel } from "@models/types";
+import { AffixModel } from "@models";
 import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface AffixFindOptions {

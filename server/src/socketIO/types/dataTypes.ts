@@ -1,4 +1,4 @@
-import { UserModel } from "@models/types";
+import { UserModel } from "@models";
 
 export interface AudioYTData {
   id: string;

@@ -1,6 +1,5 @@
 import { modesPipeline } from "@aggregations/modesPipeline";
-import { Timer } from "@models/timerModel";
-import { TimerDocument, TimerModel } from "@models/types";
+import { Timer, TimerDocument, TimerModel } from "@models";
 import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import { ManyTimersFindOptions, TimerCreateData, TimerFindOptions, TimerUpdateData } from "./types";

@@ -1,4 +1,4 @@
-import { ChatCommandModel } from "@models/types";
+import { ChatCommandModel } from "@models";
 import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface ChatCommandsFindOptions {

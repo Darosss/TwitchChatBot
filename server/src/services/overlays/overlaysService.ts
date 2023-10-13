@@ -1,5 +1,4 @@
-import { Overlay } from "@models/overlayModel";
-import { OverlayDocument } from "@models/types";
+import { Overlay, OverlayDocument } from "@models";
 import { AppError, handleAppError, checkExistResource, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { OverlayCreateData, OverlaysFindOptions, OverlayUpdateData, ManyOverlaysFindOptions } from "./types/";

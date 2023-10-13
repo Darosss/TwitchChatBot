@@ -1,4 +1,4 @@
-import { User } from "@models/userModel";
+import { User } from "@models";
 import { RequestQueryMessage } from "@types";
 
 export const filterMessagesByUrlParams = async (params: RequestQueryMessage) => {

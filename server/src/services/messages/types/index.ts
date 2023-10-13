@@ -1,5 +1,5 @@
 import { SortQuery, SelectQuery, PopulateSelect } from "@services";
-import { MessageModel } from "@models/types";
+import { MessageModel } from "@models";
 
 export type MessageCreateData = Omit<MessageModel, "_id">;
 

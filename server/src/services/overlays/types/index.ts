@@ -1,4 +1,4 @@
-import { OverlayModel } from "@models/types";
+import { OverlayModel } from "@models";
 import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface OverlaysFindOptions {

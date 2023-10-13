@@ -12,7 +12,7 @@ import {
   getMultiperEnabledAfixesChances
 } from "@services";
 import { percentChance, randomWithMax, timerLogger } from "@utils";
-import { TimerModel, TimersConfigs, UserModel } from "@models/types";
+import { TimerModel, TimersConfigs, UserModel } from "@models";
 import { AuthorizedUserData } from "./types";
 
 class TimersHandler extends HeadHandler {

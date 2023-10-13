@@ -4,7 +4,7 @@ import { getBaseLog, removeDifferenceFromSet, retryWithCatch, watcherLogger } fr
 import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";
 import { Server } from "socket.io";
 import HeadHandler from "./HeadHandler";
-import { LoyaltyConfigs, PointsConfigs, StreamSessionModel } from "@models/types";
+import { LoyaltyConfigs, PointsConfigs, StreamSessionModel } from "@models";
 import { AuthorizedUserData } from "./types";
 
 interface LoyaltyConfigsHandler extends LoyaltyConfigs, PointsConfigs {}

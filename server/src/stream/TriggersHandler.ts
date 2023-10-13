@@ -1,4 +1,4 @@
-import { TriggerModel, TriggerMode, TriggersConfigs, MoodModel } from "@models/types";
+import { TriggerModel, TriggerMode, TriggersConfigs, MoodModel } from "@models";
 import {
   getEnabledSuffixesAndPrefixes,
   getMultiperEnabledAfixesChances,

@@ -1,4 +1,4 @@
-import { MoodModel } from "@models/types";
+import { MoodModel } from "@models";
 import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface MoodFindOptions {
