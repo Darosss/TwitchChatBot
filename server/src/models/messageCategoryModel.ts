@@ -1,4 +1,4 @@
-import { baseChatFeaturesFields, chatFeaturesModeFields } from "@utils/commonSchemaFieldsUtil";
+import { baseChatFeaturesFields, chatFeaturesModeFields } from "@utils";
 import mongoose, { Model, model, Schema } from "mongoose";
 import { MessageCategoryDocument } from "./types";
 

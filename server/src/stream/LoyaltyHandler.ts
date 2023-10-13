@@ -1,16 +1,11 @@
 import { updateCurrentStreamSession } from "@services/streamSessions";
 import { createUserIfNotExist, isUserInDB, updateUser } from "@services/users";
 import { ApiClient, HelixChatChatter } from "@twurple/api";
-import { getBaseLog } from "@utils/getBaseLogUtil";
-import removeDifferenceFromSet from "@utils/removeDifferenceSetUtil";
-
+import { getBaseLog, removeDifferenceFromSet, retryWithCatch, watcherLogger } from "@utils";
 import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";
 import { Server } from "socket.io";
-
-import retryWithCatch from "@utils/retryWithCatchUtil";
 import HeadHandler from "./HeadHandler";
 import { LoyaltyConfigs, PointsConfigs, StreamSessionModel } from "@models/types";
-import { watcherLogger } from "@utils/loggerUtil";
 import { AuthorizedUserData } from "./types";
 
 interface LoyaltyConfigsHandler extends LoyaltyConfigs, PointsConfigs {}

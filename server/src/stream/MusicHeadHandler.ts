@@ -11,7 +11,7 @@ import type {
 } from "@socket";
 import { MusicConfigs } from "@models/types";
 import moment from "moment";
-import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";
+import { convertSecondsToMS } from "@utils";
 import { EmitAudioNames, SongProperties, EmitPauseMusic, EmitChangeVolumeMusic } from "./types";
 
 abstract class MusicHeadHandler {

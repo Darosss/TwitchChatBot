@@ -1,5 +1,5 @@
 import { RequestQueryAuthorizationTwitch } from "@types";
-import retryWithCatch from "@utils/retryWithCatchUtil";
+import { retryWithCatch } from "@utils";
 import { NextFunction, Request, Response } from "express";
 import { AuthorizationTwitch } from "@types";
 import { createNewAuth } from "@services/auth";

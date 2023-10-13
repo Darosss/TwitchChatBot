@@ -1,7 +1,6 @@
 import { Message } from "@models/messageModel";
 import { MessageDocument } from "@models/types";
-import { handleAppError } from "@utils/ErrorHandlerUtil";
-import { logger } from "@utils/loggerUtil";
+import { handleAppError, logger } from "@utils";
 import { FilterQuery } from "mongoose";
 import { ManyMessageFindOptions, MessageCreateData } from "./types";
 export const getMessages = async (

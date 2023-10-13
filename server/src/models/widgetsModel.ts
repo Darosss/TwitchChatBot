@@ -1,4 +1,4 @@
-import { nameField } from "@utils/commonSchemaFieldsUtil";
+import { nameField } from "@utils";
 import { Model, model, Schema } from "mongoose";
 import { WidgetsDocument } from "./types";
 import { layoutBreakpointSchema } from "./layoutBreakpointModel";

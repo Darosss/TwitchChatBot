@@ -1,7 +1,6 @@
 import { Redemption } from "@models/redemptionModel";
 import { RedemptionDocument } from "@models/types";
-import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
-import { logger } from "@utils/loggerUtil";
+import { AppError, handleAppError, logger } from "@utils";
 import { FilterQuery } from "mongoose";
 import { ManyRedemptionsFindOptions, RedemptionCreateData } from "./types";
 

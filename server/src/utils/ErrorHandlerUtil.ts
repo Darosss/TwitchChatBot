@@ -1,6 +1,6 @@
 import { Error as ErrorMoongose } from "mongoose";
 
-class AppError extends Error {
+export class AppError extends Error {
   statusCode: number;
   override message: string;
 
@@ -21,7 +21,7 @@ class AppError extends Error {
   }
 }
 
-const handleAppError = (err: unknown) => {
+export const handleAppError = (err: unknown) => {
   if (err instanceof AppError) {
     throw new AppError(err.statusCode, err.message);
   } else if (err instanceof ErrorMoongose) {
@@ -30,4 +30,10 @@ const handleAppError = (err: unknown) => {
   throw new AppError();
 };
 
-export { AppError, handleAppError };
+export const checkExistResource = <T>(resource: T | null | undefined, resourceName: string) => {
+  if (!resource) {
+    throw new AppError(404, `${resourceName} not found`);
+  }
+
+  return resource;
+};

@@ -9,9 +9,8 @@ import {
   updateEnabledTimersAndEnabledModes,
   updateTimerById
 } from "@services/timers";
-import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
+import { percentChance, randomWithMax, timerLogger } from "@utils";
 import { TimerModel, TimersConfigs, UserModel } from "@models/types";
-import { timerLogger } from "@utils/loggerUtil";
 import { getEnabledSuffixesAndPrefixes, getMultiperEnabledAfixesChances } from "@services/affixes";
 import { AuthorizedUserData } from "./types";
 
