@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestSearch } from "@types";
-import { filterMoodsByUrlParams } from "./filters/moodsFilter";
+import { filterMoodsByUrlParams } from "./filters";
 import {
   createMood,
   deleteMoodById,

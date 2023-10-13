@@ -8,7 +8,7 @@ import {
   MessageCategoryCreateData
 } from "@services";
 import { RequestParams, RequestQueryMessageCategories } from "@types";
-import { filterMessageCategoriesByUrlParams } from "./filters/messageCategoriesFilter";
+import { filterMessageCategoriesByUrlParams } from "./filters";
 
 export const getMessageCategoriesList = async (
   req: Request<{}, {}, {}, RequestQueryMessageCategories>,

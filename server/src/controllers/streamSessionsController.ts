@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { RequestParams, RequestQueryMessage, RequestQuerySession, RequestRedemptionQuery } from "@types";
-import { filterSessionByUrlParams } from "./filters/sessionFilter";
+import { filterSessionByUrlParams, filterMessagesByUrlParams, filterRedemptionsByUrlParams } from "./filters";
 import {
   getCurrentStreamSession,
   getStreamSessionStatistics,
@@ -13,8 +13,6 @@ import {
   getRedemptions,
   getRedemptionsCount
 } from "@services";
-import { filterMessagesByUrlParams } from "./filters/messagesFilter";
-import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
 import { AppError } from "@utils";
 
 export const getStreamSessionsList = async (

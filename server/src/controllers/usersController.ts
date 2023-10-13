@@ -6,7 +6,7 @@ import {
   RequestQueryUser,
   RequestRedemptionQuery
 } from "@types";
-import { filterUsersByUrlParams } from "./filters/usersFilter";
+import { filterUsersByUrlParams, filterMessagesByUrlParams, filterRedemptionsByUrlParams } from "./filters";
 import {
   getUserById,
   getUserCount,
@@ -18,8 +18,6 @@ import {
   getRedemptions,
   getRedemptionsCount
 } from "@services";
-import { filterMessagesByUrlParams } from "./filters/messagesFilter";
-import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
 
 export const getUsersList = async (req: Request<{}, {}, {}, RequestQueryUser>, res: Response, next: NextFunction) => {
   const { page = 1, limit = 50, sortBy = "lastSeen", sortOrder = "desc" } = req.query;

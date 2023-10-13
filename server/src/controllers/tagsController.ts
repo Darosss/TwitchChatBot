@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestSearch } from "@types";
-import { filterTagsByUrlParams } from "./filters/tagsFilter";
+import { filterTagsByUrlParams } from "./filters";
 import {
   createTag,
   deleteTagById,
