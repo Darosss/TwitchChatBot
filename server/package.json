@@ -54,8 +54,6 @@
     "typescript": "^4.9.4"
   },
   "_moduleAliases": {
-    "@libs": "../../libs",
-    "@routes": "dist/routes",
     "@controllers": "dist/controllers",
     "@configs": "dist/configs",
     "@models": "dist/models",
@@ -63,7 +61,6 @@
     "@utils": "dist/utils",
     "@services": "dist/services",
     "@defaults": "dist/defaults",
-    "@aggregations": "dist/aggregations",
     "@socket": "dist/socketIO"
   }
 }
