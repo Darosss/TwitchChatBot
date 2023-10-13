@@ -11,10 +11,9 @@ import {
   getOneMood
 } from "@services";
 import mongoose, { ConnectOptions } from "mongoose";
-import { getDefaultChatCommands } from "@defaults/commandsDefaults";
-import { getDefaultMood, getDefaultTag } from "@defaults/modesDefaults";
-
+import { getDefaultChatCommands, getDefaultMood, getDefaultTag } from "@defaults";
 import { databaseConnectURL } from "./envVariables";
+
 const initMongoDataBase = async () => {
   mongoose.set("strictQuery", false);
 

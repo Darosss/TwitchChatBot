@@ -1,7 +1,6 @@
 import { ApiClient } from "@twurple/api";
 import { ConfigDocument, UserModel } from "@models";
-import { ConfigDefaults } from "@defaults/types";
-import { configDefaults } from "@defaults/configsDefaults";
+import { ConfigDefaults, configDefaults } from "@defaults";
 import type {
   ClientToServerEvents,
   ServerToClientEvents,
