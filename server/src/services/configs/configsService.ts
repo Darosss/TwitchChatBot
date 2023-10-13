@@ -1,7 +1,5 @@
 import { Config } from "@models/configModel";
-import { checkExistResource } from "@utils/checkExistResourceUtil";
-import { AppError, handleAppError } from "@utils/ErrorHandlerUtil";
-import { logger } from "@utils/loggerUtil";
+import { AppError, handleAppError, logger, checkExistResource } from "@utils";
 import { UpdateQuery } from "mongoose";
 import { ConfigUpdateData } from "./types";
 

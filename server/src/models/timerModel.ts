@@ -1,9 +1,4 @@
-import {
-  baseChatFeaturesFields,
-  commonChatFeaturesFields,
-  delayField,
-  descriptionField
-} from "@utils/commonSchemaFieldsUtil";
+import { baseChatFeaturesFields, commonChatFeaturesFields, delayField, descriptionField } from "@utils";
 import { Model, model, Schema } from "mongoose";
 import { TimerDocument } from "./types";
 

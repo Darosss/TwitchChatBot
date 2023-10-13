@@ -6,9 +6,8 @@ import { RefreshingAuthProvider, getTokenInfo } from "@twurple/auth";
 import ClientTmiHandler from "../stream/TwitchTmiHandler";
 import StreamHandler from "../stream/StreamHandler";
 import { getTwitchAuthUrl } from "../auth/auth";
-import { logger } from "@utils/loggerUtil";
+import { logger, decryptToken } from "@utils";
 import { botPassword, botUsername, clientId, clientSecret, encryptionKey } from "@configs/envVariables";
-import { decryptToken } from "@utils/tokenUtil";
 
 const authorizationTwitch = async (req: Request, res: Response, next: NextFunction) => {
   const tokenDB = await getAuthToken();

@@ -1,7 +1,7 @@
 import { Model, model, Schema } from "mongoose";
 import { ConfigDocument } from "./types";
 import { configDefaults } from "../defaults/configsDefaults";
-import { prefixChanceField, suffixChanceField } from "@utils/commonSchemaFieldsUtil";
+import { prefixChanceField, suffixChanceField } from "@utils";
 const {
   commandsConfigs,
   timersConfigs,

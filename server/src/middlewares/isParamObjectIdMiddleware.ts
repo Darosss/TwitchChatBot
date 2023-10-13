@@ -1,4 +1,4 @@
-import { AppError } from "@utils/ErrorHandlerUtil";
+import { AppError } from "@utils";
 import { NextFunction, Request, Response } from "express";
 import { isObjectIdOrHexString } from "mongoose";
 

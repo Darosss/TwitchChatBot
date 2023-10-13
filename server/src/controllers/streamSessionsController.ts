@@ -13,7 +13,7 @@ import { getMessages, getMessagesCount } from "@services/messages";
 import { filterMessagesByUrlParams } from "./filters/messagesFilter";
 import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
 import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
-import { AppError } from "@utils/ErrorHandlerUtil";
+import { AppError } from "@utils";
 
 export const getStreamSessionsList = async (
   req: Request<{}, {}, {}, RequestQuerySession>,

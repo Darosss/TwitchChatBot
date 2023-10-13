@@ -5,7 +5,7 @@ dotenv.config({ path: envFilePath });
 
 import initMongoDataBase from "@configs/database";
 import expressApp from "./app";
-import { logger } from "@utils/loggerUtil";
+import { logger } from "@utils";
 import { backendPort } from "@configs/envVariables";
 
 const startServer = async () => {

@@ -10,10 +10,8 @@ import type {
 import { MusicConfigs } from "@models/types";
 import moment from "moment";
 import MusicHeadHandler from "./MusicHeadHandler";
-import { shuffleArray } from "@utils/arraysOperationUtiil";
+import { shuffleArray, convertSecondsToMS, isValidUrl } from "@utils";
 import { SongProperties } from "./types";
-import { convertSecondsToMS } from "@utils/convertSecondsToFormatMSUtil";
-import { isValidUrl } from "@utils/stringsOperationsUtil";
 import YoutubeApiHandler from "./YoutubeAPIHandler";
 
 interface PlaylistDetails {

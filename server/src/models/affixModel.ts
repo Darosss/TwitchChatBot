@@ -1,10 +1,4 @@
-import {
-  baseChatFeaturesFields,
-  prefixChanceField,
-  prefixesField,
-  suffixChanceField,
-  suffixesField
-} from "@utils/commonSchemaFieldsUtil";
+import { baseChatFeaturesFields, prefixChanceField, prefixesField, suffixChanceField, suffixesField } from "@utils";
 import { Model, model, Schema } from "mongoose";
 import { AffixDocument } from "./types";
 

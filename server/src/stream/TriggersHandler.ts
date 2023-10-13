@@ -2,8 +2,7 @@ import { TriggerModel, TriggerMode, TriggersConfigs, MoodModel } from "@models/t
 import { getEnabledSuffixesAndPrefixes, getMultiperEnabledAfixesChances } from "@services/affixes";
 import { findCategoryAndUpdateMessageUse, getLeastMessagesFromEnabledCategories } from "@services/messageCategories";
 import { getOneTrigger, getTriggersWords, updateTriggerById, updateTriggers } from "@services/triggers";
-import { triggerLogger } from "@utils/loggerUtil";
-import { percentChance, randomWithMax } from "@utils/randomNumbersUtil";
+import { percentChance, randomWithMax, triggerLogger } from "@utils";
 
 class TriggersHandler {
   private configs: TriggersConfigs;
