@@ -4,7 +4,7 @@ import { createNewAuth, getAuthToken, removeAuthToken, getConfigs } from "@servi
 import { RefreshingAuthProvider, getTokenInfo } from "@twurple/auth";
 import ClientTmiHandler from "../stream/TwitchTmiHandler";
 import StreamHandler from "../stream/StreamHandler";
-import { getTwitchAuthUrl } from "../auth/auth";
+import { getTwitchAuthUrl } from "../auth";
 import { logger, decryptToken } from "@utils";
 import { botPassword, botUsername, clientId, clientSecret, encryptionKey } from "@configs";
 
