@@ -5,7 +5,7 @@
       "@routes/*": ["routes/*"],
       "@controllers/*": ["controllers/*"],
       "@configs": ["configs"],
-      "@middlewares/*": ["middlewares/*"],
+      "@middlewares": ["middlewares"],
       "@models": ["models"],
       "@services": ["services"],
       "@customTypes/*": ["@types/*"],
