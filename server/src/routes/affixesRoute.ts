@@ -7,7 +7,7 @@ import {
   // getAffixById,
   editAffixById,
   deleteAffix
-} from "@controllers/affixesController";
+} from "@controllers";
 
 const affixesRouter = Router();
 

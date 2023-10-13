@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestCommandsQuery, RequestParams } from "@types";
-import { filterCommandsByUrlParams } from "./filters/commandsFilter";
+import { filterCommandsByUrlParams } from "./filters";
 import {
   createChatCommand,
   deleteChatCommandById,

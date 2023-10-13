@@ -6,7 +6,7 @@ import {
   getUserMessages,
   getUserRedemptions,
   getLatestEldestUserMessages
-} from "@controllers/usersController";
+} from "@controllers";
 import { checkSearchParams, isParamObjectId } from "@middlewares";
 
 const usersRouter = Router();

@@ -1,7 +1,7 @@
 import { isParamObjectId, checkSearchParams } from "@middlewares";
 import { Router } from "express";
 
-import { getTimersList, addNewTimer, editTimerById, deleteTimer } from "@controllers/timersController";
+import { getTimersList, addNewTimer, editTimerById, deleteTimer } from "@controllers";
 
 const timersRouter = Router();
 

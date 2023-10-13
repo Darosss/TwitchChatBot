@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestTimerQuery } from "@types";
-import { filterTimersByUrlParams } from "./filters/timersFilter";
+import { filterTimersByUrlParams } from "./filters";
 import {
   createTimer,
   deleteTimerById,

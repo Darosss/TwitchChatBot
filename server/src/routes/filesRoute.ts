@@ -9,7 +9,7 @@ import {
   getAlertSoundsList,
   uploadAlertSound,
   deleteAlertSound
-} from "@controllers/filesController";
+} from "@controllers";
 const filesRouter = Router();
 
 filesRouter.get("/folder-list", getFoldersList);

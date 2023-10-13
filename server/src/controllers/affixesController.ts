@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestSearch } from "@types";
-import { filterAffixesByUrlParams } from "./filters/affixesFilter";
+import { filterAffixesByUrlParams } from "./filters";
 import {
   createAffix,
   deleteAffixById,

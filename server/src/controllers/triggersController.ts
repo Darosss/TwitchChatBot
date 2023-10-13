@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestTriggerQuery } from "@types";
-import { filterTriggersByUrlParams } from "./filters/triggersFilter";
+import { filterTriggersByUrlParams } from "./filters";
 import {
   createTrigger,
   deleteTriggerById,

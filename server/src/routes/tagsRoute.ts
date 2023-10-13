@@ -7,7 +7,7 @@ import {
   // getTagById,
   editTagById,
   deleteTag
-} from "@controllers/tagsController";
+} from "@controllers";
 
 const tagsRouter = Router();
 

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "paths": {
-      "@controllers/*": ["controllers/*"],
+      "@controllers": ["controllers"],
       "@configs": ["configs"],
       "@middlewares": ["middlewares"],
       "@models": ["models"],
