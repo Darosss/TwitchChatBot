@@ -6,7 +6,7 @@ import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import { ManyTimersFindOptions, TimerCreateData, TimerFindOptions, TimerUpdateData } from "./types";
 
 export const getTimers = async (filter: FilterQuery<TimerDocument> = {}, timerFindOptions: ManyTimersFindOptions) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 }, populateSelect } = timerFindOptions;
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 }, populateSelect = [] } = timerFindOptions;
 
   try {
     const timer = await Timer.find(filter)
@@ -112,7 +112,7 @@ export const getTimerById = async (
   filter: FilterQuery<TimerDocument> = {},
   timerFindOptions: TimerFindOptions
 ) => {
-  const { select = { __v: 0 }, populateSelect } = timerFindOptions;
+  const { select = { __v: 0 }, populateSelect = [] } = timerFindOptions;
   try {
     const foundTimer = await Timer.findById(id, filter).select(select).populate(populateSelect);
 

@@ -9,7 +9,13 @@ export const getTriggers = async (
   filter: FilterQuery<TriggerDocument> = {},
   triggerFindOptions: ManyTriggersFindOptions
 ) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 }, populateSelect } = triggerFindOptions;
+  const {
+    limit = 50,
+    skip = 1,
+    sort = { createdAt: -1 },
+    select = { __v: 0 },
+    populateSelect = []
+  } = triggerFindOptions;
 
   try {
     const trigger = await Trigger.find(filter)
@@ -103,7 +109,7 @@ export const getOneTrigger = async (
   filter: FilterQuery<TriggerDocument> = {},
   triggerFindOptions: TriggerFindOptions
 ) => {
-  const { populateSelect, select = { __v: 0 } } = triggerFindOptions;
+  const { populateSelect = [], select = { __v: 0 } } = triggerFindOptions;
   try {
     const foundTrigger = await Trigger.findOne(filter).select(select).populate(populateSelect);
 

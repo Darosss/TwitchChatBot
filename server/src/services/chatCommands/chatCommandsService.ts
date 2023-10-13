@@ -19,7 +19,7 @@ export const getChatCommands = async (
     skip = 1,
     sort = { createdAt: -1 },
     select = { __v: 0 },
-    populateSelect
+    populateSelect = []
   } = chatCommandsFindOptions;
 
   try {

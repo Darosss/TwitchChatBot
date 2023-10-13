@@ -16,7 +16,8 @@ export const getMessagesList = async (
       limit: Number(limit),
       skip: Number(page),
       sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
-      select: { __v: 0 }
+      select: { __v: 0 },
+      populateSelect: { path: "owner", select: "id username" }
     });
 
     const count = await getMessagesCount(searchFilter);
