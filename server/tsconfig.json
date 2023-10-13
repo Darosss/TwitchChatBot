@@ -6,7 +6,7 @@
       "@controllers/*": ["controllers/*"],
       "@configs/*": ["configs/*"],
       "@middlewares/*": ["middlewares/*"],
-      "@models/*": ["models/*"],
+      "@models": ["models"],
       "@services": ["services"],
       "@customTypes/*": ["@types/*"],
       "@utils": ["utils"],
