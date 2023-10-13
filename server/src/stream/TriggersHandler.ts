@@ -206,7 +206,7 @@ class TriggersHandler {
         {
           words: { $regex: new RegExp(`\\b${triggerWord}\\b`, "i") }
         },
-        { populateSelect: "mood" }
+        { populate: { path: "mood" } }
       );
       return foundedTrigger;
     } catch (err) {}

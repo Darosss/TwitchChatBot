@@ -95,7 +95,7 @@ class TimersHandler extends HeadHandler {
   }
 
   private async getTimerMessage(id: string) {
-    const timer = await getTimerById(id, {}, { populateSelect: "mood" });
+    const timer = await getTimerById(id, {}, { populate: { path: "mood" } });
     if (!timer) return "";
 
     const [prefix, suffix] = await this.getRandomEnabledAffixes();
