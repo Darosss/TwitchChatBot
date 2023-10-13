@@ -1,6 +1,6 @@
 import { Trigger, TriggerDocument } from "@models";
 import { checkExistResource, AppError, handleAppError, logger } from "@utils";
-import { modesPipeline } from "@aggregations/modesPipeline";
+import { modesPipeline } from "../aggregations";
 import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import { ManyTriggersFindOptions, TriggerCreateData, TriggerFindOptions, TriggerUpdateData } from "./types";
 

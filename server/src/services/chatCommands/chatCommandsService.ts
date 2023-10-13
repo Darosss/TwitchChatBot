@@ -1,4 +1,3 @@
-import { modesPipeline } from "@aggregations/modesPipeline";
 import { ChatCommand, ChatCommandDocument } from "@models";
 import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
@@ -7,7 +6,8 @@ import {
   ChatCommandsFindOptions,
   ChatCommandUpdateData,
   ManyChatCommandsFindOptions
-} from "./types/";
+} from "./types";
+import { modesPipeline } from "../aggregations";
 
 export const getChatCommands = async (
   filter: FilterQuery<ChatCommandDocument> = {},

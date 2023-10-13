@@ -1,4 +1,4 @@
-import { modesPipeline } from "@aggregations/modesPipeline";
+import { modesPipeline, getLeastMessagePipeline } from "../aggregations";
 import { MessageCategory, MessageCategoryDocument, MessageCategoryModel } from "@models";
 import { handleAppError, checkExistResource, logger, randomWithMax } from "@utils";
 import mongoose, { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
@@ -8,7 +8,6 @@ import {
   MessageCategoryData,
   MessageCategoryFindOptions
 } from "./types";
-import { getLeastMessagePipeline } from "@aggregations/messageCategoriesPipeline";
 
 export const getMessageCategories = async (
   filter: FilterQuery<MessageCategoryModel> = {},
