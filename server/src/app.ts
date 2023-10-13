@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, RequestHandler, Response } from "express";
 import cors from "cors";
-import initRoutes from "./routes";
+import { initRoutes } from "./routes";
 import localSocket from "./socketIO";
 import http from "http";
 import { errorResponder, invalidPathHandler, twitchHandlersMiddleware } from "@middlewares";
