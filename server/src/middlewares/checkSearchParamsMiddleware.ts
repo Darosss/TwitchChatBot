@@ -2,7 +2,7 @@ import { RequestQuery } from "@types";
 import { AppError } from "@utils";
 import { NextFunction, Request, Response } from "express";
 
-const checkSearchParams = (req: Request<{}, {}, {}, RequestQuery>, res: Response, next: NextFunction) => {
+export const checkSearchParams = (req: Request<{}, {}, {}, RequestQuery>, res: Response, next: NextFunction) => {
   const { page, limit } = req.query;
   let message = ``;
 
@@ -16,5 +16,3 @@ const checkSearchParams = (req: Request<{}, {}, {}, RequestQuery>, res: Response
 
   throw new AppError(400, message);
 };
-
-export default checkSearchParams;
