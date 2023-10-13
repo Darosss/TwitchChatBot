@@ -10,7 +10,6 @@
       "@services": ["services"],
       "@customTypes/*": ["@types/*"],
       "@utils": ["utils"],
-      "@aggregations/*": ["aggregations/*"],
       "@defaults": ["defaults"],
       "@socket": ["socketIO"]
     },
