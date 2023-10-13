@@ -11,7 +11,7 @@
       "@customTypes/*": ["@types/*"],
       "@utils": ["utils"],
       "@aggregations/*": ["aggregations/*"],
-      "@defaults/*": ["defaults/*"],
+      "@defaults": ["defaults"],
       "@socket": ["socketIO"]
     },
     "target": "es2017",
