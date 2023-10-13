@@ -3,8 +3,7 @@ import cors from "cors";
 import initRoutes from "./routes";
 import localSocket from "./socketIO";
 import http from "http";
-import { errorResponder, invalidPathHandler } from "@middlewares/errorHandlersMiddleware";
-import twitchHandlersMiddleware from "@middlewares/twitchHandlersMiddleware";
+import { errorResponder, invalidPathHandler, twitchHandlersMiddleware } from "@middlewares";
 import { hostFrontendURL, localFrontendURL } from "@configs";
 
 const expressApp = () => {

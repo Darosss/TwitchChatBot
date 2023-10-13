@@ -7,8 +7,7 @@ import {
   getUserRedemptions,
   getLatestEldestUserMessages
 } from "@controllers/usersController";
-import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
-import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
+import { checkSearchParams, isParamObjectId } from "@middlewares";
 
 const usersRouter = Router();
 

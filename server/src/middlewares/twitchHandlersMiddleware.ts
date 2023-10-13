@@ -8,7 +8,7 @@ import { getTwitchAuthUrl } from "../auth/auth";
 import { logger, decryptToken } from "@utils";
 import { botPassword, botUsername, clientId, clientSecret, encryptionKey } from "@configs";
 
-const authorizationTwitch = async (req: Request, res: Response, next: NextFunction) => {
+export const twitchHandlersMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const tokenDB = await getAuthToken();
   if (!tokenDB) {
     const authUrl = getTwitchAuthUrl();
@@ -82,5 +82,3 @@ const authorizationTwitch = async (req: Request, res: Response, next: NextFuncti
     }
   }
 };
-
-export default authorizationTwitch;

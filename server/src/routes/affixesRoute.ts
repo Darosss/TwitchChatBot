@@ -1,4 +1,4 @@
-import isParamObjectId from "@middlewares/isParamObjectIdMiddleware";
+import { isParamObjectId, checkSearchParams } from "@middlewares";
 import { Router } from "express";
 
 import {
@@ -8,7 +8,6 @@ import {
   editAffixById,
   deleteAffix
 } from "@controllers/affixesController";
-import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
 
 const affixesRouter = Router();
 

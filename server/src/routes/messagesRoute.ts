@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getMessagesList } from "@controllers/messagesController";
-import checkSearchParams from "@middlewares/checkSearchParamsMiddleware";
+import { checkSearchParams } from "@middlewares";
 
 const messagesRouter = Router();
 
