@@ -6,7 +6,6 @@
       "@middlewares": ["middlewares"],
       "@models": ["models"],
       "@services": ["services"],
-      "@customTypes/*": ["@types/*"],
       "@utils": ["utils"],
       "@defaults": ["defaults"],
       "@socket": ["socketIO"]
