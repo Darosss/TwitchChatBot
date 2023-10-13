@@ -9,7 +9,7 @@ import {
   updateAffixById,
   AffixCreateData,
   AffixUpdateData
-} from "@services/affixes";
+} from "@services";
 
 export const getAffixesList = async (req: Request<{}, {}, {}, RequestSearch>, res: Response, next: NextFunction) => {
   const { page = 1, limit = 50 } = req.query;

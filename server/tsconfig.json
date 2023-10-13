@@ -7,7 +7,7 @@
       "@configs/*": ["configs/*"],
       "@middlewares/*": ["middlewares/*"],
       "@models/*": ["models/*"],
-      "@services/*": ["services/*"],
+      "@services": ["services"],
       "@customTypes/*": ["@types/*"],
       "@utils": ["utils"],
       "@aggregations/*": ["aggregations/*"],

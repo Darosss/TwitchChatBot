@@ -9,7 +9,7 @@ import {
   updateTriggerById,
   TriggerCreateData,
   TriggerUpdateData
-} from "@services/triggers";
+} from "@services";
 
 export const getTriggersList = async (
   req: Request<{}, {}, {}, RequestTriggerQuery>,
@@ -23,7 +23,7 @@ export const getTriggersList = async (
     const triggers = await getTriggers(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
-      populateSelect: [
+      populate: [
         { path: "tag", select: { _id: 1, name: 1, enabled: true } },
         { path: "mood", select: { _id: 1, name: 1, enabled: true } }
       ],

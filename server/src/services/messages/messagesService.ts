@@ -7,13 +7,12 @@ export const getMessages = async (
   filter: FilterQuery<MessageDocument> = {},
   messageFindOptions: ManyMessageFindOptions
 ) => {
-  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 }, populateSelect = "id username" } = messageFindOptions;
-
+  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 }, populate = [] } = messageFindOptions;
   try {
     const messages = await Message.find(filter)
       .limit(limit * 1)
       .skip((skip - 1) * limit)
-      .populate({ path: "owner", select: populateSelect })
+      .populate(populate)
       .select(select)
       .sort(sort);
     return messages;

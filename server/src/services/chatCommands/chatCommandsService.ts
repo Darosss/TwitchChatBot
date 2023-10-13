@@ -19,7 +19,7 @@ export const getChatCommands = async (
     skip = 1,
     sort = { createdAt: -1 },
     select = { __v: 0 },
-    populateSelect
+    populate = []
   } = chatCommandsFindOptions;
 
   try {
@@ -27,7 +27,7 @@ export const getChatCommands = async (
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
-      .populate(populateSelect)
+      .populate(populate)
       .sort(sort);
 
     return chatCommands;

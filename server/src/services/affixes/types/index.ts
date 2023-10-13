@@ -1,10 +1,9 @@
 import { AffixModel } from "@models/types";
-import { PopulateOption } from "mongoose";
-import { SortQuery, SelectQuery } from "@services/types";
+import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface AffixFindOptions {
   select?: SelectQuery<AffixModel>;
-  populateSelect?: PopulateOption.select;
+  populate?: PopulateSelect;
 }
 
 export interface ManyAffixesFindOptions extends AffixFindOptions {

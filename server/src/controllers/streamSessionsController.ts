@@ -7,11 +7,13 @@ import {
   getStreamSessions,
   getStreamSessionsCount,
   getStreamSessionById,
-  getLatestStreamSession
-} from "@services/streamSessions";
-import { getMessages, getMessagesCount } from "@services/messages";
+  getLatestStreamSession,
+  getMessages,
+  getMessagesCount,
+  getRedemptions,
+  getRedemptionsCount
+} from "@services";
 import { filterMessagesByUrlParams } from "./filters/messagesFilter";
-import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
 import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
 import { AppError } from "@utils";
 

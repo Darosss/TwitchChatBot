@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestQueryMessage } from "@types";
 import { filterMessagesByUrlParams } from "./filters/messagesFilter";
-import { getMessages, getMessagesCount } from "@services/messages";
+import { getMessages, getMessagesCount } from "@services";
 
 export const getMessagesList = async (
   req: Request<{}, {}, {}, RequestQueryMessage>,
@@ -16,7 +16,8 @@ export const getMessagesList = async (
       limit: Number(limit),
       skip: Number(page),
       sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 },
-      select: { __v: 0 }
+      select: { __v: 0 },
+      populate: { path: "owner", select: "id username" }
     });
 
     const count = await getMessagesCount(searchFilter);

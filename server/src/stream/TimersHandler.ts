@@ -7,11 +7,12 @@ import {
   getTimers,
   getTimersDataWithModesEnabled,
   updateEnabledTimersAndEnabledModes,
-  updateTimerById
-} from "@services/timers";
+  updateTimerById,
+  getEnabledSuffixesAndPrefixes,
+  getMultiperEnabledAfixesChances
+} from "@services";
 import { percentChance, randomWithMax, timerLogger } from "@utils";
 import { TimerModel, TimersConfigs, UserModel } from "@models/types";
-import { getEnabledSuffixesAndPrefixes, getMultiperEnabledAfixesChances } from "@services/affixes";
 import { AuthorizedUserData } from "./types";
 
 class TimersHandler extends HeadHandler {
@@ -94,7 +95,7 @@ class TimersHandler extends HeadHandler {
   }
 
   private async getTimerMessage(id: string) {
-    const timer = await getTimerById(id, {}, { populateSelect: "mood" });
+    const timer = await getTimerById(id, {}, { populate: { path: "mood" } });
     if (!timer) return "";
 
     const [prefix, suffix] = await this.getRandomEnabledAffixes();

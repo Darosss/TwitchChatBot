@@ -1,10 +1,18 @@
-import { configExist, createNewConfig } from "@services/configs";
+import {
+  configExist,
+  createNewConfig,
+  createChatCommand,
+  getChatCommandsCount,
+  createTag,
+  getOneTag,
+  getTagsCount,
+  createMood,
+  getMoodsCount,
+  getOneMood
+} from "@services";
 import mongoose, { ConnectOptions } from "mongoose";
-import { createChatCommand, getChatCommandsCount } from "@services/chatCommands";
 import { getDefaultChatCommands } from "@defaults/commandsDefaults";
-import { createTag, getOneTag, getTagsCount } from "@services/tags";
 import { getDefaultMood, getDefaultTag } from "@defaults/modesDefaults";
-import { createMood, getMoodsCount, getOneMood } from "@services/moods";
 
 import { databaseConnectURL } from "./envVariables";
 const initMongoDataBase = async () => {

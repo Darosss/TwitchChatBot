@@ -1,10 +1,9 @@
 import { TagModel } from "@models/types";
-import { PopulateOption } from "mongoose";
-import { SortQuery, SelectQuery } from "@services/types";
+import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface TagFindOptions {
   select?: SelectQuery<TagModel>;
-  populateSelect?: PopulateOption.select;
+  populate?: PopulateSelect;
 }
 
 export interface ManyTagsFindOptions extends TagFindOptions {

@@ -1,12 +1,7 @@
 import HeadHandler from "./HeadHandler";
 import { ApiClient } from "@twurple/api";
 import { ChatCommandModel, CommandsConfigs, HeadConfigs, UserModel } from "@models/types";
-import {
-  getChatCommands,
-  getChatCommandsAliases,
-  getOneChatCommand,
-  updateChatCommandById
-} from "@services/chatCommands";
+import { getChatCommands, getChatCommandsAliases, getOneChatCommand, updateChatCommandById } from "@services";
 import { commandLogger, randomWithMax } from "@utils";
 import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";
 import { Server } from "socket.io";

@@ -9,7 +9,7 @@ import {
   updateTagById,
   TagCreateData,
   TagUpdateData
-} from "@services/tags";
+} from "@services";
 
 export const getTagsList = async (req: Request<{}, {}, {}, RequestSearch>, res: Response, next: NextFunction) => {
   const { page = 1, limit = 50 } = req.query;

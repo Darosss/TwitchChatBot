@@ -1,9 +1,6 @@
 import { Tag } from "@models/tagModel";
 import { TagDocument } from "@models/types";
-import { getChatCommandsCount } from "@services/chatCommands";
-import { getMessageCategoriesCount } from "@services/messageCategories";
-import { getTimersCount } from "@services/timers";
-import { getTriggersCount } from "@services/triggers";
+import { getChatCommandsCount, getMessageCategoriesCount, getTimersCount, getTriggersCount } from "@services";
 import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { ManyTagsFindOptions, TagCreateData, TagUpdateData } from "./types";

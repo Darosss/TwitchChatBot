@@ -8,7 +8,7 @@ import {
   updateWidgetById,
   WidgetCreateData,
   WidgetUpdateData
-} from "@services/widgets";
+} from "@services";
 import { RequestParams, RequestSearch } from "@types";
 
 export const getWidgetsList = async (req: Request<{}, {}, {}, RequestSearch>, res: Response, next: NextFunction) => {

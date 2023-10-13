@@ -7,12 +7,18 @@ import {
   RequestRedemptionQuery
 } from "@types";
 import { filterUsersByUrlParams } from "./filters/usersFilter";
-import { getUserById, getUserCount, getUsers, updateUserById, UserUpdateData } from "@services/users";
-
+import {
+  getUserById,
+  getUserCount,
+  getUsers,
+  updateUserById,
+  UserUpdateData,
+  getMessages,
+  getMessagesCount,
+  getRedemptions,
+  getRedemptionsCount
+} from "@services";
 import { filterMessagesByUrlParams } from "./filters/messagesFilter";
-import { getMessages, getMessagesCount } from "@services/messages";
-
-import { getRedemptions, getRedemptionsCount } from "@services/redemptions";
 import { filterRedemptionsByUrlParams } from "./filters/redemptionsFilter";
 
 export const getUsersList = async (req: Request<{}, {}, {}, RequestQueryUser>, res: Response, next: NextFunction) => {

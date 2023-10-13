@@ -1,10 +1,9 @@
 import { TimerModel } from "@models/types";
-import { PopulateOption } from "mongoose";
-import { SortQuery, SelectQuery } from "@services/types";
+import { SortQuery, SelectQuery, PopulateSelect } from "@services";
 
 export interface TimerFindOptions {
   select?: SelectQuery<TimerModel>;
-  populateSelect?: PopulateOption.select;
+  populate?: PopulateSelect;
 }
 
 export interface ManyTimersFindOptions extends TimerFindOptions {
@@ -15,6 +14,8 @@ export interface ManyTimersFindOptions extends TimerFindOptions {
 
 export type TimerOptionalData = Partial<Omit<TimerModel, "_id" | "createdAt" | "updatedAt">>;
 
-export interface TimerCreateData extends Pick<TimerModel, "name" | "messages">, TimerOptionalData {}
+export interface TimerCreateData
+  extends Pick<TimerModel, "name" | "messages">,
+    Omit<TimerOptionalData, "name" | "messages"> {}
 
 export interface TimerUpdateData extends TimerOptionalData, Partial<TimerCreateData> {}
