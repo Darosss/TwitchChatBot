@@ -13,4 +13,4 @@ export * from "./timers";
 export * from "./triggers";
 export * from "./users";
 export * from "./widgets";
-export type * from "./types";
+export * from "./types";
