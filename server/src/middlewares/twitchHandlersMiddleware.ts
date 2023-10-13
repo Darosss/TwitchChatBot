@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiClient } from "@twurple/api";
-import { createNewAuth, getAuthToken, removeAuthToken } from "@services/auth";
-import { getConfigs } from "@services/configs";
+import { createNewAuth, getAuthToken, removeAuthToken, getConfigs } from "@services";
 import { RefreshingAuthProvider, getTokenInfo } from "@twurple/auth";
 import ClientTmiHandler from "../stream/TwitchTmiHandler";
 import StreamHandler from "../stream/StreamHandler";

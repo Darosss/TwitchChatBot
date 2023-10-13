@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { getConfigs, updateConfigs, ConfigUpdateData } from "@services/configs";
+import { getConfigs, updateConfigs, ConfigUpdateData } from "@services";
 import { configDefaults } from "@defaults/configsDefaults";
 
 export const getConfigsList = async (req: Request, res: Response, next: NextFunction) => {

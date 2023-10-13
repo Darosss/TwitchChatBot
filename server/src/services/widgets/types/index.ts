@@ -1,5 +1,5 @@
 import { IWidget } from "@models/types";
-import { SortQuery, SelectQuery } from "@services/types";
+import { SortQuery, SelectQuery } from "@services";
 import { PopulateOption } from "mongoose";
 
 export interface WidgetsFindOptions {

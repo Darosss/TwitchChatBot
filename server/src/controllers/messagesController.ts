@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestQueryMessage } from "@types";
 import { filterMessagesByUrlParams } from "./filters/messagesFilter";
-import { getMessages, getMessagesCount } from "@services/messages";
+import { getMessages, getMessagesCount } from "@services";
 
 export const getMessagesList = async (
   req: Request<{}, {}, {}, RequestQueryMessage>,

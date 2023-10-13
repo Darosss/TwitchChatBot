@@ -1,5 +1,5 @@
 import { PopulateOption } from "mongoose";
-import { SortQuery, SelectQuery } from "@services/types";
+import { SortQuery, SelectQuery } from "@services";
 import { MessageModel } from "@models/types";
 
 export type MessageCreateData = Omit<MessageModel, "_id">;

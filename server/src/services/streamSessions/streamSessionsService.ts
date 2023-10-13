@@ -1,8 +1,12 @@
 import { StreamSession } from "@models/streamSessionModel";
 import { StreamSessionModel, StreamSessionDocument } from "@models/types";
-import { getMostActiveUsersByMsgs, getMostUsedWord, getMessagesCountByDate } from "@services/messages";
-import { getMostActiveUsersByRedemptions } from "@services/redemptions";
-import { getFollowersCount } from "@services/users";
+import {
+  getMostActiveUsersByMsgs,
+  getMostUsedWord,
+  getMessagesCountByDate,
+  getMostActiveUsersByRedemptions,
+  getFollowersCount
+} from "@services";
 import { checkExistResource, handleAppError, getLastNItemsFromMap, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {

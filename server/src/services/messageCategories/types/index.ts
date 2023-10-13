@@ -1,5 +1,5 @@
 import { PopulateOption } from "mongoose";
-import { SortQuery, SelectQuery } from "@services/types";
+import { SortQuery, SelectQuery } from "@services";
 import { MessageCategoryModel } from "@models/types";
 
 export interface MessageCategoryFindOptions {

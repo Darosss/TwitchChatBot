@@ -1,5 +1,4 @@
-import { updateCurrentStreamSession } from "@services/streamSessions";
-import { createUserIfNotExist, isUserInDB, updateUser } from "@services/users";
+import { updateCurrentStreamSession, createUserIfNotExist, isUserInDB, updateUser } from "@services";
 import { ApiClient, HelixChatChatter } from "@twurple/api";
 import { getBaseLog, removeDifferenceFromSet, retryWithCatch, watcherLogger } from "@utils";
 import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";

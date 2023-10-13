@@ -9,7 +9,7 @@ import {
   updateTriggerById,
   TriggerCreateData,
   TriggerUpdateData
-} from "@services/triggers";
+} from "@services";
 
 export const getTriggersList = async (
   req: Request<{}, {}, {}, RequestTriggerQuery>,

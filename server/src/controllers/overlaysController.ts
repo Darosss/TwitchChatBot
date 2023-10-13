@@ -8,7 +8,7 @@ import {
   updateOverlayById,
   OverlayCreateData,
   OverlayUpdateData
-} from "@services/overlays";
+} from "@services";
 import { RequestParams, RequestSearch } from "@types";
 
 export const getOverlaysList = async (req: Request<{}, {}, {}, RequestSearch>, res: Response, next: NextFunction) => {

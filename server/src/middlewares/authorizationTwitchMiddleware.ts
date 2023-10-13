@@ -2,7 +2,7 @@ import { RequestQueryAuthorizationTwitch } from "@types";
 import { retryWithCatch } from "@utils";
 import { NextFunction, Request, Response } from "express";
 import { AuthorizationTwitch } from "@types";
-import { createNewAuth } from "@services/auth";
+import { createNewAuth } from "@services";
 import { clientId, clientSecret, redirectUrl } from "@configs/envVariables";
 
 const authorizationTwitch = async (req: Request, res: Response, next: NextFunction) => {

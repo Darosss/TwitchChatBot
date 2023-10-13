@@ -1,6 +1,4 @@
-import { createMessage } from "@services/messages";
-import { MessageCreateData } from "@services/messages/types";
-import { updateUser } from "@services/users";
+import { createMessage, MessageCreateData, updateUser } from "@services";
 import { PointsConfigs } from "@models/types";
 
 class MessagesHandler {

@@ -1,6 +1,6 @@
 import { TagModel } from "@models/types";
 import { PopulateOption } from "mongoose";
-import { SortQuery, SelectQuery } from "@services/types";
+import { SortQuery, SelectQuery } from "@services";
 
 export interface TagFindOptions {
   select?: SelectQuery<TagModel>;

@@ -9,7 +9,7 @@ import {
   updateTimerById,
   TimerCreateData,
   TimerUpdateData
-} from "@services/timers";
+} from "@services";
 
 export const getTimersList = async (req: Request<{}, {}, {}, RequestTimerQuery>, res: Response, next: NextFunction) => {
   const { page = 1, limit = 50, sortBy = "createdAt", sortOrder = "desc" } = req.query;

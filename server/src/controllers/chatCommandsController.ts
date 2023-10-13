@@ -9,7 +9,7 @@ import {
   updateChatCommandById,
   ChatCommandCreateData,
   ChatCommandUpdateData
-} from "@services/chatCommands";
+} from "@services";
 
 export const getChatCommandsList = async (
   req: Request<{}, {}, {}, RequestCommandsQuery>,

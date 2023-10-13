@@ -6,7 +6,7 @@ import {
   createMessageCategories,
   deleteMessageCategory,
   MessageCategoryCreateData
-} from "@services/messageCategories";
+} from "@services";
 import { RequestParams, RequestQueryMessageCategories } from "@types";
 import { filterMessageCategoriesByUrlParams } from "./filters/messageCategoriesFilter";
 
