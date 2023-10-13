@@ -9,7 +9,7 @@
       "@models/*": ["models/*"],
       "@services/*": ["services/*"],
       "@customTypes/*": ["@types/*"],
-      "@utils/*": ["utils/*"],
+      "@utils": ["utils"],
       "@aggregations/*": ["aggregations/*"],
       "@defaults/*": ["defaults/*"],
       "@socket": ["socketIO"]
