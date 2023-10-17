@@ -259,3 +259,22 @@ export interface TagModel extends BaseModel {
 }
 
 export type TagDocument = TagModel & Document;
+
+export interface SongsModel extends BaseModel {
+  title: string;
+  youtubeId: string;
+  customTitle?: {
+    band: string;
+    title: string;
+  };
+  duration: number;
+  customId?: string;
+  uses: number;
+  usersUses: Map<string, number>;
+  botUses: number;
+  songRequestUses: number;
+  whoAdded: string | UserModel;
+  likes: Map<string, number>;
+}
+
+export type SongsDocument = SongsModel & Document;
