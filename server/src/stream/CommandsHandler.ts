@@ -62,7 +62,10 @@ class CommandsHandler extends HeadHandler {
       ["next", this.musicCommandCommonPermission],
       ["previous", this.musicCommandCommonPermission],
       ["when", this.musicCommandCommonPermission],
-      ["sr", this.musicCommandCommonPermission]
+      ["sr", this.musicCommandCommonPermission],
+      ["like", this.musicCommandCommonPermission],
+      ["dislike", this.musicCommandCommonPermission],
+      ["unlike", this.musicCommandCommonPermission]
     ]);
   }
 
@@ -150,6 +153,16 @@ class CommandsHandler extends HeadHandler {
         const volume = Number(message.replace(volumeCommand, "").trim());
 
         this.musicHandler.changeVolume(volume);
+        return true;
+
+      case "like":
+        this.musicHandler.manageSongLikesByUser(username, "like");
+        return true;
+      case "dislike":
+        this.musicHandler.manageSongLikesByUser(username, "dislike");
+        return true;
+      case "unlike":
+        this.musicHandler.manageSongLikesByUser(username, "nothing");
         return true;
     }
   }
