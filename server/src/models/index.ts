@@ -15,4 +15,5 @@ export * from "./triggerModel";
 export * from "./moodModel";
 export * from "./userModel";
 export * from "./widgetsModel";
+export * from "./songsModel";
 export * from "./types";
