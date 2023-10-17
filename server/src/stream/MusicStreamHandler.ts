@@ -93,10 +93,10 @@ class MusicStreamHandler extends MusicHeadHandler {
   }
 
   public getAudioInfo(): AudioStreamDataInfo | undefined {
-    const songsInQue: [string, string][] = [];
+    const songsInQue: AudioStreamDataInfo["songsInQue"] = [];
 
     this.musicQue.forEach(([, audioProps]) => {
-      songsInQue.push([audioProps.name, audioProps.requester || ""]);
+      songsInQue.push([audioProps.name, audioProps.requester]);
     });
     const info: AudioStreamDataInfo = {
       name: this.currentSong?.name || "",
