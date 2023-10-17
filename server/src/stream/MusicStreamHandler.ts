@@ -6,7 +6,8 @@ import type {
   InterServerEvents,
   SocketData,
   AudioStreamData,
-  AudioStreamDataInfo
+  AudioStreamDataInfo,
+  AudioDataRequester
 } from "@socket";
 import { musicPath } from "@configs";
 import path from "path";
@@ -53,7 +54,7 @@ class MusicStreamHandler extends MusicHeadHandler {
     }
   }
 
-  protected async addSongToQue(song: SongProperties, requester = "") {
+  protected async addSongToQue(song: SongProperties, requester?: AudioDataRequester) {
     try {
       const mp3FilePath = path.join(this.currentFolder, song.name) + this.formatFile;
       const duration = await getMp3AudioDuration(mp3FilePath);
