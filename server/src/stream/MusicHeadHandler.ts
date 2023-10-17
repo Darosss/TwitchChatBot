@@ -58,6 +58,8 @@ abstract class MusicHeadHandler {
 
   public abstract getAudioStreamData(): AudioStreamData | AudioYTData | undefined;
 
+  protected abstract onStartPlayNewSong(): Promise<void>;
+
   public async refreshConfigs(configs: MusicConfigs) {
     this.configs = configs;
   }
@@ -85,6 +87,7 @@ abstract class MusicHeadHandler {
         this.socketIO.emit(this.emitName, this.currentSong);
 
         this.clientSay("Current song: " + this.getNameOfCurrentSong());
+        await this.onStartPlayNewSong();
         this.emitGetAudioInfo();
 
         const delayNextSong = this.currentDelay - this.currentSong.currentTime;
