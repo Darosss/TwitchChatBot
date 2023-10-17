@@ -28,6 +28,10 @@ class MusicStreamHandler extends MusicHeadHandler {
     super(socketIO, sayInAuthorizedChannel, configs, "audio");
   }
 
+  protected override async onStartPlayNewSong(): Promise<void> {
+    //TODO: do logic here if needed?
+  }
+
   public getAudioStreamData(): AudioStreamData | undefined {
     if (this.currentSong) {
       const currentTimeSong = this.getCurrentTimeSong();
