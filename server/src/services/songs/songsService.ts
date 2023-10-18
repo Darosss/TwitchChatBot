@@ -10,7 +10,7 @@ import {
 import { SongsDocument, Songs } from "@models";
 
 export const getSongs = async (filter: FilterQuery<SongsDocument> = {}, songsFindOptions: ManySongsFindOptions) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 }, populate = [] } = songsFindOptions;
+  const { limit = 50, skip = 1, sort = { createdAt: 1 }, select = { __v: 0 }, populate = [] } = songsFindOptions;
 
   try {
     const songs = await Songs.find(filter)
