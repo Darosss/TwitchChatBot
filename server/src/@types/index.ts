@@ -78,3 +78,7 @@ export interface RequestQueryAuthorizationTwitch {
   scope: string;
   state: string;
 }
+
+export interface RequestSongsQuery extends RequestSearchDate {
+  customId?: string;
+}
