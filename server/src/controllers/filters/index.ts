@@ -9,3 +9,4 @@ export * from "./tagsFilter";
 export * from "./timersFilter";
 export * from "./triggersFilter";
 export * from "./usersFilter";
+export * from "./songsFilter";

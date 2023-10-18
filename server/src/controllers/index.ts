@@ -14,3 +14,4 @@ export * from "./timersController";
 export * from "./triggersController";
 export * from "./usersController";
 export * from "./widgetsController";
+export * from "./songsController";
