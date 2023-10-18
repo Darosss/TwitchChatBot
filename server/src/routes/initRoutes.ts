@@ -15,6 +15,7 @@ import moodsRouter from "./moodsRoute";
 import tagsRouter from "./tagsRoute";
 import affixesRouter from "./affixesRoute";
 import filesRouter from "./filesRoute";
+import songsRouter from "./songsRoute";
 
 export const initRoutes = (app: Express) => {
   app.use("/auth", auth);
@@ -31,6 +32,7 @@ export const initRoutes = (app: Express) => {
   app.use("/tags", tagsRouter);
   app.use("/triggers", triggersRouter);
   app.use("/timers", timersRouter);
+  app.use("/songs", songsRouter);
   app.use("/files", filesRouter);
   app.use("/widgets", widgetsRouter);
 };
