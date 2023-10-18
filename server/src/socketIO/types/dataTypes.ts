@@ -1,11 +1,16 @@
 import { UserModel } from "@models";
 
+export interface AudioDataRequester {
+  id: string;
+  username: string;
+}
+
 export interface AudioYTData {
   id: string;
   name: string;
   duration: number;
   currentTime: number;
-  requester?: string;
+  requester?: AudioDataRequester;
   volume: number;
 }
 
@@ -17,7 +22,7 @@ export interface AudioYTDataInfo {
   name: string;
   duration: number;
   currentTime: number;
-  songsInQue: [string, string][];
+  songsInQue: [string, AudioDataRequester | undefined][];
   isPlaying: boolean;
   volume: number;
 }

@@ -121,7 +121,7 @@ export default function AudioInformation<
           {[...audioData.songsInQue].map(([songName, requester], index) => (
             <div key={index} className="audio-playlist-audio-list">
               <div>{songName}</div>
-              <div>{`${requester ? `${requester}` : `default`}`}</div>
+              <div>{`${requester ? `${requester.username}` : `default`}`}</div>
             </div>
           ))}
         </div>

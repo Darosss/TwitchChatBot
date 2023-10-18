@@ -7,18 +7,21 @@ import type {
   AudioStreamData,
   AudioStreamDataInfo,
   AudioYTData,
-  AudioYTDataInfo
+  AudioYTDataInfo,
+  AudioDataRequester
 } from "@socket";
 import { MusicConfigs } from "@models";
 import moment from "moment";
 import { convertSecondsToMS } from "@utils";
 import { EmitAudioNames, SongProperties, EmitPauseMusic, EmitChangeVolumeMusic } from "./types";
 
+type SongRequestListType = [AudioDataRequester, SongProperties][];
+
 abstract class MusicHeadHandler {
   protected emitName: EmitAudioNames;
   protected isPlaying = false;
   protected songsList: SongProperties[] = [];
-  protected songRequestList: [string, SongProperties][] = [];
+  protected songRequestList: SongRequestListType = [];
   protected musicQue: [string, AudioStreamData | AudioYTData][] = [];
   protected isPlayingTimeout: NodeJS.Timeout | undefined;
   protected readonly clientSay: (message: string) => void;
@@ -45,7 +48,7 @@ abstract class MusicHeadHandler {
     this.emitName = emitName;
   }
 
-  protected abstract addSongToQue(song: SongProperties, requester?: string): Promise<void>;
+  protected abstract addSongToQue(song: SongProperties, requester?: AudioDataRequester): Promise<void>;
 
   protected abstract prepareInitialQue(): Promise<void>;
 
@@ -54,6 +57,8 @@ abstract class MusicHeadHandler {
   protected abstract getAudioInfo(): AudioStreamDataInfo | AudioYTDataInfo | undefined;
 
   public abstract getAudioStreamData(): AudioStreamData | AudioYTData | undefined;
+
+  protected abstract onStartPlayNewSong(): Promise<void>;
 
   public async refreshConfigs(configs: MusicConfigs) {
     this.configs = configs;
@@ -65,7 +70,7 @@ abstract class MusicHeadHandler {
     if (this.isPlaying || this.musicQue.length <= 0) return;
 
     this.currentSongStart = new Date();
-    this.startPlay(0, false);
+    await this.startPlay(0, false);
 
     this.clientSay(`Music player resumed!`);
   }
@@ -82,7 +87,7 @@ abstract class MusicHeadHandler {
         this.socketIO.emit(this.emitName, this.currentSong);
 
         this.clientSay("Current song: " + this.getNameOfCurrentSong());
-
+        await this.onStartPlayNewSong();
         this.emitGetAudioInfo();
 
         const delayNextSong = this.currentDelay - this.currentSong.currentTime;
@@ -138,7 +143,7 @@ abstract class MusicHeadHandler {
 
     this.removeFromQue(this.currentSong?.id);
 
-    this.clearUserRequestAfterPlay(musicProps.requester);
+    this.clearUserRequestAfterPlay(musicProps.requester?.username);
 
     if (this.shouldPrepareQue()) await this.addNextItemToQueAndPushToEnd();
   }
@@ -176,7 +181,7 @@ abstract class MusicHeadHandler {
 
     let songName = audioProps.name;
 
-    if (audioProps.requester) songName += ` Requested by @${audioProps.requester}`;
+    if (audioProps.requester) songName += ` Requested by @${audioProps.requester.username}`;
 
     return songName;
   }
@@ -196,14 +201,14 @@ abstract class MusicHeadHandler {
   }
 
   protected removeFromRequestedQue(username: string) {
-    const index = this.songRequestList.findIndex(([requester]) => requester === username);
+    const index = this.songRequestList.findIndex(([requester]) => requester.username === username);
 
     if (index !== -1) this.songRequestList.splice(index, 1);
   }
 
   protected addSongRequestListIntoQue() {
     if (this.songRequestList.length > 0) {
-      this.songRequestList.forEach(async ([username, song]) => await this.addSongToQue(song, username));
+      this.songRequestList.forEach(async ([requester, song]) => await this.addSongToQue(song, requester));
     }
   }
 
@@ -243,7 +248,7 @@ abstract class MusicHeadHandler {
 
     this.clientSay(
       `Next song: ${nextSong.name} in ~${minutes}:${seconds} min. 
-      ${nextSong.requester ? `Requested by ${nextSong.requester}` : ""} 
+      ${nextSong.requester ? `Requested by ${nextSong.requester.username}` : ""} 
       `
     );
   }

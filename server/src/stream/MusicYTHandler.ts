@@ -5,14 +5,24 @@ import type {
   InterServerEvents,
   SocketData,
   AudioYTDataInfo,
-  AudioYTData
+  AudioYTData,
+  AudioDataRequester
 } from "@socket";
-import { MusicConfigs } from "@models";
+import { MusicConfigs, UserDocument, UserModel } from "@models";
 import moment from "moment";
 import MusicHeadHandler from "./MusicHeadHandler";
 import { shuffleArray, convertSecondsToMS, isValidUrl } from "@utils";
 import { SongProperties } from "./types";
 import YoutubeApiHandler from "./YoutubeAPIHandler";
+import { botId } from "@configs";
+import {
+  getOneUser,
+  getSongs,
+  createSong,
+  ManageSongLikesAction,
+  manageSongLikesByYoutubeId,
+  updateSongs
+} from "@services";
 
 interface PlaylistDetails {
   id: string;
@@ -28,6 +38,7 @@ class MusicYTHandler extends MusicHeadHandler {
     name: "",
     count: 0
   };
+  private botUserInDB?: UserDocument;
   constructor(
     socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     sayInAuthorizedChannel: (message: string) => void,
@@ -35,11 +46,47 @@ class MusicYTHandler extends MusicHeadHandler {
   ) {
     super(socketIO, sayInAuthorizedChannel, configs, "audioYT");
     this.youtubeAPIHandler = new YoutubeApiHandler();
+
+    this.init();
   }
 
-  protected async addSongToQue(song: SongProperties, requester = ""): Promise<void> {
+  private async init() {
+    this.botUserInDB = await getOneUser({ twitchId: botId }, {});
+
+    // TODO: add this.config.initialLoadFromDB ?
+    await this.loadYoutubeSongsFromDatabase();
+  }
+
+  private async loadYoutubeSongsFromDatabase() {
+    const songsListDB = await getSongs({}, { limit: 100 });
+
+    if (songsListDB && songsListDB.length > 0) {
+      const songsListWithMappedName = songsListDB.map(({ title, youtubeId, duration }) => ({
+        name: title,
+        id: youtubeId,
+        duration
+      }));
+      this.songsList = songsListWithMappedName;
+      await this.prepareInitialQue();
+      console.log(`Successfuly loaded initial songs (${songsListDB.length})`);
+      //TODO: pass this to logger
+    }
+  }
+
+  protected override async onStartPlayNewSong(): Promise<void> {
+    if (!this.currentSong || !this.botUserInDB) return;
+    await this.addSongToDatabase(this.currentSong, this.botUserInDB);
+    const isSongRequested = !!this.currentSong.requester;
+    await this.manageSongUsesByUserId(
+      this.currentSong.id,
+      this.currentSong.requester?.id || this.botUserInDB.id,
+      isSongRequested
+    );
+  }
+
+  protected async addSongToQue(song: SongProperties, requester?: AudioDataRequester): Promise<void> {
     try {
-      const { id, name, duration } = song;
+      const { id, name: name, duration } = song;
       this.musicQue.push([
         id,
         {
@@ -118,10 +165,10 @@ class MusicYTHandler extends MusicHeadHandler {
   }
 
   public getAudioInfo(): AudioYTDataInfo | undefined {
-    const songsInQue: [string, string][] = [];
+    const songsInQue: AudioYTDataInfo["songsInQue"] = [];
 
     this.musicQue.forEach(([, audioProps]) => {
-      songsInQue.push([audioProps.name, audioProps.requester || ""]);
+      songsInQue.push([audioProps.name, audioProps.requester]);
     });
     const info: AudioYTDataInfo = {
       name: this.currentSong?.name || "",
@@ -199,7 +246,7 @@ class MusicYTHandler extends MusicHeadHandler {
   }
 
   private checkIfUserHasAnySongInRequest(user: string) {
-    const atLeastOne = this.songRequestList.some(([username]) => username === user);
+    const atLeastOne = this.songRequestList.some(([requester]) => requester.username === user);
     return atLeastOne;
   }
 
@@ -217,9 +264,13 @@ class MusicYTHandler extends MusicHeadHandler {
   private async addRequestedSongToPlayer(username: string, song: SongProperties) {
     const { id } = song;
     if (!this.isAlreadySongInQue(id)) {
-      this.songRequestList.push([username, song]);
-      await this.addSongToQue(song, username);
+      const foundUser = await getOneUser({ username }, {});
+      if (foundUser) {
+        this.songRequestList.push([{ id: foundUser.id, username: username }, song]);
+        await this.addSongToQue(song, { id: foundUser.id, username: username });
 
+        await this.addSongToDatabase(song, foundUser);
+      }
       return true;
     }
   }
@@ -291,8 +342,8 @@ class MusicYTHandler extends MusicHeadHandler {
 
   private haveUserMoreSongsThanRequestLimit(username: string) {
     const count: { [key: string]: number } = this.songRequestList.reduce(
-      (acc: { [key: string]: number }, [username]) => {
-        acc[username] = (acc[username] || 0) + 1;
+      (acc: { [key: string]: number }, [requester]) => {
+        acc[requester.username] = (acc[requester.username] || 0) + 1;
         return acc;
       },
       {}
@@ -301,7 +352,7 @@ class MusicYTHandler extends MusicHeadHandler {
     return count[username] >= this.configs.maxSongRequestByUser;
   }
   private getNextUserSongName(user: string) {
-    const foundedRequest = this.songRequestList.find(([username]) => username === user);
+    const foundedRequest = this.songRequestList.find(([requester]) => requester.username === user);
     if (foundedRequest) return foundedRequest[1].name;
 
     return "No next song, something went wrong Kappa";
@@ -312,7 +363,7 @@ class MusicYTHandler extends MusicHeadHandler {
 
     totalDuration += this.getRemainingTimeOfCurrentSong();
     this.musicQue.every(([, audioProps]) => {
-      if (audioProps.requester !== username) {
+      if (audioProps.requester?.username !== username) {
         totalDuration += audioProps.duration;
         return true;
       }
@@ -321,6 +372,35 @@ class MusicYTHandler extends MusicHeadHandler {
     const [minutes, seconds] = convertSecondsToMS(totalDuration);
 
     return `${minutes}:${seconds}`;
+  }
+
+  private async addSongToDatabase(song: SongProperties, user: UserModel) {
+    return await createSong({
+      title: song.name,
+      youtubeId: song.id,
+      duration: song.duration,
+      whoAdded: user
+    });
+  }
+
+  public async manageSongLikesByUser(username: string, action: ManageSongLikesAction) {
+    if (!this.currentSong) return this.clientSay("No current song. Likes works only when current song is playing");
+
+    const foundUser = await getOneUser({ username: username }, {});
+
+    //TODO: pass this to logger
+    if (!foundUser) return console.log("No user found :(");
+
+    await manageSongLikesByYoutubeId(this.currentSong.id, action, foundUser.id);
+  }
+
+  private async manageSongUsesByUserId(youtubeId: string, userId: string, isSongRequested: boolean) {
+    await updateSongs(
+      { youtubeId: youtubeId },
+      {
+        $inc: { [`usersUses.${userId}`]: 1, uses: 1, ...(isSongRequested ? { songRequestUses: 1 } : { botUses: 1 }) }
+      }
+    );
   }
 }
 export default MusicYTHandler;

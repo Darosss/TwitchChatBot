@@ -7,6 +7,7 @@ export const routes = [
   { path: "/events", label: "Events" },
   { path: "/modes", label: "Modes" },
   { path: "/stream-sessions", label: "Sessions" },
+  { path: "/songs", label: "Songs" },
   { path: "/redemptions", label: "Redemptions" },
   { path: "/commands", label: "Commands" },
   { path: "/triggers", label: "Triggers" },

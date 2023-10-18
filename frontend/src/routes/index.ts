@@ -12,3 +12,4 @@ export { StreamSessionRoutes } from "./StreamSessionRoute";
 export { TimersRoute } from "./TimersRoute";
 export { TriggerRoutes } from "./TriggerRoute";
 export { UserRoutes } from "./UserRoute";
+export { SongsRoutes } from "./SongsRoute";

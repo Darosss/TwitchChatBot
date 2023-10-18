@@ -1,0 +1,65 @@
+import { Model, model, Schema } from "mongoose";
+import { SongsDocument } from "./types";
+
+const SongsSchema: Schema<SongsDocument> = new Schema(
+  {
+    title: {
+      type: String,
+      required: true
+    },
+    youtubeId: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    customTitle: {
+      band: {
+        type: String,
+        required: false
+      },
+      title: {
+        type: String,
+        required: false
+      },
+      required: false
+    },
+    uses: {
+      type: Number,
+      required: true,
+      default: 0
+    },
+    usersUses: {
+      type: Map,
+      of: Number,
+      default: new Map()
+    },
+    botUses: {
+      type: Number,
+      requried: true,
+      default: 0
+    },
+    songRequestUses: {
+      type: Number,
+      requried: true,
+      default: 0
+    },
+    duration: {
+      type: Number,
+      requried: true,
+      default: 0
+    },
+    customId: {
+      type: String,
+      required: false
+    },
+    whoAdded: { type: Schema.Types.ObjectId, require: true, ref: "User" },
+    likes: {
+      type: Map,
+      of: Number,
+      default: new Map()
+    }
+  },
+  { timestamps: true }
+);
+
+export const Songs: Model<SongsDocument> = model("Songs", SongsSchema);

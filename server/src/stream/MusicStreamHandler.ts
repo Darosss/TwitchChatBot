@@ -6,7 +6,8 @@ import type {
   InterServerEvents,
   SocketData,
   AudioStreamData,
-  AudioStreamDataInfo
+  AudioStreamDataInfo,
+  AudioDataRequester
 } from "@socket";
 import { musicPath } from "@configs";
 import path from "path";
@@ -25,6 +26,10 @@ class MusicStreamHandler extends MusicHeadHandler {
     configs: MusicConfigs
   ) {
     super(socketIO, sayInAuthorizedChannel, configs, "audio");
+  }
+
+  protected override async onStartPlayNewSong(): Promise<void> {
+    //TODO: do logic here if needed?
   }
 
   public getAudioStreamData(): AudioStreamData | undefined {
@@ -53,7 +58,7 @@ class MusicStreamHandler extends MusicHeadHandler {
     }
   }
 
-  protected async addSongToQue(song: SongProperties, requester = "") {
+  protected async addSongToQue(song: SongProperties, requester?: AudioDataRequester) {
     try {
       const mp3FilePath = path.join(this.currentFolder, song.name) + this.formatFile;
       const duration = await getMp3AudioDuration(mp3FilePath);
@@ -92,10 +97,10 @@ class MusicStreamHandler extends MusicHeadHandler {
   }
 
   public getAudioInfo(): AudioStreamDataInfo | undefined {
-    const songsInQue: [string, string][] = [];
+    const songsInQue: AudioStreamDataInfo["songsInQue"] = [];
 
     this.musicQue.forEach(([, audioProps]) => {
-      songsInQue.push([audioProps.name, audioProps.requester || ""]);
+      songsInQue.push([audioProps.name, audioProps.requester]);
     });
     const info: AudioStreamDataInfo = {
       name: this.currentSong?.name || "",
