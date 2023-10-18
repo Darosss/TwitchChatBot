@@ -1,0 +1,42 @@
+.songs-data-table-actions {
+  button {
+    max-height: 4dvh;
+  }
+}
+
+.songs-data-table-song-details:hover {
+  background-color: $secondary-color;
+  color: $info-color;
+  cursor: pointer;
+}
+
+.preview-song-modal-content-wrapper {
+  min-height: 40dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .song-details {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+
+    & > div {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+
+      & > div:first-child {
+        color: $info-color;
+        min-width: 40%;
+        max-width: 40%;
+      }
+
+      & > div {
+        display: flex;
+        flex-direction: row;
+      }
+    }
+  }
+}

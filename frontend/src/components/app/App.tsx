@@ -22,6 +22,7 @@ import {
   TimersRoute,
   TriggerRoutes,
   ConfigRoutes,
+  SongsRoutes,
 } from "@routes";
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
                   path="/stream-sessions/*"
                   element={<StreamSessionRoutes />}
                 />
+                <Route path="/songs/*" element={<SongsRoutes />} />
                 <Route path="/timers/*" element={<TimersRoute />} />
                 <Route path="/triggers/*" element={<TriggerRoutes />} />
                 <Route path="/configs/*" element={<ConfigRoutes />} />

@@ -16,3 +16,4 @@ export * from "./TimerService";
 export * from "./TriggerService";
 export * from "./UserService";
 export * from "./WidgetsService";
+export * from "./SongsService";
