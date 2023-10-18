@@ -143,7 +143,7 @@ export default function MusicPlayer() {
 }
 
 interface SongsPlaylistProps {
-  songs: [string, string][];
+  songs: AudioStreamDataInfo["songsInQue"];
 }
 
 function SongsPlaylist({ songs }: SongsPlaylistProps) {
@@ -155,7 +155,7 @@ function SongsPlaylist({ songs }: SongsPlaylistProps) {
             <div className="music-player-playlist-index">{index + 1}. </div>
             <div className="music-player-playlist-song-name">{songName} </div>
             <div className="music-player-playlist-requester">
-              {requester || "default"}
+              {requester?.username || "default"}
             </div>
           </div>
         ))}
