@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
-import { Link, LinkProps } from "react-router-dom";
+import { Link, LinkProps, useLocation } from "react-router-dom";
 import { resetWindowScroll } from "@utils";
 import { useGetAuthorizeUrl } from "@services";
 import DrawerBar from "@components/drawer";
@@ -80,15 +80,26 @@ export default function SideBar() {
 }
 
 const NavLink = ({ label, ...restProps }: NavLinkProps) => {
+  const location = useLocation();
   function handleClick() {
     resetWindowScroll();
   }
+
+  const isUserOnThisSite = useMemo(() => {
+    const restPropsToString = restProps.to.toString();
+    return (
+      restPropsToString.length > 1 &&
+      location.pathname.includes(restPropsToString)
+    );
+  }, [restProps.to, location.pathname]);
 
   return (
     <li>
       <Link
         {...restProps}
-        className="common-button primary-button"
+        className={`common-button ${
+          isUserOnThisSite ? "secondary-button" : "primary-button"
+        }`}
         onClick={handleClick}
       >
         {label}
