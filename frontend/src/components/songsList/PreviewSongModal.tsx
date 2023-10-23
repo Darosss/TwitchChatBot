@@ -1,6 +1,7 @@
 import Modal from "@components/modal";
 import { Song } from "@services";
 import YouTube, { YouTubeProps } from "react-youtube";
+import SongLikes from "./SongLikes";
 
 interface PreviewSongModalProps {
   song: Song;
@@ -20,8 +21,6 @@ export default function PreviewSongModal({
       modestbranding: 1,
     },
   };
-
-  console.log(song.likes);
 
   return (
     <Modal
@@ -62,23 +61,3 @@ export default function PreviewSongModal({
     </Modal>
   );
 }
-
-interface SongLikesProps {
-  likes: Record<string, number>;
-}
-
-function SongLikes({ likes }: SongLikesProps) {
-  return (
-    <>
-      {/* {Object.entries(likes).map(([id, like], index) => (
-        <div key={index}>
-          <div>{id}</div>
-          <div>{like}</div>
-        </div>
-      ))} */}
-    </>
-  );
-}
-
-// TODO: add song likes
-// TODO: add song uses users?
