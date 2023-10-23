@@ -52,7 +52,7 @@ const SongsSchema: Schema<SongsDocument> = new Schema(
       type: String,
       required: false
     },
-    whoAdded: { type: Schema.Types.ObjectId, require: true, ref: "User" },
+    whoAdded: { type: Schema.Types.ObjectId, required: true, ref: "User" },
     likes: {
       type: Map,
       of: Number,
