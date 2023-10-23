@@ -6,6 +6,8 @@ export interface SongCustomTitle {
   title: string;
 }
 
+export type SongLikesAction = -1 | 0 | 1;
+
 export interface Song {
   _id: string;
   title: string;
@@ -18,7 +20,7 @@ export interface Song {
   duration: number;
   customId?: string;
   whoAdded: Pick<User, "_id" | "username" | "twitchName">;
-  likes: Record<string, number>;
+  likes: Record<string, SongLikesAction>;
   createdAt: Date;
   updatedAt: Date;
 }
