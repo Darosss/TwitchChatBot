@@ -11,7 +11,7 @@
 }
 
 .preview-song-modal-content-wrapper {
-  min-height: 40dvh;
+  min-height: 50dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -20,15 +20,20 @@
   .song-details {
     display: flex;
     flex-direction: column;
-    width: 60%;
+    width: 100%;
 
     & > div {
       width: 100%;
       display: flex;
+      box-shadow: 2px 4px 9px 2px $primary-color;
+      padding: 1rem 0;
       justify-content: flex-start;
 
       & > div:first-child {
-        color: $info-color;
+        justify-content: center;
+        align-items: center;
+        letter-spacing: 0.3rem;
+        font-weight: 700;
         min-width: 40%;
         max-width: 40%;
       }
@@ -36,7 +41,64 @@
       & > div {
         display: flex;
         flex-direction: row;
+        color: $info-color;
       }
+    }
+  }
+
+  .preview-song-modal-song-users-data {
+    max-height: 25dvh;
+    min-width: 25dvw;
+    overflow-x: hidden;
+
+    .sort-wrapper {
+      display: flex;
+      justify-content: space-between;
+      & > div {
+        width: 15dvw;
+        color: $info-color;
+        font-weight: 800;
+        letter-spacing: 0.2rem;
+        margin-right: 1rem;
+      }
+
+      button {
+        padding: 0 1rem;
+      }
+
+      select {
+        background-color: $primary-color;
+        option {
+          background-color: $secondary-color;
+        }
+      }
+    }
+
+    .song-users-data-list {
+      display: flex;
+      justify-content: space-between;
+      box-shadow: -10px 1px 10px -3px $primary-color;
+      padding-bottom: 0.1rem;
+      & > div {
+        padding: 0.2rem 1rem 0 0;
+        max-width: 50%;
+      }
+
+      & > div:not(:first-child) {
+        display: flex;
+        justify-content: center;
+        font-weight: 800;
+      }
+    }
+
+    .liked-song {
+      color: $success-color;
+    }
+    .disliked-song {
+      color: $danger-color;
+    }
+    .unliked-song {
+      color: $secondary-color;
     }
   }
 }
