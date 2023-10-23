@@ -2,6 +2,7 @@ import Modal from "@components/modal";
 import { Song } from "@services";
 import YouTube, { YouTubeProps } from "react-youtube";
 import SongLikes from "./SongLikes";
+import SongUsersUses from "./SongUsersUses";
 
 interface PreviewSongModalProps {
   song: Song;
@@ -54,6 +55,14 @@ export default function PreviewSongModal({
             <div>
               <div>Custom id </div>
               <div>{song.customId}</div>
+            </div>
+          ) : null}
+          {song.usersUses ? (
+            <div>
+              <div>Users uses </div>
+              <div>
+                <SongUsersUses uses={song.usersUses} />
+              </div>
             </div>
           ) : null}
         </div>
