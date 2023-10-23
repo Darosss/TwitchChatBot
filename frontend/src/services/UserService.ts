@@ -30,9 +30,20 @@ interface FirstAndLatestMsgs {
   latestMessages: Message[];
 }
 
+interface GetUsersByIds {
+  data: User[];
+  count: number;
+}
+
 export const useGetUsersList = () => {
   return useAxiosCustom<PaginationData<User>>({
     url: `/users`,
+  });
+};
+
+export const useGetUsersByIds = (ids: string[]) => {
+  return useAxiosCustom<GetUsersByIds>({
+    url: `/users/by-ids/${ids.join(",")}`,
   });
 };
 

@@ -18,10 +18,12 @@ import {
   getRedemptions,
   getRedemptionsCount
 } from "@services";
+import { AppError } from "@utils";
 
 export const getUsersList = async (req: Request<{}, {}, {}, RequestQueryUser>, res: Response, next: NextFunction) => {
   const { page = 1, limit = 50, sortBy = "lastSeen", sortOrder = "desc" } = req.query;
   const searchFilter = filterUsersByUrlParams(req.query);
+
   try {
     const users = await getUsers(searchFilter, {
       limit: Number(limit),
@@ -42,9 +44,28 @@ export const getUsersList = async (req: Request<{}, {}, {}, RequestQueryUser>, r
   }
 };
 
-export const getUsersProfile = async (req: Request<RequestParams, {}, {}, {}>, res: Response, next: NextFunction) => {
+export const getUsersByIds = async (req: Request<RequestParams, {}, {}, {}>, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
+  if (!id) throw new AppError(400, "Id not provided");
+  const usersByIdFilter = { _id: { $in: id.split(",") } };
+
+  try {
+    const users = await getUsers(usersByIdFilter, {});
+
+    const count = await getUserCount(usersByIdFilter);
+
+    return res.status(200).send({
+      data: users,
+      count: count
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getUsersProfile = async (req: Request<RequestParams, {}, {}, {}>, res: Response, next: NextFunction) => {
+  const { id } = req.params;
   try {
     const user = await getUserById(id, { select: { __v: 0 } });
 
