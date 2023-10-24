@@ -146,7 +146,7 @@ export default function SongsLIst() {
 const initialState: SongCreateData = {
   title: "",
   youtubeId: "",
-  customTitle: { title: "Custom title", band: "Custom band" },
+  customTitle: { title: "", band: "" },
   duration: 0,
   customId: "",
   whoAdded: "",
