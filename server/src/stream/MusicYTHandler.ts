@@ -8,7 +8,7 @@ import type {
   AudioYTData,
   AudioDataRequester
 } from "@socket";
-import { MusicConfigs, UserDocument, UserModel } from "@models";
+import { MusicConfigs, UserDocument } from "@models";
 import moment from "moment";
 import MusicHeadHandler from "./MusicHeadHandler";
 import { shuffleArray, convertSecondsToMS, isValidUrl } from "@utils";
@@ -75,7 +75,7 @@ class MusicYTHandler extends MusicHeadHandler {
 
   protected override async onStartPlayNewSong(): Promise<void> {
     if (!this.currentSong || !this.botUserInDB) return;
-    await this.addSongToDatabase(this.currentSong, this.botUserInDB);
+    await this.addSongToDatabase(this.currentSong, this.botUserInDB._id);
     const isSongRequested = !!this.currentSong.requester;
     await this.manageSongUsesByUserId(
       this.currentSong.id,
@@ -269,7 +269,7 @@ class MusicYTHandler extends MusicHeadHandler {
         this.songRequestList.push([{ id: foundUser.id, username: username }, song]);
         await this.addSongToQue(song, { id: foundUser.id, username: username });
 
-        await this.addSongToDatabase(song, foundUser);
+        await this.addSongToDatabase(song, foundUser._id);
       }
       return true;
     }
@@ -374,12 +374,12 @@ class MusicYTHandler extends MusicHeadHandler {
     return `${minutes}:${seconds}`;
   }
 
-  private async addSongToDatabase(song: SongProperties, user: UserModel) {
+  private async addSongToDatabase(song: SongProperties, userId: string) {
     return await createSong({
       title: song.name,
       youtubeId: song.id,
       duration: song.duration,
-      whoAdded: user
+      whoAdded: userId
     });
   }
 
