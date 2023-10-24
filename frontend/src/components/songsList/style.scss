@@ -102,3 +102,28 @@
     }
   }
 }
+
+.search-users-wrapper {
+  color: $info-color;
+
+  .who-added-wrapper {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 0.3rem;
+    background-color: $success-color;
+  }
+
+  .search-user-content-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    .users-list {
+      display: flex;
+      flex-direction: column;
+
+      & > button {
+        margin: 0.1rem;
+      }
+    }
+  }
+}
