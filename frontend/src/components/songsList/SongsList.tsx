@@ -45,11 +45,19 @@ export default function SongsLIst() {
   const { data, count, currentPage } = songsData;
 
   const onSubmitModalCreate = () => {
-    fetchCreateSong().then(() => {
-      addNotification("Success", "Song created successfully", "success");
-      refetchData();
-      setShowModal(false);
-    });
+    fetchCreateSong()
+      .then(() => {
+        addNotification("Success", "Song created successfully", "success");
+        refetchData();
+        setShowModal(false);
+      })
+      .catch((err) =>
+        addNotification(
+          "ERROR",
+          err.response?.data?.message || "Couldn't create song",
+          "danger"
+        )
+      );
   };
 
   const onSubmitModalEdit = () => {
@@ -87,11 +95,13 @@ export default function SongsLIst() {
     customTitle,
     customId,
     duration,
+    whoAdded,
   }: Song) => {
     dispatch({
       type: "SET_STATE",
       payload: {
         title,
+        whoAdded: whoAdded._id,
         youtubeId,
         customTitle,
         duration,
@@ -139,6 +149,7 @@ const initialState: SongCreateData = {
   customTitle: { title: "Custom title", band: "Custom band" },
   duration: 0,
   customId: "",
+  whoAdded: "",
 };
 
 function reducer(
@@ -156,6 +167,8 @@ function reducer(
       return { ...state, duration: action.payload };
     case "SET_CUSTOM_ID":
       return { ...state, customId: action.payload };
+    case "SET_WHO_ADDED":
+      return { ...state, whoAdded: action.payload };
     case "SET_STATE":
       return { ...action.payload };
     default:
