@@ -2,7 +2,7 @@ import React from "react";
 import { SongCreateData } from "@services";
 import { DispatchAction } from "./types";
 import ModalDataWrapper from "@components/modalDataWrapper/ModalDataWrapper";
-
+import SearchUsers from "./SearchUsers";
 interface SongModalDataProps {
   state: SongCreateData;
   dispatch: React.Dispatch<DispatchAction>;
@@ -79,6 +79,14 @@ export default function SongModalData({ state, dispatch }: SongModalDataProps) {
           value={state.customId || ""}
           onChange={(e) =>
             dispatch({ type: "SET_CUSTOM_ID", payload: e.target.value })
+          }
+        />
+      </div>
+      <div>Who added</div>
+      <div>
+        <SearchUsers
+          onClickUser={(user) =>
+            dispatch({ type: "SET_WHO_ADDED", payload: user._id })
           }
         />
       </div>
