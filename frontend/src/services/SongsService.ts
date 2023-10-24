@@ -38,7 +38,7 @@ export interface SongCreateData
     | "whoAdded"
     | "likes"
   > {
-  whoAdded?: string;
+  whoAdded: string;
 }
 
 interface SongUpdateData extends Partial<SongCreateData> {}

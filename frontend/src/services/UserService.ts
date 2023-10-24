@@ -35,9 +35,10 @@ interface GetUsersByIds {
   count: number;
 }
 
-export const useGetUsersList = () => {
+export const useGetUsersList = (urlParams = true, customUrlParams = "") => {
   return useAxiosCustom<PaginationData<User>>({
-    url: `/users`,
+    url: `/users?${customUrlParams}`,
+    urlParams: urlParams,
   });
 };
 

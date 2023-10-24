@@ -12,11 +12,13 @@ export interface ManySongsFindOptions extends SongsFindOptions {
   limit?: number;
 }
 
-export type SongsOptionalData = Partial<Omit<SongsModel, "_id" | "createdAt" | "updatedAt">>;
+export type SongsOptionalData = Partial<Omit<SongsModel, "_id" | "createdAt" | "updatedAt" | "whoAdded">>;
 
 export interface SongsCreateData
-  extends Pick<SongsModel, "title" | "duration" | "whoAdded" | "youtubeId">,
-    Omit<SongsOptionalData, "title" | "duration" | "whoAdded" | "youtubeId"> {}
+  extends Pick<SongsModel, "title" | "duration" | "youtubeId">,
+    Omit<SongsOptionalData, "title" | "duration" | "whoAdded" | "youtubeId"> {
+  whoAdded: string;
+}
 
 export interface SongsUpdateData extends SongsOptionalData, Partial<SongsCreateData> {}
 

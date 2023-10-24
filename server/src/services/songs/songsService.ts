@@ -7,7 +7,8 @@ import {
   SongsFindOptions,
   SongsUpdateData
 } from "./types";
-import { SongsDocument, Songs } from "@models";
+import { SongsDocument, Songs, UserModel } from "@models";
+import { getUserById } from "@services";
 
 export const getSongs = async (filter: FilterQuery<SongsDocument> = {}, songsFindOptions: ManySongsFindOptions) => {
   const { limit = 50, skip = 1, sort = { createdAt: 1 }, select = { __v: 0 }, populate = [] } = songsFindOptions;
@@ -35,8 +36,12 @@ export const createSong = async (createData: SongsCreateData) => {
   const foundSong = await getOneSong({ youtubeId: createData.youtubeId }, {});
   if (foundSong) return foundSong;
 
+  const { whoAdded, ...rest } = createData;
   try {
-    const createdSong = await Songs.create(createData);
+    const foundCreator = checkExistResource(await getUserById(whoAdded, {}), "Creator of song");
+
+    const modifiedCreateData = { ...rest, whoAdded: foundCreator as UserModel };
+    const createdSong = await Songs.create(modifiedCreateData);
 
     if (!createdSong) {
       throw new AppError(400, "Couldn't create new song(s");
