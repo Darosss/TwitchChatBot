@@ -16,7 +16,6 @@ export interface User {
   notes?: string[];
   twitchName?: string;
   twitchCreated?: Date;
-  userDisplayName?: string;
   follower?: Date;
 }
 
