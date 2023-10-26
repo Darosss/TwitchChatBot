@@ -1,22 +1,18 @@
 import React from "react";
 import { SocketContextProvider } from "@context";
-import { BrowserRouter, Routes } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 import { ReactNotifications } from "react-notifications-component";
 import { HelmetProvider } from "react-helmet-async";
-import { AllRoutes } from "@routes";
+import { allRoutes } from "@routes";
 
 function App() {
   return (
     <SocketContextProvider>
       <HelmetProvider>
-        <BrowserRouter>
-          <div className="main">
-            <ReactNotifications />
-            <Routes>
-              <AllRoutes />
-            </Routes>
-          </div>
-        </BrowserRouter>
+        <div className="main">
+          <ReactNotifications />
+          <RouterProvider router={allRoutes} />
+        </div>
       </HelmetProvider>
     </SocketContextProvider>
   );
