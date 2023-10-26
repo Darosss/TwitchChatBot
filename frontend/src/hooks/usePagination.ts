@@ -7,12 +7,14 @@ const range = (start: number, end: number): number[] => {
   return Array.from({ length }, (_, idx) => idx + start);
 };
 
+type UsePaginationReturnType = (string | number)[] | undefined;
+
 export const usePagination = (
   totalCount: number,
   pageSize: number,
   siblingCount = 1,
   currentPage: number
-): (string | number)[] | undefined => {
+): UsePaginationReturnType => {
   const paginationRange = useMemo(() => {
     const totalPageCount = Math.ceil(totalCount / pageSize);
 
