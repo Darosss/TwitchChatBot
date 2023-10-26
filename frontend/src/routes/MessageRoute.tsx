@@ -5,19 +5,17 @@ import ComponentWithTitle from "@components/componentWithTitle";
 export function MessageRoutes() {
   return (
     <Routes>
-      <Route>
-        <Route
-          index
-          element={
-            <ComponentWithTitle
-              title="Messages"
-              component={<MessagesList messages="all" />}
-            />
-          }
-        />
+      <Route
+        index
+        element={
+          <ComponentWithTitle
+            title="Messages"
+            component={<MessagesList messages="all" />}
+          />
+        }
+      />
 
-        <Route path="*" element={<>Not found</>} />
-      </Route>
+      <Route path="*" element={<>Not found</>} />
     </Routes>
   );
 }
