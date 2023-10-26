@@ -9,14 +9,13 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
   privileges: number;
-  points?: number;
-  watchTime?: number;
-  lastSeen?: Date;
-  messageCount?: number;
+  points: number;
+  watchTime: number;
+  lastSeen: Date;
+  messageCount: number;
   notes?: string[];
   twitchName?: string;
   twitchCreated?: Date;
-  userDisplayName?: string;
   follower?: Date;
 }
 

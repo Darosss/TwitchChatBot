@@ -1,6 +1,14 @@
 import { useState } from "react";
 
-export const useLocalStorage = <T = unknown>(key: string, initialValue: T) => {
+type UseLocalStorageReturnType<T> = readonly [
+  storedValue: T,
+  setValue: (value: T | ((val: T) => T)) => void
+];
+
+export const useLocalStorage = <T = unknown>(
+  key: string,
+  initialValue: T
+): UseLocalStorageReturnType<T> => {
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
   const [storedValue, setStoredValue] = useState<T>(() => {

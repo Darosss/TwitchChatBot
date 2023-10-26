@@ -14,8 +14,4 @@ export default defineConfig({
   },
   plugins: [react(), viteTsconfigPaths(), svgrPlugin(), eslint()],
   envDir: "../",
-
-  optimizeDeps: {
-    include: ["src/**/*.ts"],
-  },
 });

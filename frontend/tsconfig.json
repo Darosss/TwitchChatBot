@@ -8,7 +8,7 @@
       "@routes": ["src/routes"],
       "@services": ["src/services"],
       "@components/*": ["src/components/*"],
-      "@context": ["src/context"],
+      "@socket": ["src/socket"],
       "@hooks": ["src/hooks"],
       "@socketTypes": ["../server/src/socketIO"]
     },

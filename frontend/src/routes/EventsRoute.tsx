@@ -6,24 +6,19 @@ import ComponentWithTitle from "@components/componentWithTitle";
 export function EventRoutes() {
   return (
     <Routes>
-      <Route>
-        <Route
-          index
-          element={
-            <ComponentWithTitle
-              title="Events"
-              component={<StreamEventsLayouts />}
-            />
-          }
-        />
-        <Route path=":eventsId" element={<StreamEvents editor={false} />} />
-        <Route
-          path=":eventsId/editor"
-          element={<StreamEvents editor={true} />}
-        />
+      <Route
+        index
+        element={
+          <ComponentWithTitle
+            title="Events"
+            component={<StreamEventsLayouts />}
+          />
+        }
+      />
+      <Route path=":eventsId" element={<StreamEvents editor={false} />} />
+      <Route path=":eventsId/editor" element={<StreamEvents editor={true} />} />
 
-        <Route path="*" element={<>Not found</>} />
-      </Route>
+      <Route path="*" element={<>Not found</>} />
     </Routes>
   );
 }

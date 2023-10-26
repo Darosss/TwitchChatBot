@@ -2,9 +2,26 @@ import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { viteBackendUrl } from "src/configs/envVariables";
 
-export const useFileUpload = (url: string) => {
+type UseFileUploadReturnType = {
+  uploadProgress: number;
+  handleFileUpload: (
+    props: {
+      event?: React.ChangeEvent<HTMLInputElement>;
+      fileList?: FileList | null;
+      bodySingleFileName?: {
+        bodyName: string;
+        value: string;
+      };
+    },
+    formInputName: string
+  ) => Promise<void>;
+  error: string | null;
+  success: any;
+};
+
+export const useFileUpload = (url: string): UseFileUploadReturnType => {
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<any>();
 
   const handleFileUpload = async (

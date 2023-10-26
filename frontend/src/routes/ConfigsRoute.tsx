@@ -5,15 +5,13 @@ import ComponentWithTitle from "@components/componentWithTitle";
 export function ConfigRoutes() {
   return (
     <Routes>
-      <Route>
-        <Route
-          index
-          element={
-            <ComponentWithTitle title="Configs" component={<ConfigsList />} />
-          }
-        />
-        <Route path="*" element={<>Not found</>} />
-      </Route>
+      <Route
+        index
+        element={
+          <ComponentWithTitle title="Configs" component={<ConfigsList />} />
+        }
+      />
+      <Route path="*" element={<>Not found</>} />
     </Routes>
   );
 }
