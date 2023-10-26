@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { AudioYTDataInfo, useSocketContext } from "@context";
+import { AudioYTDataInfo, useSocketContext } from "@socket";
 import { useState } from "react";
 import SterringButtons from "./SterringButtonsPlayer";
 import TabButton from "./TabButton";
