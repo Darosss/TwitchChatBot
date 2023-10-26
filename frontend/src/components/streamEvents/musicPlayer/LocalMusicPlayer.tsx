@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import UploadMp3Form from "./UploadMp3Form";
 import AudioFoldersList from "./AudioFoldersList";
 import AudioFolderCreate from "./AudioFolderCreate";
-import { AudioStreamDataInfo, useSocketContext } from "@context";
+import { AudioStreamDataInfo, useSocketContext } from "@socket";
 import { useState } from "react";
 import SterringButtons from "./SterringButtonsPlayer";
 import TabButton from "./TabButton";

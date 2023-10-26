@@ -1,5 +1,5 @@
 import React from "react";
-import { SocketContextProvider } from "@context";
+import { SocketContextProvider } from "@socket";
 import { RouterProvider } from "react-router-dom";
 import { ReactNotifications } from "react-notifications-component";
 import { HelmetProvider } from "react-helmet-async";

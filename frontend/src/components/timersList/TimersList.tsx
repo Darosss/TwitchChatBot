@@ -11,7 +11,7 @@ import {
   useDeleteTimer,
   TimerCreateData,
 } from "@services";
-import { useSocketContext } from "@context";
+import { useSocketContext } from "@socket";
 import { handleActionOnChangeState } from "@utils";
 import { addNotification } from "@utils";
 import { useGetAllModes } from "@utils";

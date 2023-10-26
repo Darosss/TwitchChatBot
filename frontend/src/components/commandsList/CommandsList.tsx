@@ -17,7 +17,7 @@ import { useGetAllModes } from "@utils";
 import { DispatchAction } from "./types";
 import CommandsData from "./CommandsData";
 import CommandModalData from "./CommandModalData";
-import { useSocketContext } from "@context";
+import { useSocketContext } from "@socket";
 
 export default function CommandsList() {
   const [showModal, setShowModal] = useState(false);

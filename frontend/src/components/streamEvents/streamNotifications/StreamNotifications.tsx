@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { useSocketContext } from "@context";
+import { useSocketContext } from "@socket";
 import StreamSessionEvents from "@components/streamSessionEvents";
 import { SessionEvents } from "@services";
 
