@@ -1,3 +1,3 @@
 export { routes } from "./routesList";
 
-export { AllRoutes } from "./AllRoutes";
+export { allRoutes } from "./AllRoutes";

@@ -1,4 +1,9 @@
-import { Outlet, Route, Routes } from "react-router-dom";
+import {
+  Outlet,
+  Route,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from "react-router-dom";
 import { MessageRoutes } from "./MessageRoute";
 import SideBar from "@components/sideBar";
 import ComponentWithTitle from "@components/componentWithTitle";
@@ -16,63 +21,6 @@ import { TriggerRoutes } from "./TriggerRoute";
 import { UserRoutes } from "./UserRoute";
 import { OverlayRoutes } from "./OverlayRoute";
 import Home from "@components/home";
-
-export function AllRoutes() {
-  return (
-    <Routes>
-      <OverlayRoutesWrapper />
-      <HomeRoutesWrapper />
-      <DefaultRoutesWrapper />
-    </Routes>
-  );
-}
-
-function OverlayRoutesWrapper() {
-  return (
-    <Route element={<OverlayLayout />}>
-      <Route path="/overlay/*" element={<OverlayRoutes />} />
-    </Route>
-  );
-}
-
-function HomeRoutesWrapper() {
-  return (
-    <Route element={<HomeLayout />}>
-      <Route path="/" element={<Home />} />
-    </Route>
-  );
-}
-
-function DefaultRoutesWrapper() {
-  return (
-    <Route element={<DefaultRouteLayout />}>
-      <Route path="/messages/*" element={<MessageRoutes />} />
-      <Route
-        path="/overlay"
-        element={
-          <ComponentWithTitle title="Overlays" component={<OverlayList />} />
-        }
-      />
-
-      <Route path="/users/*" element={<UserRoutes />} />
-      <Route path="/messages/*" element={<MessageRoutes />} />
-      <Route
-        path="/message-categories/*"
-        element={<MessageCategoriesRoute />}
-      />
-      <Route path="/commands/*" element={<CommandRoutes />} />
-      <Route path="/events/*" element={<EventRoutes />} />
-      <Route path="/modes/*" element={<ModesRoutes />} />
-      <Route path="/redemptions/*" element={<RedemptionRoutes />} />
-      <Route path="/stream-sessions/*" element={<StreamSessionRoutes />} />
-      <Route path="/songs/*" element={<SongsRoutes />} />
-      <Route path="/timers/*" element={<TimersRoute />} />
-      <Route path="/triggers/*" element={<TriggerRoutes />} />
-      <Route path="/configs/*" element={<ConfigRoutes />} />
-      <Route path="/*" element={<>Not found</>} />
-    </Route>
-  );
-}
 
 const DefaultRouteLayout = () => {
   return (
@@ -99,3 +47,42 @@ const OverlayLayout = () => {
     </div>
   );
 };
+
+export const allRoutes = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/">
+      <Route element={<OverlayLayout />}>
+        <Route path="/overlay/*" element={<OverlayRoutes />} />
+      </Route>
+      <Route element={<HomeLayout />}>
+        <Route path="/" element={<Home />} />
+      </Route>
+      <Route element={<DefaultRouteLayout />}>
+        <Route path="/messages/*" element={<MessageRoutes />} />
+        <Route
+          path="/overlay"
+          element={
+            <ComponentWithTitle title="Overlays" component={<OverlayList />} />
+          }
+        />
+
+        <Route path="/users/*" element={<UserRoutes />} />
+        <Route path="/messages/*" element={<MessageRoutes />} />
+        <Route
+          path="/message-categories/*"
+          element={<MessageCategoriesRoute />}
+        />
+        <Route path="/commands/*" element={<CommandRoutes />} />
+        <Route path="/events/*" element={<EventRoutes />} />
+        <Route path="/modes/*" element={<ModesRoutes />} />
+        <Route path="/redemptions/*" element={<RedemptionRoutes />} />
+        <Route path="/stream-sessions/*" element={<StreamSessionRoutes />} />
+        <Route path="/songs/*" element={<SongsRoutes />} />
+        <Route path="/timers/*" element={<TimersRoute />} />
+        <Route path="/triggers/*" element={<TriggerRoutes />} />
+        <Route path="/configs/*" element={<ConfigRoutes />} />
+        <Route path="/*" element={<>Not found</>} />
+      </Route>
+    </Route>
+  )
+);
