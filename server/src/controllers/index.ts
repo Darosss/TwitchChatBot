@@ -1,3 +1,4 @@
+export * from "./achievementsController";
 export * from "./affixesController";
 export * from "./authController";
 export * from "./chatCommandsController";
