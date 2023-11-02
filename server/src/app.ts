@@ -5,12 +5,14 @@ import localSocket from "./socketIO";
 import http from "http";
 import { errorResponder, invalidPathHandler, twitchHandlersMiddleware } from "@middlewares";
 import { hostFrontendURL, localFrontendURL } from "@configs";
+import path from "path";
 
 const expressApp = () => {
   const app = express();
   const server = http.createServer(app);
 
   app.use(express.json());
+  app.use(express.static(path.join(__dirname, "public")));
   app.set("json spaces", 2);
   app.use(
     cors({

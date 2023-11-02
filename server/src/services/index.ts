@@ -1,5 +1,6 @@
 export * from "./affixes";
 export * from "./auth";
+export * from "./badges";
 export * from "./chatCommands";
 export * from "./configs";
 export * from "./messageCategories";
@@ -14,4 +15,5 @@ export * from "./triggers";
 export * from "./users";
 export * from "./widgets";
 export * from "./songs";
+export * from "./achievements";
 export * from "./types";

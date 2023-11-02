@@ -1,4 +1,13 @@
-import { updateCurrentStreamSession, createUserIfNotExist, isUserInDB, updateUser } from "@services";
+import {
+  updateCurrentStreamSession,
+  createUserIfNotExist,
+  isUserInDB,
+  updateUser,
+  getOneUser,
+  createAchievementUserProgress,
+  getOneAchievement,
+  updateFinishedStagesDependsOnProgress
+} from "@services";
 import { ApiClient, HelixChatChatter } from "@twurple/api";
 import { getBaseLog, removeDifferenceFromSet, retryWithCatch, watcherLogger } from "@utils";
 import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";
@@ -6,6 +15,7 @@ import { Server } from "socket.io";
 import HeadHandler from "./HeadHandler";
 import { LoyaltyConfigs, PointsConfigs, StreamSessionModel } from "@models";
 import { AuthorizedUserData } from "./types";
+import { ACHIEVEMENTS } from "@defaults";
 
 interface LoyaltyConfigsHandler extends LoyaltyConfigs, PointsConfigs {}
 
@@ -156,6 +166,7 @@ class LoyaltyHandler extends HeadHandler {
 
     const usersNow = await this.handleActiveUsers(chatters);
 
+    await this.updateLoyaltyAchievements(chatters);
     await this.updateFollowerStatus(chatters);
 
     removeDifferenceFromSet(this.usersBefore, usersNow);
@@ -175,6 +186,30 @@ class LoyaltyHandler extends HeadHandler {
     };
 
     await updateUser({ twitchId: userId }, updateData);
+  }
+
+  private async updateLoyaltyAchievements(chatters: HelixChatChatter[]) {
+    for (const { userId } of chatters) {
+      const foundUser = await getOneUser({ twitchId: userId }, {});
+      if (!foundUser) return watcherLogger.error("updateLoyaltyAchievements - user  not found");
+
+      await this.updateAchievementUserProgress(ACHIEVEMENTS.CHAT_MESSAGES, foundUser._id, foundUser.messageCount || 0);
+      await this.updateAchievementUserProgress(ACHIEVEMENTS.WATCH_TIME, foundUser._id, foundUser.watchTime || 0);
+    }
+  }
+
+  private async updateAchievementUserProgress(achievementName: string, userId: string, progressValue: number) {
+    const foundAchievement = await getOneAchievement({ name: achievementName }, {});
+
+    if (!foundAchievement) return watcherLogger.error("updateAchievementUserProgress - achievement  not found");
+    const userProgress = await createAchievementUserProgress({
+      userId: userId,
+      achievement: foundAchievement._id
+    });
+
+    if (!userProgress) return;
+
+    updateFinishedStagesDependsOnProgress(foundAchievement, userProgress, progressValue);
   }
 }
 

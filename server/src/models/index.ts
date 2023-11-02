@@ -16,4 +16,6 @@ export * from "./moodModel";
 export * from "./userModel";
 export * from "./widgetsModel";
 export * from "./songsModel";
+export * from "./badgeModel";
+export * from "./achievementModel";
 export * from "./types";

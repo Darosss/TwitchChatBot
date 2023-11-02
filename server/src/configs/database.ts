@@ -8,10 +8,22 @@ import {
   getTagsCount,
   createMood,
   getMoodsCount,
-  getOneMood
+  getOneMood,
+  getAchievementsCount,
+  createBadge,
+  getAchievementStagesCount,
+  createAchievementStage,
+  createAchievement
 } from "@services";
 import mongoose, { ConnectOptions } from "mongoose";
-import { getDefaultChatCommands, getDefaultMood, getDefaultTag } from "@defaults";
+import {
+  getDefaultAchievementStagesData,
+  getDefaultAchievementsData,
+  getDefaultBadgeData,
+  getDefaultChatCommands,
+  getDefaultMood,
+  getDefaultTag
+} from "@defaults";
 import { databaseConnectURL } from "./envVariables";
 
 export const initMongoDataBase = async () => {
@@ -30,6 +42,8 @@ export const initMongoDataBase = async () => {
   await Promise.all([createDefaultTag(), createDefaultMood()]);
 
   await createDefaultCommands();
+
+  await createDefaultInitialAchievements();
 };
 
 const createDefaultConfigs = async () => {
@@ -66,4 +80,25 @@ const createDefaultMood = async () => {
     const moods = getDefaultMood();
     await createMood(moods);
   }
+};
+
+const createDefaultAchievementStages = async (badgeId: string) => {
+  if ((await getAchievementStagesCount()) === 0) {
+    return await createAchievementStage(getDefaultAchievementStagesData(badgeId));
+  }
+};
+
+const createDefaultAchievements = async (stagesId: string) => {
+  const achievementsData = getDefaultAchievementsData(stagesId);
+
+  achievementsData.forEach((data) => createAchievement(data));
+};
+
+const createDefaultInitialAchievements = async () => {
+  if ((await getAchievementsCount()) !== 0) return;
+  const badge = await createBadge(getDefaultBadgeData());
+  if (!badge) return;
+  const stages = await createDefaultAchievementStages(badge._id);
+  if (!stages) return;
+  await createDefaultAchievements(stages._id);
 };

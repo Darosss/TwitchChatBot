@@ -278,3 +278,48 @@ export interface SongsModel extends BaseModel {
 }
 
 export type SongsDocument = SongsModel & Document;
+
+export interface BadgeModel extends BaseModel {
+  name: string;
+  description: string;
+  imageUrl: string;
+}
+
+export type BadgeDocument = BadgeModel & Document;
+
+interface StageData {
+  name: string;
+  stage: number;
+  goal: number;
+  badge: string | BadgeModel;
+}
+
+export interface AchievementStageModel extends BaseModel {
+  name: string;
+  stageData: StageData[];
+}
+
+export type AchievementStageDocument = AchievementStageModel & Document;
+
+export interface AchievementModel extends BaseModel {
+  name: string;
+  description: string;
+  stages: AchievementStageModel;
+}
+
+export type AchievementDocument = AchievementModel & Document;
+
+export interface AchievementUserProgressModel extends BaseModel {
+  userId: string | UserModel;
+  achievement: string | AchievementModel;
+  value: number;
+  progresses: [number, number][];
+}
+
+export type AchievementUserProgressDocument = AchievementUserProgressModel & Document;
+
+export interface UserAchievementsValues extends AchievementStageModel {
+  finishedDate?: Date;
+}
+
+export type UserAchievements = Map<string, UserAchievementsValues[]>;
