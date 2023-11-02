@@ -16,8 +16,10 @@ import tagsRouter from "./tagsRoute";
 import affixesRouter from "./affixesRoute";
 import filesRouter from "./filesRoute";
 import songsRouter from "./songsRoute";
+import achievementsRouter from "./achievementsRoute";
 
 export const initRoutes = (app: Express) => {
+  app.use("/achievements", achievementsRouter);
   app.use("/auth", auth);
   app.use("/chat-commands", chatCommandsRouter);
   app.use("/configs", configsRouter);
