@@ -4,6 +4,7 @@ import UserProfile from "@components/userProfile";
 import MessagesList from "@components/messagesList";
 import RedemptionsList from "@components/redemptionsList";
 import ComponentWithTitle from "@components/componentWithTitle";
+import UserAchievements from "@components/userAchievements";
 
 export function UserRoutes() {
   return (
@@ -13,6 +14,15 @@ export function UserRoutes() {
         element={<ComponentWithTitle title="Users" component={<Users />} />}
       />
       <Route path=":userId" element={<UserProfile />} />
+      <Route
+        path=":userId/achievements"
+        element={
+          <ComponentWithTitle
+            title="User achievements"
+            component={<UserAchievements />}
+          />
+        }
+      />
       <Route
         path=":userId/messages"
         element={
