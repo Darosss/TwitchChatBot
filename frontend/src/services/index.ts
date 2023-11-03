@@ -1,3 +1,4 @@
+export * from "./AchievementService";
 export * from "./AffixService";
 export * from "./ApiService";
 export * from "./AuthService";

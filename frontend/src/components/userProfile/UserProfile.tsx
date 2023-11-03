@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import Message from "@components/message";
 import PreviousPage from "@components/previousPage";
@@ -67,6 +67,11 @@ export default function UserProfile() {
             <div>Username:</div> <div>{data.username}</div>
             <div>Twitch name:</div>
             <div>{data.twitchName}</div>
+            <div>
+              <Link to="./achievements" className="primary-button">
+                Achievements
+              </Link>
+            </div>
           </div>
           <div>
             <div>First seen:</div>
