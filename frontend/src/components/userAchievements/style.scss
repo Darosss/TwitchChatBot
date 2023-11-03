@@ -1,0 +1,84 @@
+.user-achievements-header {
+  font-size: 2.5dvw;
+  font-weight: 800;
+  display: flex;
+  justify-content: space-around;
+}
+
+.achievements-list-wrapper,
+.achievements-list-header-wrapper {
+  display: flex;
+  justify-content: space-between;
+  border-radius: 0.5rem;
+  font-size: 1.7vw;
+  margin: 0px 5rem;
+  box-shadow: 3px 2px 1px 3px $primary-color;
+  padding: 1rem;
+  img {
+    border-radius: 0.2rem;
+    margin: 1px;
+    width: 5vw;
+  }
+}
+
+.achievements-list-header-wrapper {
+  justify-content: space-between;
+  font-size: 2vw;
+  font-weight: 800;
+  & > div:hover {
+    color: $info-color;
+  }
+}
+
+.achievements-list-wrapper {
+  color: $info-color;
+  font-size: 1.2dvw;
+  font-weight: 800;
+  flex-direction: column;
+  & > .achievement-section {
+    display: flex;
+    align-items: center;
+    padding: 1rem 0rem;
+    &:hover {
+      color: $success-color;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+
+  .achievement-obtained-at {
+    * {
+      font-size: 1dvw;
+    }
+  }
+
+  .not-achieved {
+    img {
+      filter: grayscale(100%);
+    }
+    .current-progress {
+      color: $secondary-color;
+    }
+  }
+
+  .achieved {
+    .current-progress {
+      color: $success-color;
+    }
+  }
+
+  .achievement-stage-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: $primary-color;
+    font-weight: 800;
+    letter-spacing: 0.2rem;
+    border-bottom: 1px solid $secondary-color;
+
+    & > div {
+      width: 25%;
+      overflow: auto;
+    }
+  }
+}
