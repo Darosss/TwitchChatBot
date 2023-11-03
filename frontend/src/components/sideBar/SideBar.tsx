@@ -13,7 +13,11 @@ interface NavLinkProps extends LinkProps {
 }
 
 export default function SideBar() {
-  const { data: authData, error } = useGetAuthorizeUrl();
+  const {
+    data: authData,
+    error,
+    refetchData: refetchAuthData,
+  } = useGetAuthorizeUrl();
   const {
     emits: { logout: emitLogout },
     events: { sendLoggedUserInfo },
@@ -48,14 +52,23 @@ export default function SideBar() {
         ))}
 
         <li>
-          <a
-            className="common-button tertiary-button"
-            href={authData ? authData.data : "_blank"}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {error ? "URL Error" : "Connect with twitch"}
-          </a>
+          {error || !authData ? (
+            <button
+              className="common-button tertiary-button"
+              onClick={refetchAuthData}
+            >
+              Refresh Link
+            </button>
+          ) : (
+            <a
+              className="common-button tertiary-button"
+              href={authData ? authData.data : "_blank"}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Connect with twitch
+            </a>
+          )}
         </li>
         {loggedUser ? (
           <>
