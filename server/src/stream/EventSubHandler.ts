@@ -17,22 +17,12 @@ interface EventSubHandlerOptions {
 }
 
 class EventSubHandler extends HeadHandler {
-  private static instance: EventSubHandler;
   private listener: EventSubWsListener;
   private redemptionQue: [RewardData, { audioBuffer: Buffer; duration: number }][] = [];
   private isAlertPlaying = false;
-  private constructor(options: EventSubHandlerOptions) {
+  constructor(options: EventSubHandlerOptions) {
     super(options.socketIO, options.apiClient, options.authorizedUser);
     this.listener = new EventSubWsListener({ apiClient: options.apiClient });
-  }
-
-  public static getInstance(options: EventSubHandlerOptions): EventSubHandler {
-    if (!EventSubHandler.instance) {
-      EventSubHandler.instance = new EventSubHandler(options);
-    } else {
-      EventSubHandler.instance.updateOptions(options);
-    }
-    return EventSubHandler.instance;
   }
 
   public async updateOptions(options: EventSubHandlerOptions): Promise<void> {

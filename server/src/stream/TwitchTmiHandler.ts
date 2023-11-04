@@ -7,11 +7,10 @@ interface ClientTmiOptions {
 }
 
 class ClientTmiHandler {
-  private static instance: ClientTmiHandler;
   private userToListen: string;
   private clientTmi: Client;
 
-  private constructor(options: ClientTmiOptions) {
+  constructor(options: ClientTmiOptions) {
     this.userToListen = options.userToListen;
     this.clientTmi = new tmi.Client({
       options: { debug: true },
@@ -20,15 +19,6 @@ class ClientTmiHandler {
       channels: [options.userToListen]
     });
     this.connect();
-  }
-
-  public static async getInstance(options: ClientTmiOptions): Promise<ClientTmiHandler> {
-    if (!ClientTmiHandler.instance) {
-      ClientTmiHandler.instance = new ClientTmiHandler(options);
-    } else {
-      await ClientTmiHandler.instance.updateOptions(options);
-    }
-    return ClientTmiHandler.instance;
   }
 
   public async disconnectTmi() {
