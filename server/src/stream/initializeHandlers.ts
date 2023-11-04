@@ -75,7 +75,7 @@ const createHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: 
     sayInAuthorizedChannel
   );
 
-  INITIALIZED_HANDLERS.eventSubHandler = EventSubHandler.getInstance({
+  INITIALIZED_HANDLERS.eventSubHandler = new EventSubHandler({
     apiClient: twitchApi,
     socketIO,
     authorizedUser
