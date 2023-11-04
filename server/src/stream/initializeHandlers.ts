@@ -95,8 +95,6 @@ const createHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: 
       eventSubHandler: INITIALIZED_HANDLERS.eventSubHandler
     }
   });
-
-  await INITIALIZED_HANDLERS.eventSubHandler.init();
 };
 
 /** This should be only called when all handlers are !== undefined */

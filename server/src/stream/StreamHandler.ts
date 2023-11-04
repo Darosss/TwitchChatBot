@@ -77,6 +77,7 @@ class StreamHandler {
     this.checkViewersInterval = setInterval(async () => {
       await this.checkCountOfViewers(id);
     }, this.configuration.configs.headConfigs.intervalCheckViewersPeek * 1000);
+    await this.handlers.eventSubHandler.init();
   }
 
   public updateOptions({ configuration, handlers }: StreamHandlerConstructorType): void {
@@ -110,7 +111,7 @@ class StreamHandler {
       if (typeof commandMessage === "string") {
         this.handlers.clientTmi.say(commandMessage);
       }
-
+      ``;
       return;
     }
 
