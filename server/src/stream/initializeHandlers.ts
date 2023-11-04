@@ -38,7 +38,7 @@ export const initializeHandlers = async (args: InitializeHandlersArgs) => {
 };
 
 const createHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: CreateHandlersArgs) => {
-  INITIALIZED_HANDLERS.clientTmi = await ClientTmiHandler.getInstance({
+  INITIALIZED_HANDLERS.clientTmi = new ClientTmiHandler({
     userToListen: authorizedUser.name,
     username: botUsername,
     password: botPassword
