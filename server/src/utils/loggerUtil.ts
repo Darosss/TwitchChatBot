@@ -82,3 +82,5 @@ export const commandLogger = winston.createLogger(optionsLoggers("commands"));
 export const watcherLogger = winston.createLogger(optionsLoggers("watchers"));
 
 export const eventsubLogger = winston.createLogger(optionsLoggers("eventsub"));
+
+export const achievementsLogger = winston.createLogger(optionsLoggers("achievements"));
