@@ -1,19 +1,53 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiClient } from "@twurple/api";
-import { createNewAuth, getAuthToken, removeAuthToken, getConfigs } from "@services";
+import { createNewAuth, getAuthToken, removeAuthToken } from "@services";
 import { RefreshingAuthProvider, getTokenInfo } from "@twurple/auth";
-import ClientTmiHandler from "../stream/TwitchTmiHandler";
-import StreamHandler from "../stream/StreamHandler";
 import { getTwitchAuthUrl } from "../auth";
 import { logger, decryptToken } from "@utils";
-import { botPassword, botUsername, clientId, clientSecret, encryptionKey } from "@configs";
+import { clientId, clientSecret, encryptionKey } from "@configs";
+import { AuthorizedUserData } from "stream/types";
+import { initializeHandlers } from "../stream";
 
 export const twitchHandlersMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const tokenDB = await getAuthToken();
-  if (!tokenDB) {
+  const authData = await initializeAuthToken();
+
+  if (!authData) {
     const authUrl = getTwitchAuthUrl();
     return res.redirect(authUrl.toString());
   }
+
+  try {
+    const tokeninfo = await getTokenInfo(authData.decryptedAccessToken);
+    // Pretty sure it's always string so null assertion
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const authorizedUser: AuthorizedUserData = { id: tokeninfo.userId!, name: tokeninfo.userName! };
+    const twitchApi = new ApiClient({ authProvider: authData.authProvider });
+
+    if (!authorizedUser.id || !authorizedUser.name) {
+      throw Error("Something went wrong, try login again");
+    }
+
+    await initializeHandlers({ twitchApi, authorizedUser, socketIO: req.io });
+
+    req.io.emit("forceReconnect");
+
+    return next();
+  } catch (err) {
+    await removeAuthToken();
+    if (err instanceof Error) {
+      res.status(400).send({ message: "Something went wrong. Please log in again" });
+      logger.error(`Error occured while using ApiClient ${err}`);
+    } else {
+      res.status(500).send({ message: "Interfnal server error" });
+      logger.error(`An unknown error occured while using ApiClient ${err}`);
+    }
+  }
+};
+
+const initializeAuthToken = async () => {
+  const tokenDB = await getAuthToken();
+  if (!tokenDB) return;
+
   const decryptedAccessToken = decryptToken(tokenDB.accessToken, tokenDB.ivAccessToken, encryptionKey);
   const decryptedRefreshToken = decryptToken(tokenDB.refreshToken, tokenDB.ivRefreshToken, encryptionKey);
 
@@ -41,44 +75,5 @@ export const twitchHandlersMiddleware = async (req: Request, res: Response, next
     obtainmentTimestamp: tokenDB.obtainmentTimestamp
   });
 
-  try {
-    const tokeninfo = await getTokenInfo(decryptedAccessToken);
-    // Pretty sure it's always string so null assertion
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const authorizedUser = { id: tokeninfo.userId!, name: tokeninfo.userName! };
-    const twitchApi = new ApiClient({ authProvider });
-
-    const configDB = await getConfigs();
-
-    if (!authorizedUser.id || !authorizedUser.name || !configDB) {
-      throw Error("Something went wrong, try login again");
-    }
-
-    const clientTmi = await ClientTmiHandler.getInstance({
-      userToListen: authorizedUser.name,
-      username: botUsername,
-      password: botPassword
-    });
-
-    StreamHandler.getInstance({
-      twitchApi: twitchApi,
-      config: configDB,
-      authorizedUser: { id: authorizedUser.id, name: authorizedUser.name },
-      socketIO: req.io,
-      clientTmi: clientTmi
-    });
-
-    req.io.emit("forceReconnect");
-
-    return next();
-  } catch (err) {
-    await removeAuthToken();
-    if (err instanceof Error) {
-      res.status(400).send({ message: "Something went wrong. Please log in again" });
-      logger.error(`Error occured while using ApiClient ${err}`);
-    } else {
-      res.status(500).send({ message: "Interfnal server error" });
-      logger.error(`An unknown error occured while using ApiClient ${err}`);
-    }
-  }
+  return { authProvider, decryptedAccessToken };
 };
