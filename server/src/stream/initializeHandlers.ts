@@ -15,6 +15,7 @@ import ClientTmiHandler from "./TwitchTmiHandler";
 import { AuthorizedUserData, HandlersList } from "./types";
 import { ConfigModel } from "@models";
 import TimersHandler from "./TimersHandler";
+import AchievementsHandler from "./AchievementsHandler";
 
 const INITIALIZED_HANDLERS: HandlersList = {};
 
@@ -47,6 +48,9 @@ const createHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: 
   const { commandsConfigs, headConfigs, musicConfigs, pointsConfigs, triggersConfigs, loyaltyConfigs, timersConfigs } =
     configs;
   const sayInAuthorizedChannel = INITIALIZED_HANDLERS.clientTmi.say.bind(INITIALIZED_HANDLERS.clientTmi);
+
+  INITIALIZED_HANDLERS.achievementsHandler = new AchievementsHandler(socketIO);
+
   INITIALIZED_HANDLERS.musicStreamHandler = new MusicStreamHandler(socketIO, sayInAuthorizedChannel, musicConfigs);
   INITIALIZED_HANDLERS.musicYTHandler = new MusicYTHandler(socketIO, sayInAuthorizedChannel, musicConfigs);
   INITIALIZED_HANDLERS.commandsHandler = new CommandsHandler(
@@ -60,12 +64,19 @@ const createHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: 
     }
   );
 
-  INITIALIZED_HANDLERS.messagesHandler = new MessagesHandler(pointsConfigs);
+  INITIALIZED_HANDLERS.messagesHandler = new MessagesHandler(INITIALIZED_HANDLERS.achievementsHandler, pointsConfigs);
   INITIALIZED_HANDLERS.triggersHandler = new TriggersHandler(triggersConfigs);
-  INITIALIZED_HANDLERS.loyaltyHandler = new LoyaltyHandler(twitchApi, socketIO, authorizedUser, {
-    ...loyaltyConfigs,
-    ...pointsConfigs
-  });
+
+  INITIALIZED_HANDLERS.loyaltyHandler = new LoyaltyHandler(
+    twitchApi,
+    socketIO,
+    authorizedUser,
+    {
+      ...loyaltyConfigs,
+      ...pointsConfigs
+    },
+    INITIALIZED_HANDLERS.achievementsHandler
+  );
 
   INITIALIZED_HANDLERS.timersHandler = new TimersHandler(
     twitchApi,
