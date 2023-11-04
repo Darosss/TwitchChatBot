@@ -55,8 +55,6 @@ interface StreamHandlerConstructorType {
 }
 
 class StreamHandler {
-  private static instance: StreamHandler;
-
   private configuration: StreamHandlerConfiguration;
   private handlers: StreamHandlerHandlers;
 
