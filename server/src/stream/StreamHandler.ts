@@ -1,6 +1,5 @@
 import { ApiClient } from "@twurple/api";
-import { ConfigDocument, UserModel } from "@models";
-import { ConfigDefaults, configDefaults } from "@defaults";
+import { ConfigModel, UserModel } from "@models";
 import type {
   ClientToServerEvents,
   ServerToClientEvents,
@@ -31,126 +30,75 @@ import EventSubHandler from "./EventSubHandler";
 import ClientTmiHandler from "./TwitchTmiHandler";
 import MusicYTHandler from "./MusicYTHandler";
 import { AuthorizedUserData } from "./types";
-interface StreamHandlerOptions {
-  config: ConfigDocument;
+interface StreamHandlerConfiguration {
+  configs: ConfigModel;
   twitchApi: ApiClient;
   socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
   authorizedUser: AuthorizedUserData;
+}
+
+interface StreamHandlerHandlers {
   clientTmi: ClientTmiHandler;
+  commandsHandler: CommandsHandler;
+  triggersHandler: TriggersHandler;
+  messagesHandler: MessagesHandler;
+  loyaltyHandler: LoyaltyHandler;
+  timersHandler: TimersHandler;
+  musicStreamHandler: MusicStreamHandler;
+  musicYTHandler: MusicYTHandler;
+  eventSubHandler: EventSubHandler;
+}
+
+interface StreamHandlerConstructorType {
+  configuration: StreamHandlerConfiguration;
+  handlers: StreamHandlerHandlers;
 }
 
 class StreamHandler {
   private static instance: StreamHandler;
-  private twitchApi: ApiClient;
-  private authorizedUser: AuthorizedUserData;
-  private socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
 
-  private clientTmi: ClientTmiHandler;
-  private commandsHandler: CommandsHandler;
-  private triggersHandler: TriggersHandler;
-  private messagesHandler: MessagesHandler;
-  private loayaltyHandler: LoyaltyHandler;
-  private timersHandler: TimersHandler;
-  private musicHandler: MusicStreamHandler;
-  private musicYTHandler: MusicYTHandler;
-  private eventSubHandler: EventSubHandler;
-  private configs: ConfigDefaults;
+  private configuration: StreamHandlerConfiguration;
+  private handlers: StreamHandlerHandlers;
+
   private loggedIn = true;
 
   private checkViewersInterval: NodeJS.Timeout | undefined;
-  private constructor(options: StreamHandlerOptions) {
-    const { twitchApi, socketIO, authorizedUser, clientTmi } = options;
-    this.twitchApi = twitchApi;
-    this.socketIO = socketIO;
-    this.clientTmi = clientTmi;
-
-    this.authorizedUser = authorizedUser;
-    this.configs = { ...configDefaults };
-    this.musicHandler = new MusicStreamHandler(socketIO, clientTmi.say.bind(clientTmi), this.configs.musicConfigs);
-    this.musicYTHandler = new MusicYTHandler(socketIO, clientTmi.say.bind(clientTmi), this.configs.musicConfigs);
-    this.commandsHandler = new CommandsHandler(twitchApi, socketIO, authorizedUser, this.musicYTHandler, {
-      ...this.configs.commandsConfigs,
-      permissionLevels: this.configs.headConfigs.permissionLevels
-    });
-    this.messagesHandler = new MessagesHandler(this.configs.pointsConfigs);
-    this.triggersHandler = new TriggersHandler(this.configs.triggersConfigs);
-    this.loayaltyHandler = new LoyaltyHandler(twitchApi, socketIO, authorizedUser, {
-      ...this.configs.loyaltyConfigs,
-      ...this.configs.pointsConfigs
-    });
-
-    this.timersHandler = new TimersHandler(
-      twitchApi,
-      socketIO,
-      authorizedUser,
-      this.configs.timersConfigs,
-      clientTmi.say.bind(clientTmi)
-    );
-
-    this.eventSubHandler = EventSubHandler.getInstance({
-      apiClient: twitchApi,
-      socketIO: socketIO,
-      authorizedUser: authorizedUser
-    });
+  constructor({ configuration, handlers }: StreamHandlerConstructorType) {
+    this.configuration = configuration;
+    this.handlers = handlers;
 
     this.init();
-    this.initOnMessageEvents();
     this.initSocketEvents();
-
-    this.triggersHandler;
-    this.eventSubHandler.init();
+    this.initOnMessageEvents();
   }
 
   private async init() {
-    const { id } = this.authorizedUser;
+    const { id } = this.configuration.authorizedUser;
     await this.refreshConfigs();
     clearInterval(this.checkViewersInterval);
     this.checkViewersInterval = setInterval(async () => {
       await this.checkCountOfViewers(id);
-    }, this.configs.headConfigs.intervalCheckViewersPeek * 1000);
+    }, this.configuration.configs.headConfigs.intervalCheckViewersPeek * 1000);
   }
 
-  public static getInstance(options: StreamHandlerOptions): StreamHandler {
-    if (!StreamHandler.instance) {
-      StreamHandler.instance = new StreamHandler(options);
-    } else {
-      StreamHandler.instance.updateOptions(options);
-    }
-    return StreamHandler.instance;
-  }
-
-  public updateOptions(options: StreamHandlerOptions): void {
+  public updateOptions({ configuration, handlers }: StreamHandlerConstructorType): void {
     this.loggedIn = true;
-    const { twitchApi, socketIO, authorizedUser, clientTmi } = options;
-    this.twitchApi = twitchApi;
-    this.socketIO = socketIO;
-    this.clientTmi = clientTmi;
-    this.authorizedUser = authorizedUser;
+    this.configuration = configuration;
+    this.handlers = handlers;
     this.init();
-    this.initOnMessageEvents();
-
-    this.commandsHandler.updateProperties(twitchApi, authorizedUser);
-    this.eventSubHandler.updateProperties(twitchApi, authorizedUser);
-    this.loayaltyHandler.updateProperties(twitchApi, authorizedUser);
-    this.timersHandler.updateProperties(twitchApi, authorizedUser);
-    this.eventSubHandler = EventSubHandler.getInstance({
-      apiClient: twitchApi,
-      socketIO: socketIO,
-      authorizedUser: authorizedUser
-    });
   }
 
   private async initOnMessageEvents() {
-    this.clientTmi.onMessageEvent(async (channel, userstate, message, self) => {
+    this.handlers.clientTmi.onMessageEvent(async (channel, userstate, message, self) => {
       const userData = this.getUserStateInfo(userstate, self);
       messageLogger.info(`${userData.username}: ${message}`);
-      this.socketIO.emit("messageServer", new Date(), userData.username, message); // emit for socket
+      this.configuration.socketIO.emit("messageServer", new Date(), userData.username, message); // emit for socket
 
       const user = await createUserIfNotExist({ twitchId: userData.twitchId }, userData);
 
       if (!user) return;
 
-      await this.messagesHandler.saveMessageAndUpdateUser(user._id, user.username, new Date(), message);
+      await this.handlers.messagesHandler.saveMessageAndUpdateUser(user._id, user.username, new Date(), message);
 
       if (self) return;
 
@@ -159,10 +107,10 @@ class StreamHandler {
   }
 
   private async chceckAndSendAnswer(user: UserModel, message: string) {
-    const commandMessage = await this.commandsHandler.checkMessageForCommand(user, message);
+    const commandMessage = await this.handlers.commandsHandler.checkMessageForCommand(user, message);
     if (commandMessage) {
       if (typeof commandMessage === "string") {
-        this.clientTmi.say(commandMessage);
+        this.handlers.clientTmi.say(commandMessage);
       }
 
       return;
@@ -171,8 +119,8 @@ class StreamHandler {
     //either check for timer / trigger / random message
     const messagesQueue = (
       await Promise.all([
-        this.triggersHandler.checkMessageForTrigger(message),
-        this.timersHandler.checkMessageForTimer(user)
+        this.handlers.triggersHandler.checkMessageForTrigger(message),
+        this.handlers.timersHandler.checkMessageForTimer(user)
       ])
     ).filter((x) => x) as string[];
 
@@ -180,18 +128,18 @@ class StreamHandler {
   }
 
   private sendMessagesFromQueue(messages: string[]) {
-    const { min, max } = this.configs.headConfigs.delayBetweenMessages;
+    const { min, max } = this.configuration.configs.headConfigs.delayBetweenMessages;
     messages.forEach((msgInQue, index) => {
       const delay = (index + 1) * Math.floor(Math.random() * (max - min + 1) + min);
 
       headLogger.info(`Send message ${msgInQue} in ${delay}ms`);
       setTimeout(() => {
-        this.clientTmi.say(msgInQue);
+        this.handlers.clientTmi.say(msgInQue);
       }, delay);
     });
   }
   // private async debugFollows() {
-  //   const follows = await this.twitchApi.users.getFollows({
+  //   const follows = await this.configuration.twitchApi.users.getFollows({
   //     followedUser: 147192097,
   //     limit: 100,
   //   });
@@ -201,7 +149,7 @@ class StreamHandler {
   async refreshConfigs() {
     const refreshedConfigs = await getConfigs();
     if (refreshedConfigs) {
-      this.configs = refreshedConfigs;
+      this.configuration.configs = refreshedConfigs;
       const {
         commandsConfigs,
         pointsConfigs,
@@ -210,25 +158,25 @@ class StreamHandler {
         timersConfigs,
         musicConfigs,
         headConfigs
-      } = this.configs;
+      } = this.configuration.configs;
 
-      this.messagesHandler.refreshConfigs(pointsConfigs);
-      this.loayaltyHandler.refreshConfigs({
+      this.handlers.messagesHandler.refreshConfigs(pointsConfigs);
+      this.handlers.loyaltyHandler.refreshConfigs({
         ...pointsConfigs,
         ...loyaltyConfigs
       });
 
-      this.triggersHandler.refreshConfigs(triggersConfigs);
+      this.handlers.triggersHandler.refreshConfigs(triggersConfigs);
 
-      this.commandsHandler.refreshConfigs({
+      this.handlers.commandsHandler.refreshConfigs({
         ...commandsConfigs,
         permissionLevels: headConfigs.permissionLevels
       });
 
-      this.timersHandler.refreshConfigs(timersConfigs);
+      this.handlers.timersHandler.refreshConfigs(timersConfigs);
 
-      this.musicHandler.refreshConfigs(musicConfigs);
-      this.musicYTHandler.refreshConfigs(musicConfigs);
+      this.handlers.musicStreamHandler.refreshConfigs(musicConfigs);
+      this.handlers.musicYTHandler.refreshConfigs(musicConfigs);
     }
   }
 
@@ -244,8 +192,8 @@ class StreamHandler {
   }
 
   private initSocketEvents() {
-    this.socketIO.on("connect", (socket) => {
-      socket.emit("sendLoggedUserInfo", this.loggedIn ? this.authorizedUser.name : "");
+    this.configuration.socketIO.on("connect", (socket) => {
+      socket.emit("sendLoggedUserInfo", this.loggedIn ? this.configuration.authorizedUser.name : "");
 
       socket.on("logout", async () => {
         await this.logoutUser();
@@ -284,25 +232,29 @@ class StreamHandler {
 
       socket.on("messageClient", (message) => {
         if (!message) return;
-        this.clientTmi.say(message);
+        this.handlers.clientTmi.say(message);
       });
 
-      this.onMusicHandlerEvents(socket);
+      this.onmusicStreamHandlerEvents(socket);
 
       this.onMusicYtHandlerEvents(socket);
     });
   }
 
   private async logoutUser() {
-    await Promise.all([removeAuthToken(), this.eventSubHandler.stop(), this.clientTmi.disconnectTmi()]);
-    this.loayaltyHandler.stopCheckChatters();
+    await Promise.all([
+      removeAuthToken(),
+      this.handlers.eventSubHandler.stop(),
+      this.handlers.clientTmi.disconnectTmi()
+    ]);
+    this.handlers.loyaltyHandler.stopCheckChatters();
     this.loggedIn = false;
   }
 
   private async onCreateCustomReward(data: CustomRewardCreateData) {
     if (!data.title || data.cost < 0) return false;
     try {
-      await this.twitchApi.channelPoints.createCustomReward(this.authorizedUser.id, {
+      await this.configuration.twitchApi.channelPoints.createCustomReward(this.configuration.authorizedUser.id, {
         ...data,
         title: alertSoundPrefix + data.title
       });
@@ -316,7 +268,7 @@ class StreamHandler {
 
   private async onDeleteCustomReward(id: string) {
     try {
-      await this.twitchApi.channelPoints.deleteCustomReward(this.authorizedUser.id, id);
+      await this.configuration.twitchApi.channelPoints.deleteCustomReward(this.configuration.authorizedUser.id, id);
       return true;
     } catch (err) {
       headLogger.error(`Error occured while deleting custom reward: ${err}`);
@@ -330,7 +282,10 @@ class StreamHandler {
       if (!data.title.startsWith(alertSoundPrefix)) {
         title = alertSoundPrefix + title;
       }
-      await this.twitchApi.channelPoints.updateCustomReward(this.authorizedUser.id, id, { ...data, title: title });
+      await this.configuration.twitchApi.channelPoints.updateCustomReward(this.configuration.authorizedUser.id, id, {
+        ...data,
+        title: title
+      });
       return true;
     } catch (err) {
       headLogger.error(`Error occured while updating custom reward: ${err}`);
@@ -340,7 +295,9 @@ class StreamHandler {
   }
 
   private async onGetCustomRewards() {
-    const rewards = await this.twitchApi.channelPoints.getCustomRewards(this.authorizedUser.id);
+    const rewards = await this.configuration.twitchApi.channelPoints.getCustomRewards(
+      this.configuration.authorizedUser.id
+    );
     const customRewardsData: CustomRewardData[] = rewards
       .filter((reward) => reward.title.startsWith(alertSoundPrefix))
       .map((reward) => {
@@ -356,7 +313,7 @@ class StreamHandler {
           autoFulfill: reward.autoFulfill
         };
       });
-    this.socketIO.emit("getCustomRewards", customRewardsData);
+    this.configuration.socketIO.emit("getCustomRewards", customRewardsData);
   }
 
   private async onSaveConfigs() {
@@ -369,38 +326,38 @@ class StreamHandler {
       "Client changed modes(tag, mood, affix) - refreshing triggers, commands, message categories and timers"
     );
     await Promise.all([
-      this.triggersHandler.refreshTriggers(),
-      this.commandsHandler.refreshCommands(),
-      this.timersHandler.refreshTimers()
+      this.handlers.triggersHandler.refreshTriggers(),
+      this.handlers.commandsHandler.refreshCommands(),
+      this.handlers.timersHandler.refreshTimers()
     ]);
   }
 
   private async onRefreshTriggers() {
     headLogger.info("Client created/updated/deleted trigger - refreshing triggers");
-    await this.triggersHandler.refreshTriggers();
+    await this.handlers.triggersHandler.refreshTriggers();
   }
   private async onRefreshCommands() {
     headLogger.info("Client created/updated/deleted command - refreshing commands");
-    await this.commandsHandler.refreshCommands();
+    await this.handlers.commandsHandler.refreshCommands();
   }
 
   private async onRefreshTimers() {
     headLogger.info("Client created/updated/deleted timer - refreshing timers");
-    await this.timersHandler.refreshTimers();
+    await this.handlers.timersHandler.refreshTimers();
   }
 
-  private onMusicHandlerEvents(
+  private onmusicStreamHandlerEvents(
     socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>
   ) {
     socket.on("getAudioStreamData", (cb) => {
-      const audioData = this.musicHandler.getAudioStreamData();
-      const isPlaying = this.musicHandler.isMusicPlaying();
+      const audioData = this.handlers.musicStreamHandler.getAudioStreamData();
+      const isPlaying = this.handlers.musicStreamHandler.isMusicPlaying();
       if (!audioData) return;
       cb(isPlaying, audioData);
     });
 
     socket.on("musicPause", () => {
-      this.musicHandler.pausePlayer();
+      this.handlers.musicStreamHandler.pausePlayer();
     });
 
     socket.on("musicStop", () => {
@@ -409,25 +366,25 @@ class StreamHandler {
     });
 
     socket.on("musicPlay", () => {
-      this.musicHandler.resumePlayer();
+      this.handlers.musicStreamHandler.resumePlayer();
     });
     socket.on("loadSongs", (folderName) => {
-      this.musicHandler.loadNewSongs(folderName, true);
+      this.handlers.musicStreamHandler.loadNewSongs(folderName, true);
     });
 
     socket.on("musicNext", () => {
-      this.musicHandler.nextSong();
+      this.handlers.musicStreamHandler.nextSong();
     });
 
     socket.on("changeVolume", (volume) => {
-      this.musicHandler.changeVolume(volume);
+      this.handlers.musicStreamHandler.changeVolume(volume);
     });
 
     socket.on("getAudioInfo", () => {
-      const audioInfo = this.musicHandler.getAudioInfo();
+      const audioInfo = this.handlers.musicStreamHandler.getAudioInfo();
       if (!audioInfo) return;
 
-      this.socketIO.to(socket.id).emit("getAudioInfo", audioInfo);
+      this.configuration.socketIO.to(socket.id).emit("getAudioInfo", audioInfo);
     });
   }
 
@@ -435,19 +392,19 @@ class StreamHandler {
     socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>
   ) {
     socket.on("getAudioYTData", (cb) => {
-      const audioData = this.musicYTHandler.getAudioStreamData();
-      const isPlaying = this.musicYTHandler.isMusicPlaying();
+      const audioData = this.handlers.musicYTHandler.getAudioStreamData();
+      const isPlaying = this.handlers.musicYTHandler.isMusicPlaying();
       if (!audioData) return;
       cb(isPlaying, audioData);
     });
     socket.on("getAudioYTInfo", (cb) => {
-      const audioData = this.musicYTHandler.getAudioInfo();
+      const audioData = this.handlers.musicYTHandler.getAudioInfo();
       if (!audioData) return;
       cb(audioData);
     });
 
     socket.on("musicYTPause", () => {
-      this.musicYTHandler.pausePlayer();
+      this.handlers.musicYTHandler.pausePlayer();
     });
 
     socket.on("musicYTStop", () => {
@@ -456,26 +413,28 @@ class StreamHandler {
     });
 
     socket.on("musicYTPlay", () => {
-      this.musicYTHandler.resumePlayer();
+      this.handlers.musicYTHandler.resumePlayer();
     });
 
     //TODO: events from backend database?
     // socket.on('loadYTPlaylist', async (playlistId: string) => {
-    //   await this.musicYTHandler.loadNewSongs('xd', true)
+    //   await this.handlers.musicYTHandler.loadNewSongs('xd', true)
     // })
 
     socket.on("musicYTNext", () => {
-      this.musicYTHandler.nextSong();
+      this.handlers.musicYTHandler.nextSong();
     });
 
     socket.on("changeYTVolume", (volume) => {
-      this.musicYTHandler.changeVolume(volume);
+      this.handlers.musicYTHandler.changeVolume(volume);
     });
   }
 
   async checkCountOfViewers(broadcasterId: string) {
     const currentSession = await getCurrentStreamSession({});
-    const streamInfo = await retryWithCatch(() => this.twitchApi.streams.getStreamByUserId(broadcasterId));
+    const streamInfo = await retryWithCatch(() =>
+      this.configuration.twitchApi.streams.getStreamByUserId(broadcasterId)
+    );
 
     if (!currentSession || !streamInfo) return;
 
@@ -487,40 +446,6 @@ class StreamHandler {
       $set: { [`viewers.${timestamp}`]: streamInfo.viewers }
     });
   }
-
-  // TODO: this is loyalty??
-
-  // async updateEveryUserTwitchDetails(broadcasterId: string) {
-  //   const limit = 50;
-  //   let index = 0;
-
-  //   const checkUsersTimer = setInterval(async () => {
-  //     const usernames = await getTwitchNames(limit, limit * index);
-  //     if (!usernames) return;
-
-  //     const usersTwitch = await retryWithCatch(() =>
-  //       this.twitchApi.users.getUsersByNames(usernames.twitchNames)
-  //     );
-  //     if (!usersTwitch) return;
-
-  //     for await (const user of usersTwitch) {
-  //       // const follower = await retryWithCatch(async () => {
-  //       //   for await (const user of usersTwitch) {
-  //       //     await user.getFollowTo(broadcasterId);
-  //       //   }
-  //       // });
-  //       //   user.follower = follower?.followDate;
-  //       //   await user.save();
-  //       console.log("user", user.displayName);
-  //     }
-
-  //     index++;
-  //     if (limit * index > usernames.total) {
-  //       console.log("Finished checking users - clear interval");
-  //       clearInterval(checkUsersTimer);
-  //     }
-  //   }, 10000);
-  // }
 }
 
 export default StreamHandler;
