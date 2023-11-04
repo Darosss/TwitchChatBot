@@ -1,9 +1,12 @@
 import { createMessage, MessageCreateData, updateUser } from "@services";
 import { PointsConfigs } from "@models";
+import AchievementsHandler from "./AchievementsHandler";
 
 class MessagesHandler {
   private configs: PointsConfigs;
-  constructor(configs: PointsConfigs) {
+  private achievementsHandler: AchievementsHandler;
+  constructor(achievementsHandler: AchievementsHandler, configs: PointsConfigs) {
+    this.achievementsHandler = achievementsHandler;
     this.configs = configs;
   }
 
