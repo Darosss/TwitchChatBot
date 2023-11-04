@@ -5,7 +5,8 @@ import {
   AudioStreamData,
   AudioStreamDataInfo,
   AudioYTData,
-  AudioYTDataInfo
+  AudioYTDataInfo,
+  ObtainAchievementData
 } from "./dataTypes";
 
 export interface ServerToClientEvents extends ServerToClientYoutubeEvents, ServerToClientMusicLocalEvents {
@@ -18,6 +19,8 @@ export interface ServerToClientEvents extends ServerToClientYoutubeEvents, Serve
   forceReconnect: () => void;
   getCustomRewards: (data: CustomRewardData[]) => void;
   sendLoggedUserInfo: (username: string) => void;
+
+  obtainAchievement: (data: ObtainAchievementData) => void;
 }
 
 export interface ServerToClientMusicLocalEvents {

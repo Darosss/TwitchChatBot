@@ -1,13 +1,4 @@
-import {
-  updateCurrentStreamSession,
-  createUserIfNotExist,
-  isUserInDB,
-  updateUser,
-  getOneUser,
-  createAchievementUserProgress,
-  getOneAchievement,
-  updateFinishedStagesDependsOnProgress
-} from "@services";
+import { updateCurrentStreamSession, createUserIfNotExist, isUserInDB, updateUser, getOneUser } from "@services";
 import { ApiClient, HelixChatChatter } from "@twurple/api";
 import { getBaseLog, removeDifferenceFromSet, retryWithCatch, watcherLogger } from "@utils";
 import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";
@@ -16,6 +7,7 @@ import HeadHandler from "./HeadHandler";
 import { LoyaltyConfigs, PointsConfigs, StreamSessionModel } from "@models";
 import { AuthorizedUserData } from "./types";
 import { ACHIEVEMENTS } from "@defaults";
+import AchievementsHandler from "./AchievementsHandler";
 
 interface LoyaltyConfigsHandler extends LoyaltyConfigs, PointsConfigs {}
 
@@ -24,14 +16,17 @@ class LoyaltyHandler extends HeadHandler {
   private usersBefore = new Set<string>();
   private currentSession: StreamSessionModel | null | undefined;
   private checkChattersTimeout: NodeJS.Timeout | undefined;
+  private achievementsHandler: AchievementsHandler;
   constructor(
     twitchApi: ApiClient,
     socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     authorizedUser: AuthorizedUserData,
-    configs: LoyaltyConfigsHandler
+    configs: LoyaltyConfigsHandler,
+    achievementsHandler: AchievementsHandler
   ) {
     super(socketIO, twitchApi, authorizedUser);
     this.configs = configs;
+    this.achievementsHandler = achievementsHandler;
     this.init();
   }
 
@@ -193,23 +188,19 @@ class LoyaltyHandler extends HeadHandler {
       const foundUser = await getOneUser({ twitchId: userId }, {});
       if (!foundUser) return watcherLogger.error("updateLoyaltyAchievements - user  not found");
 
-      await this.updateAchievementUserProgress(ACHIEVEMENTS.CHAT_MESSAGES, foundUser._id, foundUser.messageCount || 0);
-      await this.updateAchievementUserProgress(ACHIEVEMENTS.WATCH_TIME, foundUser._id, foundUser.watchTime || 0);
+      await this.achievementsHandler.updateAchievementUserProgressAndAddToQueue({
+        achievement: ACHIEVEMENTS.CHAT_MESSAGES,
+        userId: foundUser._id,
+        progressValue: foundUser.messageCount || 0,
+        username: foundUser.username
+      });
+      await this.achievementsHandler.updateAchievementUserProgressAndAddToQueue({
+        achievement: ACHIEVEMENTS.WATCH_TIME,
+        userId: foundUser._id,
+        progressValue: foundUser.watchTime || 0,
+        username: foundUser.username
+      });
     }
-  }
-
-  private async updateAchievementUserProgress(achievementName: string, userId: string, progressValue: number) {
-    const foundAchievement = await getOneAchievement({ name: achievementName }, {});
-
-    if (!foundAchievement) return watcherLogger.error("updateAchievementUserProgress - achievement  not found");
-    const userProgress = await createAchievementUserProgress({
-      userId: userId,
-      achievement: foundAchievement._id
-    });
-
-    if (!userProgress) return;
-
-    updateFinishedStagesDependsOnProgress(foundAchievement, userProgress, progressValue);
   }
 }
 

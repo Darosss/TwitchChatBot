@@ -2,12 +2,18 @@ import {
   AchievementUserProgressDocument,
   AchievementUserProgress,
   AchievementModel,
-  AchievementUserProgressModel
+  AchievementUserProgressModel,
+  StageData
 } from "@models";
 import { logger, handleAppError, checkExistResource } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
-import { getUserById } from "@services";
-import { AchievementUserProgressCreate, AchievementUserProgressUpdate } from "./types";
+import { getOneAchievement, getUserById } from "@services";
+import {
+  AchievementUserProgressCreate,
+  AchievementUserProgressUpdate,
+  GetDataForObtainAchievementEmitReturnData,
+  UpdateAchievementUserProgressProgressesReturnData
+} from "./types";
 
 export const getOneAchievementUserProgress = async (filter: FilterQuery<AchievementUserProgressDocument> = {}) => {
   try {
@@ -83,21 +89,52 @@ export const updateFinishedStagesDependsOnProgress = async (
   achievement: AchievementModel,
   achievementProgress: AchievementUserProgressModel,
   progress: number
-) => {
-  const modifiedStages: AchievementUserProgressModel["progresses"] = achievementProgress.progresses;
-
+): Promise<[number, number][]> => {
+  const newfinishedStages: AchievementUserProgressModel["progresses"] = [];
   for (let idx = 0; idx < achievement.stages.stageData.length; idx++) {
     const currentAchievementStage = achievement.stages.stageData[idx];
     const currentProgressStage = achievementProgress.progresses.at(idx);
     if (!currentProgressStage && currentAchievementStage.goal <= progress) {
-      modifiedStages.push([currentAchievementStage.stage, Date.now()]);
+      newfinishedStages.push([currentAchievementStage.stage, Date.now()]);
     }
   }
 
-  const updatedAchievementUpdate = await updateOneAchievementUserProgress(
+  await updateOneAchievementUserProgress(
     { _id: achievementProgress._id },
-    { progresses: modifiedStages, value: progress }
+    { progresses: [...achievementProgress.progresses, ...newfinishedStages], value: progress }
   );
 
-  return updatedAchievementUpdate;
+  return newfinishedStages;
+};
+
+export const updateAchievementUserProgressProgresses = async (
+  achievementName: string,
+  userId: string,
+  progressValue: number
+): Promise<UpdateAchievementUserProgressProgressesReturnData | undefined> => {
+  const foundAchievement = await getOneAchievement({ name: achievementName }, {});
+
+  if (!foundAchievement) return; //TODO: add handling
+  const userProgress = await createAchievementUserProgress({
+    userId: userId,
+    achievement: foundAchievement._id
+  });
+
+  if (!userProgress) return; //TODO: add handling
+
+  const nowFinishedStages = await updateFinishedStagesDependsOnProgress(foundAchievement, userProgress, progressValue);
+
+  return { foundAchievement, nowFinishedStages };
+};
+
+export const getDataForObtainAchievementEmit = (
+  data: UpdateAchievementUserProgressProgressesReturnData
+): GetDataForObtainAchievementEmitReturnData => {
+  const newStages: StageData[] = [];
+
+  data.nowFinishedStages.forEach((stage) => {
+    const stageData = data.foundAchievement.stages.stageData.find((innerStage) => innerStage.stage === stage[0]);
+    if (stageData) newStages.push(stageData);
+  });
+  return { achievementName: data.foundAchievement.name, stages: newStages };
 };

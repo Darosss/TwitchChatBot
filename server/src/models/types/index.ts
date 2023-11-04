@@ -287,7 +287,7 @@ export interface BadgeModel extends BaseModel {
 
 export type BadgeDocument = BadgeModel & Document;
 
-interface StageData {
+export interface StageData {
   name: string;
   stage: number;
   goal: number;

@@ -1,5 +1,5 @@
 import { SortQuery, SelectQuery } from "@services";
-import { AchievementModel, AchievementStageModel, AchievementUserProgressModel } from "@models";
+import { AchievementModel, AchievementStageModel, AchievementUserProgressModel, StageData } from "@models";
 
 export interface AchievementsFindOptions<T = AchievementModel> {
   select?: SelectQuery<T>;
@@ -24,3 +24,13 @@ export interface AchievementUserProgressCreate
 
 export type AchievementStageCreateData = Pick<AchievementStageModel, "name" | "stageData">;
 export type AchievementStageUpdateData = Partial<AchievementStageCreateData>;
+
+export type UpdateAchievementUserProgressProgressesReturnData = {
+  foundAchievement: AchievementModel;
+  nowFinishedStages: AchievementUserProgressModel["progresses"];
+};
+
+export interface GetDataForObtainAchievementEmitReturnData {
+  achievementName: string;
+  stages: StageData[];
+}

@@ -1,3 +1,4 @@
+import AchievementsHandler from "stream/AchievementsHandler";
 import CommandsHandler from "../CommandsHandler";
 import EventSubHandler from "../EventSubHandler";
 import LoyaltyHandler from "../LoyaltyHandler";
@@ -40,6 +41,7 @@ export interface AuthorizedUserData {
 }
 
 export interface HandlersList {
+  achievementsHandler?: AchievementsHandler;
   musicStreamHandler?: MusicStreamHandler;
   timersHandler?: TimersHandler;
   musicHandler?: MusicStreamHandler;
