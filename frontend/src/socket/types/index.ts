@@ -6,6 +6,7 @@ export type {
   EventAndUser,
   CustomRewardData,
   AudioStreamData,
+  ObtainAchievementData,
 } from "@socketTypes";
 
 export type * from "./types";
