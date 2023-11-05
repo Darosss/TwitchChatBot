@@ -1,0 +1,103 @@
+.achievements-overlay-wrapper {
+  width: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+
+  & > div:not(.achievements-overlay-background) {
+    margin: 0 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .obtained-achievements-wrapper {
+    position: relative;
+
+    display: flex;
+    flex-direction: row;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    box-shadow: 1px 2px 3px 2px $secondary-color;
+    justify-content: space-between;
+
+    .achievements-overlay-background {
+      border-radius: 1rem;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      background-color: $primary-color;
+      box-shadow: 1px 2px 3px 4px $primary-color;
+      filter: opacity(15%);
+    }
+
+    .obtained-achievements-content {
+      display: flex;
+      flex-direction: column;
+
+      color: $primary-color;
+      font-weight: 600;
+      min-width: 70%;
+      max-width: 70%;
+
+      div.obtained-achievement-username {
+        color: $success-color;
+        font-weight: 800;
+        margin-right: 0.5rem;
+        text-align: center;
+        & > span {
+          color: $primary-color;
+          font-weight: 400;
+
+          & > span {
+            font-weight: 800;
+          }
+        }
+      }
+
+      div.obtained-achievement-details {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      div.obtained-achievements-goal {
+        color: $success-color;
+        & > span {
+          font-weight: 800;
+          color: $primary-color;
+          font-size: 1.4em;
+        }
+      }
+
+      div.obtained-achievements-stage-name {
+        font-weight: 800;
+        text-decoration: underline;
+      }
+    }
+
+    .obtained-achievements-badge {
+      width: 20%;
+
+      img {
+        width: 70%;
+        filter: opacity(70%);
+        box-shadow: 1px 2px 3px 4px $secondary-color;
+        border-radius: 0.3rem;
+      }
+    }
+  }
+}
+
+.animated-achievement {
+  animation: achievement-animation 1s;
+}
+
+@keyframes achievement-animation {
+  0% {
+    transform: scale(0.7, 0.025);
+  }
+  50% {
+    box-shadow: 4px 2px 9px 15px $success-color;
+    transform: scale(1, 0.025);
+  }
+}
