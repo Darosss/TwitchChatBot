@@ -122,7 +122,7 @@ export default function MusicPlayer() {
   }, [socketContext]);
 
   return (
-    <div className="music-player-wrapper">
+    <div className={`music-player-wrapper ${songName ? "" : "hidden"}`}>
       {showPlaylist && audioData ? (
         <SongsPlaylist songs={audioData.songsInQue} />
       ) : (
