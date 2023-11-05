@@ -14,11 +14,13 @@ import { useEditOverlayById, useGetOverlayById } from "@services";
 import MusicPlayer from "./musicPlayer";
 import YoutubePlayerVideo from "./youtubePlayerVideo";
 import { HelmetTitle } from "@components/componentWithTitle";
+import Achievements from "./achievements";
 
 const components = new Map([
   [overlaysKeys.overlayMusicPlayer, Redemptions],
   [overlaysKeys.overlayMusicPlayer, MusicPlayer],
   [overlaysKeys.overlayYoutubeMusicPlayer, YoutubePlayerVideo],
+  [overlaysKeys.overlayAchievements, Achievements],
 ]);
 
 export default function Overlay(params: { editor?: boolean }) {

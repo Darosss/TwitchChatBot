@@ -167,5 +167,17 @@ export const getSocketEventsFunctions = (
         socketConnection.off("changeVolume");
       },
     },
+    obtainAchievement: {
+      on: (cb) => {
+        socketConnection.on(
+          "obtainAchievement",
+          ({ achievementName, stage, username }) =>
+            cb({ achievementName, stage, username })
+        );
+      },
+      off: () => {
+        socketConnection.off("obtainAchievement");
+      },
+    },
   };
 };
