@@ -12,22 +12,38 @@
     bottom: 0;
   }
 
+  .youtube-player-background {
+    position: absolute;
+    background-color: $primary-color;
+    filter: opacity(15%);
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+  }
+
   .youtube-song-details {
     padding: 0.5rem;
     border-radius: 0.5rem;
     z-index: 2;
-    position: absolute;
     overflow: hidden;
     display: flex;
+    font-weight: 700;
     opacity: 0.8;
-    background-color: rgb(195, 195, 195);
+    box-shadow: 1px 2px 3px 4px $secondary-color;
     width: 100%;
-    height: 90%;
+  }
+
+  .youtube-song-progress {
+    * {
+      color: $success-color !important;
+    }
   }
 
   .youtube-current-song {
     flex: 0 0 60%;
-    border-right: 1px solid rgba(138, 137, 137, 0.52);
+    border-right: 1px solid $primary-color;
+    margin-right: 2%;
   }
 
   * {
