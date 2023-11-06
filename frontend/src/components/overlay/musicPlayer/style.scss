@@ -1,18 +1,25 @@
 .music-player-wrapper {
   padding-right: 0.4rem;
   font-weight: 500;
-  background-color: rgba(24, 23, 23, 0.3);
   height: 100%;
   font-size: 1.2vw;
   border-radius: 1rem;
   display: flex;
   flex-direction: column;
-  color: lightblue;
+  color: $default-overlay-text-color;
   overflow: hidden;
-  span {
-    padding-left: 0.3rem;
-    font-weight: 700;
-    color: white;
+  position: relative;
+  box-shadow: $default-overlay-box-shadow;
+  padding-left: 0.5rem;
+
+  .music-player-background {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    filter: opacity(15%);
+    background-color: $default-overlay-background-color;
   }
 
   & > div {
@@ -25,7 +32,6 @@
     width: 100%;
     border-radius: 1rem;
 
-    color: white;
     display: inline-block;
     white-space: nowrap;
     animation: scrollHorizontally 6s alternate infinite;
@@ -34,8 +40,13 @@
     display: flex;
 
     & > div {
-      flex: 1 1 30%;
+      flex: 1;
       align-self: center;
+      z-index: 100;
+
+      & > span {
+        color: $default-overlay-text-color !important;
+      }
     }
   }
 
@@ -43,7 +54,6 @@
     display: flex;
     height: 100%;
     flex-direction: column;
-    color: white;
 
     & > div:first-child {
       text-align: center;

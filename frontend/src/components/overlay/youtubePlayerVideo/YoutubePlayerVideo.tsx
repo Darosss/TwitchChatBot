@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { useSocketContext } from "@socket";
 import YouTube, { YouTubeEvent, YouTubeProps } from "react-youtube";
@@ -16,6 +16,7 @@ export default function MusicPlayer() {
   const [player, setPlayer] = React.useState<YouTubeEvent | null>(null);
   const [duration, setDuration] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<number>(0);
+  const youtubeWrapperRef = useRef<HTMLDivElement | null>(null);
 
   const handleYTPause = useCallback(() => {
     if (player) player.target.pauseVideo();
@@ -111,7 +112,18 @@ export default function MusicPlayer() {
   };
 
   return (
-    <div className={`youtube-player-wrapper ${songName ? "" : "hidden"}`}>
+    <div
+      className={`youtube-player-wrapper ${songName ? "" : "hidden"}`}
+      ref={youtubeWrapperRef}
+      style={{
+        fontSize: `${
+          youtubeWrapperRef.current
+            ? `${youtubeWrapperRef.current.offsetWidth / 500}dvw`
+            : "1rem"
+        }`,
+      }}
+    >
+      <div className="youtube-player-background"></div>
       <div className="youtube-song-details">
         <div className="youtube-current-song">{songName} </div>
         <div className="youtube-song-progress">
