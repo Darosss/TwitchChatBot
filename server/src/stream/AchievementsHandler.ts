@@ -61,7 +61,7 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
     return nowFinishedStagesInfo;
   }
 
-  public async updateAchievementUserProgressAndAddToQueue({ username, ...rest }: UpdateAchievementUserProgressOpts) {
+  private async updateAchievementUserProgressAndAddToQueue({ username, ...rest }: UpdateAchievementUserProgressOpts) {
     const updateData = await updateAchievementUserProgressProgresses(rest);
 
     if (!updateData) {
