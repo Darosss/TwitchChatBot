@@ -34,3 +34,9 @@ export interface GetDataForObtainAchievementEmitReturnData {
   achievementName: string;
   stages: StageData[];
 }
+
+export interface UpdateAchievementUserProgressProgressesArgs {
+  achievementName: string;
+  userId: string;
+  progress: { increment?: boolean; value: number };
+}
