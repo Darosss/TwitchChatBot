@@ -14,7 +14,7 @@
 
   .youtube-player-background {
     position: absolute;
-    background-color: $primary-color;
+    background-color: $default-overlay-background-color;
     filter: opacity(15%);
     left: 0;
     top: 0;
@@ -30,7 +30,7 @@
     display: flex;
     font-weight: 700;
     opacity: 0.8;
-    box-shadow: 1px 2px 3px 4px $secondary-color;
+    box-shadow: $default-overlay-box-shadow;
     width: 100%;
   }
 
