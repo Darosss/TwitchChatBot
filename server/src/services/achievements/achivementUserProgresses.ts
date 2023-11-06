@@ -12,6 +12,7 @@ import {
   AchievementUserProgressCreate,
   AchievementUserProgressUpdate,
   GetDataForObtainAchievementEmitReturnData,
+  UpdateAchievementUserProgressProgressesArgs,
   UpdateAchievementUserProgressProgressesReturnData
 } from "./types";
 
@@ -101,17 +102,19 @@ export const updateFinishedStagesDependsOnProgress = async (
 
   await updateOneAchievementUserProgress(
     { _id: achievementProgress._id },
-    { progresses: [...achievementProgress.progresses, ...newfinishedStages], value: progress }
+    { progresses: [...achievementProgress.progresses, ...newfinishedStages] }
   );
 
   return newfinishedStages;
 };
 
-export const updateAchievementUserProgressProgresses = async (
-  achievementName: string,
-  userId: string,
-  progressValue: number
-): Promise<UpdateAchievementUserProgressProgressesReturnData | undefined> => {
+export const updateAchievementUserProgressProgresses = async ({
+  achievementName,
+  userId,
+  progress
+}: UpdateAchievementUserProgressProgressesArgs): Promise<
+  UpdateAchievementUserProgressProgressesReturnData | undefined
+> => {
   const foundAchievement = await getOneAchievement({ name: achievementName }, {});
 
   if (!foundAchievement) return; //TODO: add handling
@@ -122,7 +125,11 @@ export const updateAchievementUserProgressProgresses = async (
 
   if (!userProgress) return; //TODO: add handling
 
-  const nowFinishedStages = await updateFinishedStagesDependsOnProgress(foundAchievement, userProgress, progressValue);
+  const nowFinishedStages = await updateFinishedStagesDependsOnProgress(
+    foundAchievement,
+    userProgress,
+    progress.increment ? userProgress.value + progress.value : progress.value
+  );
 
   return { foundAchievement, nowFinishedStages };
 };
