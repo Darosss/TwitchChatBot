@@ -123,6 +123,8 @@ export default function MusicPlayer() {
 
   return (
     <div className={`music-player-wrapper ${songName ? "" : "hidden"}`}>
+      <div className="music-player-background"></div>
+
       {showPlaylist && audioData ? (
         <SongsPlaylist songs={audioData.songsInQue} />
       ) : (
