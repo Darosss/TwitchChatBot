@@ -11,15 +11,12 @@ import {
   getDataForObtainAchievementEmit,
   updateAchievementUserProgressProgresses,
   UpdateAchievementUserProgressProgressesReturnData,
-  GetDataForObtainAchievementEmitReturnData
+  GetDataForObtainAchievementEmitReturnData,
+  UpdateAchievementUserProgressProgressesArgs
 } from "@services";
-import { ACHIEVEMENTS } from "@defaults";
 import { achievementsLogger } from "@utils";
 
-interface UpdateAchievementUserProgressOpts {
-  achievement: ACHIEVEMENTS;
-  progressValue: number;
-  userId: string;
+interface UpdateAchievementUserProgressOpts extends UpdateAchievementUserProgressProgressesArgs {
   username: string;
 }
 
@@ -51,13 +48,8 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
     return nowFinishedStagesInfo;
   }
 
-  public async updateAchievementUserProgressAndAddToQueue({
-    achievement,
-    userId,
-    progressValue,
-    username
-  }: UpdateAchievementUserProgressOpts) {
-    const updateData = await updateAchievementUserProgressProgresses(achievement, userId, progressValue);
+  public async updateAchievementUserProgressAndAddToQueue({ username, ...rest }: UpdateAchievementUserProgressOpts) {
+    const updateData = await updateAchievementUserProgressProgresses(rest);
 
     if (!updateData) {
       achievementsLogger.error("Not found update data in updateAchievementUserProgressAndAddToQueue");
