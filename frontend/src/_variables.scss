@@ -32,3 +32,7 @@ $screen-lg: 1024px; /* Px for media queries for large screens */
 $screen-ulg: 1200px; /* Px for media queries for ultra large screens */
 
 $width-without-drawer: 98vw;
+
+$default-overlay-box-shadow: 1px 2px 7px 4px $secondary-color;
+$default-overlay-background-color: $primary-color;
+$default-overlay-text-color: $success-color;
