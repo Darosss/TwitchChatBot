@@ -6,7 +6,6 @@ import { Server } from "socket.io";
 import HeadHandler from "./HeadHandler";
 import { LoyaltyConfigs, PointsConfigs, StreamSessionModel } from "@models";
 import { AuthorizedUserData } from "./types";
-import { ACHIEVEMENTS } from "@defaults";
 import AchievementsHandler from "./AchievementsHandler";
 
 interface LoyaltyConfigsHandler extends LoyaltyConfigs, PointsConfigs {}
@@ -188,17 +187,15 @@ class LoyaltyHandler extends HeadHandler {
       const foundUser = await getOneUser({ twitchId: userId }, {});
       if (!foundUser) return watcherLogger.error("updateLoyaltyAchievements - user  not found");
 
-      await this.achievementsHandler.updateAchievementUserProgressAndAddToQueue({
-        achievement: ACHIEVEMENTS.CHAT_MESSAGES,
-        userId: foundUser._id,
-        progressValue: foundUser.messageCount || 0,
-        username: foundUser.username
+      await this.achievementsHandler.checkUserMessagesCountForAchievement({
+        userId,
+        username: foundUser.username,
+        progress: { value: foundUser.messageCount || 0 }
       });
-      await this.achievementsHandler.updateAchievementUserProgressAndAddToQueue({
-        achievement: ACHIEVEMENTS.WATCH_TIME,
-        userId: foundUser._id,
-        progressValue: foundUser.watchTime || 0,
-        username: foundUser.username
+      await this.achievementsHandler.checkUserWatchTimeForAchievement({
+        userId,
+        username: foundUser.username,
+        progress: { value: foundUser.watchTime || 0 }
       });
     }
   }

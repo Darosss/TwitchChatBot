@@ -32,6 +32,7 @@ interface CheckMessageForAchievementWithCondition extends Pick<CheckMessageForAc
 interface UpdateAchievementUserProgressOpts extends UpdateAchievementUserProgressProgressesArgs {
   username: string;
 }
+type CheckGlobalUserDetailsArgs = Omit<UpdateAchievementUserProgressOpts, "achievementName">;
 
 class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   private socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
@@ -126,6 +127,14 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
       username,
       progress: { increment: true, value: 1 }
     });
+  }
+
+  public async checkUserMessagesCountForAchievement(args: CheckGlobalUserDetailsArgs) {
+    await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.WATCH_TIME, ...args });
+  }
+
+  public async checkUserWatchTimeForAchievement(args: CheckGlobalUserDetailsArgs) {
+    await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.CHAT_MESSAGES, ...args });
   }
 }
 
