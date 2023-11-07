@@ -11,7 +11,8 @@ export const getDefaultAchievementsData = (stagesId: string): AchievementCreateD
     {
       name: ACHIEVEMENTS.WATCH_TIME,
       description: "Achievements for watch time",
-      stages: stagesId
+      stages: stagesId,
+      isTime: true
     },
     {
       name: ACHIEVEMENTS.POINTS,
