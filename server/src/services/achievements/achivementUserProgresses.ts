@@ -2,8 +2,7 @@ import {
   AchievementUserProgressDocument,
   AchievementUserProgress,
   AchievementModel,
-  AchievementUserProgressModel,
-  StageData
+  AchievementUserProgressModel
 } from "@models";
 import { logger, handleAppError, checkExistResource } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
@@ -137,7 +136,7 @@ export const updateAchievementUserProgressProgresses = async ({
 export const getDataForObtainAchievementEmit = (
   data: UpdateAchievementUserProgressProgressesReturnData
 ): GetDataForObtainAchievementEmitReturnData => {
-  const newStages: StageData[] = [];
+  const newStages: GetDataForObtainAchievementEmitReturnData["stages"] = [];
 
   data.nowFinishedStages.forEach((stage) => {
     const stageData = data.foundAchievement.stages.stageData.find((innerStage) => innerStage.stage === stage[0]);
