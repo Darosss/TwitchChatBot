@@ -14,6 +14,17 @@ export const getDefaultAchievementsData = (stagesId: string): AchievementCreateD
       stages: stagesId
     },
     {
+      name: ACHIEVEMENTS.POINTS,
+      description: "Achievements for bot points",
+      stages: stagesId
+    },
+    {
+      name: ACHIEVEMENTS.FOLLOWAGE,
+      description: "Achievements for follow time",
+      stages: stagesId,
+      isTime: true
+    },
+    {
       name: ACHIEVEMENTS.COMMAS,
       description: "Achievements for at least one ',' in message",
       stages: stagesId
