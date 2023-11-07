@@ -26,6 +26,15 @@ export default function Achievements() {
   }, [obtainAchievement]);
 
   useEffect(() => {
+    if (obtainedAchievements.length > 20) {
+      setObtainedAchievements((prevState) => {
+        prevState.pop();
+        return prevState;
+      });
+    }
+  }, [obtainedAchievements]);
+
+  useEffect(() => {
     obtainAchievementQueueInfo.on((count) => {
       setItemsQueLength(count);
     });
