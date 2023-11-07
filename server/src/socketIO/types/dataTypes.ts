@@ -82,7 +82,8 @@ export interface RewardData {
 }
 
 export interface ObtainAchievementData {
+  id: string;
   achievementName: string;
-  stage: StageDataWithBadgePopulated;
+  stage: [StageDataWithBadgePopulated, number];
   username: string;
 }

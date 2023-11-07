@@ -3,9 +3,9 @@ import {
   AchievementModel,
   AchievementStageModel,
   AchievementUserProgressModel,
-  AchievementWithBadgePopulated,
-  StageDataWithBadgePopulated
+  AchievementWithBadgePopulated
 } from "@models";
+import { ObtainAchievementData } from "@socket";
 
 export interface AchievementsFindOptions<T = AchievementModel> {
   select?: SelectQuery<T>;
@@ -38,7 +38,7 @@ export type UpdateAchievementUserProgressProgressesReturnData = {
 
 export interface GetDataForObtainAchievementEmitReturnData {
   achievementName: string;
-  stages: StageDataWithBadgePopulated[];
+  stages: ObtainAchievementData["stage"][];
 }
 
 export interface UpdateAchievementUserProgressProgressesArgs {

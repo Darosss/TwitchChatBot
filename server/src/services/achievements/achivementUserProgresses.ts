@@ -140,7 +140,10 @@ export const getDataForObtainAchievementEmit = (
 
   data.nowFinishedStages.forEach((stage) => {
     const stageData = data.foundAchievement.stages.stageData.find((innerStage) => innerStage.stage === stage[0]);
-    if (stageData) newStages.push(stageData);
+    if (stageData) newStages.push([stageData, stage[1]]);
   });
-  return { achievementName: data.foundAchievement.name, stages: newStages };
+  return {
+    achievementName: data.foundAchievement.name,
+    stages: newStages
+  };
 };
