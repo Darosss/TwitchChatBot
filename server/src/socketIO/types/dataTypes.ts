@@ -1,4 +1,4 @@
-import { StageData, UserModel } from "@models";
+import { StageDataWithBadgePopulated, UserModel } from "@models";
 
 export interface AudioDataRequester {
   id: string;
@@ -83,6 +83,6 @@ export interface RewardData {
 
 export interface ObtainAchievementData {
   achievementName: string;
-  stage: StageData;
+  stage: StageDataWithBadgePopulated;
   username: string;
 }
