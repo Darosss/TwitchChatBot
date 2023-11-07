@@ -18,6 +18,7 @@ export interface UserModel extends BaseModel {
   twitchName?: string;
   twitchCreated?: Date;
   follower?: Date;
+  badges?: Types.ObjectId[] | BadgeModel[];
 }
 
 export type UserDocument = UserModel & Document;
