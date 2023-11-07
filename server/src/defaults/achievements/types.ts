@@ -11,7 +11,10 @@ export enum ACHIEVEMENTS {
   XD = "XD",
   POLISH_SWEARING = "MIENSO",
   KAPPA = "KAPPA",
-  LUL = "LUL"
+  LUL = "LUL",
+  COMMANDS_COUNT = "COMMANDS",
+  SONG_REQUEST = "MY MUSIC",
+  SONG_VOTING = "MY MUSIC TASTE"
 }
 
 //sorry for swearing LUL
