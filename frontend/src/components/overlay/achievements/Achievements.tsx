@@ -19,6 +19,12 @@ export default function Achievements() {
   useEffect(() => {
     obtainAchievement.on((data) => {
       setObtainedAchievements((prevState) => [data, ...prevState]);
+
+      const audioUrl = data.stage[0].audio;
+      if (audioUrl) {
+        const audio = new Audio(`${viteBackendUrl}/${data.stage[0].audio}`);
+        audio.play();
+      }
     });
     return () => {
       obtainAchievement.off();
