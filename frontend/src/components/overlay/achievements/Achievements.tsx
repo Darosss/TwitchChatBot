@@ -6,7 +6,7 @@ import { viteBackendUrl } from "src/configs/envVariables";
 
 export default function Achievements() {
   const {
-    events: { obtainAchievement },
+    events: { obtainAchievement, obtainAchievementQueueInfo },
   } = useSocketContext();
 
   const wrapper = useRef<HTMLDivElement>(null);
@@ -14,6 +14,8 @@ export default function Achievements() {
   const [obtainedAchievements, setObtainedAchievements] = useState<
     ObtainAchievementData[]
   >([]);
+  const [itemsQueLength, setItemsQueLength] = useState(0);
+
   useEffect(() => {
     obtainAchievement.on((data) => {
       setObtainedAchievements((prevState) => [data, ...prevState]);
@@ -22,6 +24,15 @@ export default function Achievements() {
       obtainAchievement.off();
     };
   }, [obtainAchievement]);
+
+  useEffect(() => {
+    obtainAchievementQueueInfo.on((count) => {
+      setItemsQueLength(count);
+    });
+    return () => {
+      obtainAchievementQueueInfo.off();
+    };
+  }, [obtainAchievementQueueInfo]);
 
   return (
     <div
@@ -33,8 +44,18 @@ export default function Achievements() {
         }`,
       }}
     >
+      <div
+        className={`achievements-overlay-queue-length ${
+          itemsQueLength !== 0 && itemsQueLength % 10 === 0 ? "show" : "hide"
+        }`}
+      >
+        <div className="queue-length-background"></div>
+        {itemsQueLength}+
+      </div>
+
       {obtainedAchievements.map(({ stage, achievementName, username, id }) => {
         const [stageData, timestamp] = stage;
+
         return (
           <div
             key={id}
