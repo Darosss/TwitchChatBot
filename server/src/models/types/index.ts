@@ -288,11 +288,14 @@ export interface BadgeModel extends BaseModel {
 
 export type BadgeDocument = BadgeModel & Document;
 
+export type StageDataRarity = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export interface StageData<T = string> {
   name: string;
   stage: number;
   goal: number;
   badge: T;
+  sound?: string;
+  rarity?: StageDataRarity;
 }
 export type StageDataWithBadgePopulated = StageData<BadgeModel>;
 export interface AchievementStageModel<T = string> extends BaseModel {

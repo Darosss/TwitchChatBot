@@ -8,9 +8,10 @@ const AchievementStageSchema = new Schema<AchievementStageDocument>({
       name: { type: String, required: true },
       stage: { type: Number, required: true },
       goal: { type: Number, required: true },
-      badge: { type: Schema.Types.ObjectId, required: true, ref: "Badge" }
+      badge: { type: Schema.Types.ObjectId, required: true, ref: "Badge" },
+      sound: { type: String, required: false },
+      rarity: { type: Number, required: false }
     },
-
     { timestamps: true }
   ]
 });
