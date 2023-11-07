@@ -34,6 +34,11 @@ export const getDefaultAchievementsData = (stagesId: string): AchievementCreateD
       stages: stagesId
     },
     {
+      name: ACHIEVEMENTS.SHORT_MESSAGES,
+      description: "Achievements for short messages (4)",
+      stages: stagesId
+    },
+    {
       name: ACHIEVEMENTS.MONKEY,
       description: "Achievements for at least one '@' in message",
       stages: stagesId
