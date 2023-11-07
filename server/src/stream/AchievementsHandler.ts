@@ -64,6 +64,8 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   protected override startInterval(): void {
     super.startInterval((item) => {
       this.emitObtainAchievement(item);
+
+      this.socketIO.emit("obtainAchievementQueueInfo", this.getItemsCountInQueue());
     });
   }
 
