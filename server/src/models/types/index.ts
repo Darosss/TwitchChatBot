@@ -305,6 +305,7 @@ export interface AchievementModel extends BaseModel {
   name: string;
   description: string;
   stages: AchievementStageModel;
+  isTime: boolean;
 }
 
 export type AchievementDocument = AchievementModel & Document;

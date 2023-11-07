@@ -19,7 +19,8 @@ const AchivementSchema: Schema<AchievementDocument> = new Schema(
   {
     name: { type: String, required: true, unique: true },
     description: { type: String },
-    stages: { type: Schema.Types.ObjectId, required: true, ref: "AchievementStage" }
+    stages: { type: Schema.Types.ObjectId, required: true, ref: "AchievementStage" },
+    isTime: { type: Boolean, required: true, default: false }
   },
   { timestamps: true }
 );
