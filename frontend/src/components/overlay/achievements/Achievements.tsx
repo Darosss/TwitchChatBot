@@ -68,7 +68,9 @@ export default function Achievements() {
         return (
           <div
             key={id}
-            className="obtained-achievements-wrapper animated-achievement"
+            className={`obtained-achievements-wrapper animated-achievement${
+              stageData.rarity ? `-${stageData.rarity}` : ""
+            }`}
           >
             <div className="achievements-overlay-background"></div>
 
