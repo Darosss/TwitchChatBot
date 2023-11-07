@@ -62,6 +62,21 @@ export const getDefaultAchievementsData = (stagesId: string): AchievementCreateD
       name: ACHIEVEMENTS.LUL,
       description: "Achievements for at least one 'LUL' in message",
       stages: stagesId
+    },
+    {
+      name: ACHIEVEMENTS.COMMANDS_COUNT,
+      description: "Achievements for use of command",
+      stages: stagesId
+    },
+    {
+      name: ACHIEVEMENTS.SONG_VOTING,
+      description: "Achievements for 'like/dislike/unlike' in message",
+      stages: stagesId
+    },
+    {
+      name: ACHIEVEMENTS.SONG_REQUEST,
+      description: "Achievements for song requests in message",
+      stages: stagesId
     }
   ];
 };
