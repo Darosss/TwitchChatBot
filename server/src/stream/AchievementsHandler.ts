@@ -12,7 +12,8 @@ import {
   updateAchievementUserProgressProgresses,
   UpdateAchievementUserProgressProgressesReturnData,
   GetDataForObtainAchievementEmitReturnData,
-  UpdateAchievementUserProgressProgressesArgs
+  UpdateAchievementUserProgressProgressesArgs,
+  addBadgesToUser
 } from "@services";
 import { ACHIEVEMENTS, POLISH_SWEARING } from "@defaults";
 import { achievementsLogger } from "@utils";
@@ -40,6 +41,18 @@ interface CheckGlobalUserDetailsDateArgs extends Omit<CheckGlobalUserDetailsArgs
 }
 
 type IncrementCommandAchievementsArgs = Pick<CheckMessageForAchievement, "userId" | "username">;
+
+interface CheckBadgesLogicForUserArgs {
+  userId: string;
+  username: string;
+  stages: GetDataForObtainAchievementEmitReturnData["stages"];
+}
+
+interface ManageObtainAchievementDataArgs extends GetDataForObtainAchievementEmitReturnData {
+  userId: string;
+  username: string;
+}
+
 class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   private socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
   constructor(socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>) {
@@ -78,11 +91,29 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
 
     const modifiedUpdateData = this.convertUpdateDataToObtainAchievementData(updateData);
 
-    this.addObtainedAchievementDataToQueue(modifiedUpdateData, username);
+    if (modifiedUpdateData.stages.length > 0)
+      await this.manageObtainAchievementData({ userId: rest.userId, username, ...modifiedUpdateData });
+  }
+
+  private async manageObtainAchievementData({ username, ...rest }: ManageObtainAchievementDataArgs) {
+    await this.addBadgesToUser({
+      userId: rest.userId,
+      username: username,
+      stages: rest.stages
+    });
+    this.addObtainedAchievementDataToQueue(rest, username);
   }
 
   private addObtainedAchievementDataToQueue(data: GetDataForObtainAchievementEmitReturnData, username: string) {
     data.stages.forEach((stage) => this.enqueue({ achievementName: data.achievementName, stage, username }));
+  }
+
+  private async addBadgesToUser({ userId, stages }: CheckBadgesLogicForUserArgs) {
+    const badges = stages.map((stage) => stage.badge._id);
+
+    const badgesInfo = await addBadgesToUser({ _id: userId }, badges);
+
+    return badgesInfo;
   }
 
   private emitObtainAchievement({ achievementName, stage, username }: ObtainAchievementData) {
@@ -144,6 +175,10 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
 
   public async checkUserPointsForAchievement(args: CheckGlobalUserDetailsArgs) {
     await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.POINTS, ...args });
+  }
+
+  public async checkUserBadgesCountForAchievement(args: CheckGlobalUserDetailsArgs) {
+    await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.BADGES_COUNT, ...args });
   }
 
   public async checkUserFollowageForAchievement({ dateProgress, ...rest }: CheckGlobalUserDetailsDateArgs) {
