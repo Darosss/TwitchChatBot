@@ -34,6 +34,7 @@ interface UpdateAchievementUserProgressOpts extends UpdateAchievementUserProgres
 }
 type CheckGlobalUserDetailsArgs = Omit<UpdateAchievementUserProgressOpts, "achievementName">;
 
+type IncrementCommandAchievementsArgs = Pick<CheckMessageForAchievement, "userId" | "username">;
 class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   private socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
   constructor(socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>) {
@@ -107,7 +108,6 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
 
   private isMessageContaingPolishSwearing(lowercaseMessage: string) {
     for (const swearing in POLISH_SWEARING) {
-      console.log(swearing.toLowerCase(), lowercaseMessage, "c do chuja");
       if (lowercaseMessage.includes(swearing.toLowerCase())) return true;
     }
     return false;
@@ -135,6 +135,31 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
 
   public async checkUserWatchTimeForAchievement(args: CheckGlobalUserDetailsArgs) {
     await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.CHAT_MESSAGES, ...args });
+  }
+
+  public async incrementCommandAchievements(args: IncrementCommandAchievementsArgs) {
+    await this.checkMessageForAchievementWithCondition({
+      achievementName: ACHIEVEMENTS.COMMANDS_COUNT,
+      condition: true,
+      ...args
+    });
+  }
+
+  public async incrementMusicLikesCommandAchievements(args: IncrementCommandAchievementsArgs) {
+    await this.checkMessageForAchievementWithCondition({
+      achievementName: ACHIEVEMENTS.SONG_VOTING,
+      condition: true,
+      ...args
+    });
+  }
+
+  public async incrementMusicSongRequestCommandAchievements(args: IncrementCommandAchievementsArgs) {
+    console.log(args.userId, args.username);
+    await this.checkMessageForAchievementWithCondition({
+      achievementName: ACHIEVEMENTS.SONG_REQUEST,
+      condition: true,
+      ...args
+    });
   }
 }
 
