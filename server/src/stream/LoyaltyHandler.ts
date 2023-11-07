@@ -203,12 +203,18 @@ class LoyaltyHandler extends HeadHandler {
         progress: { value: foundUser.points || 0 }
       });
 
-      if (!foundUser.follower) return;
+      if (foundUser.follower) {
+        await this.achievementsHandler.checkUserFollowageForAchievement({
+          userId: foundUser._id,
+          username: foundUser.username,
+          dateProgress: foundUser.follower
+        });
+      }
 
-      await this.achievementsHandler.checkUserFollowageForAchievement({
+      await this.achievementsHandler.checkUserBadgesCountForAchievement({
         userId: foundUser._id,
         username: foundUser.username,
-        dateProgress: foundUser.follower
+        progress: { value: foundUser.badges?.length || 0 }
       });
     }
   }

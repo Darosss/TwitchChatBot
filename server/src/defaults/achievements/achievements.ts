@@ -94,6 +94,11 @@ export const getDefaultAchievementsData = (stagesId: string): AchievementCreateD
       name: ACHIEVEMENTS.SONG_REQUEST,
       description: "Achievements for song requests in message",
       stages: stagesId
+    },
+    {
+      name: ACHIEVEMENTS.BADGES_COUNT,
+      description: "Achievements for user collected badges count",
+      stages: stagesId
     }
   ];
 };

@@ -10,6 +10,6 @@ export interface ManyUsersFindOptions extends UserFindOptions {
   limit?: number;
 }
 
-export type UserCreateData = Omit<UserModel, "_id" | "createdAt" | "updatedAt">;
+export type UserCreateData = Omit<UserModel, "_id" | "createdAt" | "updatedAt" | "badges">;
 
 export type UserUpdateData = Partial<UserCreateData>;

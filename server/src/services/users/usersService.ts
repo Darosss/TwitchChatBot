@@ -1,5 +1,5 @@
 import { UserDocument, User } from "@models";
-import { checkExistResource, handleAppError, logger } from "@utils";
+import { AppError, checkExistResource, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { ManyUsersFindOptions, UserCreateData, UserFindOptions, UserUpdateData } from "./types";
 
@@ -170,4 +170,15 @@ export const getFollowersCount = async (startDate?: Date, endDate?: Date) => {
     logger.error(`Error occured while getting followers count. ${err}`);
     handleAppError(err);
   }
+};
+
+export const addBadgesToUser = async (filter: FilterQuery<UserDocument>, badgesToAdd: string[]) => {
+  const updatedUser = await updateUser(filter, { $push: { badges: badgesToAdd } });
+
+  if (!updatedUser) {
+    logger.error(`User not updated in - addBadgesTouser filter: ${filter}`);
+    return { badgesCount: 0 };
+  }
+
+  return { badgesCount: updatedUser.badges?.length || 0 };
 };
