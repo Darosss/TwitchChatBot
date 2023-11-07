@@ -48,6 +48,10 @@ class QueueHandler<T> {
     return this.items.length == 0;
   }
 
+  public getItemsCountInQueue() {
+    return this.items.length;
+  }
+
   public printQueue() {
     console.log(JSON.stringify(this.items));
   }

@@ -3,12 +3,41 @@
   min-height: 100%;
   max-height: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   & > div:not(.achievements-overlay-background) {
     margin: 0 1rem;
     margin-top: 0.5rem;
   }
 
+  .achievements-overlay-queue-length {
+    position: relative;
+    text-align: center;
+    font-weight: 800;
+    color: $primary-color;
+    padding: 0rem;
+    .queue-length-background {
+      border-start-start-radius: 100%;
+      border-start-end-radius: 100%;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      background-color: $default-overlay-background-color;
+      box-shadow: $default-overlay-box-shadow;
+      filter: opacity(25%);
+    }
+    transition: opacity 1s;
+    &.show {
+      opacity: 1;
+    }
+
+    &.hide {
+      opacity: 0;
+    }
+  }
   .obtained-achievements-wrapper {
     position: relative;
 
@@ -18,7 +47,7 @@
     padding: 0.5rem;
     box-shadow: 1px 2px 3px 2px $secondary-color;
     justify-content: space-between;
-
+    transition: transform 2s ease;
     .achievements-overlay-background {
       border-radius: 1rem;
       position: absolute;
@@ -89,7 +118,7 @@
 }
 
 .animated-achievement {
-  animation: achievement-animation 1s;
+  animation: achievement-animation 1.5s ease-in-out;
 }
 
 @keyframes achievement-animation {

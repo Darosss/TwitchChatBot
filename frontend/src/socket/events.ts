@@ -175,5 +175,13 @@ export const getSocketEventsFunctions = (
         socketConnection.off("obtainAchievement");
       },
     },
+    obtainAchievementQueueInfo: {
+      on: (cb) => {
+        socketConnection.on("obtainAchievementQueueInfo", (count) => cb(count));
+      },
+      off: () => {
+        socketConnection.off("obtainAchievementQueueInfo");
+      },
+    },
   };
 };
