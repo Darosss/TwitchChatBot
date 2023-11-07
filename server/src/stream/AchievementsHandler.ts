@@ -16,6 +16,7 @@ import {
 } from "@services";
 import { ACHIEVEMENTS, POLISH_SWEARING } from "@defaults";
 import { achievementsLogger } from "@utils";
+import moment from "moment";
 
 interface CheckMessageForAchievement {
   message: string;
@@ -33,6 +34,10 @@ interface UpdateAchievementUserProgressOpts extends UpdateAchievementUserProgres
   username: string;
 }
 type CheckGlobalUserDetailsArgs = Omit<UpdateAchievementUserProgressOpts, "achievementName">;
+
+interface CheckGlobalUserDetailsDateArgs extends Omit<CheckGlobalUserDetailsArgs, "progress"> {
+  dateProgress: Date;
+}
 
 type IncrementCommandAchievementsArgs = Pick<CheckMessageForAchievement, "userId" | "username">;
 class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
@@ -139,6 +144,15 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
 
   public async checkUserPointsForAchievement(args: CheckGlobalUserDetailsArgs) {
     await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.POINTS, ...args });
+  }
+
+  public async checkUserFollowageForAchievement({ dateProgress, ...rest }: CheckGlobalUserDetailsDateArgs) {
+    const daysFollow = moment().diff(moment(dateProgress), "seconds");
+    await this.updateAchievementUserProgressAndAddToQueue({
+      achievementName: ACHIEVEMENTS.FOLLOWAGE,
+      progress: { value: daysFollow },
+      ...rest
+    });
   }
 
   public async incrementCommandAchievements(args: IncrementCommandAchievementsArgs) {
