@@ -188,12 +188,12 @@ class LoyaltyHandler extends HeadHandler {
       if (!foundUser) return watcherLogger.error("updateLoyaltyAchievements - user  not found");
 
       await this.achievementsHandler.checkUserMessagesCountForAchievement({
-        userId,
+        userId: foundUser._id,
         username: foundUser.username,
         progress: { value: foundUser.messageCount || 0 }
       });
       await this.achievementsHandler.checkUserWatchTimeForAchievement({
-        userId,
+        userId: foundUser._id,
         username: foundUser.username,
         progress: { value: foundUser.watchTime || 0 }
       });
