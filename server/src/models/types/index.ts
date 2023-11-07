@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 interface BaseModel {
   _id: string;
@@ -287,26 +287,28 @@ export interface BadgeModel extends BaseModel {
 
 export type BadgeDocument = BadgeModel & Document;
 
-export interface StageData {
+export interface StageData<T = string> {
   name: string;
   stage: number;
   goal: number;
-  badge: string | BadgeModel;
+  badge: T;
 }
-
-export interface AchievementStageModel extends BaseModel {
+export type StageDataWithBadgePopulated = StageData<BadgeModel>;
+export interface AchievementStageModel<T = string> extends BaseModel {
   name: string;
-  stageData: StageData[];
+  stageData: StageData<T>[];
 }
 
 export type AchievementStageDocument = AchievementStageModel & Document;
 
-export interface AchievementModel extends BaseModel {
+export interface AchievementModel<T = string | BadgeModel> extends BaseModel {
   name: string;
   description: string;
-  stages: AchievementStageModel;
+  stages: AchievementStageModel<T>;
   isTime: boolean;
 }
+
+export type AchievementWithBadgePopulated = AchievementModel<BadgeModel>;
 
 export type AchievementDocument = AchievementModel & Document;
 
