@@ -130,11 +130,11 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   }
 
   public async checkUserMessagesCountForAchievement(args: CheckGlobalUserDetailsArgs) {
-    await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.WATCH_TIME, ...args });
+    await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.CHAT_MESSAGES, ...args });
   }
 
   public async checkUserWatchTimeForAchievement(args: CheckGlobalUserDetailsArgs) {
-    await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.CHAT_MESSAGES, ...args });
+    await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.WATCH_TIME, ...args });
   }
 
   public async incrementCommandAchievements(args: IncrementCommandAchievementsArgs) {
@@ -154,7 +154,6 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   }
 
   public async incrementMusicSongRequestCommandAchievements(args: IncrementCommandAchievementsArgs) {
-    console.log(args.userId, args.username);
     await this.checkMessageForAchievementWithCondition({
       achievementName: ACHIEVEMENTS.SONG_REQUEST,
       condition: true,
