@@ -18,6 +18,7 @@ import {
 import { ACHIEVEMENTS, POLISH_SWEARING } from "@defaults";
 import { achievementsLogger } from "@utils";
 import moment from "moment";
+import { randomUUID } from "crypto";
 
 interface CheckMessageForAchievement {
   message: string;
@@ -105,19 +106,26 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   }
 
   private addObtainedAchievementDataToQueue(data: GetDataForObtainAchievementEmitReturnData, username: string) {
-    data.stages.forEach((stage) => this.enqueue({ achievementName: data.achievementName, stage, username }));
+    data.stages.forEach((stage) =>
+      this.enqueue({
+        achievementName: data.achievementName,
+        stage,
+        username,
+        id: randomUUID()
+      })
+    );
   }
 
   private async addBadgesToUser({ userId, stages }: CheckBadgesLogicForUserArgs) {
-    const badges = stages.map((stage) => stage.badge._id);
+    const badges = stages.map((stage) => stage[0]?.badge._id);
 
     const badgesInfo = await addBadgesToUser({ _id: userId }, badges);
 
     return badgesInfo;
   }
 
-  private emitObtainAchievement({ achievementName, stage, username }: ObtainAchievementData) {
-    this.socketIO.emit("obtainAchievement", { achievementName: achievementName, stage, username });
+  private emitObtainAchievement(emitData: ObtainAchievementData) {
+    this.socketIO.emit("obtainAchievement", emitData);
   }
 
   public async checkMessageForAchievements({ message, ...data }: CheckMessageForAchievement) {
