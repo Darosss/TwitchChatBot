@@ -102,7 +102,7 @@ export const updateFinishedStagesDependsOnProgress = async (
 
   await updateOneAchievementUserProgress(
     { _id: achievementProgress._id },
-    { progresses: [...achievementProgress.progresses, ...newfinishedStages] }
+    { progresses: [...achievementProgress.progresses, ...newfinishedStages], value: progress }
   );
 
   return newfinishedStages;
