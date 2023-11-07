@@ -160,8 +160,8 @@ class LoyaltyHandler extends HeadHandler {
 
     const usersNow = await this.handleActiveUsers(chatters);
 
-    await this.updateLoyaltyAchievements(chatters);
     await this.updateFollowerStatus(chatters);
+    await this.updateLoyaltyAchievements(chatters);
 
     removeDifferenceFromSet(this.usersBefore, usersNow);
 
@@ -196,6 +196,11 @@ class LoyaltyHandler extends HeadHandler {
         userId: foundUser._id,
         username: foundUser.username,
         progress: { value: foundUser.watchTime || 0 }
+      });
+      await this.achievementsHandler.checkUserPointsForAchievement({
+        userId: foundUser._id,
+        username: foundUser.username,
+        progress: { value: foundUser.points || 0 }
       });
     }
   }
