@@ -187,35 +187,7 @@ class LoyaltyHandler extends HeadHandler {
       const foundUser = await getOneUser({ twitchId: userId }, {});
       if (!foundUser) return watcherLogger.error("updateLoyaltyAchievements - user  not found");
 
-      await this.achievementsHandler.checkUserMessagesCountForAchievement({
-        userId: foundUser._id,
-        username: foundUser.username,
-        progress: { value: foundUser.messageCount || 0 }
-      });
-      await this.achievementsHandler.checkUserWatchTimeForAchievement({
-        userId: foundUser._id,
-        username: foundUser.username,
-        progress: { value: foundUser.watchTime || 0 }
-      });
-      await this.achievementsHandler.checkUserPointsForAchievement({
-        userId: foundUser._id,
-        username: foundUser.username,
-        progress: { value: foundUser.points || 0 }
-      });
-
-      if (foundUser.follower) {
-        await this.achievementsHandler.checkUserFollowageForAchievement({
-          userId: foundUser._id,
-          username: foundUser.username,
-          dateProgress: foundUser.follower
-        });
-      }
-
-      await this.achievementsHandler.checkUserBadgesCountForAchievement({
-        userId: foundUser._id,
-        username: foundUser.username,
-        progress: { value: foundUser.badges?.length || 0 }
-      });
+      await this.achievementsHandler.checkOnlineUserAchievements(foundUser);
     }
   }
 }

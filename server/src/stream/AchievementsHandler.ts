@@ -19,6 +19,7 @@ import { ACHIEVEMENTS, POLISH_SWEARING } from "@defaults";
 import { achievementsLogger } from "@utils";
 import moment from "moment";
 import { randomUUID } from "crypto";
+import { UserModel } from "@models";
 
 interface CheckMessageForAchievement {
   message: string;
@@ -175,23 +176,35 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
     });
   }
 
-  public async checkUserMessagesCountForAchievement(args: CheckGlobalUserDetailsArgs) {
-    await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.CHAT_MESSAGES, ...args });
+  public async checkOnlineUserAchievements(user: UserModel) {
+    const { _id, username, messageCount, watchTime, points, follower, badges } = user;
+    const commonData = { userId: _id, username: username };
+    await this.updateAchievementUserProgressAndAddToQueue({
+      ...commonData,
+      achievementName: ACHIEVEMENTS.CHAT_MESSAGES,
+      progress: { value: messageCount || 0 }
+    });
+    await this.updateAchievementUserProgressAndAddToQueue({
+      ...commonData,
+      achievementName: ACHIEVEMENTS.WATCH_TIME,
+      progress: { value: watchTime || 0 }
+    });
+    await this.updateAchievementUserProgressAndAddToQueue({
+      ...commonData,
+      achievementName: ACHIEVEMENTS.POINTS,
+      progress: { value: points || 0 }
+    });
+    if (follower) {
+      await this.checkUserFollowageForAchievement({ ...commonData, dateProgress: follower });
+    }
+    await this.updateAchievementUserProgressAndAddToQueue({
+      ...commonData,
+      achievementName: ACHIEVEMENTS.BADGES_COUNT,
+      progress: { value: badges?.length || 0 }
+    });
   }
 
-  public async checkUserWatchTimeForAchievement(args: CheckGlobalUserDetailsArgs) {
-    await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.WATCH_TIME, ...args });
-  }
-
-  public async checkUserPointsForAchievement(args: CheckGlobalUserDetailsArgs) {
-    await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.POINTS, ...args });
-  }
-
-  public async checkUserBadgesCountForAchievement(args: CheckGlobalUserDetailsArgs) {
-    await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.BADGES_COUNT, ...args });
-  }
-
-  public async checkUserFollowageForAchievement({ dateProgress, ...rest }: CheckGlobalUserDetailsDateArgs) {
+  private async checkUserFollowageForAchievement({ dateProgress, ...rest }: CheckGlobalUserDetailsDateArgs) {
     const daysFollow = moment().diff(moment(dateProgress), "seconds");
     await this.updateAchievementUserProgressAndAddToQueue({
       achievementName: ACHIEVEMENTS.FOLLOWAGE,
