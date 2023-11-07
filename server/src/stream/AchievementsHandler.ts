@@ -137,6 +137,10 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
     await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.WATCH_TIME, ...args });
   }
 
+  public async checkUserPointsForAchievement(args: CheckGlobalUserDetailsArgs) {
+    await this.updateAchievementUserProgressAndAddToQueue({ achievementName: ACHIEVEMENTS.POINTS, ...args });
+  }
+
   public async incrementCommandAchievements(args: IncrementCommandAchievementsArgs) {
     await this.checkMessageForAchievementWithCondition({
       achievementName: ACHIEVEMENTS.COMMANDS_COUNT,
