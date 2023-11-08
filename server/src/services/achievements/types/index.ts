@@ -19,8 +19,8 @@ export interface ManyAchievementsFindOptions<T = AchievementModel> extends Achie
 
 export type AchievementUpdateData = Partial<Omit<AchievementModel, "_id" | "createdAt" | "updatedAt">>;
 
-export type AchievementCreateData = Omit<AchievementUpdateData, "name" | "stages"> &
-  Pick<AchievementModel, "name"> & { stages: string };
+export type AchievementCreateData = Omit<AchievementUpdateData, "name" | "stages" | "tag"> &
+  Pick<AchievementModel, "name"> & { stages: string; tag: string };
 
 export type AchievementUserProgressUpdate = Partial<Pick<AchievementUserProgressModel, "progresses" | "value">>;
 
