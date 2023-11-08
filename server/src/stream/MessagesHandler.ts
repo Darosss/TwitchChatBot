@@ -1,7 +1,6 @@
 import { createMessage, MessageCreateData, updateUser } from "@services";
-import { PointsConfigs, UserModel } from "@models";
+import { PointsConfigs } from "@models";
 import AchievementsHandler from "./AchievementsHandler";
-import { ACHIEVEMENTS } from "@defaults";
 
 class MessagesHandler {
   private configs: PointsConfigs;
@@ -26,18 +25,7 @@ class MessagesHandler {
     const updatedUser = await this.updateUserStatistics(userId);
 
     if (!updatedUser) return;
-    this.checkAchievementsIfUserFirstMessage(updatedUser);
-  }
-
-  private async checkAchievementsIfUserFirstMessage(user: UserModel) {
-    if (user.messageCount !== 1) return;
-
-    await this.achievementsHandler.updateAchievementUserProgressAndAddToQueue({
-      achievement: ACHIEVEMENTS.CHAT_MESSAGES,
-      userId: user._id,
-      progressValue: user.messageCount || 0,
-      username: user.username
-    });
+    this.achievementsHandler.checkMessageForAchievements({ message, date, userId, username: userName });
   }
 
   private async saveMessageToDatabase(messageCreateData: MessageCreateData) {

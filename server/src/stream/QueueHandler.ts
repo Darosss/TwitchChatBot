@@ -1,6 +1,7 @@
 class QueueHandler<T> {
   private items: T[];
   private interval: NodeJS.Timeout | null = null;
+  private timeout: NodeJS.Timeout | null = null;
   constructor() {
     this.items = [];
   }
@@ -9,6 +10,12 @@ class QueueHandler<T> {
     if (this.interval) {
       clearInterval(this.interval);
       this.interval = null;
+    }
+  }
+  private clearTimeout() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
     }
   }
 
@@ -23,6 +30,20 @@ class QueueHandler<T> {
 
       if (item) this.dequeue();
     }, 2500);
+  }
+
+  protected startTimeout(delay = 1000, cb: (item: T) => void) {
+    if (this.timeout) return;
+
+    this.timeout = setTimeout(async () => {
+      const item = this.peek();
+
+      if (!item) return this.clearTimeout();
+
+      this.clearTimeout();
+      if (item) this.dequeue();
+      cb(item);
+    }, delay);
   }
 
   public enqueue(item: T) {
@@ -46,6 +67,10 @@ class QueueHandler<T> {
 
   public isEmpty() {
     return this.items.length == 0;
+  }
+
+  public getItemsCountInQueue() {
+    return this.items.length;
   }
 
   public printQueue() {

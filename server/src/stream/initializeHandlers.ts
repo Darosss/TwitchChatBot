@@ -61,7 +61,8 @@ const createHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: 
     {
       ...commandsConfigs,
       permissionLevels: headConfigs.permissionLevels
-    }
+    },
+    INITIALIZED_HANDLERS.achievementsHandler
   );
 
   INITIALIZED_HANDLERS.messagesHandler = new MessagesHandler(INITIALIZED_HANDLERS.achievementsHandler, pointsConfigs);

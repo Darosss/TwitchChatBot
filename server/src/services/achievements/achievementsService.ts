@@ -1,4 +1,4 @@
-import { Achievement, AchievementDocument } from "@models";
+import { Achievement, AchievementDocument, AchievementWithBadgePopulated } from "@models";
 import { AppError, checkExistResource, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
@@ -54,18 +54,22 @@ export const getAchievementsCount = async (filter: FilterQuery<AchievementDocume
 
 export const getOneAchievement = async (
   filter: FilterQuery<AchievementDocument> = {},
-  achievementFindOptions: AchievementsFindOptions
+  achievementFindOptions: AchievementsFindOptions,
+  populateTag?: boolean
 ) => {
   const { select = { __v: 0 } } = achievementFindOptions;
   try {
-    const foundAchievement = await Achievement.findOne(filter)
+    const foundAchievement: AchievementWithBadgePopulated | null = await Achievement.findOne(filter)
       .select(select)
-      .populate({
-        path: "stages",
-        populate: {
-          path: "stageData.badge"
-        }
-      });
+      .populate([
+        {
+          path: "stages",
+          populate: {
+            path: "stageData.badge"
+          }
+        },
+        ...(populateTag ? [{ path: "tag" }] : [])
+      ]);
 
     return foundAchievement;
   } catch (err) {

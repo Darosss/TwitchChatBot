@@ -169,14 +169,18 @@ export const getSocketEventsFunctions = (
     },
     obtainAchievement: {
       on: (cb) => {
-        socketConnection.on(
-          "obtainAchievement",
-          ({ achievementName, stage, username }) =>
-            cb({ achievementName, stage, username })
-        );
+        socketConnection.on("obtainAchievement", (data) => cb(data));
       },
       off: () => {
         socketConnection.off("obtainAchievement");
+      },
+    },
+    obtainAchievementQueueInfo: {
+      on: (cb) => {
+        socketConnection.on("obtainAchievementQueueInfo", (count) => cb(count));
+      },
+      off: () => {
+        socketConnection.off("obtainAchievementQueueInfo");
       },
     },
   };

@@ -1,12 +1,19 @@
 import HeadHandler from "./HeadHandler";
 import { ApiClient } from "@twurple/api";
 import { ChatCommandModel, CommandsConfigs, HeadConfigs, UserModel } from "@models";
-import { getChatCommands, getChatCommandsAliases, getOneChatCommand, updateChatCommandById } from "@services";
+import {
+  ManageSongLikesAction,
+  getChatCommands,
+  getChatCommandsAliases,
+  getOneChatCommand,
+  updateChatCommandById
+} from "@services";
 import { commandLogger, randomWithMax } from "@utils";
 import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";
 import { Server } from "socket.io";
 import MusicYTHandler from "./MusicYTHandler";
 import { AuthorizedUserData, MusicPlayerCommands } from "./types";
+import AchievementsHandler from "./AchievementsHandler";
 
 type CommandsHandlerConfigs = CommandsConfigs & Pick<HeadConfigs, "permissionLevels">;
 
@@ -17,19 +24,22 @@ class CommandsHandler extends HeadHandler {
   private musicCommandCommonPermission: number;
   private configs: CommandsHandlerConfigs;
   private readonly musicHandler: MusicYTHandler;
+  private achievementsHandler: AchievementsHandler;
 
   constructor(
     twitchApi: ApiClient,
     socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     authorizedUser: AuthorizedUserData,
     musicHandler: MusicYTHandler,
-    configs: CommandsHandlerConfigs
+    configs: CommandsHandlerConfigs,
+    achievementsHandler: AchievementsHandler
   ) {
     super(socketIO, twitchApi, authorizedUser);
     this.configs = configs;
     this.musicHandler = musicHandler;
     this.musicCommandsPermission = this.configs.permissionLevels.mod;
     this.musicCommandCommonPermission = this.configs.permissionLevels.all;
+    this.achievementsHandler = achievementsHandler;
     this.prepareMusicDefaultAliases();
     this.init();
   }
@@ -73,6 +83,11 @@ class CommandsHandler extends HeadHandler {
     const isCommand = this.messageStartsWithPrefix(message);
     if (!isCommand) return false;
 
+    await this.achievementsHandler.incrementCommandAchievements({
+      userId: user._id,
+      username: user.username
+    });
+
     const answers = await Promise.all([
       this.checkMessageForDefaultMusicCommand(user, message),
       this.checkMessageForCustomCommand(user, message)
@@ -96,7 +111,7 @@ class CommandsHandler extends HeadHandler {
       message.toLowerCase().startsWith(this.configs.commandsPrefix + alias)
     );
     if (defaultMusicAlias) {
-      return this.onMessageMusicCommand(defaultMusicAlias, user.privileges, user.username, message);
+      return this.onMessageMusicCommand(defaultMusicAlias, user.privileges, user.username, user._id, message);
     }
   }
 
@@ -104,6 +119,7 @@ class CommandsHandler extends HeadHandler {
     musicCommand: MusicPlayerCommands,
     privilege: number,
     username: string,
+    userId: string,
     message: string
   ) {
     const commandPrivilege = this.defaultsMusicAliases.get(musicCommand);
@@ -145,7 +161,10 @@ class CommandsHandler extends HeadHandler {
       case "sr":
         const srCommand = `${this.configs.commandsPrefix}sr`;
         const songName = message.replace(srCommand, "").trim();
-
+        await this.achievementsHandler.incrementMusicSongRequestCommandAchievements({
+          userId,
+          username
+        });
         await this.musicHandler.requestSong(username, songName);
         return true;
       case "volume":
@@ -156,13 +175,13 @@ class CommandsHandler extends HeadHandler {
         return true;
 
       case "like":
-        this.musicHandler.manageSongLikesByUser(username, "like");
-        return true;
       case "dislike":
-        this.musicHandler.manageSongLikesByUser(username, "dislike");
-        return true;
       case "unlike":
-        this.musicHandler.manageSongLikesByUser(username, "nothing");
+        await this.achievementsHandler.incrementMusicLikesCommandAchievements({
+          userId,
+          username
+        });
+        await this.musicHandler.manageSongLikesByUser(username, musicCommand as ManageSongLikesAction);
         return true;
     }
   }

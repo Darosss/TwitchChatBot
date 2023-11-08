@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 interface BaseModel {
   _id: string;
@@ -18,6 +18,7 @@ export interface UserModel extends BaseModel {
   twitchName?: string;
   twitchCreated?: Date;
   follower?: Date;
+  badges?: Types.ObjectId[] | BadgeModel[];
 }
 
 export type UserDocument = UserModel & Document;
@@ -287,25 +288,34 @@ export interface BadgeModel extends BaseModel {
 
 export type BadgeDocument = BadgeModel & Document;
 
-export interface StageData {
+export type StageDataRarity = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+export interface StageData<T = string> {
   name: string;
   stage: number;
   goal: number;
-  badge: string | BadgeModel;
+  badge: T;
+  showTimeMs: number;
+  sound?: string;
+  rarity?: StageDataRarity;
 }
-
-export interface AchievementStageModel extends BaseModel {
+export type StageDataWithBadgePopulated = StageData<BadgeModel>;
+export interface AchievementStageModel<T = string> extends BaseModel {
   name: string;
-  stageData: StageData[];
+  stageData: StageData<T>[];
 }
 
 export type AchievementStageDocument = AchievementStageModel & Document;
 
-export interface AchievementModel extends BaseModel {
+export interface AchievementModel<T = string | BadgeModel> extends BaseModel {
   name: string;
   description: string;
-  stages: AchievementStageModel;
+  stages: AchievementStageModel<T>;
+  isTime: boolean;
+  tag: string | TagModel;
+  enabled: boolean;
 }
+
+export type AchievementWithBadgePopulated = AchievementModel<BadgeModel>;
 
 export type AchievementDocument = AchievementModel & Document;
 

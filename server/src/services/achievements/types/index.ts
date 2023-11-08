@@ -1,5 +1,11 @@
 import { SortQuery, SelectQuery } from "@services";
-import { AchievementModel, AchievementStageModel, AchievementUserProgressModel, StageData } from "@models";
+import {
+  AchievementModel,
+  AchievementStageModel,
+  AchievementUserProgressModel,
+  AchievementWithBadgePopulated
+} from "@models";
+import { ObtainAchievementData } from "@socket";
 
 export interface AchievementsFindOptions<T = AchievementModel> {
   select?: SelectQuery<T>;
@@ -13,8 +19,8 @@ export interface ManyAchievementsFindOptions<T = AchievementModel> extends Achie
 
 export type AchievementUpdateData = Partial<Omit<AchievementModel, "_id" | "createdAt" | "updatedAt">>;
 
-export type AchievementCreateData = Omit<AchievementUpdateData, "name" | "stages"> &
-  Pick<AchievementModel, "name"> & { stages: string };
+export type AchievementCreateData = Omit<AchievementUpdateData, "name" | "stages" | "tag"> &
+  Pick<AchievementModel, "name"> & { stages: string; tag: string };
 
 export type AchievementUserProgressUpdate = Partial<Pick<AchievementUserProgressModel, "progresses" | "value">>;
 
@@ -26,11 +32,17 @@ export type AchievementStageCreateData = Pick<AchievementStageModel, "name" | "s
 export type AchievementStageUpdateData = Partial<AchievementStageCreateData>;
 
 export type UpdateAchievementUserProgressProgressesReturnData = {
-  foundAchievement: AchievementModel;
+  foundAchievement: AchievementWithBadgePopulated;
   nowFinishedStages: AchievementUserProgressModel["progresses"];
 };
 
 export interface GetDataForObtainAchievementEmitReturnData {
   achievementName: string;
-  stages: StageData[];
+  stages: ObtainAchievementData["stage"][];
+}
+
+export interface UpdateAchievementUserProgressProgressesArgs {
+  achievementName: string;
+  userId: string;
+  progress: { increment?: boolean; value: number };
 }

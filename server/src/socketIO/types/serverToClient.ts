@@ -21,6 +21,7 @@ export interface ServerToClientEvents extends ServerToClientYoutubeEvents, Serve
   sendLoggedUserInfo: (username: string) => void;
 
   obtainAchievement: (data: ObtainAchievementData) => void;
+  obtainAchievementQueueInfo: (count: number) => void;
 }
 
 export interface ServerToClientMusicLocalEvents {

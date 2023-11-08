@@ -3,7 +3,7 @@ import {
   AchievementUserProgress,
   AchievementModel,
   AchievementUserProgressModel,
-  StageData
+  TagModel
 } from "@models";
 import { logger, handleAppError, checkExistResource } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
@@ -12,6 +12,7 @@ import {
   AchievementUserProgressCreate,
   AchievementUserProgressUpdate,
   GetDataForObtainAchievementEmitReturnData,
+  UpdateAchievementUserProgressProgressesArgs,
   UpdateAchievementUserProgressProgressesReturnData
 } from "./types";
 
@@ -107,14 +108,18 @@ export const updateFinishedStagesDependsOnProgress = async (
   return newfinishedStages;
 };
 
-export const updateAchievementUserProgressProgresses = async (
-  achievementName: string,
-  userId: string,
-  progressValue: number
-): Promise<UpdateAchievementUserProgressProgressesReturnData | undefined> => {
-  const foundAchievement = await getOneAchievement({ name: achievementName }, {});
+export const updateAchievementUserProgressProgresses = async ({
+  achievementName,
+  userId,
+  progress
+}: UpdateAchievementUserProgressProgressesArgs): Promise<
+  UpdateAchievementUserProgressProgressesReturnData | undefined
+> => {
+  const foundAchievement = await getOneAchievement({ name: achievementName }, {}, true);
 
-  if (!foundAchievement) return; //TODO: add handling
+  //FIXME:                                          Fix this assertion
+  //TODO: refactor this - most of these logic should go into AchievementsHandler - dunno.
+  if (!foundAchievement || !(foundAchievement.tag as TagModel).enabled || !foundAchievement.enabled) return; //TODO: add handling
   const userProgress = await createAchievementUserProgress({
     userId: userId,
     achievement: foundAchievement._id
@@ -122,7 +127,11 @@ export const updateAchievementUserProgressProgresses = async (
 
   if (!userProgress) return; //TODO: add handling
 
-  const nowFinishedStages = await updateFinishedStagesDependsOnProgress(foundAchievement, userProgress, progressValue);
+  const nowFinishedStages = await updateFinishedStagesDependsOnProgress(
+    foundAchievement,
+    userProgress,
+    progress.increment ? userProgress.value + progress.value : progress.value
+  );
 
   return { foundAchievement, nowFinishedStages };
 };
@@ -130,11 +139,14 @@ export const updateAchievementUserProgressProgresses = async (
 export const getDataForObtainAchievementEmit = (
   data: UpdateAchievementUserProgressProgressesReturnData
 ): GetDataForObtainAchievementEmitReturnData => {
-  const newStages: StageData[] = [];
+  const newStages: GetDataForObtainAchievementEmitReturnData["stages"] = [];
 
   data.nowFinishedStages.forEach((stage) => {
     const stageData = data.foundAchievement.stages.stageData.find((innerStage) => innerStage.stage === stage[0]);
-    if (stageData) newStages.push(stageData);
+    if (stageData) newStages.push([stageData, stage[1]]);
   });
-  return { achievementName: data.foundAchievement.name, stages: newStages };
+  return {
+    achievementName: data.foundAchievement.name,
+    stages: newStages
+  };
 };
