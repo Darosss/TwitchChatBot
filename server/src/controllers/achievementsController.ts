@@ -7,26 +7,24 @@ import {
   getAchievementStagesByAchievementId as getAchievementStagesByAchievementIdService
 } from "@services";
 import { AppError } from "@utils";
+import { filterAchievementsByUrlParams } from "./filters/achievementsFilter";
 
 export const getManyAchievements = async (
   req: Request<{}, {}, {}, RequestSearch>,
   res: Response,
   next: NextFunction
 ) => {
-  const { page = 1, limit = 50 } = req.query;
+  const { page = 1, limit = 50, sortBy = "createdAt", sortOrder = "desc" } = req.query;
 
-  // const searchFilter = filterAchievementsByUrlParams(req.query);
+  const searchFilter = filterAchievementsByUrlParams(req.query);
   try {
-    const affixes = await getAchievements(
-      /*searchFilter*/ {},
-      {
-        limit: Number(limit),
-        skip: Number(page),
-        sort: { createdAt: "asc" }
-      }
-    );
+    const affixes = await getAchievements(searchFilter, {
+      limit: Number(limit),
+      skip: Number(page),
+      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 }
+    });
 
-    const count = await getAchievementsCount(/*searchFilter */ {});
+    const count = await getAchievementsCount(searchFilter);
 
     return res.status(200).send({
       data: affixes,
