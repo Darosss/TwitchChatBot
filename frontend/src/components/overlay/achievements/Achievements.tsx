@@ -21,7 +21,7 @@ export default function Achievements() {
       audio.pause();
       setObtainedAchievements((prevState) => [data, ...prevState]);
 
-      const audioUrl = data.stage[0].audio;
+      const audioUrl = data.stage[0].sound;
       if (audioUrl) {
         audio.src = `${viteBackendUrl}/${audioUrl}`;
         audio.play();
