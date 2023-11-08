@@ -1,5 +1,6 @@
 import { Model, model, Schema } from "mongoose";
 import { AchievementDocument, AchievementStageDocument, AchievementUserProgressDocument } from "./types";
+import { enabledField, tagModeField } from "@utils";
 
 const AchievementStageSchema = new Schema<AchievementStageDocument>({
   name: { type: String, required: true, unique: true },
@@ -22,7 +23,9 @@ const AchivementSchema: Schema<AchievementDocument> = new Schema(
     name: { type: String, required: true, unique: true },
     description: { type: String },
     stages: { type: Schema.Types.ObjectId, required: true, ref: "AchievementStage" },
-    isTime: { type: Boolean, required: true, default: false }
+    isTime: { type: Boolean, required: true, default: false },
+    ...tagModeField,
+    ...enabledField
   },
   { timestamps: true }
 );
