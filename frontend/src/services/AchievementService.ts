@@ -9,11 +9,14 @@ export interface Badge {
   updatedAt: Date;
 }
 
+export type StageDataRarity = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export interface AchievementStageData {
   name: string;
   stage: number;
   goal: number;
   badge: Badge;
+  sound?: string;
+  rarity?: StageDataRarity;
 }
 
 export interface AchievementStage {

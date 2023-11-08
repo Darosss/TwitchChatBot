@@ -1,7 +1,54 @@
+@mixin animation-mixin($name, $box-shadow-color) {
+  @keyframes #{$name} {
+    0% {
+      transform: scale(0.7, 0.025);
+    }
+    50% {
+      box-shadow: 4px 2px 9px 15px $box-shadow-color;
+      transform: scale(1, 0.025);
+    }
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  7% {
+    transform: rotateZ(0);
+    transform: scale(0.7, 0.025);
+  }
+  15% {
+    transform: rotateZ(-15deg);
+  }
+  20% {
+    transform: rotateZ(10deg);
+  }
+  25% {
+    transform: rotateZ(-10deg);
+  }
+  30% {
+    transform: rotateZ(6deg);
+  }
+  35% {
+    transform: rotateZ(-4deg);
+  }
+  40%,
+  100% {
+    transform: scale(1, 0.025);
+    transform: rotateZ(0);
+  }
+}
+
+@include animation-mixin(achievement-animation, pink);
+@include animation-mixin(achievement-animation-1, $secondary-color);
+@include animation-mixin(achievement-animation-2, $success-color);
+@include animation-mixin(achievement-animation-3, $primary-color);
+@include animation-mixin(achievement-animation-4, $info-color);
+@include animation-mixin(achievement-animation-5, orange);
+
 .achievements-overlay-wrapper {
   width: 100%;
-  min-height: 100%;
   max-height: 100%;
+  min-height: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -118,15 +165,81 @@
 }
 
 .animated-achievement {
-  animation: achievement-animation 1.5s ease-in-out;
+  animation: achievement-animation 1s ease-in-out;
+
+  animation-fill-mode: forwards;
+  div.achievements-overlay-background {
+    background-color: gray !important;
+  }
 }
 
-@keyframes achievement-animation {
-  0% {
-    transform: scale(0.7, 0.025);
+.animated-achievement-1 {
+  animation: achievement-animation-1 1s;
+  animation-fill-mode: forwards;
+  div.achievements-overlay-background {
+    background: linear-gradient(12deg, $secondary-color, black);
   }
-  50% {
-    box-shadow: 4px 2px 9px 15px $success-color;
-    transform: scale(1, 0.025);
+}
+.animated-achievement-2 {
+  animation: achievement-animation-2 1s;
+  animation-fill-mode: forwards;
+  div.achievements-overlay-background {
+    background: linear-gradient(12deg, $success-color, $secondary-color);
+  }
+}
+.animated-achievement-3 {
+  animation: achievement-animation-3 1s;
+  animation-fill-mode: forwards;
+  div.achievements-overlay-background {
+    background: linear-gradient(12deg, $primary-color, $success-color);
+  }
+}
+.animated-achievement-4 {
+  animation: achievement-animation-4 1s;
+  animation-fill-mode: forwards;
+  div.achievements-overlay-background {
+    background: linear-gradient(12deg, $info-color, $primary-color);
+  }
+}
+.animated-achievement-5 {
+  animation: achievement-animation-5 1s;
+  animation-fill-mode: forwards;
+  div.achievements-overlay-background {
+    background: linear-gradient(12deg, $info-color, orange);
+  }
+}
+
+.animated-achievement-6 {
+  animation: achievement-animation 0.5s, wiggle 2.5s;
+  div.achievements-overlay-background {
+    background: linear-gradient(0deg, yellow, orange, red);
+  }
+}
+
+.animated-achievement-7 {
+  animation: achievement-animation 0.5s, wiggle 2.5s;
+  div.achievements-overlay-background {
+    background: linear-gradient(0deg, yellow, orange, red);
+  }
+}
+
+.animated-achievement-8 {
+  animation: achievement-animation 0.5s, wiggle 2.5s;
+  div.achievements-overlay-background {
+    background: linear-gradient(0deg, yellow, orange, red);
+  }
+}
+
+.animated-achievement-9 {
+  animation: achievement-animation 0.5s, wiggle 2.5s;
+  div.achievements-overlay-background {
+    background: linear-gradient(0deg, yellow, orange, red);
+  }
+}
+
+.animated-achievement-10 {
+  animation: achievement-animation 0.5s, wiggle 2.5s;
+  div.achievements-overlay-background {
+    background: linear-gradient(0deg, yellow, orange, red);
   }
 }

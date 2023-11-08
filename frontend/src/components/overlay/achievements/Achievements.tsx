@@ -15,13 +15,21 @@ export default function Achievements() {
     ObtainAchievementData[]
   >([]);
   const [itemsQueLength, setItemsQueLength] = useState(0);
-
   useEffect(() => {
+    const audio = new Audio();
     obtainAchievement.on((data) => {
+      audio.pause();
       setObtainedAchievements((prevState) => [data, ...prevState]);
+
+      const audioUrl = data.stage[0].audio;
+      if (audioUrl) {
+        audio.src = `${viteBackendUrl}/${audioUrl}`;
+        audio.play();
+      }
     });
     return () => {
       obtainAchievement.off();
+      audio.pause();
     };
   }, [obtainAchievement]);
 
@@ -68,7 +76,9 @@ export default function Achievements() {
         return (
           <div
             key={id}
-            className="obtained-achievements-wrapper animated-achievement"
+            className={`obtained-achievements-wrapper animated-achievement${
+              stageData.rarity ? `-${stageData.rarity}` : ""
+            }`}
           >
             <div className="achievements-overlay-background"></div>
 

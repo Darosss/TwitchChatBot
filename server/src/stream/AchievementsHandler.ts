@@ -62,18 +62,20 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
     this.socketIO = socketIO;
   }
 
-  protected override startInterval(): void {
-    super.startInterval((item) => {
+  protected override startTimeout(delay = 0): void {
+    super.startTimeout(delay, (item) => {
       this.emitObtainAchievement(item);
 
       this.socketIO.emit("obtainAchievementQueueInfo", this.getItemsCountInQueue());
+
+      this.startTimeout(item.stage[0].showTimeMs + 1000);
     });
   }
 
   public override enqueue(item: ObtainAchievementData) {
     super.enqueue(item);
 
-    this.startInterval();
+    this.startTimeout(500);
   }
 
   private convertUpdateDataToObtainAchievementData(data: UpdateAchievementUserProgressProgressesReturnData) {
