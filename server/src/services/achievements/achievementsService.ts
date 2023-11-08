@@ -54,18 +54,22 @@ export const getAchievementsCount = async (filter: FilterQuery<AchievementDocume
 
 export const getOneAchievement = async (
   filter: FilterQuery<AchievementDocument> = {},
-  achievementFindOptions: AchievementsFindOptions
+  achievementFindOptions: AchievementsFindOptions,
+  populateTag?: boolean
 ) => {
   const { select = { __v: 0 } } = achievementFindOptions;
   try {
     const foundAchievement: AchievementWithBadgePopulated | null = await Achievement.findOne(filter)
       .select(select)
-      .populate({
-        path: "stages",
-        populate: {
-          path: "stageData.badge"
-        }
-      });
+      .populate([
+        {
+          path: "stages",
+          populate: {
+            path: "stageData.badge"
+          }
+        },
+        ...(populateTag ? [{ path: "tag" }] : [])
+      ]);
 
     return foundAchievement;
   } catch (err) {

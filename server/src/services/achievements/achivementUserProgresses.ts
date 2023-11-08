@@ -2,7 +2,8 @@ import {
   AchievementUserProgressDocument,
   AchievementUserProgress,
   AchievementModel,
-  AchievementUserProgressModel
+  AchievementUserProgressModel,
+  TagModel
 } from "@models";
 import { logger, handleAppError, checkExistResource } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
@@ -114,9 +115,11 @@ export const updateAchievementUserProgressProgresses = async ({
 }: UpdateAchievementUserProgressProgressesArgs): Promise<
   UpdateAchievementUserProgressProgressesReturnData | undefined
 > => {
-  const foundAchievement = await getOneAchievement({ name: achievementName }, {});
+  const foundAchievement = await getOneAchievement({ name: achievementName }, {}, true);
 
-  if (!foundAchievement) return; //TODO: add handling
+  //FIXME:                                          Fix this assertion
+  //TODO: refactor this - most of these logic should go into AchievementsHandler - dunno.
+  if (!foundAchievement || !(foundAchievement.tag as TagModel).enabled || !foundAchievement.enabled) return; //TODO: add handling
   const userProgress = await createAchievementUserProgress({
     userId: userId,
     achievement: foundAchievement._id

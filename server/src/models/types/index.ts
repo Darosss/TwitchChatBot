@@ -311,6 +311,8 @@ export interface AchievementModel<T = string | BadgeModel> extends BaseModel {
   description: string;
   stages: AchievementStageModel<T>;
   isTime: boolean;
+  tag: string | TagModel;
+  enabled: boolean;
 }
 
 export type AchievementWithBadgePopulated = AchievementModel<BadgeModel>;
