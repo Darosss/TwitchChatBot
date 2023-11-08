@@ -19,12 +19,18 @@ export const getAchievements = async (
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
-      .populate({
-        path: "stages",
-        populate: {
-          path: "stageData.badge"
+      .populate([
+        {
+          path: "stages",
+          populate: {
+            path: "stageData.badge"
+          }
+        },
+        {
+          path: "tag",
+          select: "name enabled"
         }
-      })
+      ])
       .sort(sort);
 
     return affix;
