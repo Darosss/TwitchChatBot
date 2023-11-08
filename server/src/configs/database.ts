@@ -41,31 +41,31 @@ export const initMongoDataBase = async () => {
 
   await Promise.all([createDefaultTag(), createDefaultMood()]);
 
-  await createDefaultCommands();
+  const [tag, mood] = await Promise.all([getOneTag({}), getOneMood({})]);
+  if (tag) {
+    if (mood) {
+      await createDefaultCommands(tag.id, mood.id);
+    }
 
-  await createDefaultInitialAchievements();
+    await createDefaultInitialAchievements(tag.id);
+  }
 };
 
 const createDefaultConfigs = async () => {
   if (!(await configExist())) await createNewConfig();
 };
 
-const createDefaultCommands = async () => {
+const createDefaultCommands = async (tagId: string, moodId: string) => {
   if ((await getChatCommandsCount()) === 0) {
-    const modes = await Promise.all([getOneTag({}), getOneMood({})]);
-
-    const [tag, mood] = modes;
-    if (tag && mood) {
-      const chatCommands = getDefaultChatCommands();
-      const chatCommandsWithModes = chatCommands.map((command) => {
-        return {
-          ...command,
-          tag: tag.id,
-          mood: mood.id
-        };
-      });
-      await createChatCommand(chatCommandsWithModes);
-    }
+    const chatCommands = getDefaultChatCommands();
+    const chatCommandsWithModes = chatCommands.map((command) => {
+      return {
+        ...command,
+        tag: tagId,
+        mood: moodId
+      };
+    });
+    await createChatCommand(chatCommandsWithModes);
   }
 };
 const createDefaultTag = async () => {
@@ -88,17 +88,17 @@ const createDefaultAchievementStages = async (badgeId: string) => {
   }
 };
 
-const createDefaultAchievements = async (stagesId: string) => {
-  const achievementsData = getDefaultAchievementsData(stagesId);
+const createDefaultAchievements = async (stagesId: string, tagId: string) => {
+  const achievementsData = getDefaultAchievementsData(stagesId, tagId);
 
   achievementsData.forEach((data) => createAchievement(data));
 };
 
-const createDefaultInitialAchievements = async () => {
+const createDefaultInitialAchievements = async (tagId: string) => {
   if ((await getAchievementsCount()) !== 0) return;
   const badge = await createBadge(getDefaultBadgeData());
   if (!badge) return;
   const stages = await createDefaultAchievementStages(badge._id);
   if (!stages) return;
-  await createDefaultAchievements(stages._id);
+  await createDefaultAchievements(stages._id, tagId);
 };
