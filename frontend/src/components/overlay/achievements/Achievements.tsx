@@ -15,19 +15,21 @@ export default function Achievements() {
     ObtainAchievementData[]
   >([]);
   const [itemsQueLength, setItemsQueLength] = useState(0);
-
   useEffect(() => {
+    const audio = new Audio();
     obtainAchievement.on((data) => {
+      audio.pause();
       setObtainedAchievements((prevState) => [data, ...prevState]);
 
       const audioUrl = data.stage[0].audio;
       if (audioUrl) {
-        const audio = new Audio(`${viteBackendUrl}/${data.stage[0].audio}`);
+        audio.src = `${viteBackendUrl}/${audioUrl}`;
         audio.play();
       }
     });
     return () => {
       obtainAchievement.off();
+      audio.pause();
     };
   }, [obtainAchievement]);
 
