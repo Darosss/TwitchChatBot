@@ -294,6 +294,7 @@ export interface StageData<T = string> {
   stage: number;
   goal: number;
   badge: T;
+  showTimeMs: number;
   sound?: string;
   rarity?: StageDataRarity;
 }
