@@ -39,18 +39,20 @@ export const delayField = {
 
 export const descriptionField = { description: { type: String } };
 
+export const enabledField = { enabled: { type: Boolean, required: true, default: true } };
+
 export const baseChatFeaturesFields = {
   ...nameField,
-  enabled: {
-    type: Boolean,
-    required: true,
-    default: true
-  }
+  ...enabledField
 };
 
+export const tagModeField = { tag: { type: Schema.Types.ObjectId, required: true, ref: "Tags" } };
+
+export const moodModeField = { mood: { type: Schema.Types.ObjectId, required: true, ref: "Moods" } };
+
 export const chatFeaturesModeFields = {
-  tag: { type: Schema.Types.ObjectId, required: true, ref: "Tags" },
-  mood: { type: Schema.Types.ObjectId, required: true, ref: "Moods" }
+  ...tagModeField,
+  ...moodModeField
 };
 
 export const commonChatFeaturesFields = {
