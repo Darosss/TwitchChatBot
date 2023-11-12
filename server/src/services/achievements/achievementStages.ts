@@ -79,16 +79,13 @@ export const updateOneAchievementStage = async (
   }
 };
 
-export const getAchievementStagesByAchievementId = async (
-  id: string,
-  filter: FilterQuery<AchievementStageDocument> = {}
-) => {
+export const getAchievementStagesById = async (id: string, filter: FilterQuery<AchievementStageDocument> = {}) => {
   try {
     const foundAchievementStage = await AchievementStage.findOne({ _id: id }, filter);
 
     return foundAchievementStage;
   } catch (err) {
-    logger.error(`Error occured while getAchievementStagesByAchievementId with id: ${id} ${err}`);
+    logger.error(`Error occured while getAchievementStagesById with id: ${id} ${err}`);
     handleAppError(err);
   }
 };
