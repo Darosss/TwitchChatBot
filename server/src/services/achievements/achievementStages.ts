@@ -3,6 +3,7 @@ import { FilterQuery, UpdateQuery } from "mongoose";
 import {
   AchievementStageCreateData,
   AchievementStageUpdateData,
+  AchievementStagesPopulateOptions,
   AchievementsFindOptions,
   ManyAchievementsFindOptions
 } from "./types";
@@ -78,12 +79,19 @@ export const updateOneAchievementStage = async (
     handleAppError(err);
   }
 };
-
-export const getAchievementStagesById = async (id: string, filter: FilterQuery<AchievementStageDocument> = {}) => {
+//TOOD: add select opts instead alone populateOptions
+export const getAchievementStagesById = async (
+  id: string,
+  filter: FilterQuery<AchievementStageDocument> = {},
+  populateOptions?: AchievementStagesPopulateOptions
+) => {
   try {
-    const foundAchievementStage = await AchievementStage.findOne({ _id: id }, filter);
+    const achievementStage = await AchievementStage.findOne({ _id: id }, filter).populate([
+      ...(populateOptions?.stageDataBadge ? [{ path: "stageData.badge" }] : [])
+    ]);
 
-    return foundAchievementStage;
+    const existingAchievementStage = checkExistResource(achievementStage, "Achievement stage");
+    return existingAchievementStage;
   } catch (err) {
     logger.error(`Error occured while getAchievementStagesById with id: ${id} ${err}`);
     handleAppError(err);
