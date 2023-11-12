@@ -18,11 +18,15 @@ export const getManyAchievements = async (
 
   const searchFilter = filterAchievementsByUrlParams(req.query);
   try {
-    const affixes = await getAchievements(searchFilter, {
-      limit: Number(limit),
-      skip: Number(page),
-      sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 }
-    });
+    const affixes = await getAchievements(
+      searchFilter,
+      {
+        limit: Number(limit),
+        skip: Number(page),
+        sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 }
+      },
+      { tag: true, stages: true, stagesBadge: true }
+    );
 
     const count = await getAchievementsCount(searchFilter);
 
