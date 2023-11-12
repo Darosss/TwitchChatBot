@@ -4,7 +4,7 @@ import {
   getAchievements,
   getAchievementsCount,
   getAchievementsProgressesByUserId as getAchievementsProgressesByUserIdService,
-  getAchievementStagesByAchievementId as getAchievementStagesByAchievementIdService
+  getAchievementStagesById
 } from "@services";
 import { AppError } from "@utils";
 import { filterAchievementsByUrlParams } from "./filters/achievementsFilter";
@@ -61,7 +61,7 @@ export const getAchievementsProgressesByUserId = async (
   }
 };
 
-export const getAchievementStageByAchievementId = async (
+export const getAchievementStageById = async (
   req: Request<RequestParams, {}, {}, {}>,
   res: Response,
   next: NextFunction
@@ -70,7 +70,7 @@ export const getAchievementStageByAchievementId = async (
   if (!id) throw new AppError(400, "Id not provided");
 
   try {
-    const achievementStage = await getAchievementStagesByAchievementIdService(id, { __v: 0 });
+    const achievementStage = await getAchievementStagesById(id, { __v: 0 });
 
     return res.status(200).send({
       data: achievementStage
