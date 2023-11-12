@@ -1,4 +1,6 @@
 export * from "./achievementsController";
+export * from "./achievementStagesController";
+export * from "./badgesController";
 export * from "./affixesController";
 export * from "./authController";
 export * from "./chatCommandsController";

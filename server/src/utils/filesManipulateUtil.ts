@@ -21,9 +21,16 @@ export const getListOfDirectoryNames = (
     }
   });
 };
-
-export const getListOfMp3InFolder = (
+/**
+ *
+ * @param pathToFolder - absolute folder path
+ * @param extension - extension name fe. .mp3
+ * @param callback - (files) => void
+ * @param errorCB (error) => void
+ */
+export const getListOfFilesWithExtensionInFolder = (
   pathToFolder: string,
+  extensions: string[],
   callback: (files: string[]) => void,
   errorCB: (errorMsg: string) => void
 ) => {
@@ -31,11 +38,13 @@ export const getListOfMp3InFolder = (
     if (err) {
       errorCB("Folder probably does not exist");
     } else {
-      const mp3Files = files.filter((file) => {
-        return path.extname(file).toLowerCase() === ".mp3";
+      const matchedFiles = files.filter((file) => {
+        for (const ext of extensions) {
+          if (path.extname(file).toLowerCase() === ext) return true;
+        }
       });
 
-      callback(mp3Files);
+      callback(matchedFiles);
     }
   });
 };
@@ -73,4 +82,10 @@ export const deleteDirectory = (
 export const getMp3AudioDuration = async (path: string) => {
   const mp3DurationSec = await getAudioDurationInSeconds(path);
   return mp3DurationSec;
+};
+
+export const ensureDirectoryExists = (directoryPath: string): void => {
+  if (!fs.existsSync(directoryPath)) {
+    fs.mkdirSync(directoryPath, { recursive: true });
+  }
 };

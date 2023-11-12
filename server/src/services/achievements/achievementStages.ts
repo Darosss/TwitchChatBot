@@ -3,10 +3,15 @@ import { FilterQuery, UpdateQuery } from "mongoose";
 import {
   AchievementStageCreateData,
   AchievementStageUpdateData,
+  AchievementStagesPopulateOptions,
   AchievementsFindOptions,
   ManyAchievementsFindOptions
 } from "./types";
 import { AppError, checkExistResource, handleAppError, logger } from "@utils";
+import { getAchievements } from "./achievementsService";
+import path from "path";
+import { achievementsStagesSoundsPath } from "@configs";
+import { promises as fsPromises } from "fs";
 
 export const getAchievementStages = async (
   filter: FilterQuery<AchievementStageDocument> = {},
@@ -78,17 +83,67 @@ export const updateOneAchievementStage = async (
     handleAppError(err);
   }
 };
-
-export const getAchievementStagesByAchievementId = async (
+//TOOD: add select opts instead alone populateOptions
+export const getAchievementStagesById = async (
   id: string,
-  filter: FilterQuery<AchievementStageDocument> = {}
+  filter: FilterQuery<AchievementStageDocument> = {},
+  populateOptions?: AchievementStagesPopulateOptions
 ) => {
   try {
-    const foundAchievementStage = await AchievementStage.findOne({ _id: id }, filter);
+    const achievementStage = await AchievementStage.findOne({ _id: id }, filter).populate([
+      ...(populateOptions?.stageDataBadge ? [{ path: "stageData.badge" }] : [])
+    ]);
 
-    return foundAchievementStage;
+    const existingAchievementStage = checkExistResource(achievementStage, "Achievement stage");
+    return existingAchievementStage;
   } catch (err) {
-    logger.error(`Error occured while getAchievementStagesByAchievementId with id: ${id} ${err}`);
+    logger.error(`Error occured while getAchievementStagesById with id: ${id} ${err}`);
+    handleAppError(err);
+  }
+};
+
+export const deleteAchievementStageById = async (id: string) => {
+  try {
+    const containingAchievements = (await getAchievements({ stages: id }, {})) || [];
+
+    if (containingAchievements.length > 0) {
+      throw new AppError(
+        409,
+        `Achievement stage with id(${id}) is used in achievement(s): [${containingAchievements
+          .map(({ name }) => name)
+          .join(", ")}], cannot delete`
+      );
+    }
+
+    await AchievementStage.findByIdAndDelete(id);
+
+    return { message: "Successfully removed achievement stage" };
+  } catch (err) {
+    logger.error(`Error occured while deleting badge by id(${id}). ${err}`);
+    handleAppError(err);
+  }
+};
+
+export const deleteAchievementSound = async (soundName: string) => {
+  try {
+    const foundContainingStages =
+      (await getAchievementStages({ "stageData.sound": { $regex: soundName, $options: "i" } }, {})) || [];
+    if (foundContainingStages.length > 0) {
+      throw new AppError(
+        409,
+        `Achievement stage sound  with name: (${soundName}) is used in ahchievement stage sound(s): [${foundContainingStages
+          .map(({ name }) => name)
+          .join(", ")}], cannot delete`
+      );
+    }
+
+    const filePath = path.join(achievementsStagesSoundsPath, soundName);
+
+    await fsPromises.unlink(filePath);
+
+    return `Achievement stage sound  ${soundName} deleted successfully`;
+  } catch (err) {
+    logger.error(`Error occured while deleting ahchievement stage sound  by name(${soundName}). ${err}`);
     handleAppError(err);
   }
 };

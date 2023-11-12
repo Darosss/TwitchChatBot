@@ -5,21 +5,15 @@ import {
   AppError,
   createDirectory,
   deleteDirectory,
+  filterMp3,
   getListOfDirectoryNames,
-  getListOfMp3InFolder,
+  getListOfFilesWithExtensionInFolder,
   logger
 } from "@utils";
-import { alertSoundsPath, musicPath, alertSoundPrefix } from "@configs";
+import { alertSoundsPath, musicPath, alertSoundPrefix, publicPath } from "@configs";
 import path from "path";
 
 const maxFilesAtOnce = 30;
-
-if (!fs.existsSync(musicPath)) {
-  fs.mkdirSync(musicPath, { recursive: true });
-}
-if (!fs.existsSync(alertSoundsPath)) {
-  fs.mkdirSync(alertSoundsPath, { recursive: true });
-}
 
 const storageMp3 = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -30,13 +24,6 @@ const storageMp3 = multer.diskStorage({
     cb(null, file.originalname);
   }
 });
-
-const filterMp3: multer.Options["fileFilter"] = (req, file, cb) => {
-  if (file.mimetype === "audio/mpeg") cb(null, true);
-  else {
-    cb(new AppError(400, "File isn't a mp3 extension"));
-  }
-};
 
 const uploadMp3Multer = multer({
   storage: storageMp3,
@@ -66,8 +53,9 @@ export const uploadMp3File = (req: Request, res: Response, next: NextFunction) =
 };
 
 export const getFoldersList = (req: Request, res: Response, next: NextFunction) => {
+  const { folder } = req.params;
   getListOfDirectoryNames(
-    musicPath,
+    folder ? path.join(publicPath, folder) : publicPath,
     (folders) => {
       return res.status(200).send({ data: folders });
     },
@@ -79,8 +67,9 @@ export const getFoldersList = (req: Request, res: Response, next: NextFunction) 
 
 export const getFolderMp3Files = (req: Request, res: Response, next: NextFunction) => {
   const { folder } = req.params;
-  getListOfMp3InFolder(
+  getListOfFilesWithExtensionInFolder(
     path.join(musicPath, folder),
+    [".mp3"],
     (folders) => {
       return res.status(200).send({ data: folders });
     },
@@ -168,8 +157,9 @@ export const uploadAlertSound = (req: Request, res: Response, next: NextFunction
 };
 
 export const getAlertSoundsList = (req: Request, res: Response, next: NextFunction) => {
-  getListOfMp3InFolder(
+  getListOfFilesWithExtensionInFolder(
     alertSoundsPath,
+    [".mp3"],
     (sounds) => {
       return res.status(200).send({ data: sounds });
     },

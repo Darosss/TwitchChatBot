@@ -82,3 +82,12 @@ export interface RequestQueryAuthorizationTwitch {
 export interface RequestSongsQuery extends RequestSearchDate {
   customId?: string;
 }
+
+export interface RequestBadgesQuery extends RequestSearch {
+  imageUrl?: string;
+}
+
+export interface RequestAchievementStageQuery extends RequestSearch {
+  stageName?: string;
+  sound?: string;
+}
