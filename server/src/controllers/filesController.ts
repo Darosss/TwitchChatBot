@@ -10,17 +10,10 @@ import {
   getListOfFilesWithExtensionInFolder,
   logger
 } from "@utils";
-import { alertSoundsPath, musicPath, alertSoundPrefix, publicPath } from "@configs";
+import { alertSoundsPath, musicPath, alertSoundPrefix } from "@configs";
 import path from "path";
 
 const maxFilesAtOnce = 30;
-
-if (!fs.existsSync(musicPath)) {
-  fs.mkdirSync(musicPath, { recursive: true });
-}
-if (!fs.existsSync(alertSoundsPath)) {
-  fs.mkdirSync(alertSoundsPath, { recursive: true });
-}
 
 const storageMp3 = multer.diskStorage({
   destination: function (req, file, cb) {
