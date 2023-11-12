@@ -24,6 +24,17 @@ export type AchievementCreateData = Omit<AchievementUpdateData, "name" | "stages
 
 export type AchievementUserProgressUpdate = Partial<Pick<AchievementUserProgressModel, "progresses" | "value">>;
 
+//TODO: refactor this into ManyAchievementsFindOptions, create separate find options for stages, badges, progresses
+export interface AchievementsPopulateOptions {
+  stages?: boolean;
+  stagesBadge?: boolean;
+  tag?: boolean;
+}
+
+export interface AchievementStagesPopulateOptions {
+  stageDataBadge?: boolean;
+}
+
 export interface AchievementUserProgressCreate
   extends Pick<AchievementUserProgressModel, "achievement" | "userId">,
     AchievementUserProgressUpdate {}
