@@ -11,12 +11,11 @@ import {
 
 export const getAchievements = async (
   filter: FilterQuery<AchievementDocument> = {},
-  //TODO: rename to achievementsFindOptions
-  affixFindOptions: ManyAchievementsFindOptions,
+  findOptions: ManyAchievementsFindOptions,
   //TODO: move this into achievementsFindOptions as optional
   populateOptions?: AchievementsPopulateOptions
 ) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = affixFindOptions;
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = findOptions;
 
   try {
     const affix = await Achievement.find(filter)
@@ -74,11 +73,11 @@ export const getAchievementsCount = async (filter: FilterQuery<AchievementDocume
 
 export const getOneAchievement = async (
   filter: FilterQuery<AchievementDocument> = {},
-  achievementFindOptions: AchievementsFindOptions,
+  findOptions: AchievementsFindOptions,
   //TODO: add populate opts
   populateTag?: boolean
 ) => {
-  const { select = { __v: 0 } } = achievementFindOptions;
+  const { select = { __v: 0 } } = findOptions;
   try {
     const foundAchievement: AchievementWithBadgePopulated | null = await Achievement.findOne(filter)
       .select(select)
@@ -101,10 +100,10 @@ export const getOneAchievement = async (
 
 export const updateOneAchievement = async (
   filter: FilterQuery<AchievementDocument>,
-  achievementUpdateData: UpdateQuery<AchievementUpdateData>
+  updateData: UpdateQuery<AchievementUpdateData>
 ) => {
   try {
-    const updatedAchievement = await Achievement.findOneAndUpdate(filter, achievementUpdateData, {
+    const updatedAchievement = await Achievement.findOneAndUpdate(filter, updateData, {
       new: true
     });
 
