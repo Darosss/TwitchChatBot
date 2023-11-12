@@ -123,3 +123,27 @@ export const deleteAchievementStageById = async (id: string) => {
     handleAppError(err);
   }
 };
+
+export const deleteAchievementSound = async (soundName: string) => {
+  try {
+    const foundContainingStages =
+      (await getAchievementStages({ "stageData.sound": { $regex: soundName, $options: "i" } }, {})) || [];
+    if (foundContainingStages.length > 0) {
+      throw new AppError(
+        409,
+        `Achievement stage sound  with name: (${soundName}) is used in ahchievement stage sound(s): [${foundContainingStages
+          .map(({ name }) => name)
+          .join(", ")}], cannot delete`
+      );
+    }
+
+    const filePath = path.join(achievementsStagesSoundsPath, soundName);
+
+    await fsPromises.unlink(filePath);
+
+    return `Achievement stage sound  ${soundName} deleted successfully`;
+  } catch (err) {
+    logger.error(`Error occured while deleting ahchievement stage sound  by name(${soundName}). ${err}`);
+    handleAppError(err);
+  }
+};
