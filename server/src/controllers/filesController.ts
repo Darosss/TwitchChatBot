@@ -6,7 +6,7 @@ import {
   createDirectory,
   deleteDirectory,
   getListOfDirectoryNames,
-  getListOfMp3InFolder,
+  getListOfFilesWithExtensionInFolder,
   logger
 } from "@utils";
 import { alertSoundsPath, musicPath, alertSoundPrefix } from "@configs";
@@ -79,8 +79,9 @@ export const getFoldersList = (req: Request, res: Response, next: NextFunction) 
 
 export const getFolderMp3Files = (req: Request, res: Response, next: NextFunction) => {
   const { folder } = req.params;
-  getListOfMp3InFolder(
+  getListOfFilesWithExtensionInFolder(
     path.join(musicPath, folder),
+    [".mp3"],
     (folders) => {
       return res.status(200).send({ data: folders });
     },
@@ -168,8 +169,9 @@ export const uploadAlertSound = (req: Request, res: Response, next: NextFunction
 };
 
 export const getAlertSoundsList = (req: Request, res: Response, next: NextFunction) => {
-  getListOfMp3InFolder(
+  getListOfFilesWithExtensionInFolder(
     alertSoundsPath,
+    [".mp3"],
     (sounds) => {
       return res.status(200).send({ data: sounds });
     },
