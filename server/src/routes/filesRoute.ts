@@ -12,7 +12,7 @@ import {
 } from "@controllers";
 const filesRouter = Router();
 
-filesRouter.get("/folder-list", getFoldersList);
+filesRouter.get("/folder-list/:folder?", getFoldersList);
 filesRouter.get("/audio/alertSounds", getAlertSoundsList);
 filesRouter.get("/audio/:folder", getFolderMp3Files);
 filesRouter.post("/upload/alertSounds", uploadAlertSound);
