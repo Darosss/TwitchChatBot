@@ -5,12 +5,16 @@ import {
   AchievementCreateData,
   AchievementsFindOptions,
   AchievementUpdateData,
+  AchievementsPopulateOptions,
   ManyAchievementsFindOptions
 } from "./types";
 
 export const getAchievements = async (
   filter: FilterQuery<AchievementDocument> = {},
-  affixFindOptions: ManyAchievementsFindOptions
+  //TODO: rename to achievementsFindOptions
+  affixFindOptions: ManyAchievementsFindOptions,
+  //TODO: move this into achievementsFindOptions as optional
+  populateOptions?: AchievementsPopulateOptions
 ) => {
   const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = affixFindOptions;
 
@@ -20,16 +24,26 @@ export const getAchievements = async (
       .skip((skip - 1) * limit)
       .select(select)
       .populate([
-        {
-          path: "stages",
-          populate: {
-            path: "stageData.badge"
-          }
-        },
-        {
-          path: "tag",
-          select: "name enabled"
-        }
+        ...(populateOptions?.stages
+          ? [
+              {
+                path: "stages",
+                ...(populateOptions.stagesBadge && {
+                  populate: {
+                    path: "stageData.badge"
+                  }
+                })
+              }
+            ]
+          : []),
+        ...(populateOptions?.tag
+          ? [
+              {
+                path: "tag",
+                select: "name enabled"
+              }
+            ]
+          : [])
       ])
       .sort(sort);
 
@@ -61,6 +75,7 @@ export const getAchievementsCount = async (filter: FilterQuery<AchievementDocume
 export const getOneAchievement = async (
   filter: FilterQuery<AchievementDocument> = {},
   achievementFindOptions: AchievementsFindOptions,
+  //TODO: add populate opts
   populateTag?: boolean
 ) => {
   const { select = { __v: 0 } } = achievementFindOptions;
