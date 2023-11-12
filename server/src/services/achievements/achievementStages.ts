@@ -8,6 +8,10 @@ import {
   ManyAchievementsFindOptions
 } from "./types";
 import { AppError, checkExistResource, handleAppError, logger } from "@utils";
+import { getAchievements } from "./achievementsService";
+import path from "path";
+import { achievementsStagesSoundsPath } from "@configs";
+import { promises as fsPromises } from "fs";
 
 export const getAchievementStages = async (
   filter: FilterQuery<AchievementStageDocument> = {},
@@ -94,6 +98,28 @@ export const getAchievementStagesById = async (
     return existingAchievementStage;
   } catch (err) {
     logger.error(`Error occured while getAchievementStagesById with id: ${id} ${err}`);
+    handleAppError(err);
+  }
+};
+
+export const deleteAchievementStageById = async (id: string) => {
+  try {
+    const containingAchievements = (await getAchievements({ stages: id }, {})) || [];
+
+    if (containingAchievements.length > 0) {
+      throw new AppError(
+        409,
+        `Achievement stage with id(${id}) is used in achievement(s): [${containingAchievements
+          .map(({ name }) => name)
+          .join(", ")}], cannot delete`
+      );
+    }
+
+    await AchievementStage.findByIdAndDelete(id);
+
+    return { message: "Successfully removed achievement stage" };
+  } catch (err) {
+    logger.error(`Error occured while deleting badge by id(${id}). ${err}`);
     handleAppError(err);
   }
 };
