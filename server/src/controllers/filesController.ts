@@ -5,6 +5,7 @@ import {
   AppError,
   createDirectory,
   deleteDirectory,
+  filterMp3,
   getListOfDirectoryNames,
   getListOfFilesWithExtensionInFolder,
   logger
@@ -30,13 +31,6 @@ const storageMp3 = multer.diskStorage({
     cb(null, file.originalname);
   }
 });
-
-const filterMp3: multer.Options["fileFilter"] = (req, file, cb) => {
-  if (file.mimetype === "audio/mpeg") cb(null, true);
-  else {
-    cb(new AppError(400, "File isn't a mp3 extension"));
-  }
-};
 
 const uploadMp3Multer = multer({
   storage: storageMp3,
