@@ -83,3 +83,9 @@ export const getMp3AudioDuration = async (path: string) => {
   const mp3DurationSec = await getAudioDurationInSeconds(path);
   return mp3DurationSec;
 };
+
+export const ensureDirectoryExists = (directoryPath: string): void => {
+  if (!fs.existsSync(directoryPath)) {
+    fs.mkdirSync(directoryPath, { recursive: true });
+  }
+};
