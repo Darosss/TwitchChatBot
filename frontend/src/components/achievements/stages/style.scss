@@ -1,0 +1,26 @@
+.stages-list-data-thead {
+  a {
+    margin-left: 0.5rem;
+  }
+}
+
+.stages-list-data-tbody {
+  td {
+    &:not(:first-child) {
+      max-width: 35%;
+    }
+  }
+}
+
+.create-stage-modal-content {
+  & > * {
+    margin: 0 1rem;
+  }
+}
+
+@media screen and (max-width: $screen-md) {
+  .stages-list-data-tbody {
+    word-wrap: break-word;
+    font-size: 2dvw;
+  }
+}
