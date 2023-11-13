@@ -25,7 +25,11 @@ $tr-height: 30vh;
 
 .table-list {
   td {
-    button {
+    a {
+      display: flex;
+    }
+    button,
+    a {
       height: 10vh;
       width: 10vw;
       margin: 0.1rem;

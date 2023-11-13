@@ -1,0 +1,245 @@
+.one-achievement-stage-data {
+  $maxHeightStageData: 80dvh;
+  margin-right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  max-height: $maxHeightStageData;
+
+  & > div {
+    box-shadow: 1px 2px 2px 4px $primary-color;
+    padding: 0.5rem;
+  }
+
+  .default-data {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: space-around;
+    & > div:first-line {
+      color: $info-color;
+    }
+
+    .base-details-achievement-stage-wrapper {
+      display: flex;
+      align-items: center;
+      & > div {
+        padding-left: 2rem;
+      }
+      input {
+        width: 20dvw;
+      }
+    }
+
+    button {
+      padding: 1rem;
+    }
+  }
+
+  .stage-data-wrapper {
+    th {
+      color: $info-color;
+    }
+    .stage-data-content {
+      &.stage-data-edit {
+        img:hover {
+          filter: brightness(180%);
+          cursor: pointer;
+        }
+        button {
+          width: 80%;
+          height: 30%;
+          font-size: 1.2dvw;
+        }
+      }
+
+      font-size: 1.2vw;
+      td {
+        padding-left: 0.5rem;
+        width: 5vw;
+        height: 5dvh;
+        input {
+          font-weight: 800;
+          padding: 0.2rem;
+        }
+        &.stage-data-number {
+          max-width: 5dvw;
+
+          input {
+            max-width: 5dvw;
+            text-align: center;
+          }
+        }
+
+        &.stage-data-content-nr-delete-td {
+          position: relative;
+
+          button {
+            position: absolute;
+            width: 40%;
+            height: 3dvh;
+            top: 0;
+            right: 0;
+          }
+        }
+
+        &.stage-data-sound-wrapper {
+          max-width: 15dvw;
+          overflow-x: hidden;
+
+          & > div {
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            padding: 1rem;
+
+            & > audio {
+              height: 30%;
+            }
+          }
+          &:hover {
+            cursor: pointer;
+            color: $info-color;
+          }
+        }
+      }
+
+      img {
+        width: 50%;
+        aspect-ratio: 1;
+        border-radius: 0.2rem;
+        box-shadow: 1px 2px 3px 2px $secondary-color;
+      }
+      audio {
+        height: 100%;
+
+        &::-webkit-media-controls-panel {
+          background-color: $secondary-color;
+        }
+      }
+    }
+  }
+}
+
+.achievement-stages-sounds-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &.achievement-stage-edit-sound {
+    min-height: 100%;
+    max-height: 100%;
+
+    .achievement-stage-sounds-list-wrapper {
+      max-height: 45dvh;
+      min-height: 45dvh;
+      display: flex;
+      & > div {
+        flex-grow: 1;
+        min-width: 24%;
+      }
+    }
+  }
+
+  .action-items-wrapper {
+    display: flex;
+    justify-content: center;
+    border-bottom: 0.1rem solid $secondary-color;
+
+    padding: 0.5rem;
+    & > * {
+      margin: 0.1rem 0.1rem;
+    }
+
+    & > .action-item-audio-wrapper {
+      audio {
+        height: 80%;
+      }
+    }
+  }
+
+  .achievement-stage-sounds-list-wrapper {
+    padding: 0 0.5rem;
+    max-height: 75dvh;
+    min-height: 75dvh;
+    border-bottom: 0.1rem solid $secondary-color;
+
+    & > div {
+      overflow-x: hidden;
+      margin-right: 1rem;
+      margin-top: 0.5rem;
+
+      word-break: break-all;
+      min-width: 20%;
+      max-width: 20%;
+      flex: 1;
+    }
+  }
+
+  & > div {
+    display: flex;
+    flex-wrap: wrap;
+
+    overflow-x: hidden;
+
+    .one-achievement-stage-sounds-wrapper {
+      box-shadow: 1px 1px 3px 2px $secondary-color;
+      padding: 1rem 1rem;
+
+      &:hover {
+        box-shadow: 1px 1px 3px 2px $primary-color;
+        filter: brightness(180%);
+        cursor: pointer;
+      }
+    }
+    .current-sound {
+      box-shadow: 1px 1px 4px 5px $success-color;
+      border-radius: 1rem;
+    }
+  }
+}
+
+@media screen and (max-width: $screen-lg) {
+  .stage-data-wrapper {
+    .stage-data-content {
+      td {
+        overflow-y: hidden;
+        audio {
+          max-width: 90%;
+          max-height: 80%;
+        }
+        input {
+          width: 100%;
+          font-size: 1.5dvw;
+        }
+        &.stage-data-sound-wrapper {
+          min-width: 18dvw;
+          max-width: 18dvw;
+          & > div {
+            flex-direction: column;
+          }
+        }
+      }
+    }
+  }
+  .achievement-stages-sounds-wrapper {
+    .achievement-stage-sounds-list-wrapper {
+      & > div {
+        flex: 1;
+        max-width: none;
+        min-width: 30%;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $screen-sm) {
+  .achievement-stages-sounds-wrapper {
+    .achievement-stage-sounds-list-wrapper {
+      & > div {
+        min-width: 80%;
+      }
+    }
+  }
+}

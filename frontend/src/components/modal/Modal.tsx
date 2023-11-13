@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 interface ModalProps {
   title?: string;
   onClose: () => void;
-  onSubmit: () => any;
+  onSubmit?: () => any;
   show?: boolean;
   children?: React.ReactNode;
 }
@@ -33,12 +33,14 @@ export default function Modal({
           >
             Close
           </button>
-          <button
-            onClick={onSubmit}
-            className="modal-button common-button primary-button"
-          >
-            Submit
-          </button>
+          {onSubmit ? (
+            <button
+              onClick={onSubmit}
+              className="modal-button common-button primary-button"
+            >
+              Submit
+            </button>
+          ) : null}
         </div>
       </div>
     </div>,
