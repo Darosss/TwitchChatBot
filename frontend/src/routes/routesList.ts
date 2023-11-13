@@ -1,5 +1,6 @@
 export const routes = [
   { path: "/", label: "Home" },
+  { path: "/achievements", label: "Achievements" },
   { path: "/overlay", label: "Overlay" },
   { path: "/messages", label: "Messages" },
   { path: "/message-categories", label: "Message categories" },

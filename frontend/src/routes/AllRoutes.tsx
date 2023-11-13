@@ -21,6 +21,7 @@ import { TriggerRoutes } from "./TriggerRoute";
 import { UserRoutes } from "./UserRoute";
 import { OverlayRoutes } from "./OverlayRoute";
 import Home from "@components/home";
+import { AchievementsRoutes } from "./AchievementsRoute";
 
 const DefaultRouteLayout = () => {
   return (
@@ -58,6 +59,7 @@ export const allRoutes = createBrowserRouter(
         <Route path="/" element={<Home />} />
       </Route>
       <Route element={<DefaultRouteLayout />}>
+        <Route path="/achievements/*" element={<AchievementsRoutes />} />
         <Route path="/messages/*" element={<MessageRoutes />} />
         <Route
           path="/overlay"
