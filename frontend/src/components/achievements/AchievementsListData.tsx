@@ -1,17 +1,14 @@
 import React from "react";
-import { Achievement } from "@services";
 import { TableListWrapper } from "@components/tableWrapper";
 import SortByParamsButton from "@components/SortByParamsButton";
 import { DateTooltip } from "@components/dateTooltip";
 import { generateEnabledDisabledDiv } from "@utils";
+import { useAchievementsListContext } from "./AchievementsContext";
 
-interface AchievementsListDataProps {
-  data: Achievement[];
-}
-
-export default function AchievementsListData({
-  data,
-}: AchievementsListDataProps) {
+export default function AchievementsListData() {
+  const {
+    achievementsState: { data },
+  } = useAchievementsListContext();
   return (
     <>
       <TableListWrapper
