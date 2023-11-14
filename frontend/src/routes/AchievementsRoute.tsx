@@ -8,6 +8,7 @@ import Achievements, {
   OneAchievementStageData,
   AchievementStagesSounds,
   AchievementStageContextProvider,
+  AchievementsContextProvider,
 } from "@components/achievements";
 import { ManyAchievementStagesContextProvider } from "@components/achievements/stages";
 import { BadgesContextProvider } from "@components/achievements/badges";
@@ -29,7 +30,11 @@ export function AchievementsRoutes() {
         element={
           <ComponentWithTitle
             title="Achievements"
-            component={<AchievementsList />}
+            component={
+              <AchievementsContextProvider>
+                <AchievementsList />
+              </AchievementsContextProvider>
+            }
           />
         }
       />
