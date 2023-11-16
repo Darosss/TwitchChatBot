@@ -211,9 +211,10 @@ export const useDeleteBadgeImage = (badgeName: string) => {
 
 /* STAGES */
 
-export const useGetAchievementStages = () => {
+export const useGetAchievementStages = (customParams?: string) => {
   return useAxiosCustom<PaginationData<AchievementStage>>({
-    url: `${BASE_STAGES_URL}/`,
+    url: `${BASE_STAGES_URL}${customParams ? `?${customParams}` : ""}`,
+    urlParams: customParams ? false : true,
   });
 };
 
