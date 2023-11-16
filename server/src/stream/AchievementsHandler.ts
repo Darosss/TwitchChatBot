@@ -124,7 +124,7 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   private addObtainedAchievementDataToQueue(data: GetDataForObtainAchievementEmitReturnData, username: string) {
     data.stages.forEach((stage) =>
       this.enqueue({
-        achievementName: data.achievementName,
+        achievement: data.achievement,
         stage,
         username,
         id: randomUUID()
