@@ -100,7 +100,9 @@ export default function Achievements() {
                     {stageData.name}
                   </div>
 
-                  <div>{moment(timestamp).format("HH:mm")}</div>
+                  <div className="obtained-achievement-timestamp">
+                    {moment(timestamp).format("HH:mm")}
+                  </div>
                   <div className="obtained-achievements-goal">
                     Goal:
                     <span>
