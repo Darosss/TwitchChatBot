@@ -89,7 +89,7 @@ export default function Achievements() {
 
               <div className="obtained-achievements-content">
                 <div className="obtained-achievement-username">
-                  {username}
+                  {username}{" "}
                   <span>
                     obtained achievement <span>{name} </span>
                   </span>
