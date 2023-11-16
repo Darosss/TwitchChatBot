@@ -31,11 +31,18 @@ export const useGetAllModes = (): AllModesReturn | undefined => {
 
 export const generateSelectModes = (
   value: string,
-  onChangeSelect: (value: string) => void,
+  onChangeSelect: (id: string, name: string) => void,
   data?: Tag[] | Affix[] | Mood[]
 ) => {
   return (
-    <select value={value} onChange={(e) => onChangeSelect(e.target.value)}>
+    <select
+      value={value}
+      onChange={(e) => {
+        const value = e.target.value;
+        const name = data?.find(({ _id }) => _id === value)?.name || "";
+        onChangeSelect(value, name);
+      }}
+    >
       <option value=""></option>
       {data?.map((item, index) => {
         return (
