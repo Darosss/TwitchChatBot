@@ -13,19 +13,30 @@ import {
   UpdateAchievementUserProgressProgressesReturnData,
   GetDataForObtainAchievementEmitReturnData,
   UpdateAchievementUserProgressProgressesArgs,
-  addBadgesToUser
+  addBadgesToUser,
+  getAchievements
 } from "@services";
-import { ACHIEVEMENTS, POLISH_SWEARING } from "@defaults";
+import { ACHIEVEMENTS } from "@defaults";
 import { achievementsLogger } from "@utils";
 import moment from "moment";
 import { randomUUID } from "crypto";
-import { UserModel } from "@models";
+import { AchievementCustomModel, CustomAchievementAction, TagModel, UserModel } from "@models";
+// TODO: PERFOMANCE
+// TODO: cache custom achievements names or _ids
+// TODO: cache basic achievements too maybe
+// TODO: add on refresh tag, achievement itd, refresh of these in cache
 
 interface CheckMessageForAchievement {
   message: string;
   date: Date;
   userId: string;
   username: string;
+}
+
+interface CheckWatchTimeForAchievement {
+  userId: string;
+  username: string;
+  progress: number;
 }
 
 interface CheckMessageForAchievementWithCondition extends Pick<CheckMessageForAchievement, "userId" | "username"> {
@@ -134,32 +145,13 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   }
 
   public async checkMessageForAchievements({ message, ...data }: CheckMessageForAchievement) {
-    const checkMessageForConditionWithData = async (condition: boolean, achievementName: ACHIEVEMENTS) =>
-      await this.checkMessageForAchievementWithCondition({ ...data, condition, achievementName });
+    await this.checkCustomMessageAchievements({ message, ...data });
 
-    const lowerCaseMessage = message.toLowerCase();
-    await checkMessageForConditionWithData(true, ACHIEVEMENTS.CHAT_MESSAGES);
-    await checkMessageForConditionWithData(message.includes("."), ACHIEVEMENTS.DOTS);
-    await checkMessageForConditionWithData(message.includes("?"), ACHIEVEMENTS.QUESTION_MARKS);
-    await checkMessageForConditionWithData(message.includes("!"), ACHIEVEMENTS.DICTATOR);
-    await checkMessageForConditionWithData(message.includes(","), ACHIEVEMENTS.COMMAS);
-    await checkMessageForConditionWithData(message.includes("@"), ACHIEVEMENTS.MONKEY);
-    await checkMessageForConditionWithData(message.length > 25, ACHIEVEMENTS.LONG_MESSAGES);
-    await checkMessageForConditionWithData(message.length < 4, ACHIEVEMENTS.SHORT_MESSAGES);
-    await checkMessageForConditionWithData(message.includes("xd"), ACHIEVEMENTS.XD);
-    await checkMessageForConditionWithData(message.includes("Kappa"), ACHIEVEMENTS.KAPPA);
-    await checkMessageForConditionWithData(message.includes("LUL"), ACHIEVEMENTS.LUL);
-    await checkMessageForConditionWithData(
-      this.isMessageContaingPolishSwearing(lowerCaseMessage),
-      ACHIEVEMENTS.POLISH_SWEARING
-    );
-  }
-
-  private isMessageContaingPolishSwearing(lowercaseMessage: string) {
-    for (const swearing in POLISH_SWEARING) {
-      if (lowercaseMessage.includes(swearing.toLowerCase())) return true;
-    }
-    return false;
+    await this.checkMessageForAchievementWithCondition({
+      ...data,
+      condition: true,
+      achievementName: ACHIEVEMENTS.CHAT_MESSAGES
+    });
   }
 
   private async checkMessageForAchievementWithCondition({
@@ -204,6 +196,8 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
       achievementName: ACHIEVEMENTS.BADGES_COUNT,
       progress: { value: badges?.length || 0 }
     });
+
+    await this.checkCustomWatchTimeAchievements({ ...commonData, progress: watchTime || 0 });
   }
 
   private async checkUserFollowageForAchievement({ dateProgress, ...rest }: CheckGlobalUserDetailsDateArgs) {
@@ -237,6 +231,97 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
       condition: true,
       ...args
     });
+  }
+
+  private async checkCustomMessageAchievements(data: CheckMessageForAchievement) {
+    const foundCustomMessageAchievements = await getAchievements(
+      { enabled: true, custom: { $exists: true }, isTime: false },
+      {},
+      { tag: true }
+    );
+
+    if (!foundCustomMessageAchievements)
+      return achievementsLogger.info("Not found any custom message achievements in checkCustomMessageAchievements");
+    for await (const achievement of foundCustomMessageAchievements.filter(
+      (achivementFilter) => (achivementFilter.tag as TagModel).enabled
+    )) {
+      const { name, custom } = achievement;
+
+      const condition = this.checkAchievementDependsOnMessageAction(custom, data.message);
+      if (condition) {
+        await this.updateAchievementUserProgressAndAddToQueue({
+          ...data,
+          achievementName: name,
+          progress: {
+            increment: true,
+            value: 1
+          }
+        });
+      }
+    }
+  }
+
+  private checkAchievementDependsOnMessageAction(
+    { action, numberValue, stringValues, caseSensitive }: AchievementCustomModel,
+    message: string
+  ) {
+    const messageToCheck = !caseSensitive ? message.toLowerCase() : message;
+    const messageLength = messageToCheck.length;
+    const stringValuesToCheck = !caseSensitive ? stringValues?.map((val) => val.toLowerCase()) : stringValues;
+    switch (action) {
+      case CustomAchievementAction.ALL:
+        return true;
+
+      case CustomAchievementAction.MESSAGE_GT:
+        return numberValue && messageLength > numberValue;
+
+      case CustomAchievementAction.MESSAGE_LT:
+        return numberValue && messageLength < numberValue;
+
+      case CustomAchievementAction.INCLUDES:
+        return stringValuesToCheck?.some((val) => messageToCheck.includes(val));
+
+      case CustomAchievementAction.STARTS_WITH:
+        return stringValuesToCheck?.some((val) => messageToCheck.startsWith(val));
+
+      case CustomAchievementAction.ENDS_WITH:
+        return stringValuesToCheck?.some((val) => messageToCheck.endsWith(val));
+
+      //do not check watch time there.
+      case CustomAchievementAction.WATCH_TIME:
+      default:
+        return;
+    }
+  }
+
+  private async checkCustomWatchTimeAchievements(data: CheckWatchTimeForAchievement) {
+    //TODO: think about custom  achievemnt depends on date
+    const foundCustomWatchTimeAchievements = await getAchievements(
+      { enabled: true, custom: { $exists: true }, isTime: true },
+      {},
+      { tag: true }
+    );
+    if (!foundCustomWatchTimeAchievements)
+      return achievementsLogger.info("Not found any custom message achievements in checkCustomWatchTimeAchievements");
+    for (const achievement of foundCustomWatchTimeAchievements.filter(
+      (achivementFilter) => (achivementFilter.tag as TagModel).enabled
+    )) {
+      const {
+        name,
+        custom: { action }
+      } = achievement;
+
+      if (action !== CustomAchievementAction.WATCH_TIME) return;
+
+      await this.updateAchievementUserProgressAndAddToQueue({
+        ...data,
+        achievementName: name,
+        progress: {
+          increment: true,
+          value: 1
+        }
+      });
+    }
   }
 }
 

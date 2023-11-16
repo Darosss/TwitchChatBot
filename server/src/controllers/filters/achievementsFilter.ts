@@ -1,13 +1,15 @@
-import { RequestAchievementStageQuery, RequestSearch } from "@types";
+import { RequestAchievementQuery, RequestAchievementStageQuery } from "@types";
 
-export const filterAchievementsByUrlParams = (params: RequestSearch) => {
-  const { search_name } = params;
+export const filterAchievementsByUrlParams = (params: RequestAchievementQuery) => {
+  const { search_name, custom_action } = params;
   const filterName = {
     ...(search_name && { name: { $regex: search_name, $options: "i" } })
   };
-
+  const filterCustomAction = {
+    ...(custom_action && { "custom.action": { $regex: custom_action, $options: "i" } })
+  };
   const searchFilter = {
-    $and: [filterName]
+    $and: [filterName, filterCustomAction]
   };
   return searchFilter;
 };

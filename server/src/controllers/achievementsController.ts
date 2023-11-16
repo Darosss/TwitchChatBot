@@ -1,11 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 import { RequestParams, RequestSearch } from "@types";
 import {
+  AchievementUpdateDataController,
+  CustomAchievementCreateData,
+  CustomAchievementUpdateData,
+  createCustomAchievement,
   getAchievements,
   getAchievementsCount,
-  getAchievementsProgressesByUserId as getAchievementsProgressesByUserIdService
+  getAchievementsProgressesByUserId as getAchievementsProgressesByUserIdService,
+  deleteCustomAchievementById as deleteCustomAchievementByIdService,
+  updateOneAchievement
 } from "@services";
-import { AppError } from "@utils";
+import { AppError, checkExistResource, logger } from "@utils";
 import { filterAchievementsByUrlParams } from "./filters/achievementsFilter";
 
 export const getManyAchievements = async (
@@ -56,6 +62,94 @@ export const getAchievementsProgressesByUserId = async (
       data: achievements
     });
   } catch (err) {
+    next(err);
+  }
+};
+
+export const editAchievementById = async (
+  req: Request<RequestParams, {}, AchievementUpdateDataController, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+  const { enabled, description, tag, stages } = req.body;
+  try {
+    const updatedAchievement = await updateOneAchievement({ _id: id }, { enabled, description, stages, tag });
+
+    const foundAchievement = checkExistResource(updatedAchievement, "Achievement");
+    return res.status(200).send({
+      message: "Achievement updated successfully",
+      data: foundAchievement
+    });
+  } catch (err) {
+    logger.error(`Error when trying to editAchievementById by id: ${id}: ${err}`);
+    next(err);
+  }
+};
+
+export const addCustomAchievement = async (
+  req: Request<{}, {}, CustomAchievementCreateData, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { name, description, custom, stages, tag, isTime, enabled } = req.body;
+  try {
+    if (!custom) throw new AppError(400, `Custom options must be provided.`);
+    const newCustomAchievement = await createCustomAchievement({
+      name,
+      enabled,
+      description,
+      custom,
+      stages,
+      tag,
+      isTime
+    });
+
+    return res.status(200).send({ message: "Custom achievement added successfully", data: newCustomAchievement });
+  } catch (err) {
+    logger.error(`Error when trying to addCustomAchievement: ${err}`);
+    next(err);
+  }
+};
+
+export const deleteCustomAchievementById = async (
+  req: Request<RequestParams, {}, {}, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+
+  try {
+    await deleteCustomAchievementByIdService(id);
+
+    return res.status(200).send({ message: "Achievement deleted successfully" });
+  } catch (err) {
+    logger.error(`Error when trying to deleteCustomAchievementById by id: ${id}: ${err}`);
+    next(err);
+  }
+};
+
+export const editCustomAchievementById = async (
+  req: Request<RequestParams, {}, CustomAchievementUpdateData, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+  const { name, enabled, description, custom, stages, tag, isTime } = req.body;
+
+  try {
+    const updatedAchievement = await updateOneAchievement(
+      { _id: id },
+      { name, enabled, description, custom, stages, tag, isTime }
+    );
+
+    const foundAchievement = checkExistResource(updatedAchievement, "Achievement");
+    return res.status(200).send({
+      message: "Custom achievement updated successfully",
+      data: foundAchievement
+    });
+  } catch (err) {
+    logger.error(`Error when trying to editCustomAchievementById by id: ${id}: ${err}`);
     next(err);
   }
 };

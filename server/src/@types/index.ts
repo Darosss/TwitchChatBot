@@ -87,6 +87,9 @@ export interface RequestBadgesQuery extends RequestSearch {
   imageUrl?: string;
 }
 
+export interface RequestAchievementQuery extends RequestSearch {
+  custom_action?: string;
+}
 export interface RequestAchievementStageQuery extends RequestSearch {
   stageName?: string;
   sound?: string;

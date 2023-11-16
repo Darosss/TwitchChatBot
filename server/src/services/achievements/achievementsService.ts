@@ -1,4 +1,10 @@
-import { Achievement, AchievementDocument, AchievementWithBadgePopulated } from "@models";
+import {
+  Achievement,
+  AchievementCustomModel,
+  AchievementDocument,
+  AchievementWithBadgePopulated,
+  CustomAchievementAction
+} from "@models";
 import { AppError, checkExistResource, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
@@ -6,7 +12,8 @@ import {
   AchievementsFindOptions,
   AchievementUpdateData,
   AchievementsPopulateOptions,
-  ManyAchievementsFindOptions
+  ManyAchievementsFindOptions,
+  CustomAchievementCreateData
 } from "./types";
 
 export const getAchievements = async (
@@ -112,6 +119,74 @@ export const updateOneAchievement = async (
     return achievement;
   } catch (err) {
     logger.error(`Error occured while updating achievement with (${JSON.stringify(filter)}). ${err}`);
+    handleAppError(err);
+  }
+};
+
+export const createCustomAchievement = async (createData: CustomAchievementCreateData) => {
+  try {
+    //handling for ACTION custom data
+    const { custom } = createData;
+    handleCustomAchievementActionData(custom);
+
+    //Make sure WATCH_TIME is checked as time
+    if (custom.action === CustomAchievementAction.WATCH_TIME) createData.isTime = true;
+
+    const createdAchievementStage = await Achievement.create({ ...createData });
+
+    if (!createdAchievementStage) {
+      throw new AppError(400, "Couldn't create new custom achievement");
+    }
+    return createdAchievementStage;
+  } catch (err) {
+    logger.error(`Error occured in createCustomAchievement: ${err}`);
+    handleAppError(err);
+  }
+};
+
+const handleCustomAchievementActionData = (customProperty: AchievementCustomModel) => {
+  switch (customProperty.action) {
+    case CustomAchievementAction.INCLUDES:
+    case CustomAchievementAction.STARTS_WITH:
+    case CustomAchievementAction.ENDS_WITH:
+      if (
+        (customProperty.stringValues && customProperty.stringValues?.length <= 0) ||
+        !customProperty.stringValues?.at(0)
+      )
+        throw new AppError(
+          400,
+          `With ${CustomAchievementAction.INCLUDES}, ${CustomAchievementAction.STARTS_WITH} or ${CustomAchievementAction.ENDS_WITH} stringValues need have at least one item`
+        );
+      return;
+    case CustomAchievementAction.MESSAGE_GT:
+    case CustomAchievementAction.MESSAGE_LT:
+      if (!customProperty.numberValue)
+        throw new AppError(
+          400,
+          `With ${CustomAchievementAction.MESSAGE_GT} or ${CustomAchievementAction.MESSAGE_LT} numberValue need to be a number`
+        );
+      return;
+  }
+};
+
+export const deleteOneAchievement = async (filter: FilterQuery<AchievementDocument>) => {
+  try {
+    const deletedAchievement = await Achievement.findOneAndDelete(filter);
+
+    checkExistResource(deletedAchievement, "Achievement");
+    return { message: "Successfully removed achievement" };
+  } catch (err) {
+    logger.error(`Error occured while deleteOneAchievement: ${err}`);
+    handleAppError(err);
+  }
+};
+
+export const deleteCustomAchievementById = async (id: string) => {
+  try {
+    await deleteOneAchievement({ _id: id, custom: { $exists: true } });
+    return { message: "Successfully removed custom achievement" };
+  } catch (err) {
+    logger.error(`Error occured while deleting badge by id(${id}). ${err}`);
     handleAppError(err);
   }
 };
