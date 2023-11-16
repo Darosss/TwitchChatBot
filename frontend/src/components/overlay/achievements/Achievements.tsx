@@ -1,5 +1,5 @@
 import { ObtainAchievementData, useSocketContext } from "@socket";
-import { convertSecondsToMS } from "@utils";
+import { getDateFromSecondsToYMDHMS } from "@utils";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { viteBackendUrl } from "src/configs/envVariables";
@@ -101,7 +101,7 @@ export default function Achievements() {
                     Goal:
                     <span>
                       {isTime
-                        ? convertSecondsToMS(stageData.goal).join(":")
+                        ? getDateFromSecondsToYMDHMS(stageData.goal)
                         : stageData.goal}
                     </span>
                   </div>
