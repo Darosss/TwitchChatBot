@@ -70,51 +70,53 @@ export default function Achievements() {
         {itemsQueLength}+
       </div>
 
-      {obtainedAchievements.map(({ stage, achievementName, username, id }) => {
-        const [stageData, timestamp] = stage;
+      {obtainedAchievements.map(
+        ({ stage, achievement: { name, isTime }, username, id }) => {
+          const [stageData, timestamp] = stage;
 
-        return (
-          <div
-            key={id}
-            className={`obtained-achievements-wrapper animated-achievement${
-              stageData.rarity ? `-${stageData.rarity}` : ""
-            }`}
-          >
-            <div className="achievements-overlay-background"></div>
+          return (
+            <div
+              key={id}
+              className={`obtained-achievements-wrapper animated-achievement${
+                stageData.rarity ? `-${stageData.rarity}` : ""
+              }`}
+            >
+              <div className="achievements-overlay-background"></div>
 
-            <div className="obtained-achievements-content">
-              <div className="obtained-achievement-username">
-                {username}
-                <span>
-                  obtained achievement <span>{achievementName} </span>
-                </span>
-              </div>
-
-              <div className="obtained-achievement-details">
-                <div className="obtained-achievements-stage-name">
-                  {stageData.name}
-                </div>
-
-                <div>{moment(timestamp).format("HH:mm")}</div>
-                <div className="obtained-achievements-goal">
-                  Goal:
+              <div className="obtained-achievements-content">
+                <div className="obtained-achievement-username">
+                  {username}
                   <span>
-                    {achievementName.includes("TIME")
-                      ? convertSecondsToMS(stageData.goal).join(":")
-                      : stageData.goal}
+                    obtained achievement <span>{name} </span>
                   </span>
                 </div>
+
+                <div className="obtained-achievement-details">
+                  <div className="obtained-achievements-stage-name">
+                    {stageData.name}
+                  </div>
+
+                  <div>{moment(timestamp).format("HH:mm")}</div>
+                  <div className="obtained-achievements-goal">
+                    Goal:
+                    <span>
+                      {isTime
+                        ? convertSecondsToMS(stageData.goal).join(":")
+                        : stageData.goal}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="obtained-achievements-badge">
+                <img
+                  src={`${viteBackendUrl}/${stageData.badge.imageUrl}`}
+                  alt={stageData.name}
+                />
               </div>
             </div>
-            <div className="obtained-achievements-badge">
-              <img
-                src={`${viteBackendUrl}/${stageData.badge.imageUrl}`}
-                alt={stageData.name}
-              />
-            </div>
-          </div>
-        );
-      })}
+          );
+        }
+      )}
     </div>
   );
 }
