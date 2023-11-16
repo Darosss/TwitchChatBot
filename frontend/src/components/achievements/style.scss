@@ -22,18 +22,12 @@
 }
 
 .achievements-list-data-tbody {
-  & > td {
-    max-width: 15%;
-    * {
-      padding: 0.3rem 0;
-    }
-
-    &:first-child {
-      padding-left: 0.5rem;
-    }
-    &.achievement-list-td-condition {
-      max-width: 5%;
-      min-width: 5%;
-    }
+  & > td:not(:first-child) {
+    min-width: 35%;
+    max-width: 33%;
   }
+}
+
+.modal-custom-achievement-name {
+  order: -1;
 }
