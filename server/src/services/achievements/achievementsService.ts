@@ -131,6 +131,7 @@ export const createCustomAchievement = async (createData: CustomAchievementCreat
 
     //Make sure WATCH_TIME is checked as time
     if (custom.action === CustomAchievementAction.WATCH_TIME) createData.isTime = true;
+    else createData.isTime = false;
 
     const createdAchievementStage = await Achievement.create({ ...createData });
 
