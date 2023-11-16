@@ -146,7 +146,7 @@ export const getDataForObtainAchievementEmit = (
     if (stageData) newStages.push([stageData, stage[1]]);
   });
   return {
-    achievementName: data.foundAchievement.name,
+    achievement: { name: data.foundAchievement.name, isTime: data.foundAchievement.isTime },
     stages: newStages
   };
 };

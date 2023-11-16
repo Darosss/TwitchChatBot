@@ -54,9 +54,11 @@ export type UpdateAchievementUserProgressProgressesReturnData = {
   foundAchievement: AchievementWithBadgePopulated;
   nowFinishedStages: AchievementUserProgressModel["progresses"];
 };
-
 export interface GetDataForObtainAchievementEmitReturnData {
-  achievementName: string;
+  achievement: {
+    name: string;
+    isTime: boolean;
+  };
   stages: ObtainAchievementData["stage"][];
 }
 
