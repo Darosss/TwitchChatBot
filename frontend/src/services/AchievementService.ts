@@ -38,6 +38,22 @@ export interface AchievementStageCreateData
 }
 export type AchievementStageUpdateData = Partial<AchievementStageCreateData>;
 
+export enum CustomAchievementAction {
+  ALL = "ALL MESSAGES",
+  INCLUDES = "INCLUDES",
+  STARTS_WITH = "STARTS WITH",
+  ENDS_WITH = "ENDS WITH",
+  MESSAGE_GT = "MESSAGE LENGTH GREATER THAN",
+  MESSAGE_LT = "MESSAGE LENGTH LESS THAN",
+  WATCH_TIME = "WATCH TIME",
+}
+export interface AchievementCustomField {
+  stringValues?: string[];
+  numberValue?: number;
+  caseSensitive?: boolean;
+  action: CustomAchievementAction;
+}
+
 export interface Achievement {
   _id: string;
   name: string;
@@ -46,9 +62,26 @@ export interface Achievement {
   isTime: boolean;
   tag: Tag;
   enabled: boolean;
+  custom?: AchievementCustomField;
   createdAt: Date;
   updatedAt: Date;
 }
+export interface AchievementUpdateData
+  extends Pick<Achievement, "description" | "enabled"> {
+  stages: string;
+  tag: string;
+}
+
+//TODO: check if used
+export interface CustomAchievementCreateData
+  extends Required<
+    Pick<Achievement, "description" | "name" | "enabled" | "custom">
+  > {
+  stages: string;
+  tag: string;
+}
+export interface CustomAchievementUpdateData
+  extends Partial<CustomAchievementCreateData> {}
 
 export interface AchievementUserProgress {
   _id: string;
@@ -67,6 +100,49 @@ const BASE_STAGES_URL = `${BASE_URL}/stages`;
 export const useGetAchievements = () => {
   return useAxiosCustom<PaginationData<Achievement>>({
     url: `${BASE_URL}/`,
+  });
+};
+export const useEditAchievement = (id: string, data: AchievementUpdateData) => {
+  return useAxiosCustom({
+    url: `${BASE_URL}/${id}`,
+    method: "POST",
+    manual: true,
+    urlParams: false,
+    bodyData: data,
+  });
+};
+
+export const useCreateCustomAchievement = (
+  data: CustomAchievementCreateData
+) => {
+  return useAxiosCustom({
+    url: `${BASE_URL}/custom/create`,
+    method: "POST",
+    bodyData: data,
+    manual: true,
+    urlParams: false,
+  });
+};
+
+export const useDeleteCustomAchievement = (id: string) => {
+  return useAxiosCustom({
+    url: `${BASE_URL}/custom/${id}`,
+    method: "DELETE",
+    manual: true,
+    urlParams: false,
+  });
+};
+
+export const useUpdateCustomAchievement = (
+  id: string,
+  data: CustomAchievementUpdateData
+) => {
+  return useAxiosCustom({
+    url: `${BASE_URL}/custom/${id}`,
+    method: "POST",
+    bodyData: data,
+    manual: true,
+    urlParams: false,
   });
 };
 
