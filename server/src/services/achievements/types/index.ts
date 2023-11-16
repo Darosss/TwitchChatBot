@@ -17,11 +17,19 @@ export interface ManyAchievementsFindOptions<T = AchievementModel> extends Achie
   limit?: number;
 }
 
-export type AchievementUpdateData = Partial<Omit<AchievementModel, "_id" | "createdAt" | "updatedAt">>;
+export type AchievementUpdateData = Partial<
+  Omit<AchievementModel, "_id" | "createdAt" | "updatedAt" | "stages" | "tag">
+> & { stages?: string; tag?: string };
 
-export type AchievementCreateData = Omit<AchievementUpdateData, "name" | "stages" | "tag"> &
-  Pick<AchievementModel, "name"> & { stages: string; tag: string };
+export type AchievementCreateData = Omit<AchievementUpdateData, "name" | "custom" | "description"> &
+  Pick<AchievementModel, "name" | "description"> & { stages: string; tag: string };
 
+export type AchievementUpdateDataController = Pick<AchievementUpdateData, "description" | "enabled" | "tag" | "stages">;
+
+export type CustomAchievementCreateData = Required<AchievementCreateData> &
+  Required<Pick<AchievementUpdateData, "custom">>;
+
+export type CustomAchievementUpdateData = Partial<CustomAchievementCreateData>;
 export type AchievementUserProgressUpdate = Partial<Pick<AchievementUserProgressModel, "progresses" | "value">>;
 
 //TODO: refactor this into ManyAchievementsFindOptions, create separate find options for stages, badges, progresses
