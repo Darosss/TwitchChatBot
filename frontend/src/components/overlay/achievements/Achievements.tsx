@@ -18,7 +18,6 @@ export default function Achievements() {
   useEffect(() => {
     const audio = new Audio();
     obtainAchievement.on((data) => {
-      audio.pause();
       setObtainedAchievements((prevState) => [data, ...prevState]);
 
       const audioUrl = data.stage[0].sound;
@@ -26,7 +25,12 @@ export default function Achievements() {
         audio.src = `${viteBackendUrl}/${audioUrl}`;
         audio.play();
       }
+
+      setTimeout(() => {
+        audio.pause();
+      }, data.stage[0].showTimeMs);
     });
+
     return () => {
       obtainAchievement.off();
       audio.pause();
