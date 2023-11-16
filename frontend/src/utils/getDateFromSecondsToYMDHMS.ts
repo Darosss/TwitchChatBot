@@ -22,5 +22,5 @@ export const getDateFromSecondsToYMDHMS = (
     seconds,
   ].filter(Boolean);
 
-  return timeArray;
+  return timeArray.join("");
 };
