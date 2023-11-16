@@ -11,6 +11,11 @@ export default function FilterBarAchievements() {
           type="search"
           placeholder="Name"
         />
+        <FilterBarInput
+          queryparam="custom_action"
+          type="search"
+          placeholder="Custom action"
+        />
       </UrlParamsInput>
     </div>
   );

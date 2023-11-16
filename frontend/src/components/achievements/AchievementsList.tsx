@@ -1,22 +1,24 @@
 import React from "react";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-import { useGetAchievements } from "@services";
+
 import AchievementsListData from "./AchievementsListData";
 import FilterBarAchievements from "./FilterBarAchievements";
+import { useAchievementsListContext } from "./AchievementsContext";
+import { ManageAchievementContextProvider } from "./ManageAchievementContext";
 
 export default function AchievementsList() {
-  const { data: achievementsData, loading, error } = useGetAchievements();
-
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (loading || !achievementsData) return <> Loading...</>;
-  const { data, count, currentPage } = achievementsData;
+  const {
+    achievementsState: { count, currentPage },
+  } = useAchievementsListContext();
 
   return (
     <>
       <PreviousPage />
       <FilterBarAchievements />
-      <AchievementsListData data={data} />
+      <ManageAchievementContextProvider>
+        <AchievementsListData />
+      </ManageAchievementContextProvider>
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"

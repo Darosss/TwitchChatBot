@@ -305,6 +305,21 @@ export interface AchievementStageModel<T = string> extends BaseModel {
 }
 
 export type AchievementStageDocument = AchievementStageModel & Document;
+export enum CustomAchievementAction {
+  ALL = "ALL MESSAGES",
+  INCLUDES = "INCLUDES",
+  STARTS_WITH = "STARTS WITH",
+  ENDS_WITH = "ENDS WITH",
+  MESSAGE_GT = "MESSAGE LENGTH GREATER THAN",
+  MESSAGE_LT = "MESSAGE LENGTH LESS THAN",
+  WATCH_TIME = "WATCH TIME"
+}
+export interface AchievementCustomModel {
+  stringValues?: string[];
+  caseSensitive?: boolean;
+  numberValue?: number;
+  action: CustomAchievementAction;
+}
 
 export interface AchievementModel<T = string | BadgeModel> extends BaseModel {
   name: string;
@@ -313,6 +328,7 @@ export interface AchievementModel<T = string | BadgeModel> extends BaseModel {
   isTime: boolean;
   tag: string | TagModel;
   enabled: boolean;
+  custom: AchievementCustomModel;
 }
 
 export type AchievementWithBadgePopulated = AchievementModel<BadgeModel>;

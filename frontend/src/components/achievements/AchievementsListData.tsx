@@ -1,77 +1,48 @@
 import React from "react";
-import { Achievement } from "@services";
 import { TableListWrapper } from "@components/tableWrapper";
 import SortByParamsButton from "@components/SortByParamsButton";
-import { DateTooltip } from "@components/dateTooltip";
-import { generateEnabledDisabledDiv } from "@utils";
+import TBodyData from "./TBodyData";
+import { CreateCustomAchievementButton } from "./CreateCustomAchievementButton";
 
-interface AchievementsListDataProps {
-  data: Achievement[];
-}
-
-export default function AchievementsListData({
-  data,
-}: AchievementsListDataProps) {
+export default function AchievementsListData() {
   return (
     <>
       <TableListWrapper
         theadChildren={
           <tr>
             <th>
-              <SortByParamsButton buttonText="Name" sortBy="name" />
+              Actions
+              <CreateCustomAchievementButton />
             </th>
             <th>
-              <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
+              <div>
+                <SortByParamsButton buttonText="Name" sortBy="name" />
+                <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
+                <SortByParamsButton buttonText="Is time" sortBy="isTime" />
+              </div>
             </th>
             <th>
-              <SortByParamsButton buttonText="Is time" sortBy="isTime" />
+              <div>
+                <SortByParamsButton buttonText="Stages" sortBy="stages" />
+                <SortByParamsButton buttonText="Tag" sortBy="tag" />
+                <SortByParamsButton buttonText="Custom" sortBy="custom" />
+              </div>
             </th>
             <th>
-              <SortByParamsButton buttonText="Stages" sortBy="stages" />
-            </th>
-            <th>
-              <SortByParamsButton buttonText="Tag" sortBy="tag" />
-            </th>
-            <th>
-              <SortByParamsButton buttonText="Created At" sortBy="createdAt" />
-            </th>
-            <th>
-              <SortByParamsButton buttonText="Updated at" sortBy="updatedAt" />
+              <div>
+                <SortByParamsButton
+                  buttonText="Created At"
+                  sortBy="createdAt"
+                />
+                <SortByParamsButton
+                  buttonText="Updated at"
+                  sortBy="updatedAt"
+                />
+              </div>
             </th>
           </tr>
         }
-        tbodyChildren={data.map((achievement, index) => {
-          return (
-            <tr key={index} className="achievements-list-data-tbody">
-              <td>{achievement.name}</td>
-              <td className="achievement-list-td-condition">
-                {generateEnabledDisabledDiv(
-                  achievement.enabled,
-                  achievement.enabled.toString().toUpperCase()
-                )}
-              </td>
-              <td className="achievement-list-td-condition">
-                {generateEnabledDisabledDiv(
-                  achievement.isTime,
-                  achievement.isTime.toString().toUpperCase()
-                )}
-              </td>
-              <td>{achievement.stages.name}</td>
-              <td>
-                {generateEnabledDisabledDiv(
-                  achievement.tag.enabled,
-                  achievement.tag.name
-                )}
-              </td>
-              <td>
-                <DateTooltip date={achievement.createdAt} />
-              </td>
-              <td>
-                <DateTooltip date={achievement.updatedAt} />
-              </td>
-            </tr>
-          );
-        })}
+        tbodyChildren={<TBodyData />}
       />
     </>
   );

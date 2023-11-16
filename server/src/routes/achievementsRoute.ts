@@ -18,7 +18,11 @@ import {
   uploadAchievementStageSounds,
   deleteAchievementStageSoundById,
   addNewAchievementStage,
-  getBadgeById
+  getBadgeById,
+  addCustomAchievement,
+  editCustomAchievementById,
+  deleteCustomAchievementById,
+  editAchievementById
 } from "@controllers";
 import { checkSearchParams, isParamObjectId } from "@middlewares";
 import { Router } from "express";
@@ -26,6 +30,10 @@ import { Router } from "express";
 const achievementsRouter = Router();
 
 achievementsRouter.get("/", checkSearchParams, getManyAchievements);
+
+achievementsRouter.post("/custom/create", addCustomAchievement);
+achievementsRouter.post("/custom/:id", isParamObjectId, editCustomAchievementById);
+achievementsRouter.delete("/custom/:id", deleteCustomAchievementById);
 
 /* STAGES RELATED */
 achievementsRouter.get("/stages", checkSearchParams, getManyAchievementStages);
@@ -50,5 +58,7 @@ achievementsRouter.get("/badges/:id", isParamObjectId, getBadgeById);
 achievementsRouter.post("/badges/:id", isParamObjectId, editBadgeById);
 
 achievementsRouter.get("/user/:id", isParamObjectId, getAchievementsProgressesByUserId);
+
+achievementsRouter.post("/:id", isParamObjectId, editAchievementById);
 
 export default achievementsRouter;
