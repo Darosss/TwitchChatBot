@@ -5,6 +5,7 @@ import PreviousPage from "@components/previousPage";
 import AchievementsListData from "./AchievementsListData";
 import FilterBarAchievements from "./FilterBarAchievements";
 import { useAchievementsListContext } from "./AchievementsContext";
+import { ManageAchievementContextProvider } from "./ManageAchievementContext";
 
 export default function AchievementsList() {
   const {
@@ -15,7 +16,9 @@ export default function AchievementsList() {
     <>
       <PreviousPage />
       <FilterBarAchievements />
-      <AchievementsListData />
+      <ManageAchievementContextProvider>
+        <AchievementsListData />
+      </ManageAchievementContextProvider>
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
