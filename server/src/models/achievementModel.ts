@@ -1,5 +1,11 @@
 import { Model, model, Schema } from "mongoose";
-import { AchievementDocument, AchievementStageDocument, AchievementUserProgressDocument } from "./types";
+import {
+  CustomAchievementAction,
+  AchievementCustomModel,
+  AchievementDocument,
+  AchievementStageDocument,
+  AchievementUserProgressDocument
+} from "./types";
 import { enabledField, tagModeField } from "@utils";
 
 const AchievementStageSchema = new Schema<AchievementStageDocument>({
@@ -18,6 +24,17 @@ const AchievementStageSchema = new Schema<AchievementStageDocument>({
   ]
 });
 
+const AchievementCustomSchema: Schema<AchievementCustomModel> = new Schema({
+  stringValues: { type: [String], required: false },
+  numberValue: { type: Number, required: false },
+  caseSensitive: { type: Boolean, required: false },
+  action: {
+    type: String,
+    default: CustomAchievementAction.INCLUDES,
+    enum: Object.values(CustomAchievementAction)
+  }
+});
+
 const AchivementSchema: Schema<AchievementDocument> = new Schema(
   {
     name: { type: String, required: true, unique: true },
@@ -25,7 +42,8 @@ const AchivementSchema: Schema<AchievementDocument> = new Schema(
     stages: { type: Schema.Types.ObjectId, required: true, ref: "AchievementStage" },
     isTime: { type: Boolean, required: true, default: false },
     ...tagModeField,
-    ...enabledField
+    ...enabledField,
+    custom: { type: AchievementCustomSchema, required: false }
   },
   { timestamps: true }
 );
