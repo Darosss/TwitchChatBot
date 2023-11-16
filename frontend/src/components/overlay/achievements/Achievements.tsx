@@ -61,7 +61,7 @@ export default function Achievements() {
       ref={wrapper}
       style={{
         fontSize: `${
-          wrapper.current ? `${wrapper.current.offsetWidth / 500}dvw` : "2rem"
+          wrapper.current ? `${wrapper.current.offsetWidth / 600}rem` : "2rem"
         }`,
       }}
     >
