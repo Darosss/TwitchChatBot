@@ -81,9 +81,14 @@ export interface RewardData {
   rewardImage: string;
 }
 
+export interface AchievementDataInObtainAchievement {
+  name: string;
+  isTime: boolean;
+}
+
 export interface ObtainAchievementData {
   id: string;
-  achievementName: string;
+  achievement: AchievementDataInObtainAchievement;
   stage: [StageDataWithBadgePopulated, number];
   username: string;
 }
