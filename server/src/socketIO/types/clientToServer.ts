@@ -3,7 +3,8 @@ import {
   AudioStreamDataInfo,
   AudioYTData,
   AudioYTDataInfo,
-  AudioStreamData
+  AudioStreamData,
+  ObtainAchievementData
 } from "./dataTypes";
 
 export interface ClientToServerEvents
@@ -17,6 +18,7 @@ export interface ClientToServerEvents
   refreshTimers: () => void;
   changeModes: () => void;
   logout: () => void;
+  emulateAchievement: (data: ObtainAchievementData) => void;
 }
 
 export interface ClientToServerCustomRewards {
