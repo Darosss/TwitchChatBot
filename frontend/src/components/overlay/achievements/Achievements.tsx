@@ -14,7 +14,26 @@ export default function Achievements() {
   const [obtainedAchievements, setObtainedAchievements] = useState<
     ObtainAchievementData[]
   >([]);
+
+  const [showAchievementsQueue, setShowAchievementsQueue] = useState(false);
   const [itemsQueLength, setItemsQueLength] = useState(0);
+
+  useEffect(() => {
+    let showQueueInterval: NodeJS.Timer;
+
+    showQueueInterval = setInterval(() => {
+      setShowAchievementsQueue(true);
+
+      setTimeout(() => {
+        setShowAchievementsQueue(false);
+      }, 1000 * 5);
+    }, 1000 * 30);
+
+    return () => {
+      clearInterval(showQueueInterval);
+    };
+  }, []);
+
   useEffect(() => {
     const audio = new Audio();
     obtainAchievement.on((data) => {
@@ -67,7 +86,7 @@ export default function Achievements() {
     >
       <div
         className={`achievements-overlay-queue-length ${
-          itemsQueLength !== 0 && itemsQueLength % 10 === 0 ? "show" : "hide"
+          showAchievementsQueue && itemsQueLength > 1 ? "show" : "hide"
         }`}
       >
         <div className="queue-length-background"></div>
