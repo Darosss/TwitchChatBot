@@ -93,6 +93,19 @@
           }
         }
 
+        &.stage-data-content-nr-emulate {
+          & > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            height: 100%;
+          }
+          button {
+            height: 5dvh;
+            width: 5dvw;
+          }
+        }
+
         &.stage-data-sound-wrapper {
           max-width: 20dvw;
           overflow-x: hidden;
