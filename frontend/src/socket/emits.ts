@@ -1,6 +1,7 @@
 import { Socket } from "socket.io-client";
 import {
   ClientToServerEvents,
+  ObtainAchievementData,
   ServerToClientEvents,
   SocketContexType,
 } from "./types";
@@ -89,6 +90,9 @@ export const getSocketEmitsFunctions = (
     },
     getCustomRewards: () => {
       socketConnection.emit("getCustomRewards");
+    },
+    emulateAchievement: (data: ObtainAchievementData) => {
+      socketConnection.emit("emulateAchievement", data);
     },
   };
 };
