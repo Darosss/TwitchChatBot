@@ -55,19 +55,30 @@
       font-size: 1.2vw;
       td {
         padding-left: 0.5rem;
-        width: 5vw;
+        width: 12vw;
         height: 5dvh;
+        &:first-child {
+          width: 5vw;
+        }
         input {
           font-weight: 800;
           padding: 0.2rem;
         }
+
+        input[type="number"] {
+          max-width: 5dvw;
+          text-align: center;
+        }
+        div {
+          input {
+            width: 100%;
+          }
+        }
         &.stage-data-number {
           max-width: 5dvw;
-
-          input {
-            max-width: 5dvw;
-            text-align: center;
-          }
+        }
+        &.stage-data-goal {
+          min-width: 25%;
         }
 
         &.stage-data-content-nr-delete-td {
@@ -83,19 +94,19 @@
         }
 
         &.stage-data-sound-wrapper {
-          max-width: 15dvw;
+          max-width: 20dvw;
           overflow-x: hidden;
 
           & > div {
             width: 90%;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: space-evenly;
             height: 100%;
             padding: 1rem;
 
             & > audio {
-              height: 30%;
+              height: 10%;
             }
           }
           &:hover {

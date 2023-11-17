@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 
 import {
   AchievementStage,
@@ -47,6 +47,8 @@ export const AchievementStageContextProvider = ({
     await refetchData();
   };
 
+  const [isGoalTime, setIsGoalTime] = useState(false);
+
   useEffect(() => {
     if (!achievementStageData) return;
     dispatchAchievementStageState({
@@ -82,6 +84,7 @@ export const AchievementStageContextProvider = ({
         ],
         refetchAchievementStageData,
         updateStageDataByIndex,
+        isGoalTimeState: [isGoalTime, setIsGoalTime],
       }}
     >
       {children}

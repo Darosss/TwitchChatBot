@@ -39,7 +39,7 @@ export default function OneAchievementStageData() {
 
         <div className="stage-data-wrapper">
           <TableListWrapper
-            theadChildren={<AchievementStageTheadData />}
+            theadChildren={<AchievementStageTheadData editing={editing} />}
             tbodyChildren={
               editing ? (
                 <AchievementStageEditData
