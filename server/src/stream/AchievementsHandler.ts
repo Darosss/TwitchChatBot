@@ -71,6 +71,7 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   constructor(socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>) {
     super();
     this.socketIO = socketIO;
+    this.onEmulateAchievementSocket();
   }
 
   protected override startTimeout(delay = 0): void {
@@ -130,6 +131,14 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
         id: randomUUID()
       })
     );
+  }
+
+  private onEmulateAchievementSocket() {
+    this.socketIO.on("connect", (socket) => {
+      socket.on("emulateAchievement", (data) => {
+        this.enqueue(data);
+      });
+    });
   }
 
   private async addBadgesToUser({ userId, stages }: CheckBadgesLogicForUserArgs) {
