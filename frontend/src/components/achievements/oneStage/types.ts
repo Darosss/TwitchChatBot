@@ -11,6 +11,7 @@ export interface AchievementStageContextType {
   ];
   refetchAchievementStageData: () => Promise<void>;
   updateStageDataByIndex: UpdateStageDataByIndexFn;
+  isGoalTimeState: [boolean, (value: boolean) => void];
 }
 
 export type AchievementStageDispatchAction =
