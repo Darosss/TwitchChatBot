@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
-
-export default function AchievementStageTheadData() {
+import { useAchievementStageContext } from "./Context";
+interface AchievementStageTheadDataProps {
+  editing: boolean;
+}
+export default function AchievementStageTheadData({
+  editing,
+}: AchievementStageTheadDataProps) {
   return (
     <tr className="stages-list-data-thead">
       <th>Nr. </th>
@@ -12,7 +17,7 @@ export default function AchievementStageTheadData() {
         </Link>
       </th>
       <th>Rarity (1-10)</th>
-      <th>Goal</th>
+      <th>Goal {editing ? <ToggleGoalIsTimeBtn /> : null}</th>
       <th>Show Time (sec)</th>
       <th>
         <Link to="../sounds" className="common-button primary-button">
@@ -20,5 +25,22 @@ export default function AchievementStageTheadData() {
         </Link>
       </th>
     </tr>
+  );
+}
+
+function ToggleGoalIsTimeBtn() {
+  const {
+    isGoalTimeState: [isGoalTime, setIsGoalTime],
+  } = useAchievementStageContext();
+
+  return (
+    <button
+      className={`common-button ${
+        isGoalTime ? "primary-button" : "danger-button"
+      }`}
+      onClick={() => setIsGoalTime(!isGoalTime)}
+    >
+      {isGoalTime ? "Time" : "Points"}
+    </button>
   );
 }
