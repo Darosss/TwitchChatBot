@@ -1,5 +1,5 @@
 import { ObtainAchievementData, useSocketContext } from "@socket";
-import { convertSecondsToMS } from "@utils";
+import { getDateFromSecondsToYMDHMS } from "@utils";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { viteBackendUrl } from "src/configs/envVariables";
@@ -14,11 +14,29 @@ export default function Achievements() {
   const [obtainedAchievements, setObtainedAchievements] = useState<
     ObtainAchievementData[]
   >([]);
+
+  const [showAchievementsQueue, setShowAchievementsQueue] = useState(false);
   const [itemsQueLength, setItemsQueLength] = useState(0);
+
+  useEffect(() => {
+    let showQueueInterval: NodeJS.Timer;
+
+    showQueueInterval = setInterval(() => {
+      setShowAchievementsQueue(true);
+
+      setTimeout(() => {
+        setShowAchievementsQueue(false);
+      }, 1000 * 5);
+    }, 1000 * 30);
+
+    return () => {
+      clearInterval(showQueueInterval);
+    };
+  }, []);
+
   useEffect(() => {
     const audio = new Audio();
     obtainAchievement.on((data) => {
-      audio.pause();
       setObtainedAchievements((prevState) => [data, ...prevState]);
 
       const audioUrl = data.stage[0].sound;
@@ -26,7 +44,12 @@ export default function Achievements() {
         audio.src = `${viteBackendUrl}/${audioUrl}`;
         audio.play();
       }
+
+      setTimeout(() => {
+        audio.pause();
+      }, data.stage[0].showTimeMs);
     });
+
     return () => {
       obtainAchievement.off();
       audio.pause();
@@ -57,64 +80,68 @@ export default function Achievements() {
       ref={wrapper}
       style={{
         fontSize: `${
-          wrapper.current ? `${wrapper.current.offsetWidth / 500}dvw` : "2rem"
+          wrapper.current ? `${wrapper.current.offsetWidth / 600}rem` : "2rem"
         }`,
       }}
     >
       <div
         className={`achievements-overlay-queue-length ${
-          itemsQueLength !== 0 && itemsQueLength % 10 === 0 ? "show" : "hide"
+          showAchievementsQueue && itemsQueLength > 1 ? "show" : "hide"
         }`}
       >
         <div className="queue-length-background"></div>
         {itemsQueLength}+
       </div>
 
-      {obtainedAchievements.map(({ stage, achievementName, username, id }) => {
-        const [stageData, timestamp] = stage;
+      {obtainedAchievements.map(
+        ({ stage, achievement: { name, isTime }, username, id }) => {
+          const [stageData, timestamp] = stage;
 
-        return (
-          <div
-            key={id}
-            className={`obtained-achievements-wrapper animated-achievement${
-              stageData.rarity ? `-${stageData.rarity}` : ""
-            }`}
-          >
-            <div className="achievements-overlay-background"></div>
+          return (
+            <div
+              key={id}
+              className={`obtained-achievements-wrapper animated-achievement${
+                stageData.rarity ? `-${stageData.rarity}` : ""
+              }`}
+            >
+              <div className="achievements-overlay-background"></div>
 
-            <div className="obtained-achievements-content">
-              <div className="obtained-achievement-username">
-                {username}
-                <span>
-                  obtained achievement <span>{achievementName} </span>
-                </span>
-              </div>
-
-              <div className="obtained-achievement-details">
-                <div className="obtained-achievements-stage-name">
-                  {stageData.name}
-                </div>
-
-                <div>{moment(timestamp).format("HH:mm")}</div>
-                <div className="obtained-achievements-goal">
-                  Goal:
+              <div className="obtained-achievements-content">
+                <div className="obtained-achievement-username">
+                  {username}{" "}
                   <span>
-                    {achievementName.includes("TIME")
-                      ? convertSecondsToMS(stageData.goal).join(":")
-                      : stageData.goal}
+                    obtained achievement <span>{name} </span>
                   </span>
                 </div>
+
+                <div className="obtained-achievement-details">
+                  <div className="obtained-achievements-stage-name">
+                    {stageData.name}
+                  </div>
+
+                  <div className="obtained-achievement-timestamp">
+                    {moment(timestamp).format("HH:mm")}
+                  </div>
+                  <div className="obtained-achievements-goal">
+                    Goal:
+                    <span>
+                      {isTime
+                        ? getDateFromSecondsToYMDHMS(stageData.goal)
+                        : stageData.goal}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="obtained-achievements-badge">
+                <img
+                  src={`${viteBackendUrl}/${stageData.badge.imageUrl}`}
+                  alt={stageData.name}
+                />
               </div>
             </div>
-            <div className="obtained-achievements-badge">
-              <img
-                src={`${viteBackendUrl}/${stageData.badge.imageUrl}`}
-                alt={stageData.name}
-              />
-            </div>
-          </div>
-        );
-      })}
+          );
+        }
+      )}
     </div>
   );
 }
