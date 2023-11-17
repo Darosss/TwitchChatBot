@@ -5,6 +5,8 @@ import { viteBackendUrl } from "src/configs/envVariables";
 import AvailableAchievementSounds from "./AvailableAchievementSounds";
 import { useAchievementStageContext } from "./Context";
 import moment from "moment";
+import { TableDataWrapper } from "@components/tableWrapper";
+import { getDateFromSecondsToYMDHMS } from "@utils";
 
 interface AchievementStageEditDataProps {
   onClickBadge: (indexOfStage: number) => void;
@@ -71,45 +73,47 @@ export default function AchievementStageEditData({
             </button>
           </td>
           <td>
-            <input
-              type="text"
-              value={data.name}
-              onChange={(e) =>
-                updateStageDataKeyByIndex(index, "name", e.target.value)
-              }
-            />
-          </td>
-          <td className="stage-data-number">{data.stage}</td>
-          <td className="stage-data-badge">
-            <img
-              src={`${viteBackendUrl}/${data.badge.imageUrl}`}
-              alt={data.badge.name}
-              onClick={() => onClickBadge(index)}
-            />
-          </td>
-          <td className="stage-data-number">
-            <input
-              type="number"
-              min={1}
-              max={10}
-              value={data.rarity}
-              onChange={(e) => {
-                let value = e.target.valueAsNumber;
-                if (value <= 0 || isNaN(value)) value = 1;
-                else if (value > 10) value = 10;
+            <TableDataWrapper>
+              <div> Name</div>
+              <div>
+                <input
+                  type="text"
+                  value={data.name}
+                  onChange={(e) =>
+                    updateStageDataKeyByIndex(index, "name", e.target.value)
+                  }
+                />
+              </div>
+              <div>Stage </div>
+              <div>{data.stage}</div>
+              <div>Rarity</div>
+              <div>
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={data.rarity}
+                  onChange={(e) => {
+                    let value = e.target.valueAsNumber;
+                    if (value <= 0 || isNaN(value)) value = 1;
+                    else if (value > 10) value = 10;
 
-                updateStageDataKeyByIndex(index, "rarity", value);
-              }}
-            />
+                    updateStageDataKeyByIndex(index, "rarity", value);
+                  }}
+                />
+              </div>
+            </TableDataWrapper>
           </td>
-          <td className="stage-data-number">
+          <td className="stage-data-goal">
             {isGoalTime ? (
-              <TimeGoalInput
-                goal={data.goal}
-                onChangeCallback={(value) =>
-                  updateStageDataKeyByIndex(index, "goal", value)
-                }
-              />
+              <TableDataWrapper>
+                <TimeGoalInput
+                  goal={data.goal}
+                  onChangeCallback={(value) =>
+                    updateStageDataKeyByIndex(index, "goal", value)
+                  }
+                />
+              </TableDataWrapper>
             ) : (
               <input
                 type="number"
@@ -136,7 +140,13 @@ export default function AchievementStageEditData({
               }}
             />
           </td>
-
+          <td className="stage-data-badge">
+            <img
+              src={`${viteBackendUrl}/${data.badge.imageUrl}`}
+              alt={data.badge.name}
+              onClick={() => onClickBadge(index)}
+            />
+          </td>
           <td className="stage-data-sound-wrapper">
             <div
               onClick={() => {
@@ -222,33 +232,44 @@ function TimeGoalInput({ goal, onChangeCallback }: TimeGoalInputProps) {
   );
   return (
     <>
-      <select
-        value={currentInput}
-        onChange={(e) => setCurrentInput(e.target.value as CurrentInputEnum)}
-      >
-        <option id={`${CurrentInputEnum.SECONDS}`}>
-          {CurrentInputEnum.SECONDS}
-        </option>
-        <option id={`${CurrentInputEnum.MINUTES}`}>
-          {CurrentInputEnum.MINUTES}
-        </option>
-        <option id={`${CurrentInputEnum.HOURS}`}>
-          {CurrentInputEnum.HOURS}
-        </option>
-        <option id={`${CurrentInputEnum.DAYS}`}>{CurrentInputEnum.DAYS}</option>
-        <option id={`${CurrentInputEnum.MONTHS}`}>
-          {CurrentInputEnum.MONTHS}
-        </option>
-        <option id={`${CurrentInputEnum.YEARS}`}>
-          {CurrentInputEnum.YEARS}
-        </option>
-      </select>
-      <input
-        type="number"
-        onChange={(e) => setLocalGoalValue(e.target.valueAsNumber)} //onChangeCallback(onChangeFn(e.target.valueAsNumber))}
-        onBlur={() => onChangeCallback(onChangeFn(localGoalValue))}
-        value={localGoalValue}
-      />
+      <div>Time in</div>
+      <div>
+        <select
+          value={currentInput}
+          onChange={(e) => setCurrentInput(e.target.value as CurrentInputEnum)}
+        >
+          <option id={`${CurrentInputEnum.SECONDS}`}>
+            {CurrentInputEnum.SECONDS}
+          </option>
+          <option id={`${CurrentInputEnum.MINUTES}`}>
+            {CurrentInputEnum.MINUTES}
+          </option>
+          <option id={`${CurrentInputEnum.HOURS}`}>
+            {CurrentInputEnum.HOURS}
+          </option>
+          <option id={`${CurrentInputEnum.DAYS}`}>
+            {CurrentInputEnum.DAYS}
+          </option>
+          <option id={`${CurrentInputEnum.MONTHS}`}>
+            {CurrentInputEnum.MONTHS}
+          </option>
+          <option id={`${CurrentInputEnum.YEARS}`}>
+            {CurrentInputEnum.YEARS}
+          </option>
+        </select>
+      </div>
+      <div>Goal</div>
+      <div>
+        <input
+          type="number"
+          onChange={(e) => setLocalGoalValue(e.target.valueAsNumber)} //onChangeCallback(onChangeFn(e.target.valueAsNumber))}
+          onBlur={() => onChangeCallback(onChangeFn(localGoalValue))}
+          value={localGoalValue}
+        />
+      </div>
+      <div>Preview</div>
+
+      <div>{getDateFromSecondsToYMDHMS(onChangeFn(localGoalValue))}</div>
     </>
   );
 }
