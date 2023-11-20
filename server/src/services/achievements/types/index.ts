@@ -24,11 +24,12 @@ export type AchievementUpdateData = Partial<
 export type AchievementCreateData = Omit<AchievementUpdateData, "name" | "custom" | "description"> &
   Pick<AchievementModel, "name" | "description"> & { stages: string; tag: string };
 
-export type AchievementUpdateDataController = Pick<AchievementUpdateData, "description" | "enabled" | "tag" | "stages">;
+export type AchievementUpdateDataController = Pick<
+  AchievementUpdateData,
+  "description" | "enabled" | "tag" | "stages" | "hidden"
+>;
 
-export type CustomAchievementCreateData = Required<AchievementCreateData> &
-  Required<Pick<AchievementUpdateData, "custom">>;
-
+export type CustomAchievementCreateData = AchievementCreateData & Required<Pick<AchievementUpdateData, "custom">>;
 export type CustomAchievementUpdateData = Partial<CustomAchievementCreateData>;
 export type AchievementUserProgressUpdate = Partial<Pick<AchievementUserProgressModel, "progresses" | "value">>;
 
