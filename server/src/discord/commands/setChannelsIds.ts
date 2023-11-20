@@ -1,4 +1,4 @@
-import { ChannelType, CommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ChannelType, CommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 import { CommandData, CommandNames } from "./types";
 import { updateConfigs } from "@services";
 
@@ -12,6 +12,7 @@ export const setObtainedAchievementsChannelId: CommandData = {
         .setName("channel")
         .setRequired(true)
     )
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .setDescription("Sets channel for announce obtained user achievements!"),
 
   execute: async (interaction: CommandInteraction) => {
