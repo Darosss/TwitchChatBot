@@ -63,23 +63,25 @@ export interface Achievement {
   tag: Tag;
   enabled: boolean;
   custom?: AchievementCustomField;
+  hidden?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 export interface AchievementUpdateData
-  extends Pick<Achievement, "description" | "enabled"> {
+  extends Pick<Achievement, "description" | "enabled" | "hidden"> {
   stages: string;
   tag: string;
 }
 
-//TODO: check if used
 export interface CustomAchievementCreateData
   extends Required<
-    Pick<Achievement, "description" | "name" | "enabled" | "custom">
-  > {
+      Pick<Achievement, "description" | "name" | "enabled" | "custom">
+    >,
+    Pick<Achievement, "hidden"> {
   stages: string;
   tag: string;
 }
+
 export interface CustomAchievementUpdateData
   extends Partial<CustomAchievementCreateData> {}
 

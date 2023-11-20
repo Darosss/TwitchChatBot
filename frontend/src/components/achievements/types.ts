@@ -38,6 +38,7 @@ export type ManageAchievementDispatchAction =
   | { type: "SET_STAGES"; payload: AchievementStateType["stages"] }
   | { type: "SET_TAG"; payload: AchievementStateType["tag"] }
   | { type: "SET_ENABLED"; payload: boolean }
+  | { type: "SET_HIDDEN"; payload: boolean }
   | { type: "SET_IS_TIME"; payload: boolean }
   | { type: "SET_CUSTOM"; payload: AchievementCustomField }
   | { type: "SET_STATE"; payload: AchievementStateType };

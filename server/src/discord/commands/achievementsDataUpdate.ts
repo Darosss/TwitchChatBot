@@ -121,7 +121,13 @@ const sendAchievementsListMessages: SendAchievementsListMessagesFn = async ({ ch
 
   const achievementListMsg = await getAchievementsListMessagesData();
   if (!achievementListMsg) return;
-  for await (const { name, description, isTime, stageData } of achievementListMsg) {
+  let hiddenAchievementsCount = 0;
+  for await (const { name, description, isTime, stageData, hidden } of achievementListMsg) {
+    if (hidden) {
+      //hidden do not show, just add count
+      hiddenAchievementsCount++;
+      continue;
+    }
     const preStageMsg = `----------------------------\n(Back to top): ${headMessageRef.url}\n
     `;
 
@@ -139,9 +145,18 @@ const sendAchievementsListMessages: SendAchievementsListMessagesFn = async ({ ch
       `ACHIEVEMENT: '${name}'\n'${description}'`
     )}\n${codeBlock("js", stageDataString)}`;
 
-    const createdMessage = await channel.send(`\n${messageToSend}`);
-    if (!createdMessage) return;
+    await channel.send(`\n${messageToSend}`);
   }
+
+  hiddenAchievementsCount > 0
+    ? await headMessageRef.edit(
+        `${headMessageRef.content}\n${bold(
+          `There are ${hiddenAchievementsCount} hidden achievement(s). GL in finding them :D`
+        )}`
+      )
+    : null;
+
+  await headMessageRef.suppressEmbeds(true);
 };
 
 const sendBadgesListMessages: SendBadgesListMessagesFn = async ({ channel, achievementsListChannelUrl }) => {
@@ -167,9 +182,10 @@ const getAchievementsListMessagesData = async () => {
   const foundAchievements = await getAchievements({}, {}, { stages: true, stagesBadge: true });
 
   if (!foundAchievements) return;
-  const achievementListData = foundAchievements.map(({ name, description, isTime, stages: { stageData } }) => ({
+  const achievementListData = foundAchievements.map(({ name, description, isTime, hidden, stages: { stageData } }) => ({
     name,
     description,
+    hidden,
     isTime,
     stageData: stageData as unknown as StageData<BadgeModel>[]
   }));

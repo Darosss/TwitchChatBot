@@ -334,6 +334,7 @@ export interface AchievementModel<T = string | BadgeModel> extends BaseModel {
   tag: string | TagModel;
   enabled: boolean;
   custom: AchievementCustomModel;
+  hidden?: boolean;
 }
 
 export type AchievementWithBadgePopulated = AchievementModel<BadgeModel>;

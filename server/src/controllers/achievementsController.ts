@@ -72,9 +72,9 @@ export const editAchievementById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { enabled, description, tag, stages } = req.body;
+  const { enabled, description, tag, stages, hidden } = req.body;
   try {
-    const updatedAchievement = await updateOneAchievement({ _id: id }, { enabled, description, stages, tag });
+    const updatedAchievement = await updateOneAchievement({ _id: id }, { enabled, description, stages, tag, hidden });
 
     const foundAchievement = checkExistResource(updatedAchievement, "Achievement");
     return res.status(200).send({
@@ -92,7 +92,7 @@ export const addCustomAchievement = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, description, custom, stages, tag, isTime, enabled } = req.body;
+  const { name, description, custom, stages, tag, isTime, enabled, hidden } = req.body;
   try {
     if (!custom) throw new AppError(400, `Custom options must be provided.`);
     const newCustomAchievement = await createCustomAchievement({
@@ -102,7 +102,8 @@ export const addCustomAchievement = async (
       custom,
       stages,
       tag,
-      isTime
+      isTime,
+      hidden
     });
 
     return res.status(200).send({ message: "Custom achievement added successfully", data: newCustomAchievement });
@@ -135,12 +136,12 @@ export const editCustomAchievementById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, enabled, description, custom, stages, tag, isTime } = req.body;
+  const { name, enabled, description, custom, stages, tag, isTime, hidden } = req.body;
 
   try {
     const updatedAchievement = await updateOneAchievement(
       { _id: id },
-      { name, enabled, description, custom, stages, tag, isTime }
+      { name, enabled, description, custom, stages, tag, isTime, hidden }
     );
 
     const foundAchievement = checkExistResource(updatedAchievement, "Achievement");

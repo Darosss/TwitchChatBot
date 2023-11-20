@@ -43,7 +43,8 @@ const AchivementSchema: Schema<AchievementDocument> = new Schema(
     isTime: { type: Boolean, required: true, default: false },
     ...tagModeField,
     ...enabledField,
-    custom: { type: AchievementCustomSchema, required: false }
+    custom: { type: AchievementCustomSchema, required: false },
+    hidden: { type: Boolean }
   },
   { timestamps: true }
 );

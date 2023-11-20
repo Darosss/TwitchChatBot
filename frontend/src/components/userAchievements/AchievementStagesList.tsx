@@ -25,7 +25,12 @@ export default function AchievementStageLists({
       onClick={() => setShowSection(!showSection)}
     >
       <div className="achievement-section">
-        {achievement.name} - {achievement.description}
+        <div>
+          {achievement.name} - {achievement.description}
+        </div>
+        <div className="achievement-secret">
+          {achievement.hidden ? "Secret achievement" : null}
+        </div>
       </div>
       {showSection || expandAll
         ? achievement.stages.stageData.map((stage, index) => (
