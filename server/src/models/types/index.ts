@@ -143,6 +143,10 @@ export interface MusicConfigs {
   maxSongRequestByUser: number;
 }
 
+export interface AchievementsConfigs {
+  obtainedAchievementsChannelId: string;
+}
+
 export interface ConfigModel extends BaseModel {
   commandsConfigs: CommandsConfigs;
   timersConfigs: TimersConfigs;
@@ -152,6 +156,7 @@ export interface ConfigModel extends BaseModel {
   loyaltyConfigs: LoyaltyConfigs;
   musicConfigs: MusicConfigs;
   headConfigs: HeadConfigs;
+  achievementsConfigs: AchievementsConfigs;
 }
 
 export type ConfigDocument = ConfigModel & Document;

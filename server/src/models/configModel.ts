@@ -10,7 +10,8 @@ const {
   loyaltyConfigs,
   chatGamesConfigs,
   musicConfigs,
-  headConfigs
+  headConfigs,
+  achievementsConfigs
 } = configDefaults;
 
 const ConfigSchema: Schema<ConfigDocument> = new Schema(
@@ -149,6 +150,13 @@ const ConfigSchema: Schema<ConfigDocument> = new Schema(
           requried: true,
           default: headConfigs.delayBetweenMessages.max
         }
+      }
+    },
+    achievementsConfigs: {
+      obtainedAchievementsChannelId: {
+        type: String,
+        required: true,
+        default: achievementsConfigs.obtainedAchievementsChannelId
       }
     }
   },

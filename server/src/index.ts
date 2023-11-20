@@ -3,6 +3,7 @@ import { initMongoDataBase, backendPort } from "@configs";
 
 import expressApp from "./app";
 import { logger } from "@utils";
+import "./discord";
 
 const startServer = async () => {
   await initMongoDataBase();

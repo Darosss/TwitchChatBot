@@ -1,4 +1,5 @@
 import { ServerSocket } from "@socket";
+import { CommandData } from "../discord";
 
 declare global {
   namespace NodeJS {
@@ -15,6 +16,8 @@ declare global {
       BOT_USERNAME: string;
       BOT_PASSWORD: string;
       BOT_ID: string;
+      DISCORD_CLIENT_TOKEN: string;
+      DISCORD_CLIENT_ID: string;
       NODE_ENV: "development" | "production";
     }
   }
@@ -22,5 +25,11 @@ declare global {
     interface Request {
       io: ServerSocket;
     }
+  }
+}
+
+declare module "discord.js" {
+  export interface Client {
+    commands: Collection<string, CommandData>;
   }
 }

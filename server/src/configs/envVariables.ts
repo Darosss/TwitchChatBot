@@ -15,5 +15,7 @@ export const {
   BOT_USERNAME: botUsername,
   BOT_PASSWORD: botPassword,
   BOT_ID: botId,
-  NODE_ENV: nodeEnv
+  NODE_ENV: nodeEnv,
+  DISCORD_CLIENT_TOKEN: discordClientToken,
+  DISCORD_CLIENT_ID: discordClientId
 } = process.env;
