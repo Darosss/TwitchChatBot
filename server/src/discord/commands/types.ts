@@ -1,5 +1,9 @@
 import { CommandInteraction, InteractionResponse, SlashCommandBuilder, TextBasedChannel } from "discord.js";
 
+export enum CommandNames {
+  SetObtainedAchievementsChannel = "set-achievements-channel-id"
+}
+
 export interface CommandData {
   data: SlashCommandBuilder;
   execute: (interaction: CommandInteraction) => Promise<InteractionResponse<boolean> | void>;
