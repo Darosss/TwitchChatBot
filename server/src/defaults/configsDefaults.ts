@@ -48,5 +48,8 @@ export const configDefaults: ConfigDefaults = {
       min: 1000,
       max: 2000
     }
+  },
+  achievementsConfigs: {
+    obtainedAchievementsChannelId: ""
   }
 };
