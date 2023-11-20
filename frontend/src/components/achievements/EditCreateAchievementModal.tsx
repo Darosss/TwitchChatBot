@@ -95,6 +95,19 @@ export default function EditCreateAchievementModal({
             tags?.data
           )}
         </div>
+        <div>Hidden(used to hide it from displaying fe. discord, site) </div>
+        <div>
+          <button
+            className={`common-button ${
+              state.hidden ? "primary-button" : "danger-button"
+            }`}
+            onClick={() =>
+              dispatch({ type: "SET_HIDDEN", payload: !state.hidden })
+            }
+          >
+            {String(state.hidden)}
+          </button>
+        </div>
 
         {state.custom ? <CustomAchievementModalInputs /> : null}
       </ModalDataWrapper>

@@ -26,6 +26,7 @@ export default function AchievementsListData() {
                 <SortByParamsButton buttonText="Stages" sortBy="stages" />
                 <SortByParamsButton buttonText="Tag" sortBy="tag" />
                 <SortByParamsButton buttonText="Custom" sortBy="custom" />
+                <SortByParamsButton buttonText="Hidden" sortBy="hidden" />
               </div>
             </th>
             <th>

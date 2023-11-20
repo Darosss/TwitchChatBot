@@ -65,6 +65,7 @@ export const ManageAchievementContextProvider = ({
       isTime: achievementState.isTime,
       enabled: achievementState.enabled,
       custom: achievementState.custom || initialAchievementCustomData.custom,
+      hidden: achievementState.hidden,
     }),
     [achievementState]
   );
@@ -83,6 +84,7 @@ export const ManageAchievementContextProvider = ({
       description: achievementState.description,
       stages: achievementState.stages._id,
       tag: achievementState.tag._id,
+      hidden: achievementState.hidden,
     }
   );
 
@@ -162,6 +164,8 @@ function reducer(
       return { ...state, tag: action.payload };
     case "SET_ENABLED":
       return { ...state, enabled: action.payload };
+    case "SET_HIDDEN":
+      return { ...state, hidden: action.payload };
     case "SET_IS_TIME":
       return { ...state, isTime: action.payload };
     case "SET_CUSTOM":

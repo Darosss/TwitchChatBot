@@ -56,6 +56,15 @@ export default function TBodyData() {
                   achievement.tag.enabled,
                   achievement.tag.name
                 )}
+                {achievement.hidden ? (
+                  <>
+                    <div>Hidden</div>
+                    {generateEnabledDisabledDiv(
+                      achievement.hidden,
+                      String(achievement.hidden).toUpperCase() || "FALSE"
+                    )}{" "}
+                  </>
+                ) : null}
                 {achievement.custom ? (
                   <>
                     <div>Custom action</div>
