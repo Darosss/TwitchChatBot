@@ -9,6 +9,7 @@ import {
 } from "discord.js";
 import {
   CommandData,
+  CommandNames,
   OnChannelMessagesLogicFn,
   OnInterractionOptionsLogicFn,
   SendAchievementsListMessagesFn,
@@ -24,7 +25,7 @@ const randomWordToProceed = generateRandomWord();
 const randomWordToProceedLength = randomWordToProceed.length;
 export const achievementsDataUpdate: CommandData = {
   data: new SlashCommandBuilder()
-    .setName("updateachievements")
+    .setName(CommandNames.AchievementsDataUpdate)
     .addChannelOption((option) =>
       option
         .addChannelTypes(ChannelType.GuildText)
