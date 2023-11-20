@@ -91,7 +91,7 @@ export const getBadgesImagesList = (req: Request, res: Response, next: NextFunct
   try {
     getListOfFilesWithExtensionInFolder(
       badgesPath,
-      [".jpg", ".jpeg", ".png"],
+      [".jpg", ".jpeg", ".png", ".gif"],
       (imagesPaths) => {
         return res.status(200).send({ data: imagesPaths });
       },
