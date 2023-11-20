@@ -17,10 +17,12 @@ import {
   getAchievements
 } from "@services";
 import { ACHIEVEMENTS } from "@defaults";
-import { achievementsLogger } from "@utils";
+import { achievementsLogger, getDateFromSecondsToYMDHMS } from "@utils";
 import moment from "moment";
 import { randomUUID } from "crypto";
-import { AchievementCustomModel, CustomAchievementAction, TagModel, UserModel } from "@models";
+import { AchievementCustomModel, AchievementsConfigs, CustomAchievementAction, TagModel, UserModel } from "@models";
+import { client as discordClient, sendMessageInChannelByChannelId } from "../discord";
+import { codeBlock } from "discord.js";
 // TODO: PERFOMANCE
 // TODO: cache custom achievements names or _ids
 // TODO: cache basic achievements too maybe
@@ -68,10 +70,15 @@ interface ManageObtainAchievementDataArgs extends GetDataForObtainAchievementEmi
 
 class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   private socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
-  constructor(socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>) {
+  private configs: AchievementsConfigs;
+  constructor(
+    socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
+    configs: AchievementsConfigs
+  ) {
     super();
     this.socketIO = socketIO;
     this.onEmulateAchievementSocket();
+    this.configs = configs;
   }
 
   protected override startTimeout(delay = 0): void {
@@ -79,9 +86,31 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
       this.emitObtainAchievement(item);
 
       this.socketIO.emit("obtainAchievementQueueInfo", this.getItemsCountInQueue());
-
+      this.handleDiscordAnnoucment(item);
       this.startTimeout(item.stage[0].showTimeMs + 1000);
     });
+  }
+
+  private async handleDiscordAnnoucment(item: ObtainAchievementData) {
+    if (this.configs.obtainedAchievementsChannelId) {
+      const messageToSend = this.getDiscordAchievementMessage(item);
+      sendMessageInChannelByChannelId(discordClient, this.configs.obtainedAchievementsChannelId, messageToSend);
+    }
+  }
+
+  private getDiscordAchievementMessage({
+    username,
+    stage: [stage, stageTimestamp],
+    achievement
+  }: ObtainAchievementData) {
+    return codeBlock(
+      "js",
+      `${moment(stageTimestamp).format("DD-MM-YYYY HH:MM:ss")}\nUser: "${username}" - obtained achievement ${
+        achievement.name
+      }\nName: '${stage.name}'\nGoal: ${
+        achievement.isTime ? `'${getDateFromSecondsToYMDHMS(stage.goal).trim()}'` : stage.goal
+      }\nBadge: '${stage.badge.name}'`
+    );
   }
 
   public override enqueue(item: ObtainAchievementData) {

@@ -45,11 +45,18 @@ const createHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: 
     password: botPassword
   });
 
-  const { commandsConfigs, headConfigs, musicConfigs, pointsConfigs, triggersConfigs, loyaltyConfigs, timersConfigs } =
-    configs;
+  const {
+    commandsConfigs,
+    headConfigs,
+    musicConfigs,
+    pointsConfigs,
+    triggersConfigs,
+    loyaltyConfigs,
+    timersConfigs,
+    achievementsConfigs
+  } = configs;
   const sayInAuthorizedChannel = INITIALIZED_HANDLERS.clientTmi.say.bind(INITIALIZED_HANDLERS.clientTmi);
-
-  INITIALIZED_HANDLERS.achievementsHandler = new AchievementsHandler(socketIO);
+  INITIALIZED_HANDLERS.achievementsHandler = new AchievementsHandler(socketIO, achievementsConfigs);
 
   INITIALIZED_HANDLERS.musicStreamHandler = new MusicStreamHandler(socketIO, sayInAuthorizedChannel, musicConfigs);
   INITIALIZED_HANDLERS.musicYTHandler = new MusicYTHandler(socketIO, sayInAuthorizedChannel, musicConfigs);
