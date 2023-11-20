@@ -119,7 +119,7 @@ function UploadBadgeImageButtons({
             <input
               type="file"
               name="file"
-              accept="image/png, image/jpg, image/jpeg"
+              accept="image/png, image/jpg, image/jpeg, image/gif"
               onChange={(e) => handleFileUpload({ event: e }, "uploaded_file")}
               multiple
             />
