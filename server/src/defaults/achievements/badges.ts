@@ -4,6 +4,11 @@ export const getDefaultBadgeData = (): BadgeCreateData => {
   return {
     name: "DEFAULT_BADGE",
     description: "Default badge for every default achievement stages. Create some on your own.",
-    imageUrl: "/"
+    imagesUrls: {
+      x32: "/",
+      x64: "/",
+      x96: "/",
+      x128: "/"
+    }
   };
 };
