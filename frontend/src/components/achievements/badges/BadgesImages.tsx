@@ -1,9 +1,12 @@
 import PreviousPage from "@components/previousPage";
-import AvailableBadgeImages from "./AvailableBadgeImages";
+import AvailableBadgeImages, { OnClickBadgeType } from "./AvailableBadgeImages";
 import { useEffect, useState } from "react";
 import { handleActionOnChangeState, addNotification } from "@utils";
 import { useDeleteBadgeImage, useGetBadgesImages } from "@services";
 import Modal from "@components/modal";
+import ModalDataWrapper from "@components/modalDataWrapper";
+import { viteBackendUrl } from "src/configs/envVariables";
+import React from "react";
 
 export default function BadgesImages() {
   const [showModal, setShowModal] = useState(false);
@@ -17,8 +20,9 @@ export default function BadgesImages() {
     error,
     refetchData,
   } = useGetBadgesImages();
-
-  const [choosenBadge, setChoosenBadge] = useState<string | null>(null);
+  const [choosenBadge, setChoosenBadge] = useState<OnClickBadgeType | null>(
+    null
+  );
 
   const { refetchData: fetchDeleteBadge } = useDeleteBadgeImage(
     badgeImageNameToDelete || ""
@@ -33,6 +37,7 @@ export default function BadgesImages() {
           .then((data) => {
             setBadgeImageNameToDelete(null);
             refetchData();
+            setShowModal(false);
             addNotification("Deleted", data.message, "danger");
           })
           .catch((err) =>
@@ -47,8 +52,8 @@ export default function BadgesImages() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [badgeImageNameToDelete]);
 
-  const handleOnClickBadgeImage = (url: string) => {
-    setChoosenBadge(url);
+  const handleOnClickBadgeImage = (data: OnClickBadgeType) => {
+    setChoosenBadge(data);
     setShowModal(true);
   };
 
@@ -65,28 +70,53 @@ export default function BadgesImages() {
     <>
       <PreviousPage />
       <AvailableBadgeImages
-        onClickBadge={({ badgeName }) => {
-          handleOnClickBadgeImage(badgeName);
+        onClickBadge={(data) => {
+          handleOnClickBadgeImage(data);
         }}
-        badgePaths={badgeImagesResponseData.data}
+        badgesData={badgeImagesResponseData.data}
         onClickRefresh={refetchData}
         showNames={true}
       />
 
       <Modal
-        title={`Badge image ${choosenBadge}`}
+        title={`Badge image ${choosenBadge?.badgeName}`}
         onClose={handleOnHideModal}
         show={showModal}
       >
         <div className="badge-images-modal-content">
-          <div> Rename image </div>
-          <div> Replace image </div>
-          <button
-            className="danger-button common-button"
-            onClick={() => setBadgeImageNameToDelete(choosenBadge)}
-          >
-            Delete
-          </button>
+          <ModalDataWrapper>
+            <div> Replace image(soon): </div>
+            <div> Replace button(soon)</div>
+            <div>Preview:</div>
+            <div className="badge-images-modal-preview">
+              {choosenBadge &&
+                badgeImagesResponseData.data.availableSizes.map(
+                  (size, index) => (
+                    <React.Fragment key={index}>
+                      <div>{size}</div>
+                      <div>
+                        <img
+                          src={`${viteBackendUrl}\\${choosenBadge.basePath}\\${choosenBadge.badgeName}${badgeImagesResponseData.data.separatorSizes}${size}${choosenBadge.badgeExtension}`}
+                          alt={`${size}`}
+                        />
+                      </div>
+                    </React.Fragment>
+                  )
+                )}
+            </div>
+            <div>
+              <button
+                className="danger-button common-button"
+                onClick={() =>
+                  setBadgeImageNameToDelete(
+                    `${choosenBadge?.badgeName}${choosenBadge?.badgeExtension}`
+                  )
+                }
+              >
+                Delete
+              </button>
+            </div>
+          </ModalDataWrapper>
         </div>
       </Modal>
     </>
