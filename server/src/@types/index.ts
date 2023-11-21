@@ -84,7 +84,7 @@ export interface RequestSongsQuery extends RequestSearchDate {
 }
 
 export interface RequestBadgesQuery extends RequestSearch {
-  imageUrl?: string;
+  imagesUrls?: string;
 }
 
 export interface RequestAchievementQuery extends RequestSearch {
