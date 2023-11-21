@@ -80,7 +80,10 @@ function AchievementStage({ achievementId, stage }: AchievementStageProps) {
       <div className="achievement-obtained-at">
         {foundProgress ? <DateTooltip date={foundProgress[1]} /> : ""}
       </div>
-      <img src={`${viteBackendUrl}/${stage.badge.imageUrl}`} alt={stage.name} />
+      <img
+        src={`${viteBackendUrl}/${stage.badge.imagesUrls.x128}`}
+        alt={stage.name}
+      />
     </div>
   );
 }
