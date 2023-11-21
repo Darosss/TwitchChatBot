@@ -49,7 +49,7 @@ export default function AchievementStageDisplayData() {
           </td>
           <td>
             <img
-              src={`${viteBackendUrl}/${data.badge.imageUrl}`}
+              src={`${viteBackendUrl}/${data.badge.imagesUrls.x128}`}
               alt={data.badge.name}
             />
           </td>

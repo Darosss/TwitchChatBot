@@ -19,7 +19,10 @@ export default function ModalBadgesList({
       <div className="modal-badges-list-wrapper">
         {data.map((badge) => (
           <div key={badge._id} onClick={() => onClickBadge(badge)}>
-            <img src={`${viteBackendUrl}/${badge.imageUrl}`} alt={badge.name} />
+            <img
+              src={`${viteBackendUrl}/${badge.imagesUrls.x64}`}
+              alt={badge.name}
+            />
           </div>
         ))}
       </div>

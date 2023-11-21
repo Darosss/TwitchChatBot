@@ -59,21 +59,3 @@ export const useBadgesContext = (): Required<BadgesContextType> => {
   }
   return achievementStageContext as BadgesContextType;
 };
-
-// function reducer(
-//   state: BadgeCreateData,
-//   action: BadgeDispatchAction
-// ): BadgeCreateData {
-//   switch (action.type) {
-//     case "SET_NAME":
-//       return { ...state, state: { name: action.payload } };
-//     case "SET_IMAGE_URL":
-//       return { ...state, imageUrl: action.payload };
-//     case "SET_DESCRIPTION":
-//       return { ...state, description: action.payload };
-//     case "SET_STATE":
-//       return { ...action.payload };
-//     default:
-//       throw new Error("Invalid action type");
-//   }
-// }

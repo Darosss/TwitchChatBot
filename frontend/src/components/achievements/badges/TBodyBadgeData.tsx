@@ -43,10 +43,10 @@ export default function TBodyManyBadgesData() {
             <td>{badge.name}</td>
             <td>
               <div className="badge-image-wrapper">
-                <div>{badge.imageUrl}</div>
+                <div>{badge.imagesUrls.x128}</div>
                 <img
-                  src={`${viteBackendUrl}/${badge.imageUrl}`}
-                  alt={badge.imageUrl}
+                  src={`${viteBackendUrl}/${badge.imagesUrls.x128}`}
+                  alt={badge.imagesUrls.x128}
                 />
               </div>
             </td>

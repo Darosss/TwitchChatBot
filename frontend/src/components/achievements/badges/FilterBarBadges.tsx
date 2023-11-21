@@ -12,9 +12,9 @@ export default function FilterBarBadges() {
           placeholder="Name"
         />
         <FilterBarInput
-          queryparam="imageUrl"
+          queryparam="imagesUrls"
           type="search"
-          placeholder="Image url"
+          placeholder="Images urls"
         />
       </UrlParamsInput>
     </div>

@@ -1,4 +1,5 @@
 import moment from "moment";
+import path from "path";
 
 export const shuffleArray = <T = unknown>(array: Array<T>) => {
   return array.sort(() => 0.5 - Math.random());
@@ -67,4 +68,11 @@ export const getDateFromSecondsToYMDHMS = (time: number, separator = " ") => {
 
 export const generateRandomWord = () => {
   return (Math.random() + 1).toString(36).substring(7);
+};
+
+export const getFileNameAndExtension = (fileNameWithExt: string) => {
+  const extension = path.extname(fileNameWithExt);
+  const fileName = path.basename(fileNameWithExt, extension);
+
+  return { fileName, extension };
 };

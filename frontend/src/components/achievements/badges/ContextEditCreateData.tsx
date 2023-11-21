@@ -12,7 +12,7 @@ const initialBadgeState: BadgeContextStateType = {
   _id: "",
   name: "",
   description: "",
-  imageUrl: "",
+  imagesUrls: { x32: "", x64: "", x96: "", x128: "" },
 };
 
 export const BadgeContextEditCreateData =
@@ -61,8 +61,8 @@ function reducer(
   switch (action.type) {
     case "SET_NAME":
       return { ...state, name: action.payload };
-    case "SET_IMAGE_URL":
-      return { ...state, imageUrl: action.payload };
+    case "SET_IMAGES_URLS":
+      return { ...state, imagesUrls: action.payload };
     case "SET_DESCRIPTION":
       return { ...state, description: action.payload };
     case "SET_STATE":

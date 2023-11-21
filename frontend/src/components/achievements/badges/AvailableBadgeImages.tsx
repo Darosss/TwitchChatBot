@@ -1,18 +1,26 @@
 import { useFileUpload } from "@hooks";
 import ProgressBar from "@ramonak/react-progress-bar";
-import { useGetBadgesIamgesBasePath } from "@services";
+import {
+  GetBagesImagesResponseData,
+  useGetBadgesIamgesBasePath,
+} from "@services";
 import { addNotification } from "@utils";
 import { useEffect, useState } from "react";
 import { viteBackendUrl } from "src/configs/envVariables";
 
-interface OnClickBadgeType {
+export interface OnClickBadgeType {
   basePath: string;
   badgeName: string;
+  badgeExtension: string;
 }
 
 interface AvailableBadgeImagesProps {
-  badgePaths: string[];
-  onClickBadge: ({ basePath, badgeName }: OnClickBadgeType) => void;
+  badgesData: GetBagesImagesResponseData;
+  onClickBadge: ({
+    basePath,
+    badgeName,
+    badgeExtension,
+  }: OnClickBadgeType) => void;
   onClickRefresh: () => void;
   currentImgPath?: string;
   className?: string;
@@ -20,7 +28,7 @@ interface AvailableBadgeImagesProps {
 }
 
 export default function AvailableBadgeImages({
-  badgePaths,
+  badgesData,
   onClickBadge,
   onClickRefresh,
   currentImgPath,
@@ -50,27 +58,35 @@ export default function AvailableBadgeImages({
         />
       </div>
       <div className="badge-images-list-wrapper">
-        {badgePaths
-          .filter((path) => {
+        {badgesData.imagesPaths
+          .filter(([name]) => {
             if (!filterBadgesNames) return true;
-            if (path.toLowerCase().includes(filterBadgesNames)) return true;
+            if (name.toLowerCase().includes(filterBadgesNames)) return true;
             return false;
           })
-          .map((path, index) => (
+          .map(([name, extension], index) => (
             <div
               key={index}
               className="one-badge-image-wrapper"
               onClick={() =>
-                onClickBadge({ basePath: basePathData.data, badgeName: path })
+                onClickBadge({
+                  basePath: basePathData.data,
+                  badgeName: name,
+                  badgeExtension: extension,
+                })
               }
             >
-              {showNames ? <div className="badge-name">{path}</div> : null}
+              {showNames ? (
+                <div className="badge-name">{name}</div>
+              ) : (
+                <div className="image-name-tooltip">{name}</div>
+              )}
               <img
-                src={`${viteBackendUrl}/${basePathData.data}\\${path}`}
+                src={`${viteBackendUrl}/${basePathData.data}\\${name}${extension}`}
                 className={`${
-                  currentImgPath?.includes(path) ? "current-image" : ""
+                  currentImgPath?.includes(name) ? "current-image" : ""
                 }`}
-                alt={path}
+                alt={name}
               />
             </div>
           ))}
@@ -97,6 +113,7 @@ function UploadBadgeImageButtons({
       addNotification("Uploaded badge images to server", success, "success");
       onSuccessCallback();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
 
   useEffect(() => {
@@ -119,7 +136,7 @@ function UploadBadgeImageButtons({
             <input
               type="file"
               name="file"
-              accept="image/png, image/jpg, image/jpeg"
+              accept="image/png, image/jpg, image/jpeg, image/gif"
               onChange={(e) => handleFileUpload({ event: e }, "uploaded_file")}
               multiple
             />
