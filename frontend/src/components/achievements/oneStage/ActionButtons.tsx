@@ -35,7 +35,6 @@ export default function ActionButtons({
     const { stageData } = state;
     const stageDataLen = stageData.length;
     const previousStageData = stageData[stageDataLen - 1];
-    console.log(previousStageData, "test");
     dispatch({
       type: "PUSH_TO_STAGE_DATA",
       payload: previousStageData
@@ -57,7 +56,7 @@ export default function ActionButtons({
               _id: "",
               name: "",
               description: "",
-              imageUrl: "",
+              imagesUrls: { x32: "", x64: "", x96: "", x128: "" },
               createdAt: new Date(),
               updatedAt: new Date(),
             },
