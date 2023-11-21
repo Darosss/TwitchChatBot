@@ -1,6 +1,12 @@
 import { Badge, BadgeDocument, BadgeModelImagesUrlsSizes } from "@models";
 import { AppError, checkExistResource, handleAppError, logger } from "@utils";
-import { BadgeCreateData, BadgeFindOptions, BadgeUpdateData, ManyBadgesFindOptions } from "./types";
+import {
+  BadgeCreateData,
+  BadgeFindOptions,
+  BadgeUpdateData,
+  DeleteBadgeImagesFn,
+  ManyBadgesFindOptions
+} from "./types";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { getAchievementStages } from "@services";
 import { promises as fsPromises } from "fs";
@@ -97,25 +103,32 @@ export const deleteBadgeById = async (id: string) => {
   }
 };
 
-export const deleteBadgeImage = async (badgeName: string) => {
+export const deleteBadgeImages: DeleteBadgeImagesFn = async ({ name, extension, sizesToDelete }) => {
   try {
-    const foundContainingBadges = (await getBadges({ imageUrl: { $regex: badgeName, $options: "i" } }, {})) || [];
+    const foundContainingBadges = (await getBadges({ imageUrl: { $regex: name, $options: "i" } }, {})) || [];
     if (foundContainingBadges.length > 0) {
       throw new AppError(
         409,
-        `Badge image with name: (${badgeName}) is used in badge(s): [${foundContainingBadges
+        `At least one badge image with name: (${name}) is used in badge(s): [${foundContainingBadges
           .map(({ name }) => name)
           .join(", ")}], cannot delete`
       );
     }
 
-    const filePath = path.join(badgesPath, badgeName);
+    //delete original
+    await fsPromises.unlink(path.join(badgesPath, name + extension));
 
-    await fsPromises.unlink(filePath);
+    //delete other sizes;
+    for await (const size of sizesToDelete) {
+      const fileName = name + SEPARATOR_BADGE_IMAGE_SIZE + String(size) + extension;
+      const filePath = path.join(badgesPath, fileName);
 
-    return `Badge image ${badgeName} deleted successfully`;
+      await fsPromises.unlink(filePath);
+    }
+
+    return `Badge images ${name} deleted successfully`;
   } catch (err) {
-    logger.error(`Error occured while deleting badge image by name(${badgeName}). ${err}`);
+    logger.error(`Error occured while deleting badge image by name(${name}). ${err}`);
     handleAppError(err);
   }
 };
