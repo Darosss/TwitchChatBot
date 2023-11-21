@@ -1,16 +1,25 @@
 import useAxiosCustom, { PaginationData, ResponseData } from "./ApiService";
 import { Tag } from "./TagService";
 
+export interface BadgeModelImagesUrls {
+  x32: string;
+  x64: string;
+  x96: string;
+  x128: string;
+}
 export interface Badge {
   _id: string;
   name: string;
   description: string;
-  imageUrl: string;
+  imagesUrls: BadgeModelImagesUrls;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type BadgeCreateData = Pick<Badge, "name" | "imageUrl" | "description">;
+export type BadgeCreateData = Pick<
+  Badge,
+  "name" | "imagesUrls" | "description"
+>;
 export type BadgeUpdateData = Partial<BadgeCreateData>;
 
 export type StageDataRarity = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
@@ -95,6 +104,12 @@ export interface AchievementUserProgress {
   updatedAt: Date;
 }
 
+export interface GetBagesImagesResponseData {
+  imagesPaths: [string, string][];
+  separatorSizes: string;
+  availableSizes: number[];
+}
+
 const BASE_URL = "/achievements";
 const BASE_BADGES_URL = `${BASE_URL}/badges`;
 const BASE_STAGES_URL = `${BASE_URL}/stages`;
@@ -162,7 +177,7 @@ export const useGetBadges = () => {
 };
 
 export const useGetBadgesImages = () => {
-  return useAxiosCustom<ResponseData<string[]>>({
+  return useAxiosCustom<ResponseData<GetBagesImagesResponseData>>({
     url: `${BASE_BADGES_URL}/available-images`,
   });
 };
