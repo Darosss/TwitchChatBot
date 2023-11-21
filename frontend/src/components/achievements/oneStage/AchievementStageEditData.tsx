@@ -142,7 +142,7 @@ export default function AchievementStageEditData({
           </td>
           <td className="stage-data-badge">
             <img
-              src={`${viteBackendUrl}/${data.badge.imageUrl}`}
+              src={`${viteBackendUrl}/${data.badge.imagesUrls.x128}`}
               alt={data.badge.name}
               onClick={() => onClickBadge(index)}
             />

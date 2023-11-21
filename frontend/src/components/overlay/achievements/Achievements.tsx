@@ -134,7 +134,7 @@ export default function Achievements() {
               </div>
               <div className="obtained-achievements-badge">
                 <img
-                  src={`${viteBackendUrl}/${stageData.badge.imageUrl}`}
+                  src={`${viteBackendUrl}/${stageData.badge.imagesUrls.x64}`}
                   alt={stageData.name}
                 />
               </div>

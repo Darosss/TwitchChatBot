@@ -1,4 +1,9 @@
-import { Badge, BadgeCreateData, PaginationData } from "@services";
+import {
+  Badge,
+  BadgeCreateData,
+  BadgeModelImagesUrls,
+  PaginationData,
+} from "@services";
 
 export interface BadgesContextType {
   badgesState: PaginationData<Badge>;
@@ -14,6 +19,6 @@ export interface BadgeContextEditCreateDataType {
 
 export type BadgeDispatchAction =
   | { type: "SET_NAME"; payload: string }
-  | { type: "SET_IMAGE_URL"; payload: string }
+  | { type: "SET_IMAGES_URLS"; payload: BadgeModelImagesUrls }
   | { type: "SET_DESCRIPTION"; payload: string }
   | { type: "SET_STATE"; payload: BadgeStateType };
