@@ -198,8 +198,8 @@ const getBadgesListMessagesData = async () => {
 
   if (!foundBadges) return;
 
-  const badgesData = foundBadges.map(({ _id, name, description, imageUrl }) => {
-    const absolutePathImage = `${publicPath}/${imageUrl}`;
+  const badgesData = foundBadges.map(({ _id, name, description, imagesUrls }) => {
+    const absolutePathImage = `${publicPath}/${imagesUrls.x128}`;
     return { _id, name, description, imageUrl: absolutePathImage };
   });
 
