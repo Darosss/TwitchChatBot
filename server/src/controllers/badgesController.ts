@@ -8,14 +8,24 @@ import {
   getBadgesCount,
   updateBadgeById,
   deleteBadgeById as deleteBadgeByIdService,
-  deleteBadgeImage,
-  getBadgeById as getBadgeByIdService
+  deleteBadgeImages,
+  getBadgeById as getBadgeByIdService,
+  badgeModelIMagesUrlsSizesNumbers,
+  SEPARATOR_BADGE_IMAGE_SIZE
 } from "@services";
 import { RequestParams, RequestSearch } from "@types";
-import { AppError, checkExistResource, filterImage, getListOfFilesWithExtensionInFolder, logger } from "@utils";
+import {
+  AppError,
+  checkExistResource,
+  filterImage,
+  getFileNameAndExtension,
+  getListOfFilesWithExtensionInFolder,
+  logger
+} from "@utils";
 import multer from "multer";
 import { filterBadgesByUrlParams } from "./filters/badgesFilter";
 import path from "path";
+import sharp from "sharp";
 
 const storageImageBadges = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -57,13 +67,46 @@ export const getManyBadges = async (req: Request<{}, {}, {}, RequestSearch>, res
 };
 export const uploadBadgeImages = (req: Request, res: Response, next: NextFunction) => {
   //TODO:add LIMIT for image size like 256/512/?? or sth
+  const resize = async (
+    filePath: string,
+    size: number,
+    destination: string,
+    fileName: string,
+    extensionWithDot: string,
+    sharpOptions?: sharp.SharpOptions
+  ) =>
+    await sharp(filePath, sharpOptions)
+      .resize(size, size, { fit: "fill" })
+      .toFile(`${destination}\\${fileName}${SEPARATOR_BADGE_IMAGE_SIZE}${size}${extensionWithDot}`);
+
   try {
-    uploadBadgeImagesMulter(req, res, function (err) {
+    uploadBadgeImagesMulter(req, res, async function (err) {
       if (err) {
         return next(err);
       }
+      if (req.files) {
+        sharp.cache(false);
 
-      return res.status(200).send({ message: "Badge images files updated successfully" });
+        const files = req.files as Express.Multer.File[];
+        const imageSizes = badgeModelIMagesUrlsSizesNumbers;
+
+        files.forEach(async (file, index) => {
+          const { fileName, extension } = getFileNameAndExtension(file.filename);
+          const isAGifFile = extension.includes("gif");
+
+          await Promise.all(
+            imageSizes.map((val) =>
+              resize(file.path, Number(val), file.destination, fileName, extension, {
+                //if gif file make sure we resize animation
+                ...(isAGifFile && { animated: true, pages: -1 })
+              })
+            )
+          );
+          //if last file is resized return message
+          if (index === files.length - 1)
+            return res.status(200).send({ message: "Badge images files resized and updated successfully" });
+        });
+      }
     });
   } catch (err) {
     logger.error(`Error when trying to uploadBadgeImages files: ${err}`);
@@ -74,8 +117,14 @@ export const uploadBadgeImages = (req: Request, res: Response, next: NextFunctio
 export const deleteBadgeImageByName = async (req: Request, res: Response, next: NextFunction) => {
   const { badgeName } = req.params;
 
+  const { fileName, extension } = getFileNameAndExtension(badgeName);
+
   try {
-    const message = await deleteBadgeImage(badgeName);
+    const message = await deleteBadgeImages({
+      name: fileName,
+      extension,
+      sizesToDelete: badgeModelIMagesUrlsSizesNumbers
+    });
     return res.status(200).send({ message });
   } catch (err) {
     logger.error(`Error when trying to delete badge image ${badgeName}: ${err}`);
@@ -93,7 +142,21 @@ export const getBadgesImagesList = (req: Request, res: Response, next: NextFunct
       badgesPath,
       [".jpg", ".jpeg", ".png", ".gif"],
       (imagesPaths) => {
-        return res.status(200).send({ data: imagesPaths });
+        const onlyOriginalImagesPaths = imagesPaths
+          .filter((path) => !path.includes(SEPARATOR_BADGE_IMAGE_SIZE))
+          .map((path) => {
+            const { fileName, extension } = getFileNameAndExtension(path);
+            return [fileName, extension];
+          });
+
+        return res.status(200).send({
+          data: {
+            //thats for show for user only x128px
+            imagesPaths: onlyOriginalImagesPaths,
+            separatorSizes: SEPARATOR_BADGE_IMAGE_SIZE,
+            availableSizes: badgeModelIMagesUrlsSizesNumbers
+          }
+        });
       },
       (errorMsg) => {
         return next(new AppError(400, errorMsg));
@@ -111,12 +174,12 @@ export const editBadgeById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, imageUrl, description } = req.body;
+  const { name, imagesUrls, description } = req.body;
 
   try {
     const updatedBadge = await updateBadgeById(id, {
       name,
-      imageUrl,
+      imagesUrls,
       description
     });
 
@@ -131,10 +194,10 @@ export const editBadgeById = async (
 };
 
 export const addNewBadge = async (req: Request<{}, {}, BadgeCreateData, {}>, res: Response, next: NextFunction) => {
-  const { name, imageUrl, description } = req.body;
+  const { name, imagesUrls, description } = req.body;
 
   try {
-    const newBadge = await createBadge({ name, description, imageUrl });
+    const newBadge = await createBadge({ name, description, imagesUrls });
 
     return res.status(200).send({ message: "Badge added successfully", badge: newBadge });
   } catch (err) {
