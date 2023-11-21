@@ -5,7 +5,12 @@ const badgeSchema = new Schema<BadgeDocument>(
   {
     name: { type: String, required: true, unique: true },
     description: { type: String, required: true },
-    imageUrl: { type: String, required: true }
+    imagesUrls: {
+      x32: { type: String, required: true },
+      x64: { type: String, required: true },
+      x96: { type: String, required: true },
+      x128: { type: String, required: true }
+    }
   },
   { timestamps: true }
 );
