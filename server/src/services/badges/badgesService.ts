@@ -1,4 +1,4 @@
-import { Badge, BadgeDocument } from "@models";
+import { Badge, BadgeDocument, BadgeModelImagesUrlsSizes } from "@models";
 import { AppError, checkExistResource, handleAppError, logger } from "@utils";
 import { BadgeCreateData, BadgeFindOptions, BadgeUpdateData, ManyBadgesFindOptions } from "./types";
 import { FilterQuery, UpdateQuery } from "mongoose";
@@ -6,6 +6,9 @@ import { getAchievementStages } from "@services";
 import { promises as fsPromises } from "fs";
 import path from "path";
 import { badgesPath } from "@configs";
+
+export const SEPARATOR_BADGE_IMAGE_SIZE = `-xSize-`;
+export const badgeModelIMagesUrlsSizesNumbers = Object.values(BadgeModelImagesUrlsSizes).filter(Number) as number[];
 
 export const getBadges = async (filter: FilterQuery<BadgeDocument> = {}, affixFindOptions: ManyBadgesFindOptions) => {
   const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = affixFindOptions;
