@@ -2,22 +2,16 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { Message as MessageType } from "@services";
 import Message from "@components/message";
-import { useSocketContext } from "@socket";
+import { MessageServerData, useSocketContext } from "@socket";
 import { addNotification } from "@utils";
 import { useGetCurrentSessionMessages } from "@services";
-
-interface LocalMessage {
-  date: Date;
-  username: string;
-  message: string;
-}
 
 export default function StreamChat() {
   const socketContext = useSocketContext();
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
   const [messagesDB, setMessagesDB] = useState<MessageType[]>([]);
-  const [messages, setMessages] = useState<LocalMessage[]>([]);
+  const [messagesData, setMessagesData] = useState<MessageServerData[]>([]);
 
   const [messageToSend, setMessageToSend] = useState("");
 
@@ -51,11 +45,8 @@ export default function StreamChat() {
     const {
       events: { messageServer },
     } = socketContext;
-    messageServer.on((date, username, message) => {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { date, username, message },
-      ]);
+    messageServer.on((data) => {
+      setMessagesData((prevMessages) => [...prevMessages, data]);
 
       chatToBottom();
     });
@@ -79,12 +70,13 @@ export default function StreamChat() {
           />
         ))}
 
-        {messages.map((message, index) => (
+        {messagesData.map(({ messageData, user }, index) => (
           <Message
             key={index}
-            date={message.date}
-            username={message.username}
-            message={message.message}
+            date={messageData.timestamp}
+            username={user.username}
+            message={messageData.message}
+            emotes={messageData.emotes}
             tooltip={false}
           />
         ))}
