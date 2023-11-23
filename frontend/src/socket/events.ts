@@ -35,12 +35,18 @@ export const getSocketEventsFunctions = (
     },
     messageServer: {
       on: (cb) => {
-        socketConnection.on("messageServer", (date, username, message) =>
-          cb(date, username, message)
-        );
+        socketConnection.on("messageServer", (data) => cb(data));
       },
       off: () => {
         socketConnection.off("messageServer");
+      },
+    },
+    messageServerDelete: {
+      on: (cb) => {
+        socketConnection.on("messageServerDelete", (data) => cb(data));
+      },
+      off: () => {
+        socketConnection.off("messageServerDelete");
       },
     },
     userJoinTwitchChat: {
