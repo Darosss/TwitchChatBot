@@ -68,3 +68,17 @@ export interface UpdateAchievementUserProgressProgressesArgs {
   userId: string;
   progress: { increment?: boolean; value: number };
 }
+
+export interface AchievementUserProgressesPopulateOptions {
+  achievements?: {
+    value: boolean;
+    stages?: {
+      value: boolean;
+      badges?: boolean;
+    };
+  };
+}
+export interface AchievementUserProgressesFindOptions {
+  select?: SelectQuery<AchievementUserProgressModel>;
+  populate?: AchievementUserProgressesPopulateOptions;
+}
