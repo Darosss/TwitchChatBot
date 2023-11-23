@@ -6,13 +6,16 @@ import {
   AudioStreamDataInfo,
   AudioYTData,
   AudioYTDataInfo,
-  ObtainAchievementData
+  ObtainAchievementData,
+  MessageServerData,
+  MessageServerDeleteData
 } from "./dataTypes";
 
 export interface ServerToClientEvents extends ServerToClientYoutubeEvents, ServerToClientMusicLocalEvents {
   noArg: () => void;
   withAck: (callback: (e: number) => void) => void;
-  messageServer: (date: Date, username: string, message: string) => void;
+  messageServer: (data: MessageServerData) => void;
+  messageServerDelete: (data: MessageServerDeleteData) => void;
   userJoinTwitchChat: (eventAndUser: EventAndUser) => void;
   onRedemption: (data: RewardData, alertSound: Buffer) => void;
 
