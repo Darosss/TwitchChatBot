@@ -1,4 +1,23 @@
 import { StageDataWithBadgePopulated, UserModel } from "@models";
+import { CommonUserstate, DeleteUserstate } from "tmi.js";
+
+export type MessageServerDataBadgesPathsType = [string, string, string];
+
+export interface MessageServerDataMessageDataType {
+  id: string;
+  message: string;
+  emotes: CommonUserstate["emotes"];
+  timestamp: number;
+}
+export interface MessageServerData {
+  user: Pick<UserModel, "_id" | "username"> & { badgesPaths: MessageServerDataBadgesPathsType };
+  messageData: MessageServerDataMessageDataType;
+}
+export interface MessageServerDeleteData {
+  username: string;
+  userstate: DeleteUserstate;
+  deletedMessage: string;
+}
 
 export interface AudioDataRequester {
   id: string;

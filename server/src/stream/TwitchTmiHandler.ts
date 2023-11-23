@@ -6,25 +6,37 @@ interface ClientTmiOptions {
   username: string;
 }
 
+// NOTE:
+// - ClientTmiHandler is containg two Clients for one reason
+// - twitch does not sends back info about emotes, ids etc. for sent bot messages
+// - way around is to create one sender and one receiver client
+
 class ClientTmiHandler {
   private userToListen: string;
   private clientTmi: Client;
+  private clientTmiAsSender: Client;
 
   constructor(options: ClientTmiOptions) {
     this.userToListen = options.userToListen;
-    this.clientTmi = new tmi.Client({
+    const clientOptions: tmi.Options = {
       options: { debug: true },
       connection: { secure: true, reconnect: true },
       identity: { password: options.password, username: options.username },
       channels: [options.userToListen]
-    });
+    };
+    this.clientTmi = new tmi.Client(clientOptions);
+    this.clientTmiAsSender = new tmi.Client(clientOptions);
     this.connect();
   }
 
   public async disconnectTmi() {
-    const readyState = this.clientTmi.readyState();
+    await this.disconnectTmiDependsIfConnected(this.clientTmi);
+    await this.disconnectTmiDependsIfConnected(this.clientTmiAsSender);
+  }
+  private async disconnectTmiDependsIfConnected(client: Client) {
+    const readyState = client.readyState();
     if (readyState === "CONNECTING" || readyState === "OPEN") {
-      await this.clientTmi.disconnect();
+      await client.disconnect();
     }
   }
 
@@ -45,10 +57,11 @@ class ClientTmiHandler {
 
   public async connect() {
     await this.clientTmi.connect();
+    await this.clientTmiAsSender.connect();
   }
 
   public say(message: string) {
-    this.clientTmi.say(this.userToListen, message);
+    this.clientTmiAsSender.say(this.userToListen, message);
   }
 
   public onMessageEvent(
@@ -56,6 +69,14 @@ class ClientTmiHandler {
   ) {
     this.clientTmi.on("message", async (channel, userstate, message, self) => {
       callback(channel, userstate, message, self);
+    });
+  }
+
+  public onDeleteMessageEvent(
+    callback: (channel: string, username: string, userstate: tmi.DeleteUserstate, deletedMessage: string) => void
+  ) {
+    this.clientTmi.on("messagedeleted", (channel, username, deletedMessage, userstate) => {
+      callback(channel, username, userstate, deletedMessage);
     });
   }
 }

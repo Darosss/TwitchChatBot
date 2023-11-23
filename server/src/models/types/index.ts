@@ -1,10 +1,12 @@
-import { Document, Types } from "mongoose";
+import { Document } from "mongoose";
 
 interface BaseModel {
   _id: string;
   createdAt: Date;
   updatedAt: Date;
 }
+//make it for not populated string later
+export type UserDisplayBadgesType = [BadgeModel, BadgeModel, BadgeModel];
 
 export interface UserModel extends BaseModel {
   twitchId: string;
@@ -18,7 +20,7 @@ export interface UserModel extends BaseModel {
   twitchName?: string;
   twitchCreated?: Date;
   follower?: Date;
-  badges?: Types.ObjectId[] | BadgeModel[];
+  displayBadges?: UserDisplayBadgesType;
 }
 
 export type UserDocument = UserModel & Document;
@@ -360,6 +362,7 @@ export interface AchievementUserProgressModel extends BaseModel {
   achievement: string | AchievementModel;
   value: number;
   progresses: [number, number][];
+  progressesLength: number;
 }
 
 export type AchievementUserProgressDocument = AchievementUserProgressModel & Document;

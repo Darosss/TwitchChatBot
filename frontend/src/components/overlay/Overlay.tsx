@@ -15,12 +15,14 @@ import MusicPlayer from "./musicPlayer";
 import YoutubePlayerVideo from "./youtubePlayerVideo";
 import { HelmetTitle } from "@components/componentWithTitle";
 import Achievements from "./achievements";
+import Chat from "./chat";
 
 const components = new Map([
   [overlaysKeys.overlayMusicPlayer, Redemptions],
   [overlaysKeys.overlayMusicPlayer, MusicPlayer],
   [overlaysKeys.overlayYoutubeMusicPlayer, YoutubePlayerVideo],
   [overlaysKeys.overlayAchievements, Achievements],
+  [overlaysKeys.overlayChat, Chat],
 ]);
 
 export default function Overlay(params: { editor?: boolean }) {

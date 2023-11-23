@@ -6,3 +6,4 @@ export * from "./handleDeleteApi";
 export * from "./layoutBreakpoints";
 export * from "./resetScroll";
 export * from "./getDateFromSecondsToYMDHMS";
+export * from "./socketData";

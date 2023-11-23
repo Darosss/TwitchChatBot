@@ -7,6 +7,8 @@ export type {
   CustomRewardData,
   AudioStreamData,
   ObtainAchievementData,
+  MessageServerData,
+  MessageServerDataBadgesPathsType,
 } from "@socketTypes";
 
 export type * from "./types";
