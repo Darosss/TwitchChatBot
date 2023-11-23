@@ -11,11 +11,43 @@ import { getOneAchievement, getUserById } from "@services";
 import {
   AchievementUserProgressCreate,
   AchievementUserProgressUpdate,
+  AchievementUserProgressesFindOptions,
   GetDataForObtainAchievementEmitReturnData,
   UpdateAchievementUserProgressProgressesArgs,
   UpdateAchievementUserProgressProgressesReturnData
 } from "./types";
 
+export const getAchievementUserProgresses = async (
+  filter: FilterQuery<AchievementUserProgressDocument> = {},
+  findOptions: AchievementUserProgressesFindOptions
+) => {
+  const { select = { __v: 0 }, populate } = findOptions;
+  try {
+    const achievementUserProgress = await AchievementUserProgress.find(filter)
+      .select(select)
+      .populate([
+        ...(populate?.achievements?.value
+          ? [
+              {
+                path: "achievement",
+                ...(populate.achievements.stages?.value && {
+                  populate: {
+                    path: "stages",
+                    ...(populate.achievements.stages.badges && {
+                      populate: { path: "stageData.badge" }
+                    })
+                  }
+                })
+              }
+            ]
+          : [])
+      ]);
+    return achievementUserProgress;
+  } catch (err) {
+    logger.error(`Error occured in getAchievementUserProgresses. ${err}`);
+    handleAppError(err);
+  }
+};
 export const getOneAchievementUserProgress = async (filter: FilterQuery<AchievementUserProgressDocument> = {}) => {
   try {
     const achievementUserProgress = await AchievementUserProgress.findOne(filter);
@@ -50,13 +82,23 @@ export const updateOneAchievementUserProgress = async (
   updateData: UpdateQuery<AchievementUserProgressUpdate>
 ) => {
   try {
-    const updatedAchievement = await AchievementUserProgress.findOneAndUpdate(filter, updateData, {
-      new: true
-    });
+    const foundAchievement = await AchievementUserProgress.findOne(filter);
 
-    const achievement = checkExistResource(updatedAchievement, "Achievement user progress");
+    const achievement = checkExistResource(foundAchievement, "Achievement user progress");
+    const updatedAchievement = await AchievementUserProgress.findByIdAndUpdate(
+      foundAchievement?._id,
+      {
+        ...updateData,
+        ...(updateData.progresses && {
+          $set: { progressesLength: achievement.progresses.length }
+        })
+      },
+      {
+        new: true
+      }
+    );
 
-    return achievement;
+    return updatedAchievement;
   } catch (err) {
     logger.error(
       `Error occured while updateOneAchievementUserProgress with filter: (${JSON.stringify(filter)}). ${err}`

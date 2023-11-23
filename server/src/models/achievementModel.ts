@@ -54,7 +54,8 @@ const AchievementUserProgressSchema: Schema<AchievementUserProgressDocument> = n
     userId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
     achievement: { type: Schema.Types.ObjectId, required: true, ref: "Achievement" },
     value: { type: Number, required: true, default: 0 },
-    progresses: [[Number, Date]]
+    progresses: [[Number, Date]],
+    progressesLength: { type: Number, required: true, default: 0 }
   },
   { timestamps: true }
 );

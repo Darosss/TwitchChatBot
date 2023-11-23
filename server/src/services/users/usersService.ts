@@ -1,18 +1,18 @@
 import { UserDocument, User } from "@models";
-import { AppError, checkExistResource, handleAppError, logger } from "@utils";
+import { checkExistResource, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { ManyUsersFindOptions, UserCreateData, UserFindOptions, UserUpdateData } from "./types";
 
 export const getUsers = async (filter: FilterQuery<UserDocument> = {}, userFindOptions: ManyUsersFindOptions) => {
-  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 } } = userFindOptions;
+  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 }, populate } = userFindOptions;
 
   try {
     const users = await User.find(filter)
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
-      .sort(sort);
-
+      .sort(sort)
+      .populate([...(populate?.displayBadges ? [{ path: "displayBadges" }] : [])]);
     return users;
   } catch (err) {
     logger.error(`Error occured while getting users. ${err}`);
@@ -21,9 +21,11 @@ export const getUsers = async (filter: FilterQuery<UserDocument> = {}, userFindO
 };
 
 export const getOneUser = async (filter: FilterQuery<UserDocument> = {}, userFindOptions: UserFindOptions) => {
-  const { select = { __v: 0 } } = userFindOptions;
+  const { select = { __v: 0 }, populate } = userFindOptions;
   try {
-    const userFiltered = await User.findOne(filter).select(select);
+    const userFiltered = await User.findOne(filter)
+      .select(select)
+      .populate([...(populate?.displayBadges ? [{ path: "displayBadges" }] : [])]);
 
     const user = checkExistResource(userFiltered, "User");
 
@@ -170,15 +172,4 @@ export const getFollowersCount = async (startDate?: Date, endDate?: Date) => {
     logger.error(`Error occured while getting followers count. ${err}`);
     handleAppError(err);
   }
-};
-
-export const addBadgesToUser = async (filter: FilterQuery<UserDocument>, badgesToAdd: string[]) => {
-  const updatedUser = await updateUser(filter, { $push: { badges: badgesToAdd } });
-
-  if (!updatedUser) {
-    logger.error(`User not updated in - addBadgesTouser filter: ${filter}`);
-    return { badgesCount: 0 };
-  }
-
-  return { badgesCount: updatedUser.badges?.length || 0 };
 };

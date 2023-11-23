@@ -6,7 +6,9 @@ import type {
   InterServerEvents,
   SocketData,
   CustomRewardCreateData,
-  CustomRewardData
+  CustomRewardData,
+  MessageServerDataBadgesPathsType,
+  MessageServerDataMessageDataType
 } from "@socket";
 import { Server, Socket } from "socket.io";
 import {
@@ -15,7 +17,8 @@ import {
   getConfigs,
   removeAuthToken,
   createUserIfNotExist,
-  UserCreateData
+  UserCreateData,
+  getBadges
 } from "@services";
 import CommandsHandler from "./CommandsHandler";
 import TriggersHandler from "./TriggersHandler";
@@ -25,11 +28,12 @@ import { headLogger, messageLogger, retryWithCatch } from "@utils";
 import TimersHandler from "./TimersHandler";
 import { ChatUserstate } from "tmi.js";
 import MusicStreamHandler from "./MusicStreamHandler";
-import { alertSoundPrefix, botId } from "@configs";
+import { alertSoundPrefix, botId, botUsername } from "@configs";
 import EventSubHandler from "./EventSubHandler";
 import ClientTmiHandler from "./TwitchTmiHandler";
 import MusicYTHandler from "./MusicYTHandler";
 import { AuthorizedUserData } from "./types";
+import { randomUUID } from "crypto";
 interface StreamHandlerConfiguration {
   configs: ConfigModel;
   twitchApi: ApiClient;
@@ -68,6 +72,7 @@ class StreamHandler {
     this.init();
     this.initSocketEvents();
     this.initOnMessageEvents();
+    this.initOnDeleteMessageEvents();
   }
 
   private async init() {
@@ -87,22 +92,59 @@ class StreamHandler {
     this.init();
   }
 
+  private initOnDeleteMessageEvents() {
+    this.handlers.clientTmi.onDeleteMessageEvent((channel, username, userstate, deletedMessage) => {
+      this.configuration.socketIO.emit("messageServerDelete", {
+        username,
+        userstate,
+        deletedMessage
+      });
+    });
+  }
   private async initOnMessageEvents() {
     this.handlers.clientTmi.onMessageEvent(async (channel, userstate, message, self) => {
       const userData = this.getUserStateInfo(userstate, self);
       messageLogger.info(`${userData.username}: ${message}`);
-      this.configuration.socketIO.emit("messageServer", new Date(), userData.username, message); // emit for socket
 
       const user = await createUserIfNotExist({ twitchId: userData.twitchId }, userData);
 
       if (!user) return;
 
+      await this.handleSocketMessageServerEmit(user, {
+        message,
+        id: userstate.id || randomUUID(),
+        emotes: userstate.emotes,
+        timestamp: Number(userstate["tmi-sent-ts"]) || new Date().getTime()
+      });
+
       await this.handlers.messagesHandler.saveMessageAndUpdateUser(user._id, user.username, new Date(), message);
 
-      if (self) return;
+      // we can't use self - onMessageEvenet uses client for only receiving data. more see in TwitchTmiHandler
+      if (userstate.username === botUsername) return;
 
       await this.chceckAndSendAnswer(user, message);
     });
+  }
+
+  private async handleSocketMessageServerEmit(
+    { displayBadges, username, _id }: UserModel,
+    messageData: MessageServerDataMessageDataType
+  ) {
+    const badgesPaths = await this.getUserBadgesPathsForMessageServer(displayBadges);
+
+    this.configuration.socketIO.emit("messageServer", {
+      user: { username, _id, badgesPaths },
+      messageData
+    });
+  }
+
+  private async getUserBadgesPathsForMessageServer(displayBadges: UserModel["displayBadges"]) {
+    const foundBadges =
+      displayBadges && displayBadges.length > 0 ? await getBadges({ _id: { $in: displayBadges } }, {}) : [];
+    const badgesPaths: MessageServerDataBadgesPathsType = ["", "", ""];
+    foundBadges?.forEach(({ imagesUrls: { x32 } }, index) => (badgesPaths[index] = x32));
+
+    return badgesPaths;
   }
 
   private async chceckAndSendAnswer(user: UserModel, message: string) {

@@ -13,14 +13,24 @@ import {
   UpdateAchievementUserProgressProgressesReturnData,
   GetDataForObtainAchievementEmitReturnData,
   UpdateAchievementUserProgressProgressesArgs,
-  addBadgesToUser,
-  getAchievements
+  getAchievements,
+  updateUserById,
+  getAchievementUserProgresses
 } from "@services";
 import { ACHIEVEMENTS } from "@defaults";
 import { achievementsLogger, getDateFromSecondsToYMDHMS } from "@utils";
 import moment from "moment";
 import { randomUUID } from "crypto";
-import { AchievementCustomModel, AchievementsConfigs, CustomAchievementAction, TagModel, UserModel } from "@models";
+import {
+  AchievementCustomModel,
+  AchievementModel,
+  AchievementUserProgressModel,
+  AchievementsConfigs,
+  BadgeModel,
+  CustomAchievementAction,
+  TagModel,
+  UserModel
+} from "@models";
 import { client as discordClient, sendMessageInChannelByChannelId } from "../discord";
 import { codeBlock } from "discord.js";
 // TODO: PERFOMANCE
@@ -28,16 +38,17 @@ import { codeBlock } from "discord.js";
 // TODO: cache basic achievements too maybe
 // TODO: add on refresh tag, achievement itd, refresh of these in cache
 
-interface CheckMessageForAchievement {
-  message: string;
-  date: Date;
+interface CommonAchievementCheckType {
   userId: string;
   username: string;
 }
 
-interface CheckWatchTimeForAchievement {
-  userId: string;
-  username: string;
+interface CheckMessageForAchievement extends CommonAchievementCheckType {
+  message: string;
+  date: Date;
+}
+
+interface CheckWatchTimeForAchievement extends CommonAchievementCheckType {
   progress: number;
 }
 
@@ -56,17 +67,6 @@ interface CheckGlobalUserDetailsDateArgs extends Omit<CheckGlobalUserDetailsArgs
 }
 
 type IncrementCommandAchievementsArgs = Pick<CheckMessageForAchievement, "userId" | "username">;
-
-interface CheckBadgesLogicForUserArgs {
-  userId: string;
-  username: string;
-  stages: GetDataForObtainAchievementEmitReturnData["stages"];
-}
-
-interface ManageObtainAchievementDataArgs extends GetDataForObtainAchievementEmitReturnData {
-  userId: string;
-  username: string;
-}
 
 class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   private socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
@@ -138,17 +138,7 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
 
     const modifiedUpdateData = this.convertUpdateDataToObtainAchievementData(updateData);
 
-    if (modifiedUpdateData.stages.length > 0)
-      await this.manageObtainAchievementData({ userId: rest.userId, username, ...modifiedUpdateData });
-  }
-
-  private async manageObtainAchievementData({ username, ...rest }: ManageObtainAchievementDataArgs) {
-    await this.addBadgesToUser({
-      userId: rest.userId,
-      username: username,
-      stages: rest.stages
-    });
-    this.addObtainedAchievementDataToQueue(rest, username);
+    if (modifiedUpdateData.stages.length > 0) this.addObtainedAchievementDataToQueue(modifiedUpdateData, username);
   }
 
   private addObtainedAchievementDataToQueue(data: GetDataForObtainAchievementEmitReturnData, username: string) {
@@ -168,14 +158,6 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
         this.enqueue(data);
       });
     });
-  }
-
-  private async addBadgesToUser({ userId, stages }: CheckBadgesLogicForUserArgs) {
-    const badges = stages.map((stage) => stage[0]?.badge._id);
-
-    const badgesInfo = await addBadgesToUser({ _id: userId }, badges);
-
-    return badgesInfo;
   }
 
   private emitObtainAchievement(emitData: ObtainAchievementData) {
@@ -209,7 +191,7 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   }
 
   public async checkOnlineUserAchievements(user: UserModel) {
-    const { _id, username, messageCount, watchTime, points, follower, badges } = user;
+    const { _id, username, messageCount, watchTime, points, follower } = user;
     const commonData = { userId: _id, username: username };
     await this.updateAchievementUserProgressAndAddToQueue({
       ...commonData,
@@ -229,11 +211,8 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
     if (follower) {
       await this.checkUserFollowageForAchievement({ ...commonData, dateProgress: follower });
     }
-    await this.updateAchievementUserProgressAndAddToQueue({
-      ...commonData,
-      achievementName: ACHIEVEMENTS.BADGES_COUNT,
-      progress: { value: badges?.length || 0 }
-    });
+
+    await this.handleBadgesLogic(commonData);
 
     await this.checkCustomWatchTimeAchievements({ ...commonData, progress: watchTime || 0 });
   }
@@ -360,6 +339,54 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
         }
       });
     }
+  }
+
+  private async handleBadgesLogic(data: CommonAchievementCheckType) {
+    const progresses = await getAchievementUserProgresses(
+      { userId: data.userId, progressesLength: { $gt: 0 } },
+      { populate: { achievements: { value: true, stages: { value: true, badges: true } } } }
+    );
+
+    if (!progresses) return;
+    await this.updateUsersDisplayBadgesDependsOnRarity(data.userId, progresses);
+    await this.setBadgesAchievementCount(data, progresses);
+  }
+
+  private async setBadgesAchievementCount(
+    data: CommonAchievementCheckType,
+    progresses: AchievementUserProgressModel[]
+  ) {
+    const earnedBadgesCount = progresses.reduce(
+      (badgesCount, { progressesLength }) => badgesCount + progressesLength,
+      0
+    );
+    await this.updateAchievementUserProgressAndAddToQueue({
+      ...data,
+      achievementName: ACHIEVEMENTS.BADGES_COUNT,
+      progress: { value: earnedBadgesCount }
+    });
+  }
+
+  // note:
+  // for now I create dynamical choose badges.
+  // latter it should be changeable by twitch command / discord command
+  private async updateUsersDisplayBadgesDependsOnRarity(userId: string, progresses: AchievementUserProgressModel[]) {
+    const bestBadges = progresses
+      .map((progress) => {
+        const lastProgress = progress.progresses.slice(-1)[0];
+        const achievement = <AchievementModel<BadgeModel>>progress.achievement;
+        const stageData = achievement.stages.stageData.find((stageData) => stageData.stage === lastProgress[0]);
+
+        return { rarity: stageData?.rarity || 1, badge: stageData?.badge._id || "" };
+      })
+      .sort((a, b) => b.rarity - a.rarity)
+      .slice(0, 3);
+
+    //if there are any get 3 most rariry badges
+
+    await updateUserById(userId, {
+      displayBadges: [bestBadges.at(0)?.badge, bestBadges.at(1)?.badge, bestBadges.at(2)?.badge]
+    });
   }
 }
 

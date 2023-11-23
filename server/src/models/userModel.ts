@@ -14,9 +14,11 @@ const UserSchema: Schema<UserDocument> = new Schema(
     points: { type: Number, default: 0 },
     watchTime: { type: Number, default: 0 },
     messageCount: { type: Number, default: 0 },
-    badges: {
-      type: [{ type: Schema.Types.ObjectId, ref: "Badge" }]
-    }
+    displayBadges: [
+      { type: Schema.Types.ObjectId, ref: "Badge" },
+      { type: Schema.Types.ObjectId, ref: "Badge" },
+      { type: Schema.Types.ObjectId, ref: "Badge" }
+    ]
   },
   { timestamps: true }
 );
