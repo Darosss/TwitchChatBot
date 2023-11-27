@@ -10,7 +10,9 @@ export const getTwitchAuthUrl = () => {
     "moderation:read",
     "moderator:read:chatters",
     "user:read:follows",
-    "moderator:read:followers"
+    "moderator:read:followers",
+    "channel:read:subscriptions",
+    "bits:read"
   ];
   const response_type = "code";
   const state = "c3ab8aa609ea11e793ae92361f002671";
