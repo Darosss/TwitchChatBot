@@ -351,6 +351,7 @@ export interface AchievementModel<T = string | BadgeModel> extends BaseModel {
   enabled: boolean;
   custom: AchievementCustomModel;
   hidden?: boolean;
+  showProgress?: boolean;
 }
 
 export type AchievementWithBadgePopulated = AchievementModel<BadgeModel>;
