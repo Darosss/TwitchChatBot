@@ -6,9 +6,10 @@ import {
   AudioStreamDataInfo,
   AudioYTData,
   AudioYTDataInfo,
-  ObtainAchievementData,
   MessageServerData,
-  MessageServerDeleteData
+  MessageServerDeleteData,
+  ObtainAchievementDataWithCollectedAchievement,
+  ObtainAchievementDataWithProgressOnly
 } from "./dataTypes";
 
 export interface ServerToClientEvents extends ServerToClientYoutubeEvents, ServerToClientMusicLocalEvents {
@@ -23,7 +24,9 @@ export interface ServerToClientEvents extends ServerToClientYoutubeEvents, Serve
   getCustomRewards: (data: CustomRewardData[]) => void;
   sendLoggedUserInfo: (username: string) => void;
 
-  obtainAchievement: (data: ObtainAchievementData) => void;
+  obtainAchievement: (
+    data: ObtainAchievementDataWithCollectedAchievement | ObtainAchievementDataWithProgressOnly
+  ) => void;
   obtainAchievementQueueInfo: (count: number) => void;
 }
 
