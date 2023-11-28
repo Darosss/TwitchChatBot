@@ -16,6 +16,7 @@ import YoutubePlayerVideo from "./youtubePlayerVideo";
 import { HelmetTitle } from "@components/componentWithTitle";
 import Achievements from "./achievements";
 import Chat from "./chat";
+import ImageSelector from "./ImageSelector";
 
 const components = new Map([
   [overlaysKeys.overlayMusicPlayer, Redemptions],
@@ -54,11 +55,11 @@ export default function Overlay(params: { editor?: boolean }) {
     setLayoutOverlay(layoutData.layout);
     setToolbox(layoutData.toolbox);
   }, [data]);
-
   if (error) return <>There is an error. {error.response?.data.message}</>;
   return (
     <div>
       <HelmetTitle title={"Overlay " + data?.data.name || "Overlay"} />
+      {editor ? <ImageSelector /> : null}
       <ReactGrid
         layoutName={data?.data.name || ""}
         layoutState={[layoutOverlay, setLayoutOverlay]}
