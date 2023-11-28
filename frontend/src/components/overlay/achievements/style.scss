@@ -45,6 +45,31 @@
 @include animation-mixin(achievement-animation-4, $info-color);
 @include animation-mixin(achievement-animation-5, orange);
 
+.achievement-progress-wrapper {
+  .obtained-achievements-stage-name {
+    display: flex;
+    flex-direction: column;
+
+    .obtained-achievements-stage-name-next-stage {
+      filter: hue-rotate(90deg);
+    }
+
+    .obtained-achievements-stage-name-header {
+      letter-spacing: 0.2rem;
+    }
+  }
+  .obtained-achievements-stage-name-max-stage {
+    animation: wiggle 10s infinite;
+    span {
+      color: $danger-color !important;
+    }
+  }
+
+  .obtained-achievements-badge-not-achieved {
+    filter: grayscale(80%) !important;
+  }
+}
+
 .achievements-overlay-wrapper {
   width: 100%;
   max-height: 100%;

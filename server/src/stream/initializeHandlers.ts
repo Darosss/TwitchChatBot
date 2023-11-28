@@ -97,7 +97,8 @@ const createHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: 
   INITIALIZED_HANDLERS.eventSubHandler = new EventSubHandler({
     apiClient: twitchApi,
     socketIO,
-    authorizedUser
+    authorizedUser,
+    achievementsHandler: INITIALIZED_HANDLERS.achievementsHandler
   });
 
   INITIALIZED_HANDLERS.streamHandler = new StreamHandler({
@@ -124,7 +125,12 @@ const updateHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: 
   INITIALIZED_HANDLERS.eventSubHandler?.updateProperties(twitchApi, authorizedUser);
   INITIALIZED_HANDLERS.loyaltyHandler?.updateProperties(twitchApi, authorizedUser);
   INITIALIZED_HANDLERS.timersHandler?.updateProperties(twitchApi, authorizedUser);
-  INITIALIZED_HANDLERS.eventSubHandler?.updateOptions({ apiClient: twitchApi, socketIO, authorizedUser });
+  INITIALIZED_HANDLERS.eventSubHandler?.updateOptions({
+    apiClient: twitchApi,
+    socketIO,
+    authorizedUser,
+    achievementsHandler: INITIALIZED_HANDLERS.achievementsHandler!
+  });
 
   INITIALIZED_HANDLERS.streamHandler?.updateOptions({
     configuration: { twitchApi, authorizedUser, socketIO, configs },

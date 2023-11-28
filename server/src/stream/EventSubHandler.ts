@@ -9,20 +9,28 @@ import fs from "fs";
 import { alertSoundsPath, alertSoundPrefix } from "@configs";
 import path from "path";
 import { AuthorizedUserData } from "./types";
+import AchievementsHandler from "./AchievementsHandler";
 
 interface EventSubHandlerOptions {
   apiClient: ApiClient;
   socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
   authorizedUser: AuthorizedUserData;
+  achievementsHandler: AchievementsHandler;
 }
+
+export type SubscriptionTiers = "1000" | "2000" | "3000";
 
 class EventSubHandler extends HeadHandler {
   private listener: EventSubWsListener;
   private redemptionQue: [RewardData, { audioBuffer: Buffer; duration: number }][] = [];
   private isAlertPlaying = false;
+  private achievementsHandler: AchievementsHandler;
   constructor(options: EventSubHandlerOptions) {
     super(options.socketIO, options.apiClient, options.authorizedUser);
-    this.listener = new EventSubWsListener({ apiClient: options.apiClient });
+    this.listener = new EventSubWsListener({
+      apiClient: options.apiClient
+    });
+    this.achievementsHandler = options.achievementsHandler;
   }
 
   public async updateOptions(options: EventSubHandlerOptions): Promise<void> {
@@ -53,6 +61,107 @@ class EventSubHandler extends HeadHandler {
         });
       } catch (err) {
         eventsubLogger.info(err); //todo add error
+      }
+    });
+  }
+
+  private async subscribeToChannelSubscription() {
+    this.listener.onChannelSubscription(this.authorizedUser.id, async (e) => {
+      const { userDisplayName, userId, userName, tier, isGift } = e;
+      eventsubLogger.info(
+        `Someone subbed to channel: ${JSON.stringify({
+          userDisplayName,
+          userId,
+          userName,
+          tier,
+          isGift
+        })}`
+      );
+
+      const userData = { username: userDisplayName, twitchId: userId, twitchName: userName, privileges: 0 };
+      try {
+        const userDB = await createUserIfNotExist({ twitchId: userId }, userData);
+        if (!userDB) {
+          return eventsubLogger.error(`subscribeToChannelSubscription - error when trying to manipulate user data`);
+        }
+        await this.achievementsHandler.checkUserSubscribeForAchievements({
+          userId: userDB._id,
+          username: userDB.username,
+          tier,
+          isGift
+        });
+      } catch (err) {
+        eventsubLogger.error(`Error occured in subscribeToChannelSubscription: ${err}`);
+      }
+    });
+  }
+
+  private async subscribeToChannelSubscriptionGift() {
+    this.listener.onChannelSubscriptionGift(this.authorizedUser.id, async (e) => {
+      const { tier, gifterName, cumulativeAmount, amount, isAnonymous, gifterId, gifterDisplayName } = e;
+      eventsubLogger.info(
+        `Someone gave a gift to channel: ${JSON.stringify({
+          tier,
+          cumulativeAmount,
+          amount,
+          isAnonymous,
+          gifterId,
+          gifterDisplayName
+        })}`
+      );
+
+      const userData = {
+        username: gifterDisplayName,
+        twitchId: gifterId,
+        twitchName: gifterName,
+        privileges: 0
+      };
+
+      try {
+        const userDB = await createUserIfNotExist({ twitchId: gifterId }, userData);
+        if (!userDB)
+          return eventsubLogger.error(`subscribeToChannelFollow - error when trying to manipulate user data`);
+
+        await this.achievementsHandler.checkUserSubscribeGiftsForAchievements({
+          userId: userDB._id,
+          username: userDB.username,
+          tier,
+          amount: amount || 1,
+          isAnonymous
+        });
+      } catch (err) {
+        eventsubLogger.error(`Error occured in subscribeToChannelFollow: ${err}`);
+      }
+    });
+  }
+
+  private async subscribeToChannelFollow() {
+    this.listener.onChannelFollow(this.authorizedUser.id, this.authorizedUser.id, async (e) => {
+      const { followDate, userDisplayName, userId, userName } = e;
+      eventsubLogger.info(
+        `Someone gave a follow to channel: ${JSON.stringify({ followDate, userDisplayName, userId, userName })}`
+      );
+
+      const userData = {
+        username: userDisplayName,
+        twitchId: userId,
+        twitchName: userName,
+        privileges: 0,
+        follower: followDate
+      };
+
+      try {
+        const userDB = await createUserIfNotExist({ twitchId: userId }, userData);
+        if (!userDB) {
+          return eventsubLogger.error(`subscribeToChannelFollow - error when trying to manipulate user data`);
+        }
+        await this.achievementsHandler.checkUserFollowageForAchievement({
+          userId: userDB._id,
+          username: userDB.username,
+          dateProgress: followDate
+        });
+      } catch (err) {
+        eventsubLogger.error(`Error occured in subscribeToChannelFollow: ${err}`);
       }
     });
   }
@@ -88,12 +197,7 @@ class EventSubHandler extends HeadHandler {
 
       const user = await createUserIfNotExist(
         { twitchId: userId },
-        {
-          twitchId: userId,
-          username: userDisplayName,
-          twitchName: userName,
-          privileges: 0
-        }
+        { twitchId: userId, username: userDisplayName, twitchName: userName, privileges: 0 }
       );
 
       const reward = await e.getReward();
@@ -182,10 +286,14 @@ class EventSubHandler extends HeadHandler {
   }
 
   private async initEvents() {
+    await this.twitchApi.eventSub.deleteAllSubscriptions();
     await this.subscribeToChannelUpdateEvents();
     await this.subscribeToStreamOfflineEvents();
     await this.subscribeToChannelRedemptionAddEvents();
     await this.subscribeToStreamOnlineEvents();
+    await this.subscribeToChannelFollow();
+    await this.subscribeToChannelSubscription();
+    await this.subscribeToChannelSubscriptionGift();
   }
 }
 

@@ -3,7 +3,9 @@ import {
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
-  ObtainAchievementData
+  ObtainAchievementDataWithCollectedAchievement,
+  ObtainAchievementDataWithProgressOnly,
+  isObtainedAchievement
 } from "@socket";
 import { Server } from "socket.io";
 import QueueHandler from "./QueueHandler";
@@ -15,7 +17,8 @@ import {
   UpdateAchievementUserProgressProgressesArgs,
   getAchievements,
   updateUserById,
-  getAchievementUserProgresses
+  getAchievementUserProgresses,
+  getOneAchievement
 } from "@services";
 import { ACHIEVEMENTS } from "@defaults";
 import { achievementsLogger, getDateFromSecondsToYMDHMS } from "@utils";
@@ -33,6 +36,7 @@ import {
 } from "@models";
 import { client as discordClient, sendMessageInChannelByChannelId } from "../discord";
 import { codeBlock } from "discord.js";
+import { SubscriptionTiers } from "./EventSubHandler";
 // TODO: PERFOMANCE
 // TODO: cache custom achievements names or _ids
 // TODO: cache basic achievements too maybe
@@ -66,9 +70,33 @@ interface CheckGlobalUserDetailsDateArgs extends Omit<CheckGlobalUserDetailsArgs
   dateProgress: Date;
 }
 
+interface CheckUserSubscribeForAchievementsParams extends Omit<CheckGlobalUserDetailsArgs, "progress"> {
+  tier: SubscriptionTiers;
+  isGift: boolean;
+}
+//TODO: refactor names to params
+
+interface CheckUserSubscribeGiftsForAchievementsParams extends Omit<CheckGlobalUserDetailsArgs, "progress"> {
+  tier: SubscriptionTiers;
+  amount: number;
+  isAnonymous: boolean;
+}
 type IncrementCommandAchievementsArgs = Pick<CheckMessageForAchievement, "userId" | "username">;
 
-class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
+interface AddAchievementProgressDataToQueueData
+  extends Omit<GetDataForObtainAchievementEmitReturnData, "stages" | "gainedProgress"> {
+  gainedProgress: ObtainAchievementDataWithProgressOnly["progressData"];
+}
+
+interface AddAnonymousAchievementProgressData {
+  achievementName: ACHIEVEMENTS;
+  username: string;
+  gainedProgress: AddAchievementProgressDataToQueueData["gainedProgress"];
+}
+
+class AchievementsHandler extends QueueHandler<
+  ObtainAchievementDataWithCollectedAchievement | ObtainAchievementDataWithProgressOnly
+> {
   private socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
   private configs: AchievementsConfigs;
   constructor(
@@ -86,12 +114,16 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
       this.emitObtainAchievement(item);
 
       this.socketIO.emit("obtainAchievementQueueInfo", this.getItemsCountInQueue());
-      this.handleDiscordAnnoucment(item);
-      this.startTimeout(item.stage[0].showTimeMs + 1000);
+      if (isObtainedAchievement(item)) this.handleDiscordAnnoucment(item);
+      // pretty sure it will be defined but still hard code 2500 as default
+      const timeoutDelay = isObtainedAchievement(item)
+        ? item.stage.data.showTimeMs
+        : item.progressData.currentStage?.showTimeMs || 2500;
+      this.startTimeout(timeoutDelay + 1000);
     });
   }
 
-  private async handleDiscordAnnoucment(item: ObtainAchievementData) {
+  private async handleDiscordAnnoucment(item: ObtainAchievementDataWithCollectedAchievement) {
     if (this.configs.obtainedAchievementsChannelId) {
       const messageToSend = this.getDiscordAchievementMessage(item);
       sendMessageInChannelByChannelId(discordClient, this.configs.obtainedAchievementsChannelId, messageToSend);
@@ -100,20 +132,20 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
 
   private getDiscordAchievementMessage({
     username,
-    stage: [stage, stageTimestamp],
+    stage: { data, timestamp },
     achievement
-  }: ObtainAchievementData) {
+  }: ObtainAchievementDataWithCollectedAchievement) {
     return codeBlock(
       "js",
-      `${moment(stageTimestamp).format("DD-MM-YYYY HH:MM:ss")}\nUser: "${username}" - obtained achievement ${
+      `${moment(timestamp).format("DD-MM-YYYY HH:MM:ss")}\nUser: "${username}" - obtained achievement ${
         achievement.name
-      }\nName: '${stage.name}'\nGoal: ${
-        achievement.isTime ? `'${getDateFromSecondsToYMDHMS(stage.goal).trim()}'` : stage.goal
-      }\nBadge: '${stage.badge.name}'`
+      }\nName: '${data.name}'\nGoal: ${
+        achievement.isTime ? `'${getDateFromSecondsToYMDHMS(data.goal).trim()}'` : data.goal
+      }\nBadge: '${data.badge.name}'`
     );
   }
 
-  public override enqueue(item: ObtainAchievementData) {
+  public override enqueue(item: ObtainAchievementDataWithCollectedAchievement | ObtainAchievementDataWithProgressOnly) {
     super.enqueue(item);
 
     this.startTimeout(500);
@@ -122,9 +154,9 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   private convertUpdateDataToObtainAchievementData(data: UpdateAchievementUserProgressProgressesReturnData) {
     const nowFinishedStagesInfo = getDataForObtainAchievementEmit({
       foundAchievement: data.foundAchievement,
-      nowFinishedStages: data.nowFinishedStages
+      nowFinishedStages: data.nowFinishedStages,
+      gainedProgress: data.gainedProgress
     });
-
     return nowFinishedStagesInfo;
   }
 
@@ -139,6 +171,47 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
     const modifiedUpdateData = this.convertUpdateDataToObtainAchievementData(updateData);
 
     if (modifiedUpdateData.stages.length > 0) this.addObtainedAchievementDataToQueue(modifiedUpdateData, username);
+    else if (modifiedUpdateData.gainedProgress !== null) {
+      const gainedProgress = modifiedUpdateData.gainedProgress;
+      this.addAchievementProgressDataToQueue({ ...modifiedUpdateData, gainedProgress }, username);
+    }
+  }
+
+  private async addAnonymousAchievementProgress({
+    achievementName,
+    username,
+    gainedProgress
+  }: AddAnonymousAchievementProgressData) {
+    const foundAchievement = await getOneAchievement({ name: achievementName }, {});
+    if (!foundAchievement)
+      return achievementsLogger.error(`Not found achievement in addAnonymousAchievementProgress , ${foundAchievement}`);
+
+    const {
+      stages: { stageData }
+    } = foundAchievement;
+
+    const nextStageIndex = stageData.findIndex(({ goal }) => goal > gainedProgress.progress);
+    const currentStageIndex = nextStageIndex === -1 ? -1 : nextStageIndex - 1;
+    this.addAchievementProgressDataToQueue(
+      {
+        achievement: foundAchievement,
+        gainedProgress: {
+          ...gainedProgress,
+          ...(nextStageIndex !== -1 ? { nextStage: stageData.at(nextStageIndex) } : undefined),
+          currentStage: stageData.at(currentStageIndex)
+        }
+      },
+      username
+    );
+  }
+
+  private addAchievementProgressDataToQueue(data: AddAchievementProgressDataToQueueData, username: string) {
+    this.enqueue({
+      achievement: data.achievement,
+      progressData: data.gainedProgress,
+      username,
+      id: randomUUID()
+    } as ObtainAchievementDataWithProgressOnly);
   }
 
   private addObtainedAchievementDataToQueue(data: GetDataForObtainAchievementEmitReturnData, username: string) {
@@ -148,7 +221,7 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
         stage,
         username,
         id: randomUUID()
-      })
+      } as ObtainAchievementDataWithCollectedAchievement)
     );
   }
 
@@ -160,7 +233,9 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
     });
   }
 
-  private emitObtainAchievement(emitData: ObtainAchievementData) {
+  private emitObtainAchievement(
+    emitData: ObtainAchievementDataWithCollectedAchievement | ObtainAchievementDataWithProgressOnly
+  ) {
     this.socketIO.emit("obtainAchievement", emitData);
   }
 
@@ -193,6 +268,7 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
   public async checkOnlineUserAchievements(user: UserModel) {
     const { _id, username, messageCount, watchTime, points, follower } = user;
     const commonData = { userId: _id, username: username };
+
     await this.updateAchievementUserProgressAndAddToQueue({
       ...commonData,
       achievementName: ACHIEVEMENTS.CHAT_MESSAGES,
@@ -211,19 +287,104 @@ class AchievementsHandler extends QueueHandler<ObtainAchievementData> {
     if (follower) {
       await this.checkUserFollowageForAchievement({ ...commonData, dateProgress: follower });
     }
-
     await this.handleBadgesLogic(commonData);
-
     await this.checkCustomWatchTimeAchievements({ ...commonData, progress: watchTime || 0 });
   }
 
-  private async checkUserFollowageForAchievement({ dateProgress, ...rest }: CheckGlobalUserDetailsDateArgs) {
-    const daysFollow = moment().diff(moment(dateProgress), "seconds");
+  public async checkUserFollowageForAchievement({ dateProgress, ...rest }: CheckGlobalUserDetailsDateArgs) {
+    // add 1 minute bonus there to prevent situations where followDate===current date
+    const secondsFollow = moment().add(1, "minute").diff(moment(dateProgress), "seconds");
+
     await this.updateAchievementUserProgressAndAddToQueue({
       achievementName: ACHIEVEMENTS.FOLLOWAGE,
-      progress: { value: daysFollow },
+      progress: { value: secondsFollow },
       ...rest
     });
+  }
+
+  public async checkUserSubscribeForAchievements({ tier, isGift, ...rest }: CheckUserSubscribeForAchievementsParams) {
+    const tierAchievements = new Map<SubscriptionTiers, ACHIEVEMENTS[]>([
+      [
+        "3000",
+        [ACHIEVEMENTS.SUBSCRIBTIONS_TIER_3, ACHIEVEMENTS.SUBSCRIBTIONS_TIER_2, ACHIEVEMENTS.SUBSCRIBTIONS_TIER_1]
+      ],
+      ["2000", [ACHIEVEMENTS.SUBSCRIBTIONS_TIER_2, ACHIEVEMENTS.SUBSCRIBTIONS_TIER_1]],
+      ["1000", [ACHIEVEMENTS.SUBSCRIBTIONS_TIER_1]]
+    ]);
+    const tierAchievementsToUpdate: ACHIEVEMENTS[] = [
+      ...(tierAchievements.get(tier) ?? []),
+      ...(isGift ? [ACHIEVEMENTS.RECEIVED_SUBSCRIBTIONS_GIFTS] : [ACHIEVEMENTS.BOUGHT_SUBSCRIBTIONS])
+    ];
+
+    for await (const achievementName of tierAchievementsToUpdate) {
+      await this.updateAchievementUserProgressAndAddToQueue({
+        achievementName,
+        progress: { value: 1, increment: true },
+        ...rest
+      });
+    }
+  }
+
+  public async checkUserSubscribeGiftsForAchievements({
+    tier,
+    amount,
+    isAnonymous,
+    ...rest
+  }: CheckUserSubscribeGiftsForAchievementsParams) {
+    const tierAchievements = new Map<
+      SubscriptionTiers,
+      { achievements: ACHIEVEMENTS[]; packAchievements: ACHIEVEMENTS[] }
+    >([
+      [
+        "3000",
+        {
+          achievements: [ACHIEVEMENTS.SENT_SUBSCRIBTIONS_GIFTS_TIER_3],
+          packAchievements: [ACHIEVEMENTS.SENT_SUBSCRIBTIONS_GIFTS_AS_PACK_TIER_3]
+        }
+      ],
+      [
+        "2000",
+        {
+          achievements: [ACHIEVEMENTS.SENT_SUBSCRIBTIONS_GIFTS_TIER_2],
+          packAchievements: [ACHIEVEMENTS.SENT_SUBSCRIBTIONS_GIFTS_AS_PACK_TIER_2]
+        }
+      ],
+      [
+        "1000",
+        {
+          achievements: [ACHIEVEMENTS.SENT_SUBSCRIBTIONS_GIFTS_TIER_1],
+          packAchievements: [ACHIEVEMENTS.SENT_SUBSCRIBTIONS_GIFTS_AS_PACK_TIER_1]
+        }
+      ]
+    ]);
+
+    const tierAchievementsToUpdate = tierAchievements.get(tier) || { achievements: [], packAchievements: [] };
+
+    for await (const achievementName of [
+      ...tierAchievementsToUpdate.achievements,
+      ...tierAchievementsToUpdate.packAchievements
+    ]) {
+      const progressValue = tierAchievementsToUpdate.achievements.includes(achievementName)
+        ? { value: amount, increment: true }
+        : { value: amount };
+
+      if (isAnonymous)
+        await this.addAnonymousAchievementProgress({
+          achievementName,
+          gainedProgress: {
+            progress: amount,
+            timestamp: Date.now()
+          },
+          username: "Anonymous user"
+        });
+      else {
+        await this.updateAchievementUserProgressAndAddToQueue({
+          achievementName,
+          progress: progressValue,
+          ...rest
+        });
+      }
+    }
   }
 
   public async incrementCommandAchievements(args: IncrementCommandAchievementsArgs) {

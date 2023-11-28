@@ -131,13 +131,10 @@ export const createUser = async (userData: UserCreateData) => {
 };
 
 export const createUserIfNotExist = async (userFilter: FilterQuery<UserDocument>, userData: UserCreateData) => {
-  const userExist = await isUserInDB(userFilter);
-  if (userExist) return userExist;
-
   try {
-    const userCreated = await createUser(userData);
+    const user = await User.findOneAndUpdate(userFilter, userData, { upsert: true, new: true });
 
-    return userCreated;
+    return user;
   } catch (err) {
     logger.error(`Error occured while creating user if not exist. ${err}`);
     handleAppError(err);
