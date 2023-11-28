@@ -1,7 +1,7 @@
 import { useLocalStorage } from "@hooks";
 import React, { ChangeEvent } from "react";
 
-function ImageSelector() {
+function PreviewImageSelector() {
   const [selectedImage, setSelectedImage] = useLocalStorage<string | null>(
     "reactGridPreviewImage",
     null
@@ -42,4 +42,4 @@ function ImageSelector() {
   );
 }
 
-export default ImageSelector;
+export default PreviewImageSelector;
