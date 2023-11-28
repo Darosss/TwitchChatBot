@@ -1,0 +1,23 @@
+.react-grid-image-select-wrapper {
+  .react-grid-image-input-wrapper {
+    background-color: $secondary-color;
+    z-index: 100;
+    position: absolute;
+  }
+  .react-grid-image-select-background {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+
+    .react-grid-image-select-background-remove {
+      position: absolute;
+      z-index: 100;
+    }
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
