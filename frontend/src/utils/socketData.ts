@@ -1,4 +1,8 @@
-import { MessageServerData } from "@socketTypes";
+import {
+  MessageServerData,
+  ObtainAchievementDataWithCollectedAchievement,
+  ObtainAchievementDataWithProgressOnly,
+} from "@socketTypes";
 
 type GetMessagesWithEmotesParams = Pick<
   MessageServerData["messageData"],
@@ -79,4 +83,17 @@ export const getMessagesWithEmotes: GetMessagesWithEmotesFn = ({
     });
 
   return messagesAndEmotes;
+};
+
+//TODO: duplicate function is in backend socket.ts
+export const isObtainedAchievement = (
+  data:
+    | ObtainAchievementDataWithCollectedAchievement
+    | ObtainAchievementDataWithProgressOnly
+): data is ObtainAchievementDataWithCollectedAchievement => {
+  return (
+    (data as ObtainAchievementDataWithCollectedAchievement).stage !==
+      undefined &&
+    (data as ObtainAchievementDataWithCollectedAchievement).stage !== null
+  );
 };

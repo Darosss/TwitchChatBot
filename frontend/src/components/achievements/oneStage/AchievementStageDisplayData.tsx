@@ -87,7 +87,7 @@ function EmulateStageButton({ stageData }: EmulateStageButtonProps) {
         isTime: isTime,
       },
       username: "Emited username",
-      stage: [stageData, new Date().getTime()],
+      stage: { data: stageData, timestamp: new Date().getTime() },
     });
   return (
     <>
