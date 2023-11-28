@@ -44,7 +44,8 @@ const AchivementSchema: Schema<AchievementDocument> = new Schema(
     ...tagModeField,
     ...enabledField,
     custom: { type: AchievementCustomSchema, required: false },
-    hidden: { type: Boolean }
+    hidden: { type: Boolean },
+    showProgress: { type: Boolean }
   },
   { timestamps: true }
 );

@@ -3,7 +3,9 @@ import {
   AchievementUserProgress,
   AchievementModel,
   AchievementUserProgressModel,
-  TagModel
+  TagModel,
+  StageData,
+  BadgeModel
 } from "@models";
 import { logger, handleAppError, checkExistResource } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
@@ -12,9 +14,11 @@ import {
   AchievementUserProgressCreate,
   AchievementUserProgressUpdate,
   AchievementUserProgressesFindOptions,
+  GainedProgress,
   GetDataForObtainAchievementEmitReturnData,
   UpdateAchievementUserProgressProgressesArgs,
-  UpdateAchievementUserProgressProgressesReturnData
+  UpdateAchievementUserProgressProgressesReturnData,
+  UpdateFinishedStagesDependsOnProgressReturnData
 } from "./types";
 
 export const getAchievementUserProgresses = async (
@@ -90,7 +94,7 @@ export const updateOneAchievementUserProgress = async (
       {
         ...updateData,
         ...(updateData.progresses && {
-          $set: { progressesLength: achievement.progresses.length }
+          $set: { progressesLength: achievement.progresses.length || updateData.progresses.length }
         })
       },
       {
@@ -129,25 +133,38 @@ export const getAchievementsProgressesByUserId = async (userId: string) => {
 };
 
 export const updateFinishedStagesDependsOnProgress = async (
-  achievement: AchievementModel,
-  achievementProgress: AchievementUserProgressModel,
+  { stages: { stageData }, showProgress }: AchievementModel,
+  { _id: progressId, progresses }: AchievementUserProgressModel,
   progress: number
-): Promise<[number, number][]> => {
-  const newfinishedStages: AchievementUserProgressModel["progresses"] = [];
-  for (let idx = 0; idx < achievement.stages.stageData.length; idx++) {
-    const currentAchievementStage = achievement.stages.stageData[idx];
-    const currentProgressStage = achievementProgress.progresses.at(idx);
+): Promise<UpdateFinishedStagesDependsOnProgressReturnData> => {
+  const returnData: UpdateFinishedStagesDependsOnProgressReturnData = {
+    nowFinishedStages: [],
+    gainedProgress: null
+  };
+  const stageDataLen = stageData.length;
+  for (let idx = 0; idx < stageDataLen; idx++) {
+    const currentAchievementStage = stageData[idx];
+    const currentProgressStage = progresses.at(idx);
     if (!currentProgressStage && currentAchievementStage.goal <= progress) {
-      newfinishedStages.push([currentAchievementStage.stage, Date.now()]);
+      returnData.nowFinishedStages.push([currentAchievementStage.stage, Date.now()]);
+      // ------
+    } else if (showProgress && (progress < currentAchievementStage.goal || idx === stageDataLen - 1)) {
+      const currentStageIndex = idx - 1;
+      const currentStageNumber = currentStageIndex >= 0 ? stageData.at(currentStageIndex)?.stage || null : null;
+      returnData.gainedProgress = {
+        currentStageNumber: currentStageNumber,
+        nextStageNumber: currentAchievementStage.stage,
+        progress
+      };
+      break;
     }
   }
 
   await updateOneAchievementUserProgress(
-    { _id: achievementProgress._id },
-    { progresses: [...achievementProgress.progresses, ...newfinishedStages], value: progress }
+    { _id: progressId },
+    { progresses: [...progresses, ...returnData.nowFinishedStages], value: progress }
   );
-
-  return newfinishedStages;
+  return returnData;
 };
 
 export const updateAchievementUserProgressProgresses = async ({
@@ -169,13 +186,27 @@ export const updateAchievementUserProgressProgresses = async ({
 
   if (!userProgress) return; //TODO: add handling
 
-  const nowFinishedStages = await updateFinishedStagesDependsOnProgress(
+  const { nowFinishedStages, gainedProgress } = await updateFinishedStagesDependsOnProgress(
     foundAchievement,
     userProgress,
     progress.increment ? userProgress.value + progress.value : progress.value
   );
 
-  return { foundAchievement, nowFinishedStages };
+  return { foundAchievement, nowFinishedStages, gainedProgress };
+};
+
+const getGainedProgressReturnData = (gainedProgress: GainedProgress, stageData: StageData<BadgeModel>[]) => {
+  const currentStageProgressGained = stageData.find(({ stage }) => stage === gainedProgress.currentStageNumber);
+  const nextStageProgressGained = stageData.find(({ stage }) => stage === gainedProgress.nextStageNumber);
+
+  const gainedProgressReturnData: GetDataForObtainAchievementEmitReturnData["gainedProgress"] = {
+    currentStage: currentStageProgressGained,
+    nextStage: nextStageProgressGained,
+    progress: gainedProgress.progress,
+    timestamp: Date.now()
+  };
+
+  return gainedProgressReturnData;
 };
 
 export const getDataForObtainAchievementEmit = (
@@ -183,12 +214,29 @@ export const getDataForObtainAchievementEmit = (
 ): GetDataForObtainAchievementEmitReturnData => {
   const newStages: GetDataForObtainAchievementEmitReturnData["stages"] = [];
 
-  data.nowFinishedStages.forEach((stage) => {
-    const stageData = data.foundAchievement.stages.stageData.find((innerStage) => innerStage.stage === stage[0]);
-    if (stageData) newStages.push([stageData, stage[1]]);
+  const { nowFinishedStages, foundAchievement, gainedProgress } = data;
+  const {
+    stages: { stageData }
+  } = foundAchievement;
+
+  nowFinishedStages.forEach((stage) => {
+    const data = stageData.find((innerStage) => innerStage.stage === stage[0]);
+    if (!data) return;
+
+    newStages.push({
+      data,
+      timestamp: stage[1]
+    });
   });
+
+  const gainedProgressReturnData = gainedProgress ? getGainedProgressReturnData(gainedProgress, stageData) : null;
+
   return {
-    achievement: { name: data.foundAchievement.name, isTime: data.foundAchievement.isTime },
-    stages: newStages
+    achievement: {
+      name: foundAchievement.name,
+      isTime: foundAchievement.isTime
+    },
+    stages: newStages,
+    gainedProgress: gainedProgressReturnData
   };
 };

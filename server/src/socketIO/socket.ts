@@ -1,5 +1,13 @@
 import { Server } from "socket.io";
-import { ClientToServerEvents, InterServerEvents, ServerSocket, ServerToClientEvents, SocketData } from "./types";
+import {
+  ClientToServerEvents,
+  InterServerEvents,
+  ObtainAchievementDataWithCollectedAchievement,
+  ObtainAchievementDataWithProgressOnly,
+  ServerSocket,
+  ServerToClientEvents,
+  SocketData
+} from "./types";
 import http from "http";
 
 const localSocket = (httpServer: http.Server) => {
@@ -15,6 +23,16 @@ const localSocket = (httpServer: http.Server) => {
   });
 
   return io;
+};
+
+//TODO: duplicate function is in frontend utils
+export const isObtainedAchievement = (
+  data: ObtainAchievementDataWithCollectedAchievement | ObtainAchievementDataWithProgressOnly
+): data is ObtainAchievementDataWithCollectedAchievement => {
+  return (
+    (data as ObtainAchievementDataWithCollectedAchievement).stage !== undefined &&
+    (data as ObtainAchievementDataWithCollectedAchievement).stage !== null
+  );
 };
 
 export default localSocket;

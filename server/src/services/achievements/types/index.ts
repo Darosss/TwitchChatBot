@@ -5,7 +5,11 @@ import {
   AchievementUserProgressModel,
   AchievementWithBadgePopulated
 } from "@models";
-import { ObtainAchievementData } from "@socket";
+import {
+  ObtainAchievementBaseData,
+  ObtainAchievementDataWithCollectedAchievement,
+  ObtainAchievementDataWithProgressOnly
+} from "@socket";
 
 export interface AchievementsFindOptions<T = AchievementModel> {
   select?: SelectQuery<T>;
@@ -51,16 +55,27 @@ export interface AchievementUserProgressCreate
 export type AchievementStageCreateData = Pick<AchievementStageModel, "name" | "stageData">;
 export type AchievementStageUpdateData = Partial<AchievementStageCreateData>;
 
+export type GainedProgress = {
+  currentStageNumber: number | null;
+  nextStageNumber: number | null;
+  progress: number;
+};
+
 export type UpdateAchievementUserProgressProgressesReturnData = {
   foundAchievement: AchievementWithBadgePopulated;
   nowFinishedStages: AchievementUserProgressModel["progresses"];
+  gainedProgress: GainedProgress | null;
 };
+
+export interface UpdateFinishedStagesDependsOnProgressReturnData {
+  nowFinishedStages: AchievementUserProgressModel["progresses"];
+  gainedProgress: GainedProgress | null;
+}
+
 export interface GetDataForObtainAchievementEmitReturnData {
-  achievement: {
-    name: string;
-    isTime: boolean;
-  };
-  stages: ObtainAchievementData["stage"][];
+  achievement: ObtainAchievementBaseData["achievement"];
+  stages: ObtainAchievementDataWithCollectedAchievement["stage"][];
+  gainedProgress: ObtainAchievementDataWithProgressOnly["progressData"] | null;
 }
 
 export interface UpdateAchievementUserProgressProgressesArgs {

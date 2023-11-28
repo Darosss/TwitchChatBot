@@ -1,4 +1,4 @@
-import { StageDataWithBadgePopulated, UserModel } from "@models";
+import { AchievementModel, StageDataWithBadgePopulated, UserModel } from "@models";
 import { CommonUserstate, DeleteUserstate } from "tmi.js";
 
 export type MessageServerDataBadgesPathsType = [string, string, string];
@@ -100,14 +100,27 @@ export interface RewardData {
   rewardImage: string;
 }
 
-export interface AchievementDataInObtainAchievement {
-  name: string;
-  isTime: boolean;
+export type ObtainAchievementDataStageType = {
+  data: StageDataWithBadgePopulated;
+  timestamp: number;
+};
+
+export type ObtainAchievementDataProgressDataType = {
+  currentStage?: StageDataWithBadgePopulated;
+  nextStage?: StageDataWithBadgePopulated;
+  progress: number;
+  timestamp: number;
+};
+
+export interface ObtainAchievementBaseData {
+  id: string;
+  achievement: Pick<AchievementModel, "name" | "isTime">;
+  username: string;
+}
+export interface ObtainAchievementDataWithCollectedAchievement extends ObtainAchievementBaseData {
+  stage: ObtainAchievementDataStageType;
 }
 
-export interface ObtainAchievementData {
-  id: string;
-  achievement: AchievementDataInObtainAchievement;
-  stage: [StageDataWithBadgePopulated, number];
-  username: string;
+export interface ObtainAchievementDataWithProgressOnly extends ObtainAchievementBaseData {
+  progressData: ObtainAchievementDataProgressDataType;
 }
