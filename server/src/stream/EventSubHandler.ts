@@ -165,6 +165,85 @@ class EventSubHandler extends HeadHandler {
       }
     });
   }
+  private async subscribeToChannelRaidFrom() {
+    this.listener.onChannelRaidFrom(this.authorizedUser.id, async (e) => {
+      const { viewers, raidingBroadcasterDisplayName, raidingBroadcasterId, raidingBroadcasterName } = e;
+
+      eventsubLogger.info(
+        `Someone raided a channel: ${JSON.stringify({
+          viewers,
+          raidingBroadcasterDisplayName,
+          raidingBroadcasterId,
+          raidingBroadcasterName
+        })}`
+      );
+
+      const userData = {
+        username: raidingBroadcasterDisplayName,
+        twitchId: raidingBroadcasterId,
+        twitchName: raidingBroadcasterName,
+        privileges: 0
+      };
+
+      try {
+        const userDB = await createUserIfNotExist({ twitchId: raidingBroadcasterId }, userData);
+        if (!userDB) {
+          return eventsubLogger.error(`subscribeToChannelRaidFrom - error when trying to manipulate user data`);
+        }
+        await this.achievementsHandler.checkRaidFromForAchievements({
+          viewersAmount: viewers,
+          userId: userDB._id,
+          username: userDB.username
+        });
+      } catch (err) {
+        eventsubLogger.error(`Error occured in subscribeToChannelRaidFrom: ${err}`);
+      }
+    });
+  }
+
+  private async subscribeToChannelCheer() {
+    this.listener.onChannelCheer(this.authorizedUser.id, async (e) => {
+      const { bits, userDisplayName, userId, userName, message, isAnonymous } = e;
+      eventsubLogger.info(
+        `Someone cheered to channel: ${JSON.stringify({
+          bits,
+          userDisplayName,
+          userId,
+          userName,
+          message,
+          isAnonymous
+        })}`
+      );
+
+      try {
+        const userDB = isAnonymous
+          ? null
+          : await createUserIfNotExist(
+              { twitchId: userId },
+              {
+                //NOTE:below 3: null assertion - because I know if !isAnonymous its not null
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                username: userDisplayName!,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                twitchId: userId!,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                twitchName: userName!,
+                privileges: 0
+              }
+            );
+
+        await this.achievementsHandler.checkUserCheersForAchievements({
+          isAnonymous,
+          bits,
+          message,
+          userId: userDB?._id,
+          username: userDB?.username
+        });
+      } catch (err) {
+        eventsubLogger.error(`Error occured in subscribeToChannelCheer: ${err}`);
+      }
+    });
+  }
 
   private async createStreamSessionHelper(startDate: Date, title: string, category: string) {
     const timestampUpdateStream = startDate.getTime().toString();
@@ -294,6 +373,8 @@ class EventSubHandler extends HeadHandler {
     await this.subscribeToChannelFollow();
     await this.subscribeToChannelSubscription();
     await this.subscribeToChannelSubscriptionGift();
+    await this.subscribeToChannelCheer();
+    await this.subscribeToChannelRaidFrom();
   }
 }
 

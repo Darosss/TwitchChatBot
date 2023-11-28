@@ -94,6 +94,15 @@ interface AddAnonymousAchievementProgressData {
   gainedProgress: AddAchievementProgressDataToQueueData["gainedProgress"];
 }
 
+interface CheckRaidFromForAchievementsParams extends CommonAchievementCheckType {
+  viewersAmount: number;
+}
+interface CheckUserCheersForAchievementsParams extends Partial<CommonAchievementCheckType> {
+  isAnonymous: boolean;
+  bits: number;
+  message: string;
+}
+
 class AchievementsHandler extends QueueHandler<
   ObtainAchievementDataWithCollectedAchievement | ObtainAchievementDataWithProgressOnly
 > {
@@ -300,6 +309,44 @@ class AchievementsHandler extends QueueHandler<
       progress: { value: secondsFollow },
       ...rest
     });
+  }
+
+  public async checkRaidFromForAchievements({ viewersAmount, ...rest }: CheckRaidFromForAchievementsParams) {
+    await this.updateAchievementUserProgressAndAddToQueue({
+      achievementName: ACHIEVEMENTS.RAID_FROM,
+      progress: { value: viewersAmount },
+      ...rest
+    });
+  }
+
+  public async checkUserCheersForAchievements({
+    bits,
+    isAnonymous,
+    message,
+    username,
+    userId
+  }: CheckUserCheersForAchievementsParams) {
+    //TODO: add usage of message
+    const cheerAchievements = [
+      { achievement: ACHIEVEMENTS.SENT_CHEERS, pack: false },
+      { achievement: ACHIEVEMENTS.SENT_CHEERS_AS_PACK, pack: true }
+    ];
+    for (const achievementData of cheerAchievements) {
+      if (!isAnonymous && username && userId) {
+        await this.updateAchievementUserProgressAndAddToQueue({
+          achievementName: achievementData.achievement,
+          progress: { value: bits },
+          userId,
+          username
+        });
+      } else {
+        await this.addAnonymousAchievementProgress({
+          achievementName: achievementData.achievement,
+          username: "Anonymous user",
+          gainedProgress: { progress: bits, timestamp: Date.now() }
+        });
+      }
+    }
   }
 
   public async checkUserSubscribeForAchievements({ tier, isGift, ...rest }: CheckUserSubscribeForAchievementsParams) {

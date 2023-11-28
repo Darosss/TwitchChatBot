@@ -114,6 +114,26 @@ export const getDefaultAchievementsData = (stagesId: string, tagId: string): Ach
       showProgress: true
     },
     {
+      name: ACHIEVEMENTS.SENT_CHEERS,
+      description: "Achievements for sending cheers cumulative to channel",
+      stages: stagesId,
+      tag: tagId,
+      showProgress: true
+    },
+    {
+      name: ACHIEVEMENTS.SENT_CHEERS_AS_PACK,
+      description: "Achievements for sending cheers choosen amounts at once to channel",
+      stages: stagesId,
+      tag: tagId
+    },
+    {
+      name: ACHIEVEMENTS.RAID_FROM,
+      description: "Achievements for raid a channel with choosen amount of viewers",
+      stages: stagesId,
+      tag: tagId,
+      showProgress: true
+    },
+    {
       name: ACHIEVEMENTS.COMMANDS_COUNT,
       description: "Achievements for use of command",
       stages: stagesId,
