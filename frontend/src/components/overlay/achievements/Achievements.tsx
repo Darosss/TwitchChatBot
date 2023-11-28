@@ -1,9 +1,15 @@
-import { ObtainAchievementData, useSocketContext } from "@socket";
-import { getDateFromSecondsToYMDHMS } from "@utils";
+import {
+  ObtainAchievementDataWithCollectedAchievement,
+  ObtainAchievementDataWithProgressOnly,
+  useSocketContext,
+} from "@socket";
+import { getDateFromSecondsToYMDHMS, isObtainedAchievement } from "@utils";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { viteBackendUrl } from "src/configs/envVariables";
-
+type ObtainedAchievementStateType =
+  | ObtainAchievementDataWithCollectedAchievement
+  | ObtainAchievementDataWithProgressOnly;
 export default function Achievements() {
   const {
     events: { obtainAchievement, obtainAchievementQueueInfo },
@@ -12,7 +18,7 @@ export default function Achievements() {
   const wrapper = useRef<HTMLDivElement>(null);
 
   const [obtainedAchievements, setObtainedAchievements] = useState<
-    ObtainAchievementData[]
+    ObtainedAchievementStateType[]
   >([]);
 
   const [showAchievementsQueue, setShowAchievementsQueue] = useState(false);
@@ -39,15 +45,26 @@ export default function Achievements() {
     obtainAchievement.on((data) => {
       setObtainedAchievements((prevState) => [data, ...prevState]);
 
-      const audioUrl = data.stage[0].sound;
-      if (audioUrl) {
-        audio.src = `${viteBackendUrl}/${audioUrl}`;
+      const options = {
+        audioUrl: "",
+        delay: 2500,
+      };
+      if (isObtainedAchievement(data)) {
+        options.audioUrl = data.stage.data.sound;
+        options.delay = data.stage.data.showTimeMs;
+      } else {
+        options.audioUrl = data.progressData.currentStage?.sound;
+        options.delay = data.progressData.currentStage?.showTimeMs;
+      }
+
+      if (options.audioUrl) {
+        audio.src = `${viteBackendUrl}/${options.audioUrl}`;
         audio.play();
       }
 
       setTimeout(() => {
         audio.pause();
-      }, data.stage[0].showTimeMs);
+      }, options.delay || 2500);
     });
 
     return () => {
@@ -93,55 +110,172 @@ export default function Achievements() {
         {itemsQueLength}+
       </div>
 
-      {obtainedAchievements.map(
-        ({ stage, achievement: { name, isTime }, username, id }) => {
-          const [stageData, timestamp] = stage;
+      {obtainedAchievements.map((data) => {
+        return isObtainedAchievement(data) ? (
+          <AchievementDataBlock key={data.id} data={data} />
+        ) : (
+          <AchievementProgressDataBlock key={data.id} data={data} />
+        );
+      })}
+    </div>
+  );
+}
 
-          return (
-            <div
-              key={id}
-              className={`obtained-achievements-wrapper animated-achievement${
-                stageData.rarity ? `-${stageData.rarity}` : ""
-              }`}
-            >
-              <div className="achievements-overlay-background"></div>
+interface AchievementDataBlockProps {
+  data: ObtainAchievementDataWithCollectedAchievement;
+}
+function AchievementDataBlock({
+  data: {
+    stage: { data, timestamp },
+    id,
+    username,
+    achievement,
+  },
+}: AchievementDataBlockProps) {
+  return (
+    <div
+      key={id}
+      className={`obtained-achievements-wrapper animated-achievement${
+        data.rarity ? `-${data.rarity}` : ""
+      }`}
+    >
+      <div className="achievements-overlay-background"></div>
 
-              <div className="obtained-achievements-content">
-                <div className="obtained-achievement-username">
-                  {username}{" "}
-                  <span>
-                    obtained achievement <span>{name} </span>
-                  </span>
-                </div>
+      <div className="obtained-achievements-content">
+        <div className="obtained-achievement-username">
+          {username}{" "}
+          <span>
+            obtained achievement <span>{achievement.name} </span>
+          </span>
+        </div>
 
-                <div className="obtained-achievement-details">
-                  <div className="obtained-achievements-stage-name">
-                    {stageData.name}
-                  </div>
+        <div className="obtained-achievement-details">
+          <div className="obtained-achievements-stage-name">{data.name}</div>
 
-                  <div className="obtained-achievement-timestamp">
-                    {moment(timestamp).format("HH:mm")}
-                  </div>
-                  <div className="obtained-achievements-goal">
-                    Goal:
-                    <span>
-                      {isTime
-                        ? getDateFromSecondsToYMDHMS(stageData.goal)
-                        : stageData.goal}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="obtained-achievements-badge">
-                <img
-                  src={`${viteBackendUrl}/${stageData.badge.imagesUrls.x64}`}
-                  alt={stageData.name}
-                />
-              </div>
+          <div className="obtained-achievement-timestamp">
+            {moment(timestamp).format("HH:mm")}
+          </div>
+          <div className="obtained-achievements-goal">
+            Goal:
+            <span>
+              {achievement.isTime
+                ? getDateFromSecondsToYMDHMS(data.goal)
+                : data.goal}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="obtained-achievements-badge">
+        <img
+          src={`${viteBackendUrl}/${data.badge.imagesUrls.x64}`}
+          alt={data.name}
+        />
+      </div>
+    </div>
+  );
+}
+
+interface AchievementProgressDataBlockProps {
+  data: ObtainAchievementDataWithProgressOnly;
+}
+function AchievementProgressDataBlock({
+  data: {
+    id,
+    progressData: { currentStage, nextStage, progress, timestamp },
+    username,
+    achievement,
+  },
+}: AchievementProgressDataBlockProps) {
+  const renderProgressDivs = () => {
+    return (
+      <>
+        <div>
+          Progress:{" "}
+          <span>
+            {achievement.isTime
+              ? getDateFromSecondsToYMDHMS(progress)
+              : progress}
+          </span>
+        </div>
+        <div>
+          {!nextStage ? null : (
+            <div>
+              Next:
+              <span>
+                {achievement.isTime
+                  ? getDateFromSecondsToYMDHMS(nextStage.goal)
+                  : nextStage.goal}
+              </span>
             </div>
-          );
-        }
-      )}
+          )}
+        </div>
+      </>
+    );
+  };
+  return (
+    <div
+      key={id}
+      className={`obtained-achievements-wrapper achievement-progress-wrapper animated-achievement${
+        currentStage?.rarity ? `-${currentStage.rarity}` : ""
+      }`}
+    >
+      <div className="achievements-overlay-background"></div>
+
+      <div className="obtained-achievements-content">
+        <div className="obtained-achievement-username">
+          {username}
+          <span>
+            {" "}
+            made a progress in <span>{achievement.name} </span> achievement
+          </span>
+        </div>
+
+        <div className="obtained-achievement-details">
+          <div className="obtained-achievements-stage-name">
+            <div className="obtained-achievements-stage-name-header">STAGE</div>
+
+            <div>
+              {" "}
+              Current: <span>{currentStage?.name || "None"}</span>
+            </div>
+            {nextStage ? (
+              <div
+                className={`obtained-achievements-stage-name-next-stage ${
+                  nextStage.rarity
+                    ? `animated-achievement-${nextStage.rarity}`
+                    : ""
+                }`}
+              >
+                Next: <span> {nextStage.name}</span>
+              </div>
+            ) : (
+              <div className="obtained-achievements-stage-name-max-stage">
+                <span> Maxed out!</span>
+              </div>
+            )}
+          </div>
+
+          <div className="obtained-achievement-timestamp">
+            {moment(timestamp).format("HH:mm")}
+          </div>
+          <div className="obtained-achievements-goal">
+            {renderProgressDivs()}
+          </div>
+        </div>
+      </div>
+      <div className="obtained-achievements-badge">
+        <img
+          className={`${
+            !currentStage ? "obtained-achievements-badge-not-achieved" : ""
+          }`}
+          src={`${viteBackendUrl}/${
+            currentStage
+              ? currentStage?.badge.imagesUrls.x64
+              : nextStage?.badge.imagesUrls.x64
+          }`}
+          alt={currentStage?.name}
+        />
+      </div>
     </div>
   );
 }
