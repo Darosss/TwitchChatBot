@@ -18,3 +18,4 @@ export * from "./TriggerService";
 export * from "./UserService";
 export * from "./WidgetsService";
 export * from "./SongsService";
+export * from "./YoutubeService";

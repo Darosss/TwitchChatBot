@@ -34,5 +34,6 @@ $screen-ulg: 1200px; /* Px for media queries for ultra large screens */
 $width-without-drawer: 98vw;
 
 $default-overlay-box-shadow: 1px 2px 7px 4px $secondary-color;
-$default-overlay-background-color: $primary-color;
+$default-overlay-filter-opacity: opacity(70%);
+$default-overlay-background-color: rgba(170, 196, 230, 0.7);
 $default-overlay-text-color: $success-color;
