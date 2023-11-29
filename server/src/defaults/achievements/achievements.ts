@@ -10,6 +10,19 @@ export const getDefaultAchievementsData = (stagesId: string, tagId: string): Ach
       tag: tagId
     },
     {
+      name: ACHIEVEMENTS.EMOTES_COUNT,
+      description: "Achievements for use chat emotes",
+      stages: stagesId,
+      tag: tagId
+    },
+    {
+      name: ACHIEVEMENTS.RANDOMLY_CHOOSEN,
+      description: "Achievements given at random time with random percent",
+      stages: stagesId,
+      tag: tagId,
+      showProgress: true
+    },
+    {
       name: ACHIEVEMENTS.WATCH_TIME,
       description: "Achievements for watch time",
       stages: stagesId,

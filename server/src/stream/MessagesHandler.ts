@@ -14,18 +14,28 @@ class MessagesHandler {
     this.configs = refreshedConfigs;
   }
 
-  public async saveMessageAndUpdateUser(userId: string, userName: string, date: Date, message: string) {
+  public async saveMessageAndUpdateUser(
+    userId: string,
+    userName: string,
+    date: Date,
+    messageData: { message: string; emotes?: boolean }
+  ) {
     await this.saveMessageToDatabase({
       owner: userId,
       ownerUsername: userName,
       date: date,
-      message: message
+      message: messageData.message
+    });
+    this.achievementsHandler.checkMessageForAchievements({
+      messageData,
+      date,
+      userId,
+      username: userName
     });
 
     const updatedUser = await this.updateUserStatistics(userId);
 
     if (!updatedUser) return;
-    this.achievementsHandler.checkMessageForAchievements({ message, date, userId, username: userName });
   }
 
   private async saveMessageToDatabase(messageCreateData: MessageCreateData) {

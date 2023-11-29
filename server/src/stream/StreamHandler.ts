@@ -117,7 +117,10 @@ class StreamHandler {
         timestamp: Number(userstate["tmi-sent-ts"]) || new Date().getTime()
       });
 
-      await this.handlers.messagesHandler.saveMessageAndUpdateUser(user._id, user.username, new Date(), message);
+      await this.handlers.messagesHandler.saveMessageAndUpdateUser(user._id, user.username, new Date(), {
+        emotes: !!userstate.emotes,
+        message
+      });
 
       // we can't use self - onMessageEvenet uses client for only receiving data. more see in TwitchTmiHandler
       if (userstate.username === botUsername) return;

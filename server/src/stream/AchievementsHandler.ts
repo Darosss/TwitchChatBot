@@ -21,7 +21,7 @@ import {
   getOneAchievement
 } from "@services";
 import { ACHIEVEMENTS } from "@defaults";
-import { achievementsLogger, getDateFromSecondsToYMDHMS } from "@utils";
+import { achievementsLogger, getDateFromSecondsToYMDHMS, percentChance } from "@utils";
 import moment from "moment";
 import { randomUUID } from "crypto";
 import {
@@ -48,7 +48,10 @@ interface CommonAchievementCheckType {
 }
 
 interface CheckMessageForAchievement extends CommonAchievementCheckType {
-  message: string;
+  messageData: {
+    message: string;
+    emotes?: boolean;
+  };
   date: Date;
 }
 
@@ -248,8 +251,14 @@ class AchievementsHandler extends QueueHandler<
     this.socketIO.emit("obtainAchievement", emitData);
   }
 
-  public async checkMessageForAchievements({ message, ...data }: CheckMessageForAchievement) {
-    await this.checkCustomMessageAchievements({ message, ...data });
+  public async checkMessageForAchievements({ messageData, ...data }: CheckMessageForAchievement) {
+    await this.checkCustomMessageAchievements({ messageData, ...data });
+
+    await this.checkMessageForAchievementWithCondition({
+      ...data,
+      condition: !!messageData.emotes,
+      achievementName: ACHIEVEMENTS.EMOTES_COUNT
+    });
 
     await this.checkMessageForAchievementWithCondition({
       ...data,
@@ -296,8 +305,23 @@ class AchievementsHandler extends QueueHandler<
     if (follower) {
       await this.checkUserFollowageForAchievement({ ...commonData, dateProgress: follower });
     }
+
+    await this.handleRandomAchievementLogic({ ...commonData });
+
     await this.handleBadgesLogic(commonData);
+
     await this.checkCustomWatchTimeAchievements({ ...commonData, progress: watchTime || 0 });
+  }
+
+  private async handleRandomAchievementLogic(data: CommonAchievementCheckType) {
+    // I guess it should be 1% hard codded
+    if (!percentChance(1)) return;
+    achievementsLogger.info(`User ${data.username} - got lucky and received: ${ACHIEVEMENTS.RANDOMLY_CHOOSEN}`);
+    await this.updateAchievementUserProgressAndAddToQueue({
+      achievementName: ACHIEVEMENTS.RANDOMLY_CHOOSEN,
+      ...data,
+      progress: { value: 1, increment: true }
+    });
   }
 
   public async checkUserFollowageForAchievement({ dateProgress, ...rest }: CheckGlobalUserDetailsDateArgs) {
@@ -472,7 +496,7 @@ class AchievementsHandler extends QueueHandler<
     )) {
       const { name, custom } = achievement;
 
-      const condition = this.checkAchievementDependsOnMessageAction(custom, data.message);
+      const condition = this.checkAchievementDependsOnMessageAction(custom, data.messageData.message);
       if (condition) {
         await this.updateAchievementUserProgressAndAddToQueue({
           ...data,
