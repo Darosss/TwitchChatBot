@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useSocketContext } from "@socket";
-import YouTube, { YouTubeEvent, YouTubeProps } from "react-youtube";
 import SongProgress from "../SongProgress";
+import { getYoutubeStreamUrl } from "@services";
+import { AudioYTData } from "@socketTypes";
 
 let progressTimer: NodeJS.Timer; // as global because clear interval doesnt work
 //FIXME: later
@@ -12,72 +13,68 @@ export default function MusicPlayer() {
     emits: { getAudioYTData },
     events: { musicYTPause, audioYT, changeYTVolume },
   } = useSocketContext();
-  const [songName, setSongName] = useState("");
-  const [player, setPlayer] = React.useState<YouTubeEvent | null>(null);
-  const [duration, setDuration] = useState<number>(0);
-  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [songDetails, setSongDetails] = useState<AudioYTData>({
+    currentTime: 0,
+    duration: 0,
+    id: "",
+    name: "",
+    volume: 50,
+  });
+
+  const audioPlayer = useRef<HTMLAudioElement>(null);
   const youtubeWrapperRef = useRef<HTMLDivElement | null>(null);
 
-  const handleYTPause = useCallback(() => {
-    if (player) player.target.pauseVideo();
-  }, [player]);
-
-  const handleYTResume = useCallback(
-    (name: string, time: number, volume: number) => {
-      if (!player) return;
-
-      player.target.loadVideoById(name, time);
-      player.target.setVolume(volume);
-    },
-    [player]
-  );
   const setSongInterval = () => {
     clearInterval(progressTimer);
     progressTimer = setInterval(() => {
-      setCurrentTime((prevTime) => prevTime + 1);
+      setSongDetails((prevState) => ({
+        ...prevState,
+        currentTime: prevState.currentTime + 1,
+      }));
     }, 1000);
   };
-  const handleYTChangeVolume = useCallback(
-    (volume: number) => {
-      if (player) player.target.setVolume(volume);
-    },
-    [player]
-  );
 
   useEffect(() => {
-    musicYTPause.on(handleYTPause);
+    musicYTPause.on(() => {
+      audioPlayer.current?.pause();
+      clearInterval(progressTimer);
+    });
 
     return () => {
       musicYTPause.off();
     };
-  }, [handleYTPause, musicYTPause]);
+  }, [musicYTPause]);
 
   useEffect(() => {
     audioYT.on((data) => {
       setSongInterval();
-      setCurrentTime(data.currentTime);
-      setDuration(data.duration);
-      handleYTResume(data.id, data.currentTime, data.volume);
-      setSongName(data.name);
+      setSongDetails(data);
+      audioPlayer.current?.play();
     });
 
     return () => {
       audioYT.off();
     };
-    //FIXME: later
-  }, [handleYTResume, audioYT]);
+  }, [audioYT]);
 
   useEffect(() => {
     changeYTVolume.on((volume) => {
-      handleYTChangeVolume(volume);
+      if (!audioPlayer.current) return;
+      audioPlayer.current.volume = volume / 100;
     });
 
     return () => {
       changeYTVolume.off();
     };
-  }, [handleYTChangeVolume, changeYTVolume]);
+  }, [changeYTVolume]);
 
   useEffect(() => {
+    getAudioYTData((isPlaying, cb) => {
+      if (!isPlaying) return;
+      setSongDetails(cb);
+      setSongInterval();
+    });
+
     return () => {
       clearInterval(progressTimer);
     };
@@ -85,54 +82,36 @@ export default function MusicPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onPlayerReady: YouTubeProps["onReady"] = (event) => {
-    setPlayer(event);
-
-    getAudioYTData((isPlaying, cb) => {
-      setSongInterval();
-      setCurrentTime(cb.currentTime);
-      setDuration(cb.duration);
-
-      if (!isPlaying) return;
-      event.target.loadVideoById(cb.id, cb.currentTime);
-      event.target.setVolume(cb.volume);
-      setSongName(cb.name);
-    });
-  };
-  const onPlayerEndSong: YouTubeProps["onEnd"] = (event) => {};
-
-  const opts: YouTubeProps["opts"] = {
-    height: "0%",
-    width: "0%",
-    playerVars: {
-      autoplay: 0,
-      enablejsapi: 1,
-      modestbranding: 1,
-    },
-  };
-
+  if (!songDetails.id) return null;
   return (
     <div
-      className={`youtube-player-wrapper ${songName ? "" : "hidden"}`}
+      className={`youtube-player-wrapper ${songDetails.name ? "" : "hidden"}`}
       ref={youtubeWrapperRef}
       style={{
         fontSize: `${
           youtubeWrapperRef.current
-            ? `${youtubeWrapperRef.current.offsetWidth / 500}dvw`
+            ? `${youtubeWrapperRef.current.offsetWidth / 500}rem`
             : "1rem"
         }`,
       }}
     >
       <div className="youtube-player-background"></div>
       <div className="youtube-song-details">
-        <div className="youtube-current-song">{songName} </div>
+        <div className="youtube-current-song">{songDetails.name} </div>
         <div className="youtube-song-progress">
-          <SongProgress songDuration={duration} currentTime={currentTime} />
+          <SongProgress
+            songDuration={songDetails.duration || 0}
+            currentTime={songDetails.currentTime}
+          />
         </div>
       </div>
 
       <div className="youtube-player">
-        <YouTube opts={opts} onReady={onPlayerReady} onEnd={onPlayerEndSong} />
+        <audio
+          ref={audioPlayer}
+          src={getYoutubeStreamUrl(songDetails.id)}
+          autoPlay
+        />
       </div>
     </div>
   );
