@@ -18,3 +18,4 @@ export * from "./triggersController";
 export * from "./usersController";
 export * from "./widgetsController";
 export * from "./songsController";
+export * from "./youtubeController";
