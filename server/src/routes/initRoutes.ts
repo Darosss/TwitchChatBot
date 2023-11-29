@@ -17,6 +17,7 @@ import affixesRouter from "./affixesRoute";
 import filesRouter from "./filesRoute";
 import songsRouter from "./songsRoute";
 import achievementsRouter from "./achievementsRoute";
+import youtubeRouter from "./youtubeRoute";
 
 export const initRoutes = (app: Express) => {
   app.use("/achievements", achievementsRouter);
@@ -37,4 +38,5 @@ export const initRoutes = (app: Express) => {
   app.use("/songs", songsRouter);
   app.use("/files", filesRouter);
   app.use("/widgets", widgetsRouter);
+  app.use("/youtube", youtubeRouter);
 };
