@@ -12,7 +12,7 @@ export interface ManySongsFindOptions extends SongsFindOptions {
   limit?: number;
 }
 
-export type SongsOptionalData = Partial<Omit<SongsModel, "_id" | "createdAt" | "updatedAt" | "whoAdded">>;
+export type SongsOptionalData = Partial<Omit<SongsModel, "_id" | "createdAt" | "updatedAt" | "whoAdded" | "enabled">>;
 
 export interface SongsCreateData
   extends Pick<SongsModel, "title" | "duration" | "youtubeId">,
@@ -20,6 +20,10 @@ export interface SongsCreateData
   whoAdded: string;
 }
 
-export interface SongsUpdateData extends SongsOptionalData, Partial<SongsCreateData> {}
+export interface SongsUpdateData
+  extends SongsOptionalData,
+    Partial<SongsCreateData>,
+    Pick<SongsModel, "lastUsed">,
+    Partial<Pick<SongsModel, "enabled">> {}
 
 export type ManageSongLikesAction = "like" | "dislike" | "nothing";
