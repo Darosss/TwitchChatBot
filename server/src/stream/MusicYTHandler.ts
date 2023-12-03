@@ -58,7 +58,7 @@ class MusicYTHandler extends MusicHeadHandler {
   }
 
   private async loadYoutubeSongsFromDatabase() {
-    const songsListDB = await getSongs({}, { limit: 100 });
+    const songsListDB = await getSongs({ enabled: { $ne: false } }, { limit: 100, sort: { lastUsed: 1 } });
 
     if (songsListDB && songsListDB.length > 0) {
       const songsListWithMappedName = songsListDB.map(({ title, youtubeId, duration }) => ({
@@ -398,9 +398,11 @@ class MusicYTHandler extends MusicHeadHandler {
     await updateSongs(
       { youtubeId: youtubeId },
       {
-        $inc: { [`usersUses.${userId}`]: 1, uses: 1, ...(isSongRequested ? { songRequestUses: 1 } : { botUses: 1 }) }
+        $inc: { [`usersUses.${userId}`]: 1, uses: 1, ...(isSongRequested ? { songRequestUses: 1 } : { botUses: 1 }) },
+        lastUsed: Date.now()
       }
     );
   }
 }
+
 export default MusicYTHandler;
