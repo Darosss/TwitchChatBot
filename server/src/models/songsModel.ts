@@ -57,7 +57,9 @@ const SongsSchema: Schema<SongsDocument> = new Schema(
       type: Map,
       of: Number,
       default: new Map()
-    }
+    },
+    lastUsed: { type: Date },
+    enabled: { type: Boolean, default: true, required: true }
   },
   { timestamps: true }
 );
