@@ -41,6 +41,19 @@ export default function SongModalData({ state, dispatch }: SongModalDataProps) {
           }
         />
       </div>
+      <div>Enabled</div>
+      <div>
+        <button
+          className={`common-button ${
+            state.enabled ? "primary-button" : "danger-button"
+          }`}
+          onClick={() =>
+            dispatch({ type: "SET_ENABLED", payload: !state.enabled })
+          }
+        >
+          {state.enabled ? "TRUE" : "FALSE"}
+        </button>
+      </div>
       <div>Custom title</div>
       <div>
         <input
