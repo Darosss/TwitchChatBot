@@ -283,6 +283,8 @@ export interface SongsModel extends BaseModel {
   songRequestUses: number;
   whoAdded: string | UserModel;
   likes: Map<string, number>;
+  enabled: boolean;
+  lastUsed?: Date;
 }
 
 export type SongsDocument = SongsModel & Document;

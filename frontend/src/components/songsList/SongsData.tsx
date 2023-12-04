@@ -4,6 +4,7 @@ import { TableListWrapper } from "@components/tableWrapper";
 import SortByParamsButton from "@components/SortByParamsButton";
 import { DateTooltip } from "@components/dateTooltip";
 import PreviewSongModal from "./PreviewSongModal";
+import { generateEnabledDisabledDiv } from "@utils";
 
 interface SongsDataProps {
   data: Song[];
@@ -44,6 +45,9 @@ export default function SongsData({
               <SortByParamsButton buttonText="Uses" sortBy="uses" />
             </th>
             <th>
+              <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
+            </th>
+            <th>
               <SortByParamsButton buttonText="botUses" sortBy="botUses" />
             </th>
             <th>
@@ -54,6 +58,9 @@ export default function SongsData({
             </th>
             <th>
               <SortByParamsButton buttonText="Duration" sortBy="duration" />
+            </th>
+            <th>
+              <SortByParamsButton buttonText="Last used" sortBy="lastUsed" />
             </th>
             <th>
               <SortByParamsButton buttonText="Created At" sortBy="createdAt" />
@@ -99,9 +106,18 @@ export default function SongsData({
               <td>{song.youtubeId}</td>
               <td>{song.customId || ""}</td>
               <td>{song.uses}</td>
+              <td>
+                {generateEnabledDisabledDiv(
+                  song.enabled,
+                  song.enabled.toString()
+                )}
+              </td>
               <td>{song.botUses}</td>
               <td>{song.songRequestUses}</td>
               <td>{song.duration}</td>
+              <td>
+                {song.lastUsed ? <DateTooltip date={song.lastUsed} /> : null}
+              </td>
               <td>
                 <DateTooltip date={song.createdAt} />
               </td>

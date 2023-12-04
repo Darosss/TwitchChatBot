@@ -96,6 +96,8 @@ export default function SongsLIst() {
     customId,
     duration,
     whoAdded,
+    enabled,
+    lastUsed,
   }: Song) => {
     dispatch({
       type: "SET_STATE",
@@ -106,6 +108,8 @@ export default function SongsLIst() {
         customTitle,
         duration,
         customId,
+        enabled,
+        lastUsed,
       },
     });
   };
@@ -150,6 +154,7 @@ const initialState: SongCreateData = {
   duration: 0,
   customId: "",
   whoAdded: "",
+  enabled: true,
 };
 
 function reducer(
@@ -161,6 +166,8 @@ function reducer(
       return { ...state, title: action.payload };
     case "SET_YOUTUBE_ID":
       return { ...state, youtubeId: action.payload };
+    case "SET_ENABLED":
+      return { ...state, enabled: action.payload };
     case "SET_CUSTOM_TITLE":
       return { ...state, customTitle: action.payload };
     case "SET_DURATION":
