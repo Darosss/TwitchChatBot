@@ -21,6 +21,8 @@ export interface Song {
   customId?: string;
   whoAdded: Pick<User, "_id" | "username" | "twitchName">;
   likes: Record<string, SongLikesAction>;
+  enabled: boolean;
+  lastUsed?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -41,7 +43,9 @@ export interface SongCreateData
   whoAdded: string;
 }
 
-interface SongUpdateData extends Partial<SongCreateData> {}
+interface SongUpdateData
+  extends Partial<SongCreateData>,
+    Partial<Pick<Song, "enabled">> {}
 
 export const useGetSongs = () => {
   return useAxiosCustom<PaginationData<Song>>({
