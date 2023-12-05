@@ -1,16 +1,19 @@
 .youtube-player-wrapper {
   position: relative;
   display: flex;
-  height: 96%;
+  height: 100%;
 
   .youtube-player {
     display: none;
   }
 
+  & > div {
+    border-radius: inherit;
+    overflow: hidden;
+  }
+
   .youtube-player-background {
     position: absolute;
-    background-color: $default-overlay-background-color;
-    filter: $default-overlay-filter-opacity;
     left: 0;
     top: 0;
     bottom: 0;
@@ -19,9 +22,7 @@
 
   .youtube-song-details {
     padding: 0.5rem;
-    border-radius: 0.5rem;
     z-index: 2;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     font-weight: 700;
@@ -32,9 +33,6 @@
 
   .youtube-song-progress {
     min-width: 30%;
-    * {
-      color: $info-color !important;
-    }
     span {
       max-width: 30%;
     }
