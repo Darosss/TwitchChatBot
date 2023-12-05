@@ -1,23 +1,41 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useSocketContext } from "@socket";
+import { useOverlayDataContext } from "../OverlayDataContext";
+import { getTwitchEmoteUrl, randomWithMax } from "@utils";
+import { commonData } from "../commonExampleData";
 
 export default function Redemptions() {
   const {
     events: { onRedemption },
   } = useSocketContext();
-  const redemptionRef = useRef<HTMLDivElement>(null);
+
+  const {
+    isEditorState: [isEditor],
+    stylesState: [{ overlayRedemptions: styles }],
+  } = useOverlayDataContext();
 
   const [redemptionInfo, setRedemptionInfo] = useState("");
   const [redemptionImg, setRedemptionImg] = useState("");
   const [showRedemption, setShowRedemption] = useState(false);
 
   useEffect(() => {
+    if (isEditor) {
+      setShowRedemption(true);
+      setRedemptionImg(getTwitchEmoteUrl({ id: "25" }));
+      setRedemptionInfo(
+        `${
+          commonData.nicknames[randomWithMax(commonData.nicknames.length - 1)]
+        } has redeemed - Reward`
+      );
+    }
+  }, [isEditor]);
+
+  useEffect(() => {
     let source: AudioBufferSourceNode | null = null;
 
     onRedemption.on((data, audioBuffer) => {
       const { rewardTitle, userDisplayName, rewardImage } = data;
-
       setRedemptionImg(rewardImage);
       setRedemptionInfo(`${userDisplayName} has redeemed - ${rewardTitle}`);
       setShowRedemption(true);
@@ -51,24 +69,35 @@ export default function Redemptions() {
     };
   }, [onRedemption]);
 
-  if (showRedemption)
+  if (showRedemption || isEditor)
     return (
-      <div ref={redemptionRef} className="redemption-wrapper">
+      <div
+        className="redemption-wrapper"
+        style={{
+          borderRadius: styles.borderRadius,
+          boxShadow: styles.boxShadow,
+        }}
+      >
+        <div
+          className="redemption-background"
+          style={{
+            background: styles.background,
+            filter: `opacity(${styles.opacity}%)`,
+          }}
+        ></div>
         <div>
           {redemptionImg ? (
             <img
               alt="no"
               src={redemptionImg}
               style={{
-                width: (redemptionRef.current?.offsetWidth || 200) / 12,
+                maxWidth: styles.imageSize,
+                minWidth: styles.imageSize,
               }}
             />
           ) : null}
         </div>
-        <div
-          className="redemption-popup"
-          style={{ fontSize: (redemptionRef.current?.offsetWidth || 200) / 24 }}
-        >
+        <div className="redemption-popup" style={{ fontSize: styles.fontSize }}>
           {redemptionInfo}
         </div>
       </div>
