@@ -74,13 +74,14 @@ export const editOverlayById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, layout, toolbox } = req.body;
+  const { name, layout, toolbox, styles } = req.body;
 
   try {
     const updatedOverlay = await updateOverlayById(id, {
       name: name,
       layout: layout,
-      toolbox: toolbox
+      toolbox: toolbox,
+      styles
     });
 
     return res.status(200).send({
