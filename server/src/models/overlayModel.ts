@@ -15,6 +15,11 @@ const OverlaySchema: Schema<OverlayDocument> = new Schema(
       type: Map,
       of: [layoutBreakpointSchema],
       default: new Map()
+    },
+    styles: {
+      type: Map,
+      of: String,
+      defaulot: new Map()
     }
   },
   { timestamps: true }
