@@ -25,7 +25,6 @@ export default function SongProgress({
         labelSize="100%"
         width={"70%"}
         height="1rem"
-        bgColor={"lightblue"}
         {...progressBarProps}
       />
     </>
