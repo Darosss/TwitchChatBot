@@ -1,11 +1,19 @@
 import ReactGridLayout from "react-grid-layout";
 import useAxiosCustom, { PaginationData, ResponseData } from "./ApiService";
 
+interface OverlayStylesType {
+  overlayRedemptions: string;
+  overlayMusicPlayer: string;
+  overlayYoutubeMusicPlayer: string;
+  overlayAchievements: string;
+  overlayChat: string;
+}
 export interface Overlay {
   _id: string;
   name: string;
   layout: ReactGridLayout.Layouts;
   toolbox: ReactGridLayout.Layouts;
+  styles?: OverlayStylesType;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -13,7 +21,9 @@ export interface Overlay {
 export interface OverlayCreateData
   extends Pick<Overlay, "name" | "layout" | "toolbox"> {}
 
-export interface OverlaysUpdateData extends Partial<OverlayCreateData> {}
+export interface OverlaysUpdateData
+  extends Partial<OverlayCreateData>,
+    Pick<Overlay, "styles"> {}
 
 export const useGetOverlays = () => {
   return useAxiosCustom<PaginationData<Overlay>>({
