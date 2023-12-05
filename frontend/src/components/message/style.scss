@@ -10,15 +10,14 @@
     overflow-wrap: break-word;
     width: 100%;
     font-size: 1vw;
+    font-weight: 600;
 
     .chat-message-badges {
       display: flex;
       & > * {
         margin-left: 0.5rem;
-        box-shadow: 1px 1px 5px 1px $primary-color;
       }
       img {
-        max-width: 16px;
         aspect-ratio: 1;
       }
     }
