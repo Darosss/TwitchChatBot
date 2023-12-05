@@ -19,6 +19,7 @@ export interface ClientToServerEvents
   changeModes: () => void;
   logout: () => void;
   emulateAchievement: (data: ObtainAchievementDataWithCollectedAchievement) => void;
+  refreshOverlayLayout: (overlayId: string) => void;
 }
 
 export interface ClientToServerCustomRewards {

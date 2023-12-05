@@ -28,6 +28,7 @@ export interface ServerToClientEvents extends ServerToClientYoutubeEvents, Serve
     data: ObtainAchievementDataWithCollectedAchievement | ObtainAchievementDataWithProgressOnly
   ) => void;
   obtainAchievementQueueInfo: (count: number) => void;
+  refreshOverlayLayout: (overlayId: string) => void;
 }
 
 export interface ServerToClientMusicLocalEvents {
