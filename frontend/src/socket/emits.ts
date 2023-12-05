@@ -96,5 +96,9 @@ export const getSocketEmitsFunctions = (
     ) => {
       socketConnection.emit("emulateAchievement", data);
     },
+
+    refreshOverlayLayout: (overlayId: string) => {
+      socketConnection.emit("refreshOverlayLayout", overlayId);
+    },
   };
 };
