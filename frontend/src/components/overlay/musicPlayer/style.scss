@@ -2,14 +2,9 @@
   padding-right: 0.4rem;
   font-weight: 500;
   height: 100%;
-  font-size: 1.2vw;
-  border-radius: 1rem;
   display: flex;
   flex-direction: column;
-  color: $default-overlay-text-color;
-  overflow: hidden;
   position: relative;
-  box-shadow: $default-overlay-box-shadow;
   padding-left: 0.5rem;
 
   .music-player-background {
@@ -18,11 +13,10 @@
     bottom: 0;
     left: 0;
     right: 0;
-    filter: opacity(15%);
-    background-color: $default-overlay-background-color;
   }
 
   & > div {
+    border-radius: inherit;
     flex: 1 1 30%;
     align-items: center;
     overflow: hidden;
@@ -30,7 +24,6 @@
 
   .music-player-song-name {
     width: 100%;
-    border-radius: 1rem;
 
     display: inline-block;
     white-space: nowrap;
@@ -43,10 +36,6 @@
       flex: 1;
       align-self: center;
       z-index: 100;
-
-      & > span {
-        color: $default-overlay-text-color !important;
-      }
     }
   }
 

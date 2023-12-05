@@ -6,8 +6,15 @@ import {
   useSocketContext,
 } from "@socket";
 import SongProgress from "../SongProgress";
+import { useOverlayDataContext } from "../OverlayDataContext";
 
 export default function MusicPlayer() {
+  const {
+    stylesState: [{ overlayMusicPlayer: styles }],
+    isEditorState: [isEditor],
+  } = useOverlayDataContext();
+
+  //TODO: refactor to one state
   const socketContext = useSocketContext();
   const [songName, setSongName] = useState("");
   const [songDuration, setSongDuration] = useState(0);
@@ -16,7 +23,16 @@ export default function MusicPlayer() {
   const [audioData, setAudioData] = useState<AudioStreamDataInfo>();
 
   useEffect(() => {
+    if (isEditor) {
+      setSongName("Test song name - test");
+      setSongDuration(200);
+      setCurrentTime(120);
+    }
+  }, [isEditor]);
+
+  useEffect(() => {
     const { emits, events } = socketContext;
+
     let source: AudioBufferSourceNode | null = null;
     let gain: GainNode | null = null;
     let timer: NodeJS.Timer | undefined;
@@ -120,22 +136,45 @@ export default function MusicPlayer() {
       musicStop();
     };
   }, [socketContext]);
-
   return (
-    <div className={`music-player-wrapper ${songName ? "" : "hidden"}`}>
-      <div className="music-player-background"></div>
+    <div
+      className={`music-player-wrapper ${songName ? "" : "hidden"}`}
+      style={{ borderRadius: styles.borderRadius }}
+    >
+      <div
+        className="music-player-background"
+        style={{
+          background: styles.background,
+          filter: `opacity(${styles.opacity}%)`,
+          boxShadow: styles.boxShadow,
+        }}
+      ></div>
 
       {showPlaylist && audioData ? (
         <SongsPlaylist songs={audioData.songsInQue} />
       ) : (
         <>
           <div>
-            <div className="music-player-song-name">{songName}</div>
+            <div
+              className="music-player-song-name"
+              style={{
+                fontSize: styles.currentSong.fontSize,
+                color: styles.currentSong.color,
+              }}
+            >
+              {songName}
+            </div>
           </div>
           <div className="music-player-song-duration">
             <SongProgress
               songDuration={songDuration}
               currentTime={currentTime}
+              progressBarProps={{
+                labelColor: styles.progressBar.color,
+                labelSize: styles.progressBar.fontSize,
+                bgColor: styles.progressBar.background,
+                baseBgColor: styles.progressBar.baseBackground,
+              }}
             />
           </div>
         </>
