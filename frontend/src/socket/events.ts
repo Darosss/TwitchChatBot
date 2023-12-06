@@ -189,5 +189,15 @@ export const getSocketEventsFunctions = (
         socketConnection.off("obtainAchievementQueueInfo");
       },
     },
+    refreshOverlayLayout: {
+      on: (cb) => {
+        socketConnection.on("refreshOverlayLayout", (overlayId) =>
+          cb(overlayId)
+        );
+      },
+      off: () => {
+        socketConnection.off("refreshOverlayLayout");
+      },
+    },
   };
 };

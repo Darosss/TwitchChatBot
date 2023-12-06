@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import { handleActionOnChangeState } from "@utils";
 import { addNotification } from "@utils";
 import { Link } from "react-router-dom";
-import {
-  initialLayoutOverlays,
-  initialToolboxOverlays,
-} from "src/layout/initialLayoutOverlays";
+import { initialLayoutOverlays, initialToolboxOverlays } from "src/layout";
 import {
   useCreateOverlay,
   useGetOverlays,

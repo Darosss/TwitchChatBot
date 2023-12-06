@@ -11,7 +11,7 @@ import {
   initialLayoutWidgets,
   initialToolboxWidgets,
   widgetsKeys,
-} from "src/layout/initialLayoutWidgets";
+} from "src/layout";
 import { useParams } from "react-router-dom";
 import { useEditWidgetById, useGetWidgetById } from "@services";
 import StreamModes from "./streamModes";

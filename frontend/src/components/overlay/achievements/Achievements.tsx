@@ -5,17 +5,32 @@ import {
 } from "@socket";
 import { getDateFromSecondsToYMDHMS, isObtainedAchievement } from "@utils";
 import moment from "moment";
-import { useEffect, useRef, useState } from "react";
+import { CSSProperties, useEffect, useMemo, useState } from "react";
 import { viteBackendUrl } from "src/configs/envVariables";
-type ObtainedAchievementStateType =
+import { useOverlayDataContext } from "../OverlayDataContext";
+import { getExampleAchievementsData } from "./exampleData";
+import { BaseOverlayAchievementsRarity } from "src/layout";
+
+export type ObtainedAchievementStateType =
   | ObtainAchievementDataWithCollectedAchievement
   | ObtainAchievementDataWithProgressOnly;
+
+const MAX_ACHIEVEMENTS_IN_CACHE = 10;
+
+/*TODO: 
+NOTE: AchievementDataBlock - needs to be refactored. I know it's a lot if one component. 
+
+*/
+
 export default function Achievements() {
   const {
     events: { obtainAchievement, obtainAchievementQueueInfo },
   } = useSocketContext();
 
-  const wrapper = useRef<HTMLDivElement>(null);
+  const {
+    isEditorState: [isEditor],
+    stylesState: [{ overlayAchievements: styles }],
+  } = useOverlayDataContext();
 
   const [obtainedAchievements, setObtainedAchievements] = useState<
     ObtainedAchievementStateType[]
@@ -39,6 +54,10 @@ export default function Achievements() {
       clearInterval(showQueueInterval);
     };
   }, []);
+
+  useEffect(() => {
+    if (isEditor) setObtainedAchievements(getExampleAchievementsData());
+  }, [isEditor]);
 
   useEffect(() => {
     const audio = new Audio();
@@ -74,11 +93,11 @@ export default function Achievements() {
   }, [obtainAchievement]);
 
   useEffect(() => {
-    if (obtainedAchievements.length > 20) {
-      setObtainedAchievements((prevState) => {
-        prevState.pop();
-        return prevState;
-      });
+    if (obtainedAchievements.length > MAX_ACHIEVEMENTS_IN_CACHE) {
+      obtainedAchievements.splice(
+        MAX_ACHIEVEMENTS_IN_CACHE,
+        obtainedAchievements.length
+      );
     }
   }, [obtainedAchievements]);
 
@@ -91,110 +110,176 @@ export default function Achievements() {
     };
   }, [obtainAchievementQueueInfo]);
 
+  const currentFlexDirection = useMemo(
+    () =>
+      styles.direction === "column" || styles.direction === "horizontal"
+        ? "column"
+        : "row",
+    [styles.direction]
+  );
+
   return (
     <div
       className="achievements-overlay-wrapper"
-      ref={wrapper}
       style={{
-        fontSize: `${
-          wrapper.current ? `${wrapper.current.offsetWidth / 600}rem` : "2rem"
-        }`,
+        borderRadius: styles.borderRadius,
+        fontSize: styles.fontSize,
+        flexDirection: currentFlexDirection,
       }}
     >
       <div
+        className="achievements-overlay-wrapper-background"
+        style={{
+          background: styles.background,
+          filter: `opacity(${styles.opacity}%)`,
+          boxShadow: styles.boxShadow,
+        }}
+      ></div>
+      <div
         className={`achievements-overlay-queue-length ${
-          showAchievementsQueue && itemsQueLength > 1 ? "show" : "hide"
+          isEditor || (showAchievementsQueue && itemsQueLength > 1)
+            ? "show"
+            : "hide"
         }`}
+        style={{
+          color: styles.queue.color,
+          fontSize: styles.queue.fontSize,
+          borderRadius: styles.queue.borderRadius,
+          ...(currentFlexDirection === "column"
+            ? { margin: "0 0.7rem 0 0.7rem" }
+            : { marginLeft: "0.3rem" }),
+        }}
       >
-        <div className="queue-length-background"></div>
-        {itemsQueLength}+
+        <div
+          className="queue-length-background"
+          style={{
+            background: styles.queue.background,
+            filter: `opacity(${styles.queue.opacity}%)`,
+            boxShadow: styles.queue.boxShadow,
+          }}
+        ></div>
+        <div>{itemsQueLength}+</div>
       </div>
 
-      {obtainedAchievements.map((data) => {
-        return isObtainedAchievement(data) ? (
-          <AchievementDataBlock key={data.id} data={data} />
-        ) : (
-          <AchievementProgressDataBlock key={data.id} data={data} />
-        );
-      })}
-    </div>
-  );
-}
-
-interface AchievementDataBlockProps {
-  data: ObtainAchievementDataWithCollectedAchievement;
-}
-function AchievementDataBlock({
-  data: {
-    stage: { data, timestamp },
-    id,
-    username,
-    achievement,
-  },
-}: AchievementDataBlockProps) {
-  return (
-    <div
-      key={id}
-      className={`obtained-achievements-wrapper animated-achievement${
-        data.rarity ? `-${data.rarity}` : ""
-      }`}
-    >
-      <div className="achievements-overlay-background"></div>
-
-      <div className="obtained-achievements-content">
-        <div className="obtained-achievement-username">
-          {username}{" "}
-          <span>
-            obtained achievement <span>{achievement.name} </span>
-          </span>
-        </div>
-
-        <div className="obtained-achievement-details">
-          <div className="obtained-achievements-stage-name">{data.name}</div>
-
-          <div className="obtained-achievement-timestamp">
-            {moment(timestamp).format("HH:mm")}
-          </div>
-          <div className="obtained-achievements-goal">
-            Goal:
-            <span>
-              {achievement.isTime
-                ? getDateFromSecondsToYMDHMS(data.goal)
-                : data.goal}
-            </span>
-          </div>
-        </div>
-      </div>
-      <div className="obtained-achievements-badge">
-        <img
-          src={`${viteBackendUrl}/${data.badge.imagesUrls.x64}`}
-          alt={data.name}
+      {obtainedAchievements.map((data) => (
+        <AchievementDataBlock
+          key={data.id}
+          {...(isObtainedAchievement(data)
+            ? {
+                achievement: data,
+                progress: null,
+              }
+            : {
+                achievement: null,
+                progress: data,
+              })}
+          flexDirection={currentFlexDirection}
         />
-      </div>
+      ))}
     </div>
   );
 }
-
-interface AchievementProgressDataBlockProps {
-  data: ObtainAchievementDataWithProgressOnly;
+interface AchievementDataBlockProps {
+  achievement: ObtainAchievementDataWithCollectedAchievement | null;
+  progress: ObtainAchievementDataWithProgressOnly | null;
+  flexDirection: CSSProperties["flexDirection"];
 }
-function AchievementProgressDataBlock({
-  data: {
-    id,
-    progressData: { currentStage, nextStage, progress, timestamp },
-    username,
-    achievement,
-  },
-}: AchievementProgressDataBlockProps) {
-  const renderProgressDivs = () => {
-    return (
+
+//FIXME: refactor to smaller later
+function AchievementDataBlock({
+  achievement,
+  progress,
+  flexDirection,
+}: AchievementDataBlockProps) {
+  const {
+    stylesState: [{ overlayAchievements: styles }],
+  } = useOverlayDataContext();
+
+  const currentRarity =
+    achievement?.stage.data.rarity ||
+    progress?.progressData.currentStage?.rarity;
+  const rarityStyle = Object.keys(styles).find(
+    (key) => key.includes("rarity") && key.includes(currentRarity)
+  ) as keyof typeof styles;
+
+  //TODO: right now I know it's rarity so assert as BaseOverlayAchievementsRarity - change later
+  const currentRarityStyle = rarityStyle
+    ? (styles[rarityStyle] as BaseOverlayAchievementsRarity)
+    : null;
+
+  const obtainedAchievementContentData = useMemo(() => {
+    if (!achievement) return null;
+
+    const obtainedAchievementName = (
+      <span>
+        obtained achievement{" "}
+        <span style={{ color: currentRarityStyle?.achievementNameColor }}>
+          {achievement.achievement.name}{" "}
+        </span>
+      </span>
+    );
+
+    const stageName = achievement?.stage.data.name;
+
+    const goalInfo = (
+      <>
+        Goal:
+        <span>
+          {achievement?.achievement.isTime
+            ? getDateFromSecondsToYMDHMS(achievement?.stage.data.goal)
+            : achievement?.stage.data.goal}
+        </span>
+      </>
+    );
+
+    const imgPath = achievement.stage.data.badge.imagesUrls.x64;
+    return { name: obtainedAchievementName, stageName, goalInfo, imgPath };
+  }, [achievement, currentRarityStyle]);
+
+  const progressContentData = useMemo(() => {
+    if (!progress) return null;
+    const {
+      progressData: { currentStage, nextStage, progress: progressValue },
+      achievement,
+    } = progress;
+    const progressName = (
+      <span>
+        made a progress in{" "}
+        <span style={{ color: currentRarityStyle?.achievementNameColor }}>
+          {achievement.name}
+        </span>
+      </span>
+    );
+
+    const currentNextStages = (
+      <>
+        <div>
+          Current: <span>{currentStage?.name || "None"}</span>
+        </div>
+        {nextStage ? (
+          <div
+            className={`obtained-achievements-stage-name-next-stage ${
+              nextStage.rarity ? `animated-achievement-${nextStage.rarity}` : ""
+            }`}
+          >
+            Next: <span> {nextStage.name}</span>
+          </div>
+        ) : (
+          <div className="obtained-achievements-stage-name-max-stage">
+            <span> Maxed out!</span>
+          </div>
+        )}
+      </>
+    );
+
+    const currentNextGoals = (
       <>
         <div>
           Progress:{" "}
           <span>
             {achievement.isTime
-              ? getDateFromSecondsToYMDHMS(progress)
-              : progress}
+              ? getDateFromSecondsToYMDHMS(progressValue)
+              : progressValue}
           </span>
         </div>
         <div>
@@ -211,69 +296,105 @@ function AchievementProgressDataBlock({
         </div>
       </>
     );
-  };
+
+    const imgPath =
+      currentStage?.badge.imagesUrls.x64 || nextStage?.badge.imagesUrls.x64;
+    return {
+      name: progressName,
+      stagesInfo: currentNextStages,
+      goalInfo: currentNextGoals,
+      imgPath,
+    };
+  }, [progress, currentRarityStyle]);
+
   return (
     <div
-      key={id}
-      className={`obtained-achievements-wrapper achievement-progress-wrapper animated-achievement${
-        currentStage?.rarity ? `-${currentStage.rarity}` : ""
+      key={achievement?.id || progress?.id}
+      className={`obtained-achievements-wrapper animated-achievement${
+        currentRarity ? `-${currentRarity}` : ""
       }`}
+      style={{
+        ...(flexDirection === "column"
+          ? { margin: "0 0.5rem 0.5rem 0.5rem" }
+          : { marginLeft: ".5rem" }),
+      }}
     >
-      <div className="achievements-overlay-background"></div>
+      <div
+        className="obtained-achievement-timestamp"
+        style={{
+          color: currentRarityStyle?.timestampColor,
+          fontSize: styles.timestampFontSize,
+        }}
+      >
+        {moment(
+          achievement?.stage.timestamp || progress?.progressData.timestamp
+        ).format("HH:mm")}
+      </div>
+      <div
+        className="achievements-overlay-background"
+        style={{
+          background: currentRarityStyle?.background,
+          boxShadow: currentRarityStyle?.boxShadow,
+          filter: `opacity(${currentRarityStyle?.opacity}%)`,
+        }}
+      ></div>
 
-      <div className="obtained-achievements-content">
+      <div
+        className="obtained-achievements-content"
+        style={{ color: currentRarityStyle?.textColor }}
+      >
         <div className="obtained-achievement-username">
-          {username}
-          <span>
-            {" "}
-            made a progress in <span>{achievement.name} </span> achievement
-          </span>
+          <span style={{ color: currentRarityStyle?.usernameColor }}>
+            {achievement?.username || progress?.username}
+          </span>{" "}
+          {obtainedAchievementContentData?.name || progressContentData?.name}
         </div>
 
         <div className="obtained-achievement-details">
-          <div className="obtained-achievements-stage-name">
-            <div className="obtained-achievements-stage-name-header">STAGE</div>
-
-            <div>
-              {" "}
-              Current: <span>{currentStage?.name || "None"}</span>
-            </div>
-            {nextStage ? (
-              <div
-                className={`obtained-achievements-stage-name-next-stage ${
-                  nextStage.rarity
-                    ? `animated-achievement-${nextStage.rarity}`
-                    : ""
-                }`}
-              >
-                Next: <span> {nextStage.name}</span>
-              </div>
-            ) : (
-              <div className="obtained-achievements-stage-name-max-stage">
-                <span> Maxed out!</span>
-              </div>
-            )}
+          <div
+            className="obtained-achievements-stage-name"
+            style={{ color: currentRarityStyle?.stagesNameColor }}
+          >
+            {progressContentData?.stagesInfo ||
+              obtainedAchievementContentData?.stageName}
           </div>
 
-          <div className="obtained-achievement-timestamp">
-            {moment(timestamp).format("HH:mm")}
-          </div>
-          <div className="obtained-achievements-goal">
-            {renderProgressDivs()}
+          <div
+            className="obtained-achievements-goal"
+            style={{ color: currentRarityStyle?.goalColor }}
+          >
+            {progressContentData?.goalInfo ||
+              obtainedAchievementContentData?.goalInfo}
           </div>
         </div>
       </div>
-      <div className="obtained-achievements-badge">
+      <div
+        className={`obtained-achievements-badge ${
+          progress && !progress.progressData.currentStage
+            ? "obtained-achievements-badge-not-achieved"
+            : ""
+        }`}
+      >
         <img
+          src={`${viteBackendUrl}${
+            obtainedAchievementContentData?.imgPath ||
+            progressContentData?.imgPath
+          }`}
           className={`${
-            !currentStage ? "obtained-achievements-badge-not-achieved" : ""
+            achievement
+              ? ""
+              : !progress?.progressData.currentStage
+              ? "obtained-achievements-badge-not-achieved"
+              : ""
           }`}
-          src={`${viteBackendUrl}/${
-            currentStage
-              ? currentStage?.badge.imagesUrls.x64
-              : nextStage?.badge.imagesUrls.x64
-          }`}
-          alt={currentStage?.name}
+          style={{
+            maxWidth: styles.badgeSize,
+            minWidth: styles.badgeSize,
+            maxHeight: styles.badgeSize,
+            minHeight: styles.badgeSize,
+            boxShadow: currentRarityStyle?.badgeBoxShadow,
+          }}
+          alt={achievement?.achievement.name || progress?.achievement.name}
         />
       </div>
     </div>
