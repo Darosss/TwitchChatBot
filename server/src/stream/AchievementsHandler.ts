@@ -290,17 +290,17 @@ class AchievementsHandler extends QueueHandler<
     await this.updateAchievementUserProgressAndAddToQueue({
       ...commonData,
       achievementName: ACHIEVEMENTS.CHAT_MESSAGES,
-      progress: { value: messageCount || 0 }
+      progress: { value: messageCount }
     });
     await this.updateAchievementUserProgressAndAddToQueue({
       ...commonData,
       achievementName: ACHIEVEMENTS.WATCH_TIME,
-      progress: { value: watchTime || 0 }
+      progress: { value: watchTime }
     });
     await this.updateAchievementUserProgressAndAddToQueue({
       ...commonData,
       achievementName: ACHIEVEMENTS.POINTS,
-      progress: { value: points || 0 }
+      progress: { value: points }
     });
     if (follower) {
       await this.checkUserFollowageForAchievement({ ...commonData, dateProgress: follower });
@@ -310,7 +310,7 @@ class AchievementsHandler extends QueueHandler<
 
     await this.handleBadgesLogic(commonData);
 
-    await this.checkCustomWatchTimeAchievements({ ...commonData, progress: watchTime || 0 });
+    await this.checkCustomWatchTimeAchievements({ ...commonData, progress: watchTime });
   }
 
   private async handleRandomAchievementLogic(data: CommonAchievementCheckType) {

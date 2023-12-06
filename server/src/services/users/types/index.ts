@@ -15,6 +15,6 @@ export interface ManyUsersFindOptions extends UserFindOptions {
   limit?: number;
 }
 
-export type UserCreateData = Omit<UserModel, "_id" | "createdAt" | "updatedAt" | "badges">;
-
+export type UserCreateData = Partial<Omit<UserModel, "_id" | "createdAt" | "updatedAt">> &
+  Pick<UserModel, "twitchId" | "username">;
 export type UserUpdateData = Partial<UserCreateData>;

@@ -111,8 +111,7 @@ class LoyaltyHandler extends HeadHandler {
         {
           username: userDisplayName,
           twitchId: userId,
-          twitchName: userName,
-          privileges: 0
+          twitchName: userName
         }
       );
 

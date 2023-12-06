@@ -12,10 +12,10 @@ export interface UserModel extends BaseModel {
   twitchId: string;
   username: string;
   privileges: number;
-  points?: number;
-  watchTime?: number;
+  points: number;
+  watchTime: number;
   lastSeen?: Date;
-  messageCount?: number;
+  messageCount: number;
   notes?: string[];
   twitchName?: string;
   twitchCreated?: Date;

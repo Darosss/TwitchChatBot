@@ -229,8 +229,7 @@ class StreamHandler {
     const userData = {
       username: userstate["display-name"] || "undefinedUsername",
       twitchName: userstate.username || "undefinedTwitchName",
-      twitchId: twitchId,
-      privileges: 0
+      twitchId: twitchId
     };
     return userData;
   }
