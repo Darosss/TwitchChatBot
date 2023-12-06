@@ -78,7 +78,7 @@ class EventSubHandler extends HeadHandler {
         })}`
       );
 
-      const userData = { username: userDisplayName, twitchId: userId, twitchName: userName, privileges: 0 };
+      const userData = { username: userDisplayName, twitchId: userId, twitchName: userName };
       try {
         const userDB = await createUserIfNotExist({ twitchId: userId }, userData);
         if (!userDB) {
@@ -113,8 +113,7 @@ class EventSubHandler extends HeadHandler {
       const userData = {
         username: gifterDisplayName,
         twitchId: gifterId,
-        twitchName: gifterName,
-        privileges: 0
+        twitchName: gifterName
       };
 
       try {
@@ -146,7 +145,6 @@ class EventSubHandler extends HeadHandler {
         username: userDisplayName,
         twitchId: userId,
         twitchName: userName,
-        privileges: 0,
         follower: followDate
       };
 
@@ -181,8 +179,7 @@ class EventSubHandler extends HeadHandler {
       const userData = {
         username: raidingBroadcasterDisplayName,
         twitchId: raidingBroadcasterId,
-        twitchName: raidingBroadcasterName,
-        privileges: 0
+        twitchName: raidingBroadcasterName
       };
 
       try {
@@ -227,8 +224,7 @@ class EventSubHandler extends HeadHandler {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 twitchId: userId!,
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                twitchName: userName!,
-                privileges: 0
+                twitchName: userName!
               }
             );
 
@@ -276,7 +272,7 @@ class EventSubHandler extends HeadHandler {
 
       const user = await createUserIfNotExist(
         { twitchId: userId },
-        { twitchId: userId, username: userDisplayName, twitchName: userName, privileges: 0 }
+        { twitchId: userId, username: userDisplayName, twitchName: userName }
       );
 
       const reward = await e.getReward();
