@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useOverlayDataContext } from "./OverlayDataContext";
 import Modal from "@components/modal";
 import React from "react";
-import { OverlayKeysStylesParsedType } from "src/layout/initialLayoutOverlays";
+import { OverlayKeysStylesParsedType } from "src/layout";
 import { useSocketContext } from "@socket";
 
 type OverlayKeysType =

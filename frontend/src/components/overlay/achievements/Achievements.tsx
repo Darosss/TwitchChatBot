@@ -9,7 +9,7 @@ import { CSSProperties, useEffect, useMemo, useState } from "react";
 import { viteBackendUrl } from "src/configs/envVariables";
 import { useOverlayDataContext } from "../OverlayDataContext";
 import { getExampleAchievementsData } from "./exampleData";
-import { BaseOverlayAchievementsRarity } from "src/layout/initialLayoutOverlays";
+import { BaseOverlayAchievementsRarity } from "src/layout";
 
 export type ObtainedAchievementStateType =
   | ObtainAchievementDataWithCollectedAchievement

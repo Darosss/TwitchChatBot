@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useCreateLayout, useGetWidgets, useRemoveWidgetById } from "@services";
 import { Link } from "react-router-dom";
-import {
-  initialLayoutWidgets,
-  initialToolboxWidgets,
-} from "src/layout/initialLayoutWidgets";
+import { initialLayoutWidgets, initialToolboxWidgets } from "src/layout";
 import { handleActionOnChangeState } from "@utils";
 import { addNotification } from "@utils";
 import CardboxWrapper from "@components/cardboxWrapper";

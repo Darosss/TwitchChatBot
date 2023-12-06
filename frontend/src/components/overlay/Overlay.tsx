@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Redemptions from "./redemptions";
-import { overlaysKeys } from "src/layout/initialLayoutOverlays";
+import { overlaysKeys } from "src/layout";
 import { getInitialCurrentBreakpoint } from "@utils";
 import ReactGrid from "@components/reactGrid";
 import MusicPlayer from "./musicPlayer";

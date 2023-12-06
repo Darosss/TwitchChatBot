@@ -6,7 +6,7 @@ import {
   initialStylesState,
   parseOverlayKeysType,
   stringifyOverlayKeysType,
-} from "src/layout/initialLayoutOverlays";
+} from "src/layout";
 
 type OverlayBaseData = Pick<Overlay, "_id" | "name">;
 
