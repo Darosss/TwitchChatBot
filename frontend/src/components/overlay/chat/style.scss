@@ -1,33 +1,35 @@
 .chat-overlay-wrapper {
   position: relative;
-  overflow: hidden;
-  min-height: 100%;
-  max-height: 100%;
-  border-radius: 0.5rem;
-  filter: opacity(70%);
+  min-height: 99%;
+  max-height: 99%;
+  height: 99%;
+
+  & > div {
+    border-radius: inherit;
+  }
+
   .chat-overlay-background {
-    border-radius: 0.5rem;
     position: absolute;
     top: 0;
     bottom: 0;
     right: 0;
     left: 0;
-    background-color: $default-overlay-background-color;
-    box-shadow: $default-overlay-box-shadow;
-    filter: opacity(5%);
+    z-index: 0;
+  }
+
+  .chat-overlay-messages-wrapper {
+    width: inherit;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    max-height: 100%;
+    overflow: hidden;
   }
 
   * > div {
+    z-index: 100;
     animation: basic-chat-animation 0.5s ease-in-out;
-  }
-
-  .ms-message {
-    color: black;
-    font-weight: 600;
-  }
-
-  .ms-time {
-    color: gray !important;
   }
 }
 

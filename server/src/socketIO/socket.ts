@@ -20,6 +20,8 @@ const localSocket = (httpServer: http.Server) => {
 
   io.on("connection", async (socket) => {
     console.log(socket.id, "connected");
+
+    socket.on("refreshOverlayLayout", (id) => io.emit("refreshOverlayLayout", id));
   });
 
   return io;

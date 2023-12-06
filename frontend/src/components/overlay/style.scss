@@ -21,3 +21,55 @@
     }
   }
 }
+
+.style-css-editor {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+.style-css-editor-modal-data-wrapper {
+  .style-css-editor-head-menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    height: 100%;
+    overflow-x: hidden;
+    & > button {
+      margin: 0.05rem;
+      flex-grow: 1;
+    }
+  }
+
+  .style-css-editor-editing-overlay-wrapper {
+    height: 50dvh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    .style-css-editor-edit-inputs-wrapper {
+      padding-top: 0.5rem;
+      border-top: 0.1rem solid $secondary-color;
+      display: flex;
+      justify-content: space-between;
+
+      & > div:not(:first-child) {
+        max-width: 70%;
+        min-width: 70%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      input {
+        padding: 0.5rem;
+        text-align: center;
+      }
+
+      .style-css-editor-edit-inputs-nested-data {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+  }
+}

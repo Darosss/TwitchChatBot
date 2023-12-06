@@ -1,17 +1,18 @@
 import ReactGridLayout from "react-grid-layout";
+import { OverlayKeysType } from "./types";
 
-const defaultsLayoutOpts = {
-  isDraggable: false,
-  isResizable: false,
-  static: false,
-};
-
-export const overlaysKeys = {
+export const overlaysKeys: OverlayKeysType = {
   overlayRedemptions: "overlay-redemptions",
   overlayMusicPlayer: "overlay-music-player",
   overlayYoutubeMusicPlayer: "overlay-youtube-music-player",
   overlayAchievements: "overlay-achievements",
   overlayChat: "overlay-chat",
+};
+
+const defaultsLayoutOpts = {
+  isDraggable: false,
+  isResizable: false,
+  static: false,
 };
 
 // prettier-ignore

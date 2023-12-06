@@ -1,11 +1,22 @@
-import React, { useMemo } from "react";
+import React, { CSSProperties, useMemo } from "react";
 
 import { DateTimeTooltip } from "@components/dateTooltip/DateTooltip";
 import moment from "moment";
-import { MessageServerData } from "@socket";
+import { MessageServerData, MessageServerDataBadgesPathsType } from "@socket";
 import { viteBackendUrl } from "src/configs/envVariables";
 import { getMessagesWithEmotes, getTwitchEmoteUrl } from "@utils";
 
+type MessageStylesBadges = Partial<
+  Pick<CSSProperties, "maxWidth" | "minWidth">
+> & {
+  boxShadow: string;
+};
+interface MessageStylesProps {
+  time?: Partial<Pick<CSSProperties, "color" | "fontSize">>;
+  username?: Partial<Pick<CSSProperties, "color" | "fontSize">>;
+  message?: Partial<Pick<CSSProperties, "color" | "fontSize">>;
+  badges?: MessageStylesBadges;
+}
 export interface MessageProps {
   date: number | Date;
   username: string;
@@ -13,6 +24,7 @@ export interface MessageProps {
   emotes?: MessageServerData["messageData"]["emotes"];
   tooltip?: boolean;
   badgesPaths?: MessageServerData["user"]["badgesPaths"];
+  styles?: MessageStylesProps;
 }
 
 export default function Message({
@@ -22,6 +34,7 @@ export default function Message({
   tooltip = true,
   badgesPaths,
   emotes,
+  styles,
 }: MessageProps) {
   const messageWithEmotes = useMemo(() => {
     if (!emotes || Object.keys(emotes).length === 0) return message;
@@ -43,7 +56,7 @@ export default function Message({
   return (
     <div className="chat-wrapper">
       <div className="chat-message">
-        <div className="ms-time">
+        <div className="ms-time" style={styles?.time}>
           {tooltip ? (
             <DateTimeTooltip date={date} />
           ) : (
@@ -51,24 +64,42 @@ export default function Message({
           )}
         </div>
 
-        <div className="ms-username">
+        <div className="ms-username" style={styles?.username}>
           {badgesPaths ? (
             <div className="chat-message-badges">
-              {badgesPaths[0] ? (
-                <img src={`${viteBackendUrl}\\${badgesPaths[0]}`} alt="[]" />
-              ) : null}
-              {badgesPaths[1] ? (
-                <img src={`${viteBackendUrl}\\${badgesPaths[1]}`} alt="[]" />
-              ) : null}
-              {badgesPaths[2] ? (
-                <img src={`${viteBackendUrl}\\${badgesPaths[2]}`} alt="[]" />
-              ) : null}
+              <MessageBadges paths={badgesPaths} style={styles?.badges} />
             </div>
           ) : null}
           {username}:
         </div>
-        <span className="ms-message">{messageWithEmotes}</span>
+        <span className="ms-message" style={styles?.message}>
+          {messageWithEmotes}
+        </span>
       </div>
     </div>
+  );
+}
+interface MessageBadgesProps {
+  paths: MessageServerDataBadgesPathsType;
+  style?: MessageStylesBadges;
+}
+function MessageBadges({ paths, style }: MessageBadgesProps) {
+  return (
+    <>
+      {paths.map((path, index) =>
+        path ? (
+          <img
+            key={index}
+            src={`${viteBackendUrl}\\${path}`}
+            alt="[]"
+            style={{
+              maxWidth: style?.maxWidth,
+              minWidth: style?.minWidth,
+              boxShadow: style?.boxShadow,
+            }}
+          />
+        ) : null
+      )}
+    </>
   );
 }

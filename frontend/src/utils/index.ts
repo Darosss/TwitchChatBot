@@ -7,3 +7,4 @@ export * from "./layoutBreakpoints";
 export * from "./resetScroll";
 export * from "./getDateFromSecondsToYMDHMS";
 export * from "./socketData";
+export * from "./utils";
