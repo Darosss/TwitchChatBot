@@ -5,8 +5,7 @@ import Modal from "@components/modal";
 import { CustomRewardData, useSocketContext } from "@socket";
 import { addNotification } from "@utils";
 import { useFileUpload } from "@hooks";
-import { useGetAlertSoundsMp3Names } from "@services";
-import { useDeleteAlertSound } from "@services";
+import { useGetAlertSoundsMp3Names, useDeleteAlertSound } from "@services";
 import { handleActionOnChangeState } from "@utils";
 
 export default function MessagesWindow() {
