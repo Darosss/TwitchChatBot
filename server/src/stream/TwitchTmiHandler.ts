@@ -19,7 +19,6 @@ class ClientTmiHandler {
   constructor(options: ClientTmiOptions) {
     this.userToListen = options.userToListen;
     const clientOptions: tmi.Options = {
-      options: { debug: true },
       connection: { secure: true, reconnect: true },
       identity: { password: options.password, username: options.username },
       channels: [options.userToListen]

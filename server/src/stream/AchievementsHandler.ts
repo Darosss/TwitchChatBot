@@ -18,7 +18,8 @@ import {
   getAchievements,
   updateUserById,
   getAchievementUserProgresses,
-  getOneAchievement
+  getOneAchievement,
+  getCurrentStreamSession
 } from "@services";
 import { ACHIEVEMENTS } from "@defaults";
 import { achievementsLogger, getDateFromSecondsToYMDHMS, percentChance } from "@utils";
@@ -173,6 +174,8 @@ class AchievementsHandler extends QueueHandler<
   }
 
   private async updateAchievementUserProgressAndAddToQueue({ username, ...rest }: UpdateAchievementUserProgressOpts) {
+    if (!(await getCurrentStreamSession({}))) return;
+
     const updateData = await updateAchievementUserProgressProgresses(rest);
 
     if (!updateData) {
