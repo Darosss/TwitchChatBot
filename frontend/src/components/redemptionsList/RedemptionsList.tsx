@@ -4,10 +4,13 @@ import Pagination from "@components/pagination";
 import { Link, useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import FilterBarRedemptions from "./filterBarRedemptions";
-import { useGetRedemptions, Redemption } from "src/services/RedemptionService";
-import { PaginationData } from "@services";
-import { useGetSessionRedemptions } from "@services";
-import { useGetUserRedemptions } from "@services";
+import {
+  useGetRedemptions,
+  Redemption,
+  PaginationData,
+  useGetSessionRedemptions,
+  useGetUserRedemptions,
+} from "@services";
 import { DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
 

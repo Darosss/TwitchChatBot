@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { Message as MessageType } from "@services";
+import {
+  Message as MessageType,
+  useGetCurrentSessionMessages,
+} from "@services";
 import Message from "@components/message";
 import { MessageServerData, useSocketContext } from "@socket";
 import { addNotification } from "@utils";
-import { useGetCurrentSessionMessages } from "@services";
 
 export default function StreamChat() {
   const socketContext = useSocketContext();
