@@ -1,4 +1,3 @@
-import { ServerSocket } from "@socket";
 import { CommandData } from "../discord";
 
 declare global {
@@ -19,11 +18,6 @@ declare global {
       DISCORD_CLIENT_TOKEN: string;
       DISCORD_CLIENT_ID: string;
       NODE_ENV: "development" | "production";
-    }
-  }
-  namespace Express {
-    interface Request {
-      io: ServerSocket;
     }
   }
 }
