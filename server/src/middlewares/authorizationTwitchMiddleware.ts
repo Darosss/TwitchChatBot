@@ -4,6 +4,8 @@ import { NextFunction, Request, Response } from "express";
 import { AuthorizationTwitch } from "@types";
 import { createNewAuth } from "@services";
 import { clientId, clientSecret, redirectUrl } from "@configs";
+import init from "../stream/initializeHandlers";
+import { getSocketInstance } from "../socketIO";
 
 export const authorizationTwitch = async (req: Request, res: Response, next: NextFunction) => {
   const { code } = req.query as unknown as RequestQueryAuthorizationTwitch;
@@ -23,7 +25,9 @@ export const authorizationTwitch = async (req: Request, res: Response, next: Nex
     })
   );
 
-  if (authRes) {
+  const socket = getSocketInstance();
+
+  if (authRes && socket) {
     const authTwitchJson = (await authRes.json()) as AuthorizationTwitch;
     await createNewAuth({
       accessToken: authTwitchJson.access_token,
@@ -32,6 +36,8 @@ export const authorizationTwitch = async (req: Request, res: Response, next: Nex
       obtainmentTimestamp: new Date().getTime(),
       scope: authTwitchJson.scope
     });
+
+    await init(socket);
 
     return next();
   }
