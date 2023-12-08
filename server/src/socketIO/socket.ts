@@ -10,22 +10,24 @@ import {
 } from "./types";
 import http from "http";
 
-const localSocket = (httpServer: http.Server) => {
-  const io: ServerSocket = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(
-    httpServer,
-    {
-      cors: { origin: "*", methods: ["GET", "POST"] }
-    }
-  );
+let SOCKET_IO: ServerSocket | null = null;
 
-  io.on("connection", async (socket) => {
-    console.log(socket.id, "connected");
-
-    socket.on("refreshOverlayLayout", (id) => io.emit("refreshOverlayLayout", id));
+export const newSocket = (httpServer: http.Server) => {
+  const socket = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer, {
+    cors: { origin: "*", methods: ["GET", "POST"] }
   });
 
-  return io;
+  socket.on("connection", async (socket) => {
+    console.log(socket.id, "connected");
+
+    socket.on("refreshOverlayLayout", (id) => socket.emit("refreshOverlayLayout", id));
+  });
+
+  SOCKET_IO = socket;
+  return SOCKET_IO;
 };
+
+export const getSocketInstance = () => SOCKET_IO;
 
 //TODO: duplicate function is in frontend utils
 export const isObtainedAchievement = (
@@ -36,5 +38,3 @@ export const isObtainedAchievement = (
     (data as ObtainAchievementDataWithCollectedAchievement).stage !== null
   );
 };
-
-export default localSocket;
