@@ -13,7 +13,11 @@ const startServer = async () => {
 
   const socketIO = newSocket(server);
 
-  await init(socketIO);
+  try {
+    await init(socketIO);
+  } catch (err) {
+    console.log("Error occured while trying to init handlers", err);
+  }
 
   server.listen(backendPort, async () => {
     console.log("listening on *:", backendPort);
