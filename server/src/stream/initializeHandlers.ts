@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { botUsername, botPassword, clientId, clientSecret, encryptionKey } from "@configs";
-import { createNewAuth, getAuthToken, getConfigs } from "@services";
+import { createNewAuth, getAuthToken, getConfigs, removeAuthToken } from "@services";
 import { ServerSocket } from "@socket";
 import { ApiClient } from "@twurple/api";
 import { RefreshingAuthProvider, getTokenInfo } from "@twurple/auth";
@@ -153,17 +153,14 @@ const updateHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: 
 const init = async (socket: ServerSocket) => {
   const authData = await initializeAuthToken();
   if (!authData) return;
-
+  // try {
   const tokeninfo = await getTokenInfo(authData.decryptedAccessToken);
-  // Pretty sure it's always string so null assertion
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const authorizedUser: AuthorizedUserData = { id: tokeninfo.userId!, name: tokeninfo.userName! };
   const twitchApi = new ApiClient({ authProvider: authData.authProvider });
 
   if (!authorizedUser.id || !authorizedUser.name) {
     throw Error("Something went wrong, try login again");
   }
-
   await initializeHandlers({ twitchApi, authorizedUser, socketIO: socket });
 
   socket.emit("forceReconnect");
@@ -192,12 +189,19 @@ const initializeAuthToken = async () => {
       userId: userId
     });
   });
-  authProvider.addUserForToken({
-    accessToken: decryptedAccessToken,
-    refreshToken: decryptedRefreshToken,
-    expiresIn: tokenDB.expiresIn,
-    obtainmentTimestamp: tokenDB.obtainmentTimestamp
-  });
+  try {
+    await authProvider.addUserForToken({
+      accessToken: decryptedAccessToken,
+      refreshToken: decryptedRefreshToken,
+      expiresIn: tokenDB.expiresIn,
+      obtainmentTimestamp: tokenDB.obtainmentTimestamp
+    });
+  } catch (err) {
+    if (err instanceof Error) {
+      await removeAuthToken();
+      throw new Error(`Error occured while trying to add user access token. Cleared auth token. Log in again`);
+    } else throw new Error("An unknown error occured. ");
+  }
 
   return { authProvider, decryptedAccessToken };
 };
