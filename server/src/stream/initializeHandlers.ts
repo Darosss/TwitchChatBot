@@ -1,21 +1,23 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { botUsername, botPassword } from "@configs";
-import { getConfigs } from "@services";
+import { botUsername, botPassword, clientId, clientSecret, encryptionKey } from "@configs";
+import { createNewAuth, getAuthToken, getConfigs } from "@services";
 import { ServerSocket } from "@socket";
 import { ApiClient } from "@twurple/api";
-import CommandsHandler from "./CommandsHandler";
-import EventSubHandler from "./EventSubHandler";
-import LoyaltyHandler from "./LoyaltyHandler";
-import MessagesHandler from "./MessagesHandler";
-import MusicStreamHandler from "./MusicStreamHandler";
-import MusicYTHandler from "./MusicYTHandler";
-import StreamHandler from "./StreamHandler";
-import TriggersHandler from "./TriggersHandler";
-import ClientTmiHandler from "./TwitchTmiHandler";
-import { AuthorizedUserData, HandlersList } from "./types";
+import { RefreshingAuthProvider, getTokenInfo } from "@twurple/auth";
 import { ConfigModel } from "@models";
+import { decryptToken } from "@utils";
+import { AuthorizedUserData, HandlersList } from "./types";
+import CommandsHandler from "./CommandsHandler";
+import LoyaltyHandler from "./LoyaltyHandler";
+import MusicStreamHandler from "./MusicStreamHandler";
+import StreamHandler from "./StreamHandler";
+import ClientTmiHandler from "./TwitchTmiHandler";
+import EventSubHandler from "./EventSubHandler";
 import TimersHandler from "./TimersHandler";
+import MessagesHandler from "./MessagesHandler";
 import AchievementsHandler from "./AchievementsHandler";
+import MusicYTHandler from "./MusicYTHandler";
+import TriggersHandler from "./TriggersHandler";
 
 const INITIALIZED_HANDLERS: HandlersList = {};
 
@@ -147,3 +149,57 @@ const updateHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: 
     }
   });
 };
+
+const init = async (socket: ServerSocket) => {
+  const authData = await initializeAuthToken();
+  if (!authData) return;
+
+  const tokeninfo = await getTokenInfo(authData.decryptedAccessToken);
+  // Pretty sure it's always string so null assertion
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const authorizedUser: AuthorizedUserData = { id: tokeninfo.userId!, name: tokeninfo.userName! };
+  const twitchApi = new ApiClient({ authProvider: authData.authProvider });
+
+  if (!authorizedUser.id || !authorizedUser.name) {
+    throw Error("Something went wrong, try login again");
+  }
+
+  await initializeHandlers({ twitchApi, authorizedUser, socketIO: socket });
+
+  socket.emit("forceReconnect");
+};
+
+const initializeAuthToken = async () => {
+  const tokenDB = await getAuthToken();
+  if (!tokenDB) return;
+
+  const decryptedAccessToken = decryptToken(tokenDB.accessToken, tokenDB.ivAccessToken, encryptionKey);
+  const decryptedRefreshToken = decryptToken(tokenDB.refreshToken, tokenDB.ivRefreshToken, encryptionKey);
+
+  const authProvider = new RefreshingAuthProvider({
+    clientId,
+    clientSecret
+  });
+
+  authProvider.onRefresh(async (userId, newTokenData) => {
+    const { accessToken, refreshToken, expiresIn, obtainmentTimestamp, scope } = newTokenData;
+    await createNewAuth({
+      accessToken: accessToken,
+      refreshToken: refreshToken || "",
+      expiresIn: expiresIn || 0,
+      obtainmentTimestamp: obtainmentTimestamp,
+      scope: scope,
+      userId: userId
+    });
+  });
+  authProvider.addUserForToken({
+    accessToken: decryptedAccessToken,
+    refreshToken: decryptedRefreshToken,
+    expiresIn: tokenDB.expiresIn,
+    obtainmentTimestamp: tokenDB.obtainmentTimestamp
+  });
+
+  return { authProvider, decryptedAccessToken };
+};
+
+export default init;
