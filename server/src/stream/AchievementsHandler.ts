@@ -509,6 +509,14 @@ class AchievementsHandler extends QueueHandler<
     });
   }
 
+  public async incrementAddNewSongToDatabaseAchievements(args: CommonAchievementCheckType) {
+    await this.updateAchievementUserProgressAndAddToQueue({
+      achievementName: ACHIEVEMENTS.ADDED_NEW_SONG_TO_DB,
+      ...args,
+      progress: { value: 1, increment: true }
+    });
+  }
+
   private async checkCustomMessageAchievements(data: CheckMessageForAchievement) {
     const foundCustomMessageAchievements = await getAchievements(
       { enabled: true, custom: { $exists: true }, isTime: false },
