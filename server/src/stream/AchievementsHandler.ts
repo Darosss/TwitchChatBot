@@ -68,6 +68,9 @@ interface CheckMessageForAchievementWithCondition extends Pick<CheckMessageForAc
 interface UpdateAchievementUserProgressOpts extends UpdateAchievementUserProgressProgressesArgs {
   username: string;
 }
+
+type UpdateAchievementUserProgressReturn = { error: false } | { error: true; message: string };
+
 type CheckGlobalUserDetailsArgs = Omit<UpdateAchievementUserProgressOpts, "achievementName">;
 
 interface CheckGlobalUserDetailsDateArgs extends Omit<CheckGlobalUserDetailsArgs, "progress"> {
@@ -173,14 +176,18 @@ class AchievementsHandler extends QueueHandler<
     return nowFinishedStagesInfo;
   }
 
-  private async updateAchievementUserProgressAndAddToQueue({ username, ...rest }: UpdateAchievementUserProgressOpts) {
-    if (!(await getCurrentStreamSession({}))) return;
+  private async updateAchievementUserProgressAndAddToQueue({
+    username,
+    ...rest
+  }: UpdateAchievementUserProgressOpts): Promise<UpdateAchievementUserProgressReturn> {
+    if (!(await getCurrentStreamSession({})))
+      return { error: true, message: "Achievements can be added only when stream session is active" };
 
     const updateData = await updateAchievementUserProgressProgresses(rest);
 
     if (!updateData) {
       achievementsLogger.error("Not found update data in updateAchievementUserProgressAndAddToQueue");
-      return;
+      return { error: true, message: "Probably achievement is turned off" };
     }
 
     const modifiedUpdateData = this.convertUpdateDataToObtainAchievementData(updateData);
@@ -190,6 +197,8 @@ class AchievementsHandler extends QueueHandler<
       const gainedProgress = modifiedUpdateData.gainedProgress;
       this.addAchievementProgressDataToQueue({ ...modifiedUpdateData, gainedProgress }, username);
     }
+
+    return { error: false };
   }
 
   private async addAnonymousAchievementProgress({
@@ -244,6 +253,21 @@ class AchievementsHandler extends QueueHandler<
     this.socketIO.on("connect", (socket) => {
       socket.on("emulateAchievement", (data) => {
         this.enqueue(data);
+      });
+
+      socket.on("addAchievementProgressToUser", async (data, cb) => {
+        try {
+          const update = await this.updateAchievementUserProgressAndAddToQueue(data);
+          if (update.error) throw Error(update.message);
+
+          cb(null);
+        } catch (error) {
+          if (error instanceof Error) {
+            cb(error.message);
+          } else {
+            cb("An unknown error occured");
+          }
+        }
       });
     });
   }
