@@ -10,6 +10,7 @@ export type {
   MessageServerDataBadgesPathsType,
   ObtainAchievementDataWithCollectedAchievement,
   ObtainAchievementDataWithProgressOnly,
+  AddAchievementProgressToUserData,
 } from "@socketTypes";
 
 export type * from "./types";

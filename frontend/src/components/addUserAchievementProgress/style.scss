@@ -1,0 +1,25 @@
+.add-user-achievement-progress-modal {
+  & > div {
+    box-shadow: 1px 2px 5px 2px $secondary-color;
+    padding: 0.5rem;
+  }
+
+  .add-user-achievement-progress-value {
+    display: flex;
+    flex-direction: column;
+
+    & > div {
+      display: flex;
+      justify-content: space-around;
+      & > * {
+        margin: 0.5rem;
+      }
+      input {
+        text-align: center;
+        font-size: 1rem;
+        padding: 0.5rem;
+        width: 25%;
+      }
+    }
+  }
+}

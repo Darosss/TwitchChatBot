@@ -1,0 +1,44 @@
+.select-with-data-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  select {
+    text-align: center;
+  }
+
+  div.select-with-data-search {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .select-pagination-wrapper {
+    display: flex;
+    justify-content: space-between;
+
+    & > div.select-pagination-pages {
+      display: flex;
+      align-items: end;
+
+      button {
+        min-width: 2dvw;
+      }
+
+      & > * {
+        margin: 0.1rem;
+      }
+    }
+
+    & > div.select-pagination-page-size {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      input {
+        text-align: center;
+        width: 50%;
+        font-size: 1rem;
+        padding: 0.5rem;
+      }
+    }
+  }
+}

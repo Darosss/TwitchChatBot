@@ -1,5 +1,9 @@
-import { BaseModelProperties } from "../api";
+import { BaseModelProperties, SearchParams } from "../api";
 import { Tag } from "../tags";
+
+export interface AchievementsSearchParams extends SearchParams {
+  search_name?: string;
+}
 
 export interface BadgeModelImagesUrls {
   x32: string;
