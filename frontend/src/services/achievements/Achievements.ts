@@ -12,15 +12,19 @@ import {
   AchievementStage,
   AchievementStageUpdateData,
   AchievementStageCreateData,
+  AchievementsSearchParams,
 } from "./types";
 
 const BASE_URL = "/achievements";
 const BASE_BADGES_URL = `${BASE_URL}/badges`;
 const BASE_STAGES_URL = `${BASE_URL}/stages`;
 
-export const useGetAchievements = () => {
+export const useGetAchievements = (searchParams?: AchievementsSearchParams) => {
+  const urlSearchParams =
+    searchParams && new URLSearchParams(Object.entries(searchParams));
   return useAxiosCustom<PaginationData<Achievement>>({
-    url: `${BASE_URL}/`,
+    url: `${BASE_URL}/${urlSearchParams ? `?${urlSearchParams}` : ""}`,
+    urlParams: !searchParams,
   });
 };
 export const useEditAchievement = (id: string, data: AchievementUpdateData) => {
@@ -67,6 +71,7 @@ export const useUpdateCustomAchievement = (
   });
 };
 
+/* PROGRESSES */
 export const useGetUserAchievementsProgresses = (userId: string) => {
   return useAxiosCustom<ResponseData<AchievementUserProgress[]>>({
     url: `${BASE_URL}/user/${userId}`,
