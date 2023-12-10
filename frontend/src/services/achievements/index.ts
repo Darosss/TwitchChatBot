@@ -3,6 +3,7 @@ export { CustomAchievementAction } from "./types";
 export type {
   AchievementCustomField,
   Achievement,
+  AchievementsSearchParams,
   AchievementStage,
   GetBagesImagesResponseData,
   BadgeModelImagesUrls,

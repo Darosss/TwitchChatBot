@@ -10,7 +10,7 @@ import {
 
 export const useGetUsersList = (urlParams = true, customUrlParams = "") => {
   return useAxiosCustom<PaginationData<User>>({
-    url: `/users?${customUrlParams}`,
+    url: `/users${customUrlParams ? `?${customUrlParams}` : ""}`,
     urlParams: urlParams,
   });
 };

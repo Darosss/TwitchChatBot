@@ -4,7 +4,8 @@ import {
   AudioYTData,
   AudioYTDataInfo,
   AudioStreamData,
-  ObtainAchievementDataWithCollectedAchievement
+  ObtainAchievementDataWithCollectedAchievement,
+  AddAchievementProgressToUserData
 } from "./dataTypes";
 
 export interface ClientToServerEvents
@@ -19,6 +20,7 @@ export interface ClientToServerEvents
   changeModes: () => void;
   logout: () => void;
   emulateAchievement: (data: ObtainAchievementDataWithCollectedAchievement) => void;
+  addAchievementProgressToUser: (data: AddAchievementProgressToUserData, cb: (error: string | null) => void) => void;
   refreshOverlayLayout: (overlayId: string) => void;
 }
 

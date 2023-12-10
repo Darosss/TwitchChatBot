@@ -100,5 +100,8 @@ export const getSocketEmitsFunctions = (
     refreshOverlayLayout: (overlayId: string) => {
       socketConnection.emit("refreshOverlayLayout", overlayId);
     },
+    addAchievementProgressToUser: (data, cb) => {
+      socketConnection.emit("addAchievementProgressToUser", data, cb);
+    },
   };
 };

@@ -31,3 +31,8 @@ export interface BaseModelProperties {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface SearchParams {
+  limit?: number;
+  page?: number;
+}
