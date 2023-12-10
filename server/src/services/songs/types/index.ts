@@ -27,3 +27,5 @@ export interface SongsUpdateData
     Partial<Pick<SongsModel, "enabled">> {}
 
 export type ManageSongLikesAction = "like" | "dislike" | "nothing";
+
+export type CreateSongReturn = { isNew: boolean; song: SongsModel };
