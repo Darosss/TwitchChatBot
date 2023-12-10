@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
-import Message from "@components/message";
 import PreviousPage from "@components/previousPage";
-import { useEditUser, useGetLatestEldestMsgs, useGetUser } from "@services";
-import { addNotification } from "@utils";
+import Message from "@components/message";
+import AddUserAchievementProgress from "@components/addUserAchievementProgress";
 import { DateTooltip } from "@components/dateTooltip";
 import { HelmetTitle } from "@components/componentWithTitle";
+import { useEditUser, useGetLatestEldestMsgs, useGetUser } from "@services";
+import { addNotification } from "@utils";
 
 export default function UserProfile() {
   const { userId } = useParams();
@@ -71,6 +71,14 @@ export default function UserProfile() {
               <Link to="./achievements" className="primary-button">
                 Achievements
               </Link>
+            </div>
+            <div>
+              {userId ? (
+                <AddUserAchievementProgress
+                  userId={userId}
+                  username={data.username}
+                />
+              ) : null}
             </div>
           </div>
           <div>
