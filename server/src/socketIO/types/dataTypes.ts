@@ -1,7 +1,16 @@
-import { AchievementModel, StageDataWithBadgePopulated, UserModel } from "@models";
+//TODO: I do not use tsconfig @paths here for one reason. These types right now are imported in /frontend @SocketTypes path
+// When using /server paths it does not know the proper path. So use ../../ paths instead for now.
+
+import { AchievementModel, StageDataWithBadgePopulated, UserModel } from "../../models";
+import { UpdateAchievementUserProgressProgressesArgs } from "../../services";
 import { CommonUserstate, DeleteUserstate } from "tmi.js";
 
 export type MessageServerDataBadgesPathsType = [string, string, string];
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface AddAchievementProgressToUserData extends UpdateAchievementUserProgressProgressesArgs {
+  username: string;
+}
 
 export interface MessageServerDataMessageDataType {
   id: string;
