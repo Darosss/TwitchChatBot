@@ -159,6 +159,12 @@ export const getDefaultAchievementsData = (stagesId: string, tagId: string): Ach
       tag: tagId
     },
     {
+      name: ACHIEVEMENTS.ADDED_NEW_SONG_TO_DB,
+      description: "Achievements for added NEW songs to my list",
+      stages: stagesId,
+      tag: tagId
+    },
+    {
       name: ACHIEVEMENTS.SONG_REQUEST,
       description: "Achievements for song requests in message",
       stages: stagesId,

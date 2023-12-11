@@ -1,6 +1,7 @@
 import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import {
+  CreateSongReturn,
   ManageSongLikesAction,
   ManySongsFindOptions,
   SongsCreateData,
@@ -32,9 +33,9 @@ export const getSongsCount = async (filter: FilterQuery<SongsDocument> = {}) => 
   return await Songs.countDocuments(filter);
 };
 
-export const createSong = async (createData: SongsCreateData) => {
+export const createSong = async (createData: SongsCreateData): Promise<CreateSongReturn | undefined> => {
   const foundSong = await getOneSong({ youtubeId: createData.youtubeId }, {});
-  if (foundSong) return foundSong;
+  if (foundSong) return { isNew: false, song: foundSong };
 
   const { whoAdded, ...rest } = createData;
   try {
@@ -46,7 +47,7 @@ export const createSong = async (createData: SongsCreateData) => {
     if (!createdSong) {
       throw new AppError(400, "Couldn't create new song(s");
     }
-    return createdSong;
+    return { isNew: true, song: createdSong };
   } catch (err) {
     logger.error(`Error occured while creating song(s). ${err}`);
     handleAppError(err);

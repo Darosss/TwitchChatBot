@@ -8,11 +8,11 @@ import type {
   AudioYTData,
   AudioDataRequester
 } from "@socket";
-import { MusicConfigs, UserDocument } from "@models";
+import { MusicConfigs, UserDocument, UserModel } from "@models";
 import moment from "moment";
 import MusicHeadHandler from "./MusicHeadHandler";
 import { shuffleArray, convertSecondsToMS, isValidUrl } from "@utils";
-import { SongProperties } from "./types";
+import { AuthorizedUserData, SongProperties } from "./types";
 import YoutubeApiHandler from "./YoutubeAPIHandler";
 import { botId } from "@configs";
 import {
@@ -23,6 +23,9 @@ import {
   manageSongLikesByYoutubeId,
   updateSongs
 } from "@services";
+import { ApiClient, HelixCustomRewardRedemption, HelixCustomRewardRedemptionTargetStatus } from "@twurple/api";
+import AchievementsHandler from "./AchievementsHandler";
+import { CreateSongReturn } from "services/songs/types";
 
 interface PlaylistDetails {
   id: string;
@@ -30,6 +33,14 @@ interface PlaylistDetails {
   count: number;
 }
 
+const SONG_REQUEST_REWARD_NAME = "Song Request";
+
+interface HandleIfSongRequestRewardIsRedeemedParams {
+  title: string;
+  username: string;
+  input: string;
+  updateStatus: (newStatus: HelixCustomRewardRedemptionTargetStatus) => Promise<HelixCustomRewardRedemption>;
+}
 class MusicYTHandler extends MusicHeadHandler {
   private readonly youtubeAPIHandler: YoutubeApiHandler;
   private maxSongDuration = 60 * 10; // 10min; TODO: add to configs
@@ -39,22 +50,61 @@ class MusicYTHandler extends MusicHeadHandler {
     count: 0
   };
   private botUserInDB?: UserDocument;
+  private twitchApi: ApiClient;
+  private authorizedUser: AuthorizedUserData;
+  private achievementsHandler: AchievementsHandler;
   constructor(
     socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     sayInAuthorizedChannel: (message: string) => void,
-    configs: MusicConfigs
+    twitchApi: ApiClient,
+    authorizedUser: AuthorizedUserData,
+    configs: MusicConfigs,
+    achievementsHandler: AchievementsHandler
   ) {
     super(socketIO, sayInAuthorizedChannel, configs, "audioYT");
     this.youtubeAPIHandler = new YoutubeApiHandler();
-
+    this.twitchApi = twitchApi;
+    this.authorizedUser = authorizedUser;
+    this.achievementsHandler = achievementsHandler;
     this.init();
   }
 
   private async init() {
+    await this.createIfNotExistSongRequestReward();
     this.botUserInDB = await getOneUser({ twitchId: botId }, {});
 
     // TODO: add this.config.initialLoadFromDB ?
     await this.loadYoutubeSongsFromDatabase();
+  }
+
+  private async isSongRequestChannelRewardCreated() {
+    const rewards = await this.twitchApi.channelPoints.getCustomRewards(this.authorizedUser.id);
+    const foundSongRequestReward = rewards.find((reward) => reward.title === SONG_REQUEST_REWARD_NAME);
+
+    return !!foundSongRequestReward;
+  }
+
+  private async createIfNotExistSongRequestReward() {
+    if (await this.isSongRequestChannelRewardCreated()) return;
+
+    this.twitchApi.channelPoints.createCustomReward(this.authorizedUser.id, {
+      cost: 10,
+      userInputRequired: true,
+      title: SONG_REQUEST_REWARD_NAME,
+      prompt: "Provide name or youtube video id. Links doesn't work here."
+    });
+  }
+
+  public async handleIfSongRequestRewardIsRedeemed({
+    title,
+    input,
+    username,
+    updateStatus
+  }: HandleIfSongRequestRewardIsRedeemedParams) {
+    if (title !== SONG_REQUEST_REWARD_NAME) return;
+
+    const added = await this.requestSong(username, input);
+    if (!added) await updateStatus("CANCELED");
   }
 
   private async loadYoutubeSongsFromDatabase() {
@@ -263,16 +313,44 @@ class MusicYTHandler extends MusicHeadHandler {
   }
   private async addRequestedSongToPlayer(username: string, song: SongProperties) {
     const { id } = song;
-    if (!this.isAlreadySongInQue(id)) {
-      const foundUser = await getOneUser({ username }, {});
-      if (foundUser) {
-        this.songRequestList.push([{ id: foundUser.id, username: username }, song]);
-        await this.addSongToQue(song, { id: foundUser.id, username: username });
-
-        await this.addSongToDatabase(song, foundUser._id);
-      }
-      return true;
+    if (this.isAlreadySongInQue(id)) {
+      return this.clientSay(`@${username}, your song is already in que, request something else`);
     }
+
+    const foundUser = await getOneUser({ username }, {});
+    if (foundUser) {
+      const databaseSongData = await this.addSongToDatabase(song, foundUser._id);
+      if (!databaseSongData) {
+        this.clientSay(`@${username}, something when wrong adding your song. Try again later :)`);
+        return false;
+      }
+
+      return await this.handleSongRequestedSongLogic(foundUser, song, databaseSongData);
+    }
+  }
+
+  private async handleSongRequestedSongLogic(
+    user: UserModel,
+    song: SongProperties,
+    { isNew, song: songDB }: CreateSongReturn
+  ) {
+    if (isNew) {
+      await this.achievementsHandler.incrementAddNewSongToDatabaseAchievements({
+        userId: user._id,
+        username: user.username
+      });
+    }
+
+    if (!songDB.enabled) {
+      this.clientSay(
+        `@${user.username}, song ${songDB.title} is disabled. Request something else. Or provide more precise name :)`
+      );
+      return false;
+    }
+
+    this.songRequestList.push([{ id: user._id, username: user.username }, song]);
+    await this.addSongToQue(song, { id: user._id, username: user.username });
+    return true;
   }
 
   private isAlreadySongInQue(songId: string) {
@@ -306,23 +384,26 @@ class MusicYTHandler extends MusicHeadHandler {
     if (added) {
       this.emitGetAudioInfo();
       this.clientSay(`@${username}, added ${foundSong.name} song to que`);
-      return;
+      return true;
     }
-
-    this.clientSay(`@${username}, your song is already in que, request something else`);
   }
 
   private async searchForRequestedSong(searchQuery: string): Promise<SongProperties | undefined> {
-    const searchedItem = await this.youtubeAPIHandler.getYoutubeSearchVideosIds({
-      q: searchQuery,
-      maxResults: 1
-    });
+    try {
+      const searchedItem = await this.youtubeAPIHandler.getYoutubeSearchVideosIds({
+        q: searchQuery,
+        maxResults: 1
+      });
 
-    if (!searchedItem) return;
+      if (!searchedItem) return;
 
-    const videoDetails = await this.getYoutubeVideosDetailsById(searchedItem);
+      const videoDetails = await this.getYoutubeVideosDetailsById(searchedItem);
 
-    if (videoDetails) return videoDetails[0];
+      if (videoDetails) return videoDetails[0];
+    } catch (err) {
+      console.error("Error occured in searchForRequestedSong. Probably youtube video doesn't exist");
+      return;
+    }
   }
 
   private isEnoughRequestSongInfo(username: string, songName: string) {

@@ -10,12 +10,14 @@ import { alertSoundsPath, alertSoundPrefix } from "@configs";
 import path from "path";
 import { AuthorizedUserData } from "./types";
 import AchievementsHandler from "./AchievementsHandler";
+import MusicYTHandler from "./MusicYTHandler";
 
 interface EventSubHandlerOptions {
   apiClient: ApiClient;
   socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
   authorizedUser: AuthorizedUserData;
   achievementsHandler: AchievementsHandler;
+  musicYTHandler: MusicYTHandler;
 }
 
 export type SubscriptionTiers = "1000" | "2000" | "3000";
@@ -25,12 +27,14 @@ class EventSubHandler extends HeadHandler {
   private redemptionQue: [RewardData, { audioBuffer: Buffer; duration: number }][] = [];
   private isAlertPlaying = false;
   private achievementsHandler: AchievementsHandler;
+  private musicYTHandler: MusicYTHandler;
   constructor(options: EventSubHandlerOptions) {
     super(options.socketIO, options.apiClient, options.authorizedUser);
     this.listener = new EventSubWsListener({
       apiClient: options.apiClient
     });
     this.achievementsHandler = options.achievementsHandler;
+    this.musicYTHandler = options.musicYTHandler;
   }
 
   public async updateOptions(options: EventSubHandlerOptions): Promise<void> {
@@ -268,8 +272,17 @@ class EventSubHandler extends HeadHandler {
 
   private async subscribeToChannelRedemptionAddEvents() {
     this.listener.onChannelRedemptionAdd(this.authorizedUser.id, async (e) => {
-      const { rewardId, userId, userName, userDisplayName, redemptionDate, rewardTitle, rewardCost } = e;
-
+      const {
+        rewardId,
+        userId,
+        userName,
+        userDisplayName,
+        redemptionDate,
+        rewardTitle,
+        rewardCost,
+        input,
+        updateStatus
+      } = e;
       const user = await createUserIfNotExist(
         { twitchId: userId },
         { twitchId: userId, username: userDisplayName, twitchName: userName }
@@ -300,6 +313,14 @@ class EventSubHandler extends HeadHandler {
       const alertSoundPath = path.join(alertSoundsPath, rewardTitle) + ".mp3";
       let alertSoundFileBuffer: Buffer;
 
+      await this.musicYTHandler.handleIfSongRequestRewardIsRedeemed({
+        title: rewardTitle,
+        input,
+        username: userDisplayName,
+        updateStatus: updateStatus.bind(e)
+      });
+
+      // manage alert sounds
       if (!rewardTitle.startsWith(alertSoundPrefix)) return;
 
       try {
