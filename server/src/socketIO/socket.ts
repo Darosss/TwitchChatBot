@@ -13,17 +13,17 @@ import http from "http";
 let SOCKET_IO: ServerSocket | null = null;
 
 export const newSocket = (httpServer: http.Server) => {
-  const socket = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer, {
+  const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer, {
     cors: { origin: "*", methods: ["GET", "POST"] }
   });
 
-  socket.on("connection", async (socket) => {
+  io.on("connection", async (socket) => {
     console.log(socket.id, "connected");
 
-    socket.on("refreshOverlayLayout", (id) => socket.emit("refreshOverlayLayout", id));
+    socket.on("refreshOverlayLayout", (id) => io.emit("refreshOverlayLayout", id));
   });
 
-  SOCKET_IO = socket;
+  SOCKET_IO = io;
   return SOCKET_IO;
 };
 
