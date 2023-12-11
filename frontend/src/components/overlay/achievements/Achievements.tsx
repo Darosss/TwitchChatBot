@@ -10,6 +10,7 @@ import { viteBackendUrl } from "src/configs/envVariables";
 import { useOverlayDataContext } from "../OverlayDataContext";
 import { getExampleAchievementsData } from "./exampleData";
 import { BaseOverlayAchievementsRarity } from "src/layout";
+import { useLocalStorage } from "@hooks";
 
 export type ObtainedAchievementStateType =
   | ObtainAchievementDataWithCollectedAchievement
@@ -32,9 +33,9 @@ export default function Achievements() {
     stylesState: [{ overlayAchievements: styles }],
   } = useOverlayDataContext();
 
-  const [obtainedAchievements, setObtainedAchievements] = useState<
+  const [obtainedAchievements, setObtainedAchievements] = useLocalStorage<
     ObtainedAchievementStateType[]
-  >([]);
+  >("achievementsOverlayData", []);
 
   const [showAchievementsQueue, setShowAchievementsQueue] = useState(false);
   const [itemsQueLength, setItemsQueLength] = useState(0);
@@ -54,9 +55,9 @@ export default function Achievements() {
       clearInterval(showQueueInterval);
     };
   }, []);
-
   useEffect(() => {
     if (isEditor) setObtainedAchievements(getExampleAchievementsData());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditor]);
 
   useEffect(() => {
@@ -69,11 +70,11 @@ export default function Achievements() {
         delay: 2500,
       };
       if (isObtainedAchievement(data)) {
-        options.audioUrl = data.stage.data.sound;
+        options.audioUrl = data.stage.data.sound || "";
         options.delay = data.stage.data.showTimeMs;
       } else {
-        options.audioUrl = data.progressData.currentStage?.sound;
-        options.delay = data.progressData.currentStage?.showTimeMs;
+        options.audioUrl = data.progressData.currentStage?.sound || "";
+        options.delay = data.progressData.currentStage?.showTimeMs || 2500;
       }
 
       if (options.audioUrl) {
@@ -90,7 +91,7 @@ export default function Achievements() {
       obtainAchievement.off();
       audio.pause();
     };
-  }, [obtainAchievement]);
+  }, [obtainAchievement, setObtainedAchievements]);
 
   useEffect(() => {
     if (obtainedAchievements.length > MAX_ACHIEVEMENTS_IN_CACHE) {
@@ -199,7 +200,7 @@ function AchievementDataBlock({
     achievement?.stage.data.rarity ||
     progress?.progressData.currentStage?.rarity;
   const rarityStyle = Object.keys(styles).find(
-    (key) => key.includes("rarity") && key.includes(currentRarity)
+    (key) => key.includes("rarity") && key.includes(`${currentRarity}`)
   ) as keyof typeof styles;
 
   //TODO: right now I know it's rarity so assert as BaseOverlayAchievementsRarity - change later
@@ -376,7 +377,7 @@ function AchievementDataBlock({
         }`}
       >
         <img
-          src={`${viteBackendUrl}${
+          src={`${viteBackendUrl}/${
             obtainedAchievementContentData?.imgPath ||
             progressContentData?.imgPath
           }`}
