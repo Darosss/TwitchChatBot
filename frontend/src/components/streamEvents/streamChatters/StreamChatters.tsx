@@ -15,9 +15,9 @@ export default function StreamChatters() {
       events: { messageServer },
     } = socketContext;
 
-    messageServer.on((date, username) => {
+    messageServer.on((data) => {
       setLastChatters((prevState) => {
-        prevState.set(username, date);
+        prevState.set(data.user.username, new Date(data.messageData.timestamp));
 
         let newState = new Map(
           [...prevState.entries()].sort(

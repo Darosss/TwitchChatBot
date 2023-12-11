@@ -1,8 +1,9 @@
 import Message from "@components/message";
 import { MessageServerData, useSocketContext } from "@socket";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useOverlayDataContext } from "../OverlayDataContext";
 import { getExampleChatData } from "./exampleData";
+import { useLocalStorage } from "@hooks";
 
 const MAX_MESSAGES_IN_CACHE = 10;
 
@@ -16,7 +17,10 @@ export default function Chat() {
     isEditorState: [isEditor],
   } = useOverlayDataContext();
 
-  const [messagesData, setMessagesData] = useState<MessageServerData[]>([]);
+  const [messagesData, setMessagesData] = useLocalStorage<MessageServerData[]>(
+    "chatOverlayMessages",
+    []
+  );
 
   useEffect(() => {
     messageServer.on((data) => {
@@ -26,10 +30,11 @@ export default function Chat() {
     return () => {
       messageServer.off();
     };
-  }, [messageServer]);
+  }, [messageServer, setMessagesData]);
 
   useEffect(() => {
     if (isEditor) setMessagesData(getExampleChatData());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditor]);
 
   useEffect(() => {
@@ -46,7 +51,7 @@ export default function Chat() {
     return () => {
       messageServerDelete.off();
     };
-  }, [messageServerDelete]);
+  }, [messageServerDelete, setMessagesData]);
 
   useEffect(() => {
     if (messagesData.length >= MAX_MESSAGES_IN_CACHE)
