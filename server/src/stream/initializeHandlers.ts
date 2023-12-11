@@ -61,7 +61,14 @@ const createHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: 
   INITIALIZED_HANDLERS.achievementsHandler = new AchievementsHandler(socketIO, achievementsConfigs);
 
   INITIALIZED_HANDLERS.musicStreamHandler = new MusicStreamHandler(socketIO, sayInAuthorizedChannel, musicConfigs);
-  INITIALIZED_HANDLERS.musicYTHandler = new MusicYTHandler(socketIO, sayInAuthorizedChannel, musicConfigs);
+  INITIALIZED_HANDLERS.musicYTHandler = new MusicYTHandler(
+    socketIO,
+    sayInAuthorizedChannel,
+    twitchApi,
+    authorizedUser,
+    musicConfigs,
+    INITIALIZED_HANDLERS.achievementsHandler
+  );
   INITIALIZED_HANDLERS.commandsHandler = new CommandsHandler(
     twitchApi,
     socketIO,
@@ -100,7 +107,8 @@ const createHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: 
     apiClient: twitchApi,
     socketIO,
     authorizedUser,
-    achievementsHandler: INITIALIZED_HANDLERS.achievementsHandler
+    achievementsHandler: INITIALIZED_HANDLERS.achievementsHandler,
+    musicYTHandler: INITIALIZED_HANDLERS.musicYTHandler
   });
 
   INITIALIZED_HANDLERS.streamHandler = new StreamHandler({
@@ -131,7 +139,8 @@ const updateHandlers = async ({ configs, twitchApi, authorizedUser, socketIO }: 
     apiClient: twitchApi,
     socketIO,
     authorizedUser,
-    achievementsHandler: INITIALIZED_HANDLERS.achievementsHandler!
+    achievementsHandler: INITIALIZED_HANDLERS.achievementsHandler!,
+    musicYTHandler: INITIALIZED_HANDLERS.musicYTHandler!
   });
 
   INITIALIZED_HANDLERS.streamHandler?.updateOptions({
