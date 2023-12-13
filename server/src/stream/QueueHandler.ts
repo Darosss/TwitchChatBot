@@ -46,9 +46,11 @@ class QueueHandler<T> {
     }, delay);
   }
 
-  public enqueue(item: T) {
+  public enqueue(item: T, overrideAddInfo?: string) {
     this.items.push(item);
-    console.log(`Item ${JSON.stringify(item)} inserted`);
+    !overrideAddInfo
+      ? console.log(`Item ${JSON.stringify(item)} inserted`)
+      : console.log(`Item ${overrideAddInfo} inserted`);
   }
 
   public dequeue() {
