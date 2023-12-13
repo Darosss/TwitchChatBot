@@ -13,11 +13,11 @@ export const registerUpdateSlashCommands = async () => {
   try {
     console.log(`Started refreshing ${commandsKeys.length} application (/) commands.`);
 
-    const data = await rest.put(Routes.applicationCommands(discordClientId), {
+    await rest.put(Routes.applicationCommands(discordClientId), {
       body: commandsList
     });
 
-    console.log(`Successfully reloaded ${JSON.stringify(data)} application (/) commands.`);
+    console.log(`Successfully reloaded application (/) commands.`);
   } catch (error) {
     console.error(error);
   }
