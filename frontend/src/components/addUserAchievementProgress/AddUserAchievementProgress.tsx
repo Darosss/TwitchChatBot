@@ -1,8 +1,9 @@
+import { AxiosError, Loading } from "@components/axiosHelper";
 import Modal from "@components/modal";
 import SelectWithData from "@components/selectWithData";
 import { AchievementsSearchParams, useGetAchievements } from "@services";
 import { AddAchievementProgressToUserData, useSocketContext } from "@socket";
-import { addNotification } from "@utils";
+import { addErrorNotification, addSuccessNotification } from "@utils";
 import React, { useCallback, useEffect, useState } from "react";
 
 interface UserAchievementProgressProps {
@@ -52,11 +53,8 @@ export default function UserAchievementProgress({
       }));
   }, [achievementsData]);
 
-  if (error)
-    return (
-      <>There is an error. {error.response?.data.message || error.message}</>
-    );
-  if (loading || !achievementsData) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !achievementsData) return <Loading />;
 
   const handleOnClickAddUserProgress = () => {
     addAchievementProgressToUser(
@@ -68,13 +66,9 @@ export default function UserAchievementProgress({
       },
       (error) => {
         if (error)
-          addNotification(
-            "Error",
-            `Couldn't add progress for user. ${error}`,
-            "danger"
-          );
+          addErrorNotification(`Couldn't add progress for user. ${error}`);
         else {
-          addNotification("Success", "Added progress for user", "default");
+          addSuccessNotification("Added progress for user");
         }
       }
     );

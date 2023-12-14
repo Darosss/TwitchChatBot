@@ -3,10 +3,13 @@ import "react-notifications-component/dist/theme.css";
 
 import Modal from "@components/modal";
 import { CustomRewardData, useSocketContext } from "@socket";
-import { addNotification } from "@utils";
 import { useFileUpload } from "@hooks";
 import { useGetAlertSoundsMp3Names, useDeleteAlertSound } from "@services";
-import { handleActionOnChangeState } from "@utils";
+import {
+  addErrorNotification,
+  addSuccessNotification,
+  handleActionOnChangeState,
+} from "@utils";
 
 export default function MessagesWindow() {
   const socketContext = useSocketContext();
@@ -39,10 +42,8 @@ export default function MessagesWindow() {
       () => {
         refetchDeleteAlertSound().then(() => {
           refetchMp3AlertSounds();
-          addNotification(
-            "Deleted",
-            "Alert sound from server deleted successfully",
-            "danger"
+          addSuccessNotification(
+            "Alert sound from server deleted successfully"
           );
           setAlertSoundNameDelete(null);
         });
@@ -80,19 +81,11 @@ export default function MessagesWindow() {
       if (window.confirm(`Are you sure to delete custom reward: ${name}`)) {
         deleteCustomReward(id, (succes) => {
           if (!succes) {
-            addNotification(
-              "Can't remove",
-              "Custom reward couldn't be removed",
-              "danger"
-            );
+            addErrorNotification("Custom reward couldn't be removed");
             return;
           }
 
-          addNotification(
-            "Removed",
-            "Custom reward removed successfully",
-            "success"
-          );
+          addSuccessNotification("Custom reward removed successfully");
 
           setAlertSoundNameDelete(name);
         });
@@ -109,16 +102,12 @@ export default function MessagesWindow() {
       emits: { getCustomRewards, createCustomReward },
     } = socketContext;
     if (fileList && fileList.length <= 0) {
-      addNotification(
-        "No sound",
-        "You must add sound file to create alert sound",
-        "danger"
-      );
+      addErrorNotification("You must add sound file to create alert sound");
       return;
     }
     createCustomReward({ title: title, cost: cost }, (success) => {
       if (!success) {
-        addNotification("Error", "Custom reward couldn't be created", "danger");
+        addErrorNotification("Custom reward couldn't be created");
         return;
       }
 
@@ -130,11 +119,7 @@ export default function MessagesWindow() {
         "alertSound"
       );
 
-      addNotification(
-        "Success",
-        "Custom reward created successfully",
-        "success"
-      );
+      addSuccessNotification("Custom reward created successfully");
     });
 
     getCustomRewards();
@@ -145,11 +130,7 @@ export default function MessagesWindow() {
       emits: { updateCustomReward },
     } = socketContext;
     if (fileList && fileList.length <= 0) {
-      addNotification(
-        "No sound",
-        "You must add sound file to update alert sound",
-        "danger"
-      );
+      addErrorNotification("You must add sound file to update alert sound");
       return;
     }
     updateCustomReward(
@@ -157,11 +138,7 @@ export default function MessagesWindow() {
       { title: title, cost: cost },
       (success) => {
         if (!success) {
-          addNotification(
-            "Error",
-            "Custom reward couldn't be created",
-            "danger"
-          );
+          addErrorNotification("Custom reward couldn't be created");
           return;
         }
 
@@ -173,11 +150,7 @@ export default function MessagesWindow() {
           "alertSound"
         );
 
-        addNotification(
-          "Success",
-          "Custom reward created successfully",
-          "success"
-        );
+        addSuccessNotification("Custom reward created successfully");
       }
     );
   }, [

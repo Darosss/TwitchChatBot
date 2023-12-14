@@ -1,7 +1,7 @@
 import { useFileUpload } from "@hooks";
 import ProgressBar from "@ramonak/react-progress-bar";
 import { useGetAchievementStageSoundsBasePath } from "@services";
-import { addNotification } from "@utils";
+import { addErrorNotification, addSuccessNotification } from "@utils";
 import { useEffect, useState } from "react";
 import { viteBackendUrl } from "src/configs/envVariables";
 
@@ -94,17 +94,13 @@ function UploadAchievementStageSoundButtons({
 
   useEffect(() => {
     if (success) {
-      addNotification(
-        "Uploaded achievement stages sound to server",
-        success,
-        "success"
-      );
+      addSuccessNotification("Uploaded achievement stages sound to server");
       onSuccessCallback();
     }
   }, [success]);
 
   useEffect(() => {
-    if (error) addNotification("Danger", error, "danger");
+    if (error) addErrorNotification(error);
   }, [error]);
 
   return (

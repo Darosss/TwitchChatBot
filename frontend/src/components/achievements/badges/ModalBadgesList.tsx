@@ -1,3 +1,4 @@
+import { AxiosError, Loading } from "@components/axiosHelper";
 import Pagination from "@components/pagination";
 import { Badge, useGetBadges } from "@services";
 import { viteBackendUrl } from "src/configs/envVariables";
@@ -10,8 +11,9 @@ export default function ModalBadgesList({
   onClickBadge,
 }: ModalBadgesListProps) {
   const { data: badgesData, loading, error } = useGetBadges();
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (loading || !badgesData) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !badgesData) return <Loading />;
+
   const { data, count, currentPage } = badgesData;
 
   return (

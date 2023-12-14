@@ -13,12 +13,12 @@ import {
 } from "@services";
 import Modal from "@components/modal";
 import FilterBarCategories from "./filterBarCategories";
-import { addNotification } from "@utils";
-import { useGetAllModes } from "@utils";
+import { addSuccessNotification, useGetAllModes } from "@utils";
 import { DispatchAction } from "./types";
 import { handleActionOnChangeState } from "@utils";
 import CategoriesData from "./CategoriesData";
 import CategoriesModalData from "./CategoriesModalData";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function MessageCategoriesList() {
   const [showModal, setShowModal] = useState(false);
@@ -50,29 +50,21 @@ export default function MessageCategoriesList() {
     handleActionOnChangeState(categoryIdDelete, setCategoryIdDelete, () => {
       fetchDeleteCategory().then(() => {
         refetchData();
-        addNotification(
-          "Deleted",
-          "Message category deleted successfully",
-          "danger"
-        );
+        addSuccessNotification("Message category deleted successfully");
         setCategoryIdDelete(null);
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryIdDelete]);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!categoriesData || loading || !modes) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!categoriesData || loading || !modes) return <Loading />;
 
   const { data, currentPage, count } = categoriesData;
 
   const onSubmitModalCreate = () => {
     fetchCreateCategory().then(() => {
-      addNotification(
-        "Success",
-        "Message category created successfully",
-        "success"
-      );
+      addSuccessNotification("Message category created successfully");
       refetchData();
       setShowModal(false);
     });
@@ -80,11 +72,7 @@ export default function MessageCategoriesList() {
 
   const onSubmitModalEdit = () => {
     fetchEditCategory().then(() => {
-      addNotification(
-        "Success",
-        "Message category edited successfully",
-        "success"
-      );
+      addSuccessNotification("Message category edited successfully");
       refetchData();
       handleOnHideModal();
     });

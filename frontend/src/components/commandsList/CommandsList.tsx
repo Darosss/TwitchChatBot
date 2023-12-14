@@ -3,7 +3,7 @@ import FilterBarCommands from "./filterBarCommands";
 import Modal from "@components/modal";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-import { handleActionOnChangeState } from "@utils";
+import { addSuccessNotification, handleActionOnChangeState } from "@utils";
 import {
   useGetCommands,
   useEditCommand,
@@ -12,12 +12,12 @@ import {
   ChatCommand,
   ChatCommandCreateData,
 } from "@services";
-import { addNotification } from "@utils";
 import { useGetAllModes } from "@utils";
 import { DispatchAction } from "./types";
 import CommandsData from "./CommandsData";
 import CommandModalData from "./CommandModalData";
 import { useSocketContext } from "@socket";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function CommandsList() {
   const [showModal, setShowModal] = useState(false);
@@ -49,7 +49,7 @@ export default function CommandsList() {
       handleActionOnChangeState(commandName, setCommandIdDelete, () => {
         fetchDeleteCommand().then(() => {
           refetchData();
-          addNotification("Deleted", `Command deleted successfully`, "danger");
+          addSuccessNotification(`Command deleted successfully`);
           setCommandIdDelete(null);
         });
       });
@@ -61,29 +61,27 @@ export default function CommandsList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [commandIdDelete]);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-
-  if (loading || !commandsData || !modes) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !commandsData || !modes) return <Loading />;
 
   const { data, count, currentPage } = commandsData;
 
   const onSubmitModalCreate = () => {
     fetchCreateCommand().then(() => {
       emitRefreshCommands();
-      addNotification("Success", "Command created successfully", "success");
+      addSuccessNotification("Command created successfully");
       refetchData();
-      setShowModal(false);
+      handleOnHideModal();
     });
   };
 
   const onSubmitModalEdit = () => {
     fetchEditCommand().then(() => {
       emitRefreshCommands();
-      addNotification("Success", "Command edited successfully", "success");
+      addSuccessNotification("Command edited successfully");
       refetchData();
       handleOnHideModal();
     });
-    setShowModal(false);
   };
 
   const setState = (command: ChatCommand) => {

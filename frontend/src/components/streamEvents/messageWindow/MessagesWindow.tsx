@@ -7,7 +7,8 @@ import {
 } from "@services";
 import Modal from "@components/modal";
 import { useSocketContext } from "@socket";
-import { addNotification } from "@utils";
+import { addSuccessNotification } from "@utils";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function MessagesWindow() {
   const socketContext = useSocketContext();
@@ -51,7 +52,7 @@ export default function MessagesWindow() {
     setCurrentIdCategory(id);
     const randomMessage = getRandomMessage(id);
 
-    addNotification("Send random message", randomMessage, "success");
+    addSuccessNotification(`Sent random message ${randomMessage}`);
 
     setMessageToSend(randomMessage);
     sendMessage(randomMessage);
@@ -72,8 +73,9 @@ export default function MessagesWindow() {
     setCurrentIdCategory("");
   };
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!data || loading) return <Loading />;
+
   const { data: msgCateg } = data;
 
   return (

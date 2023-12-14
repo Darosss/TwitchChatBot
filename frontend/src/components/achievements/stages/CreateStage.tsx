@@ -1,6 +1,6 @@
 import Modal from "@components/modal";
 import { useCreateAchievementStage } from "@services";
-import { addNotification } from "@utils";
+import { addSuccessNotification } from "@utils";
 import { useState } from "react";
 import { useManyAchievementStagesContext } from "./ManyAchievementStagesContext";
 
@@ -14,18 +14,10 @@ export default function CreateStages() {
   });
 
   const handleOnSubmit = () => {
-    fetchCreateStage()
-      .then(() => {
-        addNotification("Success", "Stage added successfully.", "default");
-        refetchStages();
-      })
-      .catch((err) =>
-        addNotification(
-          "Error",
-          `Stage cannot be added. ${err.response?.data?.message}`,
-          "danger"
-        )
-      );
+    fetchCreateStage().then(() => {
+      addSuccessNotification("Stage added successfully.");
+      refetchStages();
+    });
   };
   return (
     <>

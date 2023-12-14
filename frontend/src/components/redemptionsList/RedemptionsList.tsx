@@ -13,6 +13,7 @@ import {
 } from "@services";
 import { DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 interface RedemptionsListProps {
   redemptions: "all" | "session" | "user";
@@ -41,8 +42,8 @@ export default function RedemptionsList({ redemptions }: RedemptionsListProps) {
 const RedemptionsUser = () => {
   const { userId } = useParams();
   const { data, loading, error } = useGetUserRedemptions(userId!);
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!data || loading) return <Loading />;
 
   return <Redemptions redemptionsData={data} />;
 };
@@ -50,16 +51,16 @@ const RedemptionsUser = () => {
 const RedemptionsSession = () => {
   const { sessionId } = useParams();
   const { data, loading, error } = useGetSessionRedemptions(sessionId!);
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!data || loading) return <Loading />;
 
   return <Redemptions redemptionsData={data} />;
 };
 
 const RedemptionsAll = () => {
   const { data, loading, error } = useGetRedemptions();
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!data || loading) return <Loading />;
 
   return <Redemptions redemptionsData={data} />;
 };

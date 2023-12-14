@@ -3,6 +3,7 @@ import AvailableBadgeImages from "./AvailableBadgeImages";
 import { useBadgeContextEditCreateData } from "./ContextEditCreateData";
 import { BadgeModelImagesUrls, useGetBadgesImages } from "@services";
 import { viteBackendUrl } from "src/configs/envVariables";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function BadgeModalData() {
   const {
@@ -15,8 +16,8 @@ export default function BadgeModalData() {
     refetchData,
   } = useGetBadgesImages();
 
-  if (loading) return <>Loading</>;
-  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading) return <Loading />;
   if (!badgeImagesResponseData) return null;
 
   const { data } = badgeImagesResponseData;

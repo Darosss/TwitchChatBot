@@ -9,10 +9,10 @@ import {
   useDeleteAffix,
   Affix,
 } from "@services";
-import { handleActionOnChangeState } from "@utils";
-import { addNotification } from "@utils";
+import { addSuccessNotification, handleActionOnChangeState } from "@utils";
 import FilterBarModes from "../filterBarModes";
 import ModalDataWrapper from "@components/modalDataWrapper";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function Affixes() {
   const [showModal, setShowModal] = useState(false);
@@ -47,34 +47,30 @@ export default function Affixes() {
 
   useEffect(() => {
     handleActionOnChangeState(affixIdDelete, setAffixIdDelete, () => {
-      fetchDeleteAffix()
-        .then(() => {
-          refetchData();
-          addNotification("Deleted", "Affix deleted successfully", "danger");
-          setAffixIdDelete(null);
-        })
-        .catch((err) => {
-          addNotification("Warning", err.response.data.message, "warning");
-        });
+      fetchDeleteAffix().then(() => {
+        refetchData();
+        addSuccessNotification("Affix deleted successfully");
+        setAffixIdDelete(null);
+      });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [affixIdDelete]);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (loading || !affixesData) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !affixesData) return <Loading />;
 
   const { data, count, currentPage } = affixesData;
 
   const createNewAffix = () => {
     fetchCreateAffix().then(() => {
-      addNotification("Success", "Affix created successfully", "success");
+      addSuccessNotification("Affix created successfully");
       refetchData();
     });
   };
 
   const onSubmitEditModal = () => {
     fetchEditAffix().then(() => {
-      addNotification("Success", "Affix edited successfully", "success");
+      addSuccessNotification("Affix edited successfully");
       refetchData();
     });
     setShowModal(false);

@@ -6,7 +6,7 @@ import {
 } from "@services";
 import Message from "@components/message";
 import { MessageServerData, useSocketContext } from "@socket";
-import { addNotification } from "@utils";
+import { addSuccessNotification } from "@utils";
 
 export default function StreamChat() {
   const socketContext = useSocketContext();
@@ -38,7 +38,7 @@ export default function StreamChat() {
     const {
       emits: { messageClient },
     } = socketContext;
-    addNotification("Message sent", messageToSend, "success");
+    addSuccessNotification(`Sent message ${messageToSend}`);
     messageClient(messageToSend);
     chatToBottom();
   }, [socketContext, messageToSend]);

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 
 import { useSocketContext } from "@socket";
-import { addNotification, useGetAllModes } from "@utils";
+import { addInfoNotification, useGetAllModes } from "@utils";
 import { useEditTag, useEditAffix, useEditMood } from "@services";
+import { Loading } from "@components/axiosHelper";
 
 export default function StreamModes() {
   const {
@@ -69,7 +70,7 @@ export default function StreamModes() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moodToUpdate, changeModes]);
 
-  if (!modes) return <> Loading...</>;
+  if (!modes) return <Loading />;
 
   const { tags, affixes, moods, refetchTags, refetchMoods, refetchAffixes } =
     modes;
@@ -111,17 +112,11 @@ export default function StreamModes() {
                     prefixes.push(affix.prefixes.join(" | "));
                     suffixes.push(affix.suffixes.join(" | "));
                   });
-                  addNotification(
-                    "Enabled prefixes",
-                    `${prefixes.join(" | ")}`,
-                    "info",
-                    25000
+                  addInfoNotification(
+                    `Enabled prefixes ${prefixes.join(" | ")}`
                   );
-                  addNotification(
-                    "Enabled suffixes",
-                    `${suffixes.join(" | ")}`,
-                    "info",
-                    25000
+                  addInfoNotification(
+                    `Enabled suffixes ${suffixes.join(" | ")}`
                   );
                 }}
               >

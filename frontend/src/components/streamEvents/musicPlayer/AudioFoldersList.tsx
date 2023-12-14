@@ -5,8 +5,7 @@ import {
   useGetFolderMp3Files,
   useGetFoldersList,
 } from "@services";
-import { addNotification } from "@utils";
-import { handleActionOnChangeState } from "@utils";
+import { addSuccessNotification, handleActionOnChangeState } from "@utils";
 export default function AudioFoldersList() {
   const socketContext = useSocketContext();
   const [folderName, setFolderName] = useState("");
@@ -31,7 +30,7 @@ export default function AudioFoldersList() {
       handleActionOnChangeState(folderName, setFileNameToDelete, () => {
         fetchDeleteFile().then(() => {
           refetchMp3Files();
-          addNotification("Deleted", "File deleted successfully", "danger");
+          addSuccessNotification("File deleted successfully");
           setFileNameToDelete(null);
         });
       });

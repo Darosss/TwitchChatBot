@@ -13,6 +13,8 @@ import {
 } from "@services";
 import { DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
+import AxiosError from "@components/axiosHelper/errors";
+import Loading from "@components/axiosHelper/loading";
 
 interface MessagesDetailsProp {
   messages: Message[];
@@ -41,8 +43,8 @@ export default function MessagesList({ messages }: MessagesListProps) {
 const MessagesUser = () => {
   const { userId } = useParams();
   const { data, loading, error } = useGetUserMessages(userId!);
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!data || loading) return <Loading />;
 
   return <Messages messagesData={data} />;
 };
@@ -50,16 +52,16 @@ const MessagesUser = () => {
 const MessagesSession = () => {
   const { sessionId } = useParams();
   const { data, loading, error } = useGetSessionMessages(sessionId!);
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!data || loading) return <Loading />;
 
   return <Messages messagesData={data} />;
 };
 
 const MessagesAll = () => {
   const { data, loading, error } = useGetMessages();
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!data || loading) return <Loading />;
 
   return <Messages messagesData={data} />;
 };

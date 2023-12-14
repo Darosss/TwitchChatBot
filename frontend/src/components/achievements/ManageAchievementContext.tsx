@@ -19,7 +19,7 @@ import {
   useEditAchievement,
   useUpdateCustomAchievement,
 } from "@services";
-import { addNotification } from "@utils";
+import { addSuccessNotification } from "@utils";
 
 type AchievementContextStateType =
   ManageAchievementContextType["achievementState"][0];
@@ -117,21 +117,9 @@ export const ManageAchievementContextProvider = ({
       {/* TODO: check whether thats correct to use context in EditCreateAchievementModal or should pass it as props */}
       <EditCreateAchievementModal
         onSubmit={async () => {
-          currentActionSubmit()
-            ?.then(() =>
-              addNotification(
-                "Success",
-                `Successfuly ${currentAction}`,
-                "default"
-              )
-            )
-            .catch((err) =>
-              addNotification(
-                "ERROR",
-                err.response?.data?.message || `Couldn't ${currentAction}`,
-                "danger"
-              )
-            );
+          currentActionSubmit()?.then(() =>
+            addSuccessNotification(`Successfuly ${currentAction}`)
+          );
         }}
       />
     </ManageAchievementContext.Provider>

@@ -1,12 +1,13 @@
 import PreviousPage from "@components/previousPage";
 import AvailableBadgeImages, { OnClickBadgeType } from "./AvailableBadgeImages";
 import { useEffect, useState } from "react";
-import { handleActionOnChangeState, addNotification } from "@utils";
+import { handleActionOnChangeState, addSuccessNotification } from "@utils";
 import { useDeleteBadgeImage, useGetBadgesImages } from "@services";
 import Modal from "@components/modal";
 import ModalDataWrapper from "@components/modalDataWrapper";
 import { viteBackendUrl } from "src/configs/envVariables";
 import React from "react";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function BadgesImages() {
   const [showModal, setShowModal] = useState(false);
@@ -33,20 +34,12 @@ export default function BadgesImages() {
       badgeImageNameToDelete,
       setBadgeImageNameToDelete,
       () => {
-        fetchDeleteBadge()
-          .then((data) => {
-            setBadgeImageNameToDelete(null);
-            refetchData();
-            setShowModal(false);
-            addNotification("Deleted", data.message, "danger");
-          })
-          .catch((err) =>
-            addNotification(
-              "Deleted",
-              `Badge image cannot be deleted. ${err.response?.data?.message}`,
-              "danger"
-            )
-          );
+        fetchDeleteBadge().then((data) => {
+          setBadgeImageNameToDelete(null);
+          refetchData();
+          setShowModal(false);
+          addSuccessNotification(data.message);
+        });
       }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -62,8 +55,8 @@ export default function BadgesImages() {
     setShowModal(false);
   };
 
-  if (loading) return <>Loading</>;
-  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading) return <Loading />;
   if (!badgeImagesResponseData) return null;
 
   return (

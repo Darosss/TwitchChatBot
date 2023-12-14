@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { useGetAchievementStages } from "@services";
 import { ManyAchievementStageContextType } from "./types";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 const initialAchievementStagesData: ManyAchievementStageContextType["achievementStagesState"] =
   { count: 0, totalPages: 0, currentPage: 0, data: [] };
@@ -35,11 +36,8 @@ export const ManyAchievementStagesContextProvider = ({
     await refetchData();
   };
 
-  if (error)
-    return (
-      <>There is an error. {error.response?.data.message || error.message}</>
-    );
-  if (loading || !stagesData) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !stagesData) return <Loading />;
 
   return (
     <ManyAchievementStagesContext.Provider

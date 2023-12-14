@@ -1,6 +1,6 @@
 import { DateTooltip } from "@components/dateTooltip";
 import { useDeleteAchievementStage, AchievementStage } from "@services";
-import { handleActionOnChangeState, addNotification } from "@utils";
+import { handleActionOnChangeState, addSuccessNotification } from "@utils";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useManyAchievementStagesContext } from "./ManyAchievementStagesContext";
@@ -20,19 +20,8 @@ export default function TBodyManyStagesData() {
       fetchDeleteStage()
         .then(() => {
           refetchStages();
-          addNotification(
-            "Deleted",
-            "Achievement stage deleted successfully",
-            "danger"
-          );
+          addSuccessNotification("Achievement stage deleted successfully");
         })
-        .catch((err) =>
-          addNotification(
-            "Deleted",
-            `Achievement stage cannot be deleted. ${err.response?.data?.message}`,
-            "danger"
-          )
-        )
         .finally(() => setStageIdToDelete(null));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

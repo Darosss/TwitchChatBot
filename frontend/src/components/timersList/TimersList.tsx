@@ -12,12 +12,12 @@ import {
   TimerCreateData,
 } from "@services";
 import { useSocketContext } from "@socket";
-import { handleActionOnChangeState } from "@utils";
-import { addNotification } from "@utils";
+import { addSuccessNotification, handleActionOnChangeState } from "@utils";
 import { useGetAllModes } from "@utils";
 import { DispatchAction } from "./types";
 import TimersData from "./TimersData";
 import TimerModalData from "./TimerModalData";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function TimersList() {
   const [showModal, setShowModal] = useState(false);
@@ -45,22 +45,22 @@ export default function TimersList() {
     handleActionOnChangeState(timerIdDelete, setTimerIdDelete, () => {
       fetchDeleteCommand().then(() => {
         refetchData();
-        addNotification("Deleted", "Timer deleted successfully", "danger");
+        addSuccessNotification("Timer deleted successfully");
         setTimerIdDelete(null);
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timerIdDelete]);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (loading || !commandsData || !modes) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !commandsData || !modes) return <Loading />;
 
   const { data, count, currentPage } = commandsData;
 
   const onSubmitModalCreate = () => {
     fetchCreateTimer().then(() => {
       emitRefreshTimers();
-      addNotification("Success", "Timer created successfully", "success");
+      addSuccessNotification("Timer created successfully");
       refetchData();
       setShowModal(false);
     });
@@ -69,7 +69,7 @@ export default function TimersList() {
   const onSubmitModalEdit = () => {
     fetchEditTimer().then(() => {
       emitRefreshTimers();
-      addNotification("Success", "Timer edited successfully", "success");
+      addSuccessNotification("Timer edited successfully");
       refetchData();
       handleOnHideModal();
     });

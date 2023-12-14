@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { useGetBadges } from "@services";
 import { BadgesContextType } from "./types";
+import { AxiosError, Loading } from "@components/axiosHelper";
 const initialBadgeState: BadgesContextType["badgesState"] = {
   count: 0,
   totalPages: 0,
@@ -31,11 +32,8 @@ export const BadgesContextProvider = ({
     setBadgesState(badgesData);
   }, [badgesData]);
 
-  if (error)
-    return (
-      <>There is an error. {error.response?.data.message || error.message}</>
-    );
-  if (loading || !badgesData) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !badgesData) return <Loading />;
 
   return (
     <BadgesContext.Provider

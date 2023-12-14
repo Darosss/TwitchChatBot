@@ -5,10 +5,11 @@ import {
   useGetAchievementStageSounds,
   useGetAchievementStageSoundsBasePath,
 } from "@services";
-import { addNotification, handleActionOnChangeState } from "@utils";
+import { addSuccessNotification, handleActionOnChangeState } from "@utils";
 import { useEffect, useState } from "react";
 import AvailableAchievementSounds from "./AvailableAchievementSounds";
 import { viteBackendUrl } from "src/configs/envVariables";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function AchievementStagesSounds() {
   const [showModal, setShowModal] = useState(false);
@@ -32,19 +33,11 @@ export default function AchievementStagesSounds() {
 
   useEffect(() => {
     handleActionOnChangeState(soundNameToDelete, setSoundNameToDelete, () => {
-      fetchDeleteSound()
-        .then((data) => {
-          setSoundNameToDelete(null);
-          refetchData();
-          addNotification("Deleted", data.message, "danger");
-        })
-        .catch((err) =>
-          addNotification(
-            "Deleted",
-            `Achievement stage sound cannot be deleted. ${err.response?.data?.message}`,
-            "danger"
-          )
-        );
+      fetchDeleteSound().then((data) => {
+        setSoundNameToDelete(null);
+        refetchData();
+        addSuccessNotification(data.message);
+      });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [soundNameToDelete]);
@@ -59,8 +52,8 @@ export default function AchievementStagesSounds() {
     setShowModal(false);
   };
 
-  if (loading) return <>Loading</>;
-  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (loading) return <Loading />;
+  if (error) return <AxiosError error={error} />;
   if (!stagesSoundResponseData) return null;
 
   return (

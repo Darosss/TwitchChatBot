@@ -1,8 +1,8 @@
 import { useResetConfigs, useEditConfig } from "@services";
-import { addNotification } from "@utils";
 import { ConfigsWrapperSharedProps } from "./types";
 import { useConfigsContext } from "./ConfigsContext";
 import { useSocketContext } from "@socket";
+import { addSuccessNotification } from "@utils";
 
 interface EditConfigsProps extends ConfigsWrapperSharedProps {
   onClickShowEdit: () => void;
@@ -32,7 +32,7 @@ export default function EditConfigs({
     fetchEditConfig().then(() => {
       saveConfigs();
       onClickSaveConfigs();
-      addNotification("Success", "Configs edited succesfully", "success");
+      addSuccessNotification("Configs edited succesfully");
     });
   };
 

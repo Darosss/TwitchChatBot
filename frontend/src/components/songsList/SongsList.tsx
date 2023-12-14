@@ -13,8 +13,9 @@ import {
 import SongsData from "./SongsData";
 import { DispatchAction } from "./types";
 import Modal from "@components/modal";
-import { addNotification, handleActionOnChangeState } from "@utils";
+import { addSuccessNotification, handleActionOnChangeState } from "@utils";
 import SongModalData from "./SongModalData";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function SongsLIst() {
   const [showModal, setShowModal] = useState(false);
@@ -33,36 +34,29 @@ export default function SongsLIst() {
     handleActionOnChangeState(songIdToDelete, setSongIdToDelete, () => {
       fetchDeleteSong().then(() => {
         refetchData();
-        addNotification("Deleted", "Song deleted successfully", "danger");
+        addSuccessNotification("Song deleted successfully");
         setSongIdToDelete(null);
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [songIdToDelete]);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (loading || !songsData) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !songsData) return <Loading />;
+
   const { data, count, currentPage } = songsData;
 
   const onSubmitModalCreate = () => {
-    fetchCreateSong()
-      .then(() => {
-        addNotification("Success", "Song created successfully", "success");
-        refetchData();
-        setShowModal(false);
-      })
-      .catch((err) =>
-        addNotification(
-          "ERROR",
-          err.response?.data?.message || "Couldn't create song",
-          "danger"
-        )
-      );
+    fetchCreateSong().then(() => {
+      addSuccessNotification("Song created successfully");
+      refetchData();
+      setShowModal(false);
+    });
   };
 
   const onSubmitModalEdit = () => {
     fetchEditSong().then(() => {
-      addNotification("Success", "Song edited successfully", "success");
+      addSuccessNotification("Song edited successfully");
       refetchData();
       handleOnHideModal();
     });

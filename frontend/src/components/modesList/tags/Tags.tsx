@@ -9,10 +9,10 @@ import {
   useDeleteTag,
   Tag,
 } from "@services";
-import { handleActionOnChangeState } from "@utils";
-import { addNotification } from "@utils";
+import { addSuccessNotification, handleActionOnChangeState } from "@utils";
 import FilterBarModes from "../filterBarModes";
 import ModalDataWrapper from "@components/modalDataWrapper";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function Tags() {
   const [showModal, setShowModal] = useState(false);
@@ -37,34 +37,30 @@ export default function Tags() {
 
   useEffect(() => {
     handleActionOnChangeState(tagIdDelete, setTagIdDelete, () => {
-      fetchDeleteTag()
-        .then(() => {
-          refetchData();
-          addNotification("Deleted", "Tag deleted successfully", "danger");
-          setTagIdDelete(null);
-        })
-        .catch((err) => {
-          addNotification("Warning", err.response.data.message, "warning");
-        });
+      fetchDeleteTag().then(() => {
+        refetchData();
+        addSuccessNotification("Tag deleted successfully");
+        setTagIdDelete(null);
+      });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tagIdDelete]);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (loading || !tagsData) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !tagsData) return <Loading />;
 
   const { data, count, currentPage } = tagsData;
 
   const createNewTag = () => {
     fetchCreateTag().then(() => {
-      addNotification("Success", "Tag created successfully", "success");
+      addSuccessNotification("Tag created successfully");
       refetchData();
     });
   };
 
   const onSubmitEditModal = () => {
     fetchEditTag().then(() => {
-      addNotification("Success", "Tag edited successfully", "success");
+      addSuccessNotification("Tag edited successfully");
       refetchData();
     });
     setShowModal(false);

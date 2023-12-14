@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useCreateLayout, useGetWidgets, useRemoveWidgetById } from "@services";
 import { Link } from "react-router-dom";
 import { initialLayoutWidgets, initialToolboxWidgets } from "src/layout";
-import { handleActionOnChangeState } from "@utils";
-import { addNotification } from "@utils";
+import { addSuccessNotification, handleActionOnChangeState } from "@utils";
 import CardboxWrapper from "@components/cardboxWrapper";
 import {
   CardboxInput,
   CardboxItem,
 } from "@components/cardboxWrapper/CardboxWrapper";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function StreamNotifications() {
   const { data, loading, error, refetchData } = useGetWidgets();
@@ -32,30 +32,22 @@ export default function StreamNotifications() {
       fetchDeleteLayout().then(() => {
         refetchData();
 
-        addNotification(
-          "Deleted",
-          "Stream events layout removed successfully",
-          "danger"
-        );
+        addSuccessNotification("Stream events layout removed successfully");
         setLayoutIdToDelete(null);
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [layoutIdToDelete]);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!data || loading) return <Loading />;
 
   const { data: layouts } = data;
 
   const createNewLayout = () => {
     fetchCreateLayout().then(() => {
       refetchData();
-      addNotification(
-        "Success",
-        "Stream events layout created successfully",
-        "success"
-      );
+      addSuccessNotification("Stream events layout created successfully");
     });
   };
 

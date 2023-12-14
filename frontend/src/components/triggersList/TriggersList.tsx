@@ -11,13 +11,13 @@ import {
   useDeleteTrigger,
   TriggerCreateData,
 } from "@services";
-import { handleActionOnChangeState } from "@utils";
-import { addNotification } from "@utils";
+import { addSuccessNotification, handleActionOnChangeState } from "@utils";
 import { useGetAllModes } from "@utils";
 import TriggersData from "./TriggersData";
 import TriggerModalData from "./TriggerModalData";
 import { DispatchAction } from "./types";
 import { useSocketContext } from "@socket";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function TriggersList() {
   const [showModal, setShowModal] = useState(false);
@@ -47,22 +47,22 @@ export default function TriggersList() {
     handleActionOnChangeState(triggerIdDelete, setTriggerIdDelete, () => {
       fetchDeleteTrigger().then(() => {
         refetchData();
-        addNotification("Deleted", "Trigger deleted successfully", "danger");
+        addSuccessNotification("Trigger deleted successfully");
         setTriggerIdDelete(null);
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerIdDelete]);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (loading || !commandsData || !modes) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !commandsData || !modes) return <Loading />;
 
   const { data, count, currentPage } = commandsData;
 
   const onSubmitModalCreate = () => {
     fetchCreateTrigger().then(() => {
       emitRefreshTriggers();
-      addNotification("Success", "Trigger created successfully", "success");
+      addSuccessNotification("Trigger created successfully");
       refetchData();
       setShowModal(false);
     });
@@ -71,7 +71,7 @@ export default function TriggersList() {
   const onSubmitModalEdit = () => {
     fetchEditTrigger().then(() => {
       emitRefreshTriggers();
-      addNotification("Success", "Trigger edited successfully", "success");
+      addSuccessNotification("Trigger edited successfully");
       refetchData();
       handleOnHideModal();
     });

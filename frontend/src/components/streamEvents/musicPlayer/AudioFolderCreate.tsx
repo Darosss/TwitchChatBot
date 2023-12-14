@@ -4,8 +4,7 @@ import {
   useDeleteAudioFolder,
   useGetFoldersList,
 } from "@services";
-import { addNotification } from "@utils";
-import { handleActionOnChangeState } from "@utils";
+import { addSuccessNotification, handleActionOnChangeState } from "@utils";
 
 export default function AudioFolderCreate() {
   const [folderName, setFolderName] = useState("");
@@ -24,7 +23,7 @@ export default function AudioFolderCreate() {
     handleActionOnChangeState(folderToDelete, setFolderToDelete, () => {
       fetchDeleteFolder().then(() => {
         refetchFolders();
-        addNotification("Deleted", "Folder deleted successfully", "danger");
+        addSuccessNotification("Folder deleted successfully");
         setFolderToDelete(null);
       });
     });

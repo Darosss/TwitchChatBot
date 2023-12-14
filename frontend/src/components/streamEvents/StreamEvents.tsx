@@ -20,6 +20,7 @@ import ReactGrid from "@components/reactGrid";
 import MusicPlayer from "./musicPlayer";
 import RewardsWindow from "./rewardsWindow";
 import { HelmetTitle } from "@components/componentWithTitle";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 const components = new Map([
   [widgetsKeys.streamChat, StreamChat],
@@ -58,8 +59,8 @@ export default function StreamEvents(params: { editor?: boolean }) {
     setToolbox(layoutData.toolbox);
   }, [data]);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!data || loading) return <Loading />;
 
   return (
     <div>

@@ -9,10 +9,10 @@ import {
   useDeleteMood,
   Mood,
 } from "@services";
-import { handleActionOnChangeState } from "@utils";
-import { addNotification } from "@utils";
+import { addSuccessNotification, handleActionOnChangeState } from "@utils";
 import FilterBarModes from "../filterBarModes";
 import ModalDataWrapper from "@components/modalDataWrapper";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function Moods() {
   const [showModal, setShowModal] = useState(false);
@@ -45,34 +45,30 @@ export default function Moods() {
 
   useEffect(() => {
     handleActionOnChangeState(moodIdDelete, setMoodIdDelete, () => {
-      fetchDeleteMood()
-        .then(() => {
-          refetchData();
-          addNotification("Deleted", "Mood deleted successfully", "danger");
-          setMoodIdDelete(null);
-        })
-        .catch((err) => {
-          addNotification("Warning", err.response.data.message, "warning");
-        });
+      fetchDeleteMood().then(() => {
+        refetchData();
+        addSuccessNotification("Mood deleted successfully");
+        setMoodIdDelete(null);
+      });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moodIdDelete]);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (loading || !moodsData) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !moodsData) return <Loading />;
 
   const { data, count, currentPage } = moodsData;
 
   const createNewMood = () => {
     fetchCreateMood().then(() => {
-      addNotification("Success", "Mood created successfully", "success");
+      addSuccessNotification("Mood created successfully");
       refetchData();
     });
   };
 
   const onSubmitEditModal = () => {
     fetchEditMood().then(() => {
-      addNotification("Success", "Mood edited successfully", "success");
+      addSuccessNotification("Mood edited successfully");
       refetchData();
     });
     setShowModal(false);

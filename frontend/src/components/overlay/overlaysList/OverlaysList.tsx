@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { handleActionOnChangeState } from "@utils";
-import { addNotification } from "@utils";
+import { addSuccessNotification, handleActionOnChangeState } from "@utils";
 import { Link } from "react-router-dom";
 import { initialLayoutOverlays, initialToolboxOverlays } from "src/layout";
 import {
@@ -12,6 +11,7 @@ import CardboxWrapper, {
   CardboxInput,
   CardboxItem,
 } from "@components/cardboxWrapper/CardboxWrapper";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function OverlaysList() {
   const { data, loading, error, refetchData } = useGetOverlays();
@@ -34,27 +34,22 @@ export default function OverlaysList() {
     handleActionOnChangeState(overlayIdDelete, setLayoutIdDelete, () => {
       fetchDeleteLayout().then(() => {
         refetchData();
-
-        addNotification(
-          "Deleted",
-          "Stream events overlay removed successfully",
-          "danger"
-        );
+        addSuccessNotification("Stream events overlay removed successfully");
         setLayoutIdDelete(null);
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [overlayIdDelete]);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!data || loading) return <Loading />;
 
   const { data: overlays } = data;
 
   const createNewOverlay = () => {
     fetchCreateLayout().then(() => {
       refetchData();
-      addNotification("Success", "Overlay created successfully", "success");
+      addSuccessNotification("Overlay created successfully");
     });
   };
 

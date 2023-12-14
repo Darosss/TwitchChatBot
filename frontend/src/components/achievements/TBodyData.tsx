@@ -1,6 +1,6 @@
 import { DateTooltip } from "@components/dateTooltip";
 import { TableDataWrapper } from "@components/tableWrapper";
-import { addNotification, generateEnabledDisabledDiv } from "@utils";
+import { addSuccessNotification, generateEnabledDisabledDiv } from "@utils";
 import { useAchievementsListContext } from "./AchievementsContext";
 import { Achievement, useDeleteCustomAchievement } from "@services";
 import { useManageAchievementContext } from "./ManageAchievementContext";
@@ -105,22 +105,10 @@ function DeleteCustomAchievementButton({
 
   const handleOnClickDelete = () => {
     if (window.confirm(`Are you sure you want to delete: ${achievementName}`)) {
-      fetchDeleteCustomAchievement()
-        .then(() => {
-          refetchAchievements();
-          addNotification(
-            "Deleted",
-            "Custom achievement deleted successfully",
-            "danger"
-          );
-        })
-        .catch((err) =>
-          addNotification(
-            "Deleted",
-            `Custom achievement cannot be deleted. ${err.response?.data?.message}`,
-            "danger"
-          )
-        );
+      fetchDeleteCustomAchievement().then(() => {
+        refetchAchievements();
+        addSuccessNotification("Custom achievement deleted successfully");
+      });
     }
   };
 

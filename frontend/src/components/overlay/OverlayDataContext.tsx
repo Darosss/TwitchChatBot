@@ -1,3 +1,4 @@
+import { AxiosError, Loading } from "@components/axiosHelper";
 import { Overlay, useEditOverlayById, useGetOverlayById } from "@services";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -84,10 +85,10 @@ export const OverlayDataContextProvider = ({
       setStyles(parseOverlayKeysType(styles));
   }, [data]);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (error) return <AxiosError error={error} />;
   //TODO: without (layoutOverlay && Object.keys(layoutOverlay).length <= 0) - react grid doesnt work
   if (loading || (layoutOverlay && Object.keys(layoutOverlay).length <= 0))
-    return <>Loading</>;
+    return <Loading />;
 
   return (
     <OverlayDataContext.Provider

@@ -11,6 +11,7 @@ import {
   UpdateStageDataByIndexFn,
 } from "./types";
 import { useParams } from "react-router-dom";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 type AchievementStageContextStateType =
   AchievementStageContextType["achievementStageState"][0];
@@ -57,11 +58,8 @@ export const AchievementStageContextProvider = ({
     });
   }, [achievementStageData]);
 
-  if (error)
-    return (
-      <>There is an error. {error.response?.data.message || error.message}</>
-    );
-  if (loading || !achievementStageData) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !achievementStageData) return <Loading />;
 
   const updateStageDataByIndex: UpdateStageDataByIndexFn = (
     index: number,

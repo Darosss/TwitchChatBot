@@ -4,7 +4,7 @@ import {
   GetBagesImagesResponseData,
   useGetBadgesIamgesBasePath,
 } from "@services";
-import { addNotification } from "@utils";
+import { addErrorNotification, addSuccessNotification } from "@utils";
 import { useEffect, useState } from "react";
 import { viteBackendUrl } from "src/configs/envVariables";
 
@@ -110,14 +110,14 @@ function UploadBadgeImageButtons({
 
   useEffect(() => {
     if (success) {
-      addNotification("Uploaded badge images to server", success, "success");
+      addSuccessNotification(success);
       onSuccessCallback();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
 
   useEffect(() => {
-    if (error) addNotification("Danger", error, "danger");
+    if (error) addErrorNotification(error);
   }, [error]);
 
   return (

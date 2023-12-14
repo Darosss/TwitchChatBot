@@ -1,7 +1,7 @@
 import { TableListWrapper } from "@components/tableWrapper";
 import { useDeleteBadge } from "@services";
 import { useBadgesContext } from "./ContextManyData";
-import { handleActionOnChangeState, addNotification } from "@utils";
+import { handleActionOnChangeState, addSuccessNotification } from "@utils";
 import { useState, useEffect } from "react";
 import { BadgeContextEditCreateDataProvider } from "./ContextEditCreateData";
 import EditCreateBadgeModal from "./EditCreateBadgeModal";
@@ -18,19 +18,11 @@ export default function BadgesListData() {
 
   useEffect(() => {
     handleActionOnChangeState(badgeIdToDelete, setBadgeIdToDelete, () => {
-      fetchDeleteBadge()
-        .then(() => {
-          refetchBadgeData();
-          addNotification("Deleted", "Badge deleted successfully", "danger");
-          setBadgeIdToDelete(null);
-        })
-        .catch((err) =>
-          addNotification(
-            "Deleted",
-            `Badge cannot be deleted. ${err.response?.data?.message}`,
-            "danger"
-          )
-        );
+      fetchDeleteBadge().then(() => {
+        refetchBadgeData();
+        addSuccessNotification("Badge deleted successfully");
+        setBadgeIdToDelete(null);
+      });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [badgeIdToDelete]);

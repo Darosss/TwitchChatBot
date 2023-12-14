@@ -1,6 +1,6 @@
 import Modal from "@components/modal";
 import { useEditBadge, useCreateBadge } from "@services";
-import { addNotification } from "@utils";
+import { addSuccessNotification } from "@utils";
 import BadgeModalData from "./BadgesModalData";
 import { useBadgeContextEditCreateData } from "./ContextEditCreateData";
 import { useBadgesContext } from "./ContextManyData";
@@ -16,34 +16,18 @@ export default function EditCreateBadgeModal() {
   const { refetchData: fetchCreateBadge } = useCreateBadge(restBadgeState);
 
   const onSubmitModalCreate = () => {
-    fetchCreateBadge()
-      .then(() => {
-        addNotification("Success", "Badge created successfully", "success");
-        setShowModal(false);
-        refetchBadgeData();
-      })
-      .catch((err) =>
-        addNotification(
-          "ERROR",
-          err.response?.data?.message || "Couldn't create badge",
-          "danger"
-        )
-      );
+    fetchCreateBadge().then(() => {
+      addSuccessNotification("Badge created successfully");
+      setShowModal(false);
+      refetchBadgeData();
+    });
   };
   const onSubmitModalEdit = () => {
-    fetchEditBadge()
-      .then(() => {
-        addNotification("Success", "Badge edited successfully", "success");
-        setShowModal(false);
-        refetchBadgeData();
-      })
-      .catch((err) =>
-        addNotification(
-          "ERROR",
-          err.response?.data?.message || "Couldn't update badge",
-          "danger"
-        )
-      );
+    fetchEditBadge().then(() => {
+      addSuccessNotification("Badge edited successfully");
+      setShowModal(false);
+      refetchBadgeData();
+    });
   };
 
   return (

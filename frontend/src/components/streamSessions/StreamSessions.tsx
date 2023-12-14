@@ -6,12 +6,13 @@ import FilterBarSessions from "./filterBarSessions";
 import { useGetSessions } from "@services";
 import { DateDifference, DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function StreamSessions() {
   const { data: sessionsData, loading, error } = useGetSessions();
 
-  if (error) return <>Error! {error.response?.data.message}</>;
-  if (!sessionsData || loading) return <>Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (!sessionsData || loading) return <Loading />;
 
   const { data, count, currentPage } = sessionsData;
 
