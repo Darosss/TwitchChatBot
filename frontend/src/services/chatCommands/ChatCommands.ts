@@ -33,7 +33,7 @@ export const useCreateCommand = (data: ChatCommandCreateData) => {
   });
 };
 
-export const useDeleteCommand = (commandId: string) => {
+export const useDeleteCommand = (commandId: string | null) => {
   return useAxiosCustom<any>({
     url: `/chat-commands/delete/${commandId}`,
     method: "DELETE",

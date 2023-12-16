@@ -1,6 +1,6 @@
 import DrawerBar from "@components/drawer";
 import PreviousPage from "@components/previousPage";
-import { addNotification } from "@utils";
+import { addSuccessNotification } from "@utils";
 
 interface LayoutDrawerBarProps<T> {
   layoutName: string;
@@ -53,11 +53,7 @@ export default function LayoutDrawerBar<T = unknown>({
 
   const handleOnSave = () => {
     editFn();
-    addNotification(
-      "Success",
-      "Stream events layout edited successfully",
-      "success"
-    );
+    addSuccessNotification("Stream events layout edited successfully");
   };
 
   return (

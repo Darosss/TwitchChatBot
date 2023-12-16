@@ -1,0 +1,34 @@
+.axios-error-wrapper {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  height: 100%;
+
+  font-size: 1.5rem;
+  color: $info-color;
+
+  button {
+    padding: 1rem;
+    margin: 1rem;
+    position: relative;
+    &:hover {
+      .hidrr {
+        visibility: visible;
+      }
+    }
+    .hidrr {
+      visibility: hidden;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: $danger-color;
+    }
+  }
+}

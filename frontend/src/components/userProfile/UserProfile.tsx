@@ -6,7 +6,8 @@ import AddUserAchievementProgress from "@components/addUserAchievementProgress";
 import { DateTooltip } from "@components/dateTooltip";
 import { HelmetTitle } from "@components/componentWithTitle";
 import { useEditUser, useGetLatestEldestMsgs, useGetUser } from "@services";
-import { addNotification } from "@utils";
+import { AxiosError, Loading } from "@components/axiosHelper";
+import { addSuccessNotification } from "@utils";
 
 export default function UserProfile() {
   const { userId } = useParams();
@@ -39,7 +40,7 @@ export default function UserProfile() {
   const saveNote = () => {
     fetchEditUser().then(() => {
       refetchData();
-      addNotification("Success", "User edited successfully", "success");
+      addSuccessNotification("User edited successfully");
       setIsEditingNotes(false);
     });
   };
@@ -48,14 +49,10 @@ export default function UserProfile() {
     setNotes(userData?.data.notes?.join("\n") || "");
   }, [userData]);
 
-  if (error || msgsError)
-    return (
-      <>
-        There is an error. {error?.response?.data.message}
-        {msgsError?.response?.data.message}
-      </>
-    );
-  if (!userData || !msgsData || msgLoading || loading) return <>Loading</>;
+  if (error) return <AxiosError error={error} />;
+  if (msgsError) return <AxiosError error={msgsError} />;
+
+  if (!userData || !msgsData || msgLoading || loading) return <Loading />;
   const { data } = userData;
   return (
     <>

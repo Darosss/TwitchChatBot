@@ -7,6 +7,7 @@ import { useAchievementStageContext } from "./Context";
 import moment from "moment";
 import { TableDataWrapper } from "@components/tableWrapper";
 import { getDateFromSecondsToYMDHMS } from "@utils";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 interface AchievementStageEditDataProps {
   onClickBadge: (indexOfStage: number) => void;
@@ -55,8 +56,8 @@ export default function AchievementStageEditData({
     });
   };
 
-  if (loading) return <>Loading</>;
-  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (loading) return <Loading />;
+  if (error) return <AxiosError error={error} />;
   if (!stagesSoundResponseData) return null;
 
   return (

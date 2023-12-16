@@ -32,7 +32,7 @@ export const useEditOverlayById = (id: string, data: OverlaysUpdateData) => {
   });
 };
 
-export const useRemoveOverlayById = (id: string) => {
+export const useRemoveOverlayById = (id: string | null) => {
   return useAxiosCustom<Overlay>({
     url: `/overlays/delete/${id}`,
     method: "DELETE",

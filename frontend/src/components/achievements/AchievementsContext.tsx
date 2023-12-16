@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { AchievementsContextType } from "./types";
 import { useGetAchievements } from "@services";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 const initialAchievementsData: AchievementsContextType["achievementsState"] = {
   count: 0,
@@ -39,11 +40,8 @@ export const AchievementsListContextProvider = ({
     await refetchData();
   };
 
-  if (error)
-    return (
-      <>There is an error. {error.response?.data.message || error.message}</>
-    );
-  if (loading || !achievementsData) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !achievementsData) return <Loading />;
 
   return (
     <AchievementsListContext.Provider

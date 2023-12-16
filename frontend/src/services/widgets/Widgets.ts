@@ -32,9 +32,9 @@ export const useEditWidgetById = (id: string, data: WidgetsUpdateData) => {
   });
 };
 
-export const useRemoveWidgetById = (id: string) => {
+export const useRemoveWidgetById = (widgetId: string | null) => {
   return useAxiosCustom<Widgets>({
-    url: `/widgets/delete/${id}`,
+    url: `/widgets/delete/${widgetId}`,
     method: "DELETE",
     manual: true,
     urlParams: false,

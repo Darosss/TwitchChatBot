@@ -27,7 +27,7 @@ export const useCreateMood = (data: MoodCreateData) => {
   });
 };
 
-export const useDeleteMood = (id: string) => {
+export const useDeleteMood = (id: string | null) => {
   return useAxiosCustom<Mood>({
     url: `/moods/delete/${id}`,
     method: "DELETE",

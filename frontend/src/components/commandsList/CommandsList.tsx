@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, { useReducer, useState } from "react";
 import FilterBarCommands from "./filterBarCommands";
 import Modal from "@components/modal";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-import { handleActionOnChangeState } from "@utils";
+import { addSuccessNotification } from "@utils";
 import {
   useGetCommands,
   useEditCommand,
@@ -12,12 +12,13 @@ import {
   ChatCommand,
   ChatCommandCreateData,
 } from "@services";
-import { addNotification } from "@utils";
 import { useGetAllModes } from "@utils";
 import { DispatchAction } from "./types";
 import CommandsData from "./CommandsData";
 import CommandModalData from "./CommandModalData";
 import { useSocketContext } from "@socket";
+import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function CommandsList() {
   const [showModal, setShowModal] = useState(false);
@@ -27,7 +28,6 @@ export default function CommandsList() {
   } = useSocketContext();
 
   const [editingCommand, setEditingCommand] = useState("");
-  const [commandIdDelete, setCommandIdDelete] = useState<string | null>(null);
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -40,50 +40,33 @@ export default function CommandsList() {
     state
   );
   const { refetchData: fetchCreateCommand } = useCreateCommand(state);
-  const { refetchData: fetchDeleteCommand } = useDeleteCommand(
-    commandIdDelete || ""
-  );
 
-  const handleOnDeleteCommand = useCallback(
-    (commandName: string) => {
-      handleActionOnChangeState(commandName, setCommandIdDelete, () => {
-        fetchDeleteCommand().then(() => {
-          refetchData();
-          addNotification("Deleted", `Command deleted successfully`, "danger");
-          setCommandIdDelete(null);
-        });
-      });
-    },
-    [fetchDeleteCommand, refetchData]
-  );
-  useEffect(() => {
-    if (commandIdDelete) handleOnDeleteCommand(commandIdDelete);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [commandIdDelete]);
+  const setCommandIdToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteCommand,
+    opts: { onFullfiled: () => refetchData() },
+  });
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-
-  if (loading || !commandsData || !modes) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !commandsData || !modes) return <Loading />;
 
   const { data, count, currentPage } = commandsData;
 
   const onSubmitModalCreate = () => {
     fetchCreateCommand().then(() => {
       emitRefreshCommands();
-      addNotification("Success", "Command created successfully", "success");
+      addSuccessNotification("Command created successfully");
       refetchData();
-      setShowModal(false);
+      handleOnHideModal();
     });
   };
 
   const onSubmitModalEdit = () => {
     fetchEditCommand().then(() => {
       emitRefreshCommands();
-      addNotification("Success", "Command edited successfully", "success");
+      addSuccessNotification("Command edited successfully");
       refetchData();
       handleOnHideModal();
     });
-    setShowModal(false);
   };
 
   const setState = (command: ChatCommand) => {
@@ -131,7 +114,7 @@ export default function CommandsList() {
         data={data}
         handleOnShowCreateModal={handleOnShowCreateModal}
         handleOnShowEditModal={handleOnShowEditModal}
-        setCommandIdDelete={setCommandIdDelete}
+        setCommandIdDelete={setCommandIdToDelete}
       />
       <div className="table-list-pagination">
         <Pagination

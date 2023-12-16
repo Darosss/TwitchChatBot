@@ -4,12 +4,13 @@ import PreviousPage from "@components/previousPage";
 import { useGetUsersList } from "@services";
 import FilterBarUsers from "./filterBarUsers";
 import UsersDetails from "./UsersDetails";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function Users() {
   const { data: usersData, loading, error } = useGetUsersList();
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!usersData || loading) return <>Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (!usersData || loading) return <Loading />;
 
   const { data, count, currentPage } = usersData;
   return (

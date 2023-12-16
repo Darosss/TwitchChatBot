@@ -35,3 +35,12 @@ export const addNotification = (
     },
   });
 };
+
+export const addSuccessNotification = (message: NotificationTitleMessage) =>
+  addNotification("Success", message, "success");
+
+export const addErrorNotification = (message: NotificationTitleMessage) =>
+  addNotification("Error", message, "danger", 30000);
+
+export const addInfoNotification = (message: NotificationTitleMessage) =>
+  addNotification("Info", message, "info", 30000);

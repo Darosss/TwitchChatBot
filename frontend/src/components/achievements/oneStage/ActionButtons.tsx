@@ -1,5 +1,5 @@
 import { useEditAchievementStage } from "@services";
-import { addNotification } from "@utils";
+import { addErrorNotification } from "@utils";
 import { useParams } from "react-router-dom";
 import { useAchievementStageContext } from "./Context";
 
@@ -68,8 +68,7 @@ export default function ActionButtons({
     const isBadgeSet = state.stageData.every(
       (stageData) => stageData.badge._id
     );
-    if (!isBadgeSet)
-      return addNotification("Error", "Badge is not set properly", "danger");
+    if (!isBadgeSet) return addErrorNotification("Badge is not set properly");
     onClickSave();
     fetchEditAchievementStage();
     refetchAchievementStageData();

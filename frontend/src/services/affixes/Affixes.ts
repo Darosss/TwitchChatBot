@@ -27,7 +27,7 @@ export const useCreateAffix = (data: AffixCreateData) => {
   });
 };
 
-export const useDeleteAffix = (id: string) => {
+export const useDeleteAffix = (id: string | null) => {
   return useAxiosCustom<Affix>({
     url: `/affixes/delete/${id}`,
     method: "DELETE",

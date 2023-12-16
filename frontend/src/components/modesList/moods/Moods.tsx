@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
@@ -9,16 +9,16 @@ import {
   useDeleteMood,
   Mood,
 } from "@services";
-import { handleActionOnChangeState } from "@utils";
-import { addNotification } from "@utils";
+import { addSuccessNotification } from "@utils";
 import FilterBarModes from "../filterBarModes";
 import ModalDataWrapper from "@components/modalDataWrapper";
+import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function Moods() {
   const [showModal, setShowModal] = useState(false);
 
   const [editingMood, setEditingMood] = useState("");
-  const [moodIdDelete, setMoodIdDelete] = useState<string | null>(null);
 
   const [name, setName] = useState("");
   const [createName, setCreateName] = useState("");
@@ -39,40 +39,26 @@ export default function Moods() {
     sufixes: sufixes,
   });
 
-  const { refetchData: fetchDeleteMood } = useDeleteMood(
-    moodIdDelete ? moodIdDelete : ""
-  );
+  const setMoodIdToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteMood,
+    opts: { onFullfiled: () => refetchData() },
+  });
 
-  useEffect(() => {
-    handleActionOnChangeState(moodIdDelete, setMoodIdDelete, () => {
-      fetchDeleteMood()
-        .then(() => {
-          refetchData();
-          addNotification("Deleted", "Mood deleted successfully", "danger");
-          setMoodIdDelete(null);
-        })
-        .catch((err) => {
-          addNotification("Warning", err.response.data.message, "warning");
-        });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [moodIdDelete]);
-
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (loading || !moodsData) return <> Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (loading || !moodsData) return <Loading />;
 
   const { data, count, currentPage } = moodsData;
 
   const createNewMood = () => {
     fetchCreateMood().then(() => {
-      addNotification("Success", "Mood created successfully", "success");
+      addSuccessNotification("Mood created successfully");
       refetchData();
     });
   };
 
   const onSubmitEditModal = () => {
     fetchEditMood().then(() => {
-      addNotification("Success", "Mood edited successfully", "success");
+      addSuccessNotification("Mood edited successfully");
       refetchData();
     });
     setShowModal(false);
@@ -120,7 +106,7 @@ export default function Moods() {
               {mood.name}
             </button>
             <button
-              onClick={() => setMoodIdDelete(mood._id)}
+              onClick={() => setMoodIdToDelete(mood._id)}
               className="common-button danger-button remove-mode-btn"
             >
               X

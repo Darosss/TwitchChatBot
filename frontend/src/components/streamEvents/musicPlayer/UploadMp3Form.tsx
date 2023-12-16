@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useFileUpload } from "@hooks";
-import { addNotification } from "@utils";
 import ProgressBar from "@ramonak/react-progress-bar";
 import { useGetFoldersList } from "@services";
+import { addErrorNotification, addSuccessNotification } from "@utils";
 export default function UploadMp3Form() {
   const [fileList, setFileList] = useState<FileList | null>(null);
   const [folderName, setFolderName] = useState("");
 
-  const { data: foldersData } = useGetFoldersList();
+  const { data: foldersData } = useGetFoldersList("music");
 
   const { uploadProgress, handleFileUpload, error, success } = useFileUpload(
     `files/upload/audio-mp3/${folderName}`
   );
 
   useEffect(() => {
-    if (success) addNotification("Uploaded files to sever", success, "success");
+    if (success) addSuccessNotification(success);
   }, [success]);
 
   useEffect(() => {
-    if (error) addNotification("Danger", error, "danger");
+    if (error) addErrorNotification(error);
   }, [error]);
 
   if (!foldersData) return <> No folders to upload </>;

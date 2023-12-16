@@ -5,22 +5,16 @@ import {
   useGetAchievementStageSounds,
   useGetAchievementStageSoundsBasePath,
 } from "@services";
-import { addNotification, handleActionOnChangeState } from "@utils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AvailableAchievementSounds from "./AvailableAchievementSounds";
 import { viteBackendUrl } from "src/configs/envVariables";
+import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function AchievementStagesSounds() {
   const [showModal, setShowModal] = useState(false);
-  const [soundNameToDelete, setSoundNameToDelete] = useState<string | null>(
-    null
-  );
+  const [choosenSound, setChoosenSound] = useState("");
 
-  const [choosenSound, setChoosenSound] = useState<string | null>(null);
-
-  const { refetchData: fetchDeleteSound } = useDeleteAchievementStageSound(
-    soundNameToDelete || ""
-  );
   const {
     data: stagesSoundResponseData,
     loading,
@@ -30,24 +24,10 @@ export default function AchievementStagesSounds() {
 
   const { data: basePathData } = useGetAchievementStageSoundsBasePath();
 
-  useEffect(() => {
-    handleActionOnChangeState(soundNameToDelete, setSoundNameToDelete, () => {
-      fetchDeleteSound()
-        .then((data) => {
-          setSoundNameToDelete(null);
-          refetchData();
-          addNotification("Deleted", data.message, "danger");
-        })
-        .catch((err) =>
-          addNotification(
-            "Deleted",
-            `Achievement stage sound cannot be deleted. ${err.response?.data?.message}`,
-            "danger"
-          )
-        );
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [soundNameToDelete]);
+  const setSoundNameToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteAchievementStageSound,
+    opts: { onFullfiled: () => refetchData() },
+  });
 
   const handleOnClickSoundName = (url: string) => {
     setChoosenSound(url);
@@ -55,12 +35,12 @@ export default function AchievementStagesSounds() {
   };
 
   const handleOnHideModal = () => {
-    setChoosenSound(null);
+    setChoosenSound("");
     setShowModal(false);
   };
 
-  if (loading) return <>Loading</>;
-  if (error) return <>There is an error. {error.response?.data.message}</>;
+  if (loading) return <Loading />;
+  if (error) return <AxiosError error={error} />;
   if (!stagesSoundResponseData) return null;
 
   return (

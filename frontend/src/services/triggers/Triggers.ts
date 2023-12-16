@@ -26,7 +26,7 @@ export const useCreateTrigger = (data: TriggerCreateData) => {
   });
 };
 
-export const useDeleteTrigger = (triggerId: string) => {
+export const useDeleteTrigger = (triggerId: string | null) => {
   return useAxiosCustom<Trigger>({
     url: `/triggers/delete/${triggerId}`,
     method: "DELETE",

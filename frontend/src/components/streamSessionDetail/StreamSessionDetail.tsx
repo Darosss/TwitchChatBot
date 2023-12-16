@@ -6,6 +6,7 @@ import SlideShow from "@components/slideShow";
 import { useGetSessionById } from "@services";
 import { DateTooltip } from "@components/dateTooltip";
 import StreamSessionEvents from "@components/streamSessionEvents";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 export default function StreamSessionDetail() {
   const { sessionId } = useParams();
@@ -15,8 +16,8 @@ export default function StreamSessionDetail() {
     error,
   } = useGetSessionById(sessionId || "");
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!sessionData || loading) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!sessionData || loading) return <Loading />;
 
   const { data } = sessionData;
 

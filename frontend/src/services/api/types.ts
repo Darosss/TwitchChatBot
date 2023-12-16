@@ -1,5 +1,3 @@
-import { AxiosError } from "axios";
-
 export interface ResponseData<T> {
   data: T;
 }
@@ -19,11 +17,17 @@ export interface AxiosCustomOptions<T> {
   urlParams?: boolean;
 }
 
-export interface AxiosCustomReturn<T> {
-  data: T | undefined;
+export type AxiosCustomReturnErrorType = {
+  message: string;
+  status: number;
+  code?: string;
+} | null;
+
+export interface AxiosCustomReturn<TResponse = unknown> {
+  data: TResponse | undefined;
   loading: boolean;
-  error: AxiosError<any, any> | null;
-  refetchData: () => Promise<T>;
+  error: AxiosCustomReturnErrorType;
+  refetchData: () => Promise<TResponse>;
 }
 
 export interface BaseModelProperties {
@@ -31,8 +35,16 @@ export interface BaseModelProperties {
   createdAt: Date;
   updatedAt: Date;
 }
+export interface BackendError {
+  message: string;
+  status: number;
+}
 
 export interface SearchParams {
   limit?: number;
   page?: number;
+}
+
+export interface CommonDeleteHookParams {
+  id: string;
 }

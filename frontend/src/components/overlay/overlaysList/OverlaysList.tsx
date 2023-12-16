@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { handleActionOnChangeState } from "@utils";
-import { addNotification } from "@utils";
+import React, { useState } from "react";
+import { addSuccessNotification } from "@utils";
 import { Link } from "react-router-dom";
 import { initialLayoutOverlays, initialToolboxOverlays } from "src/layout";
 import {
@@ -12,13 +11,13 @@ import CardboxWrapper, {
   CardboxInput,
   CardboxItem,
 } from "@components/cardboxWrapper/CardboxWrapper";
+import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function OverlaysList() {
   const { data, loading, error, refetchData } = useGetOverlays();
 
   const [overlayName, setLayoutName] = useState<string>("");
-
-  const [overlayIdDelete, setLayoutIdDelete] = useState<string | null>(null);
 
   const { refetchData: fetchCreateLayout } = useCreateOverlay({
     name: overlayName,
@@ -26,35 +25,20 @@ export default function OverlaysList() {
     toolbox: initialToolboxOverlays,
   });
 
-  const { refetchData: fetchDeleteLayout } = useRemoveOverlayById(
-    overlayIdDelete ? overlayIdDelete : ""
-  );
+  const setOverlayIdToDelete = useAxiosWithConfirmation({
+    hookToProceed: useRemoveOverlayById,
+    opts: { onFullfiled: () => refetchData() },
+  });
 
-  useEffect(() => {
-    handleActionOnChangeState(overlayIdDelete, setLayoutIdDelete, () => {
-      fetchDeleteLayout().then(() => {
-        refetchData();
-
-        addNotification(
-          "Deleted",
-          "Stream events overlay removed successfully",
-          "danger"
-        );
-        setLayoutIdDelete(null);
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [overlayIdDelete]);
-
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!data || loading) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!data || loading) return <Loading />;
 
   const { data: overlays } = data;
 
   const createNewOverlay = () => {
     fetchCreateLayout().then(() => {
       refetchData();
-      addNotification("Success", "Overlay created successfully", "success");
+      addSuccessNotification("Overlay created successfully");
     });
   };
 
@@ -79,7 +63,7 @@ export default function OverlaysList() {
           <CardboxItem
             title={overlay.name}
             onClickX={() => {
-              setLayoutIdDelete(overlay._id);
+              setOverlayIdToDelete(overlay._id);
             }}
             key={index}
           >

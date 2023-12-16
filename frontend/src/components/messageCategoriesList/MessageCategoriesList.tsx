@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useReducer, useState } from "react";
 
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
@@ -13,18 +13,17 @@ import {
 } from "@services";
 import Modal from "@components/modal";
 import FilterBarCategories from "./filterBarCategories";
-import { addNotification } from "@utils";
-import { useGetAllModes } from "@utils";
+import { addSuccessNotification, useGetAllModes } from "@utils";
 import { DispatchAction } from "./types";
-import { handleActionOnChangeState } from "@utils";
 import CategoriesData from "./CategoriesData";
 import CategoriesModalData from "./CategoriesModalData";
+import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function MessageCategoriesList() {
   const [showModal, setShowModal] = useState(false);
 
   const [editingCategory, setEditingCategory] = useState("");
-  const [categoryIdDelete, setCategoryIdDelete] = useState<string | null>(null);
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -42,37 +41,20 @@ export default function MessageCategoriesList() {
     state
   );
   const { refetchData: fetchCreateCategory } = useCreateMessageCategory(state);
-  const { refetchData: fetchDeleteCategory } = useDeleteMessageCategoryById(
-    categoryIdDelete || ""
-  );
 
-  useEffect(() => {
-    handleActionOnChangeState(categoryIdDelete, setCategoryIdDelete, () => {
-      fetchDeleteCategory().then(() => {
-        refetchData();
-        addNotification(
-          "Deleted",
-          "Message category deleted successfully",
-          "danger"
-        );
-        setCategoryIdDelete(null);
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryIdDelete]);
+  const setCategoryIdToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteMessageCategoryById,
+    opts: { onFullfiled: () => refetchData() },
+  });
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!categoriesData || loading || !modes) return <>Loading!</>;
+  if (error) return <AxiosError error={error} />;
+  if (!categoriesData || loading || !modes) return <Loading />;
 
   const { data, currentPage, count } = categoriesData;
 
   const onSubmitModalCreate = () => {
     fetchCreateCategory().then(() => {
-      addNotification(
-        "Success",
-        "Message category created successfully",
-        "success"
-      );
+      addSuccessNotification("Message category created successfully");
       refetchData();
       setShowModal(false);
     });
@@ -80,11 +62,7 @@ export default function MessageCategoriesList() {
 
   const onSubmitModalEdit = () => {
     fetchEditCategory().then(() => {
-      addNotification(
-        "Success",
-        "Message category edited successfully",
-        "success"
-      );
+      addSuccessNotification("Message category edited successfully");
       refetchData();
       handleOnHideModal();
     });
@@ -131,7 +109,7 @@ export default function MessageCategoriesList() {
         data={data}
         handleOnShowCreateModal={handleOnShowCreateModal}
         handleOnShowEditModal={handleOnShowEditModal}
-        setCategoryIdToDelete={setCategoryIdDelete}
+        setCategoryIdToDelete={setCategoryIdToDelete}
       />
 
       <div className="table-list-pagination">

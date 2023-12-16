@@ -8,6 +8,7 @@ import {
 } from "@services";
 import LineChart from "@components/lineChart";
 import SlideShow from "@components/slideShow";
+import { AxiosError, Loading } from "@components/axiosHelper";
 
 interface SessionMessagesProps {
   count: number;
@@ -47,8 +48,8 @@ export default function StreamStatistics() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (error) return <>There is an error. {error.response?.data.message}</>;
-  if (!statisticsData || loading) return <>Loading...</>;
+  if (error) return <AxiosError error={error} />;
+  if (!statisticsData || loading) return <Loading />;
   const { data } = statisticsData;
   return (
     <div className="session-statistics-wrapper">
