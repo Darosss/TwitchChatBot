@@ -1,8 +1,8 @@
-import useAxiosCustom from "../api";
+import useAxiosCustom, { ResponseData, ResponseMessage } from "../api";
 import { Config, ConfigUpdateData } from "./types";
 
 export const useEditConfig = (data: ConfigUpdateData) => {
-  return useAxiosCustom<Config>({
+  return useAxiosCustom<ResponseMessage, ConfigUpdateData>({
     url: `/configs/edit`,
     method: "POST",
     bodyData: data,
@@ -11,14 +11,14 @@ export const useEditConfig = (data: ConfigUpdateData) => {
 };
 
 export const useResetConfigs = () => {
-  return useAxiosCustom<Config>({
+  return useAxiosCustom<ResponseMessage>({
     url: `/configs/defaults`,
     method: "POST",
     manual: true,
   });
 };
 export const useGetConfigs = () => {
-  return useAxiosCustom<Config>({
+  return useAxiosCustom<ResponseData<Config>>({
     url: `/configs`,
   });
 };
