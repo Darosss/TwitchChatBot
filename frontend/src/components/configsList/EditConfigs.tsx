@@ -29,18 +29,19 @@ export default function EditConfigs({
   const { refetchData: fetchEditConfig } = useEditConfig(configsState);
 
   const handleOnSaveConfigs = () => {
-    fetchEditConfig().then(() => {
+    fetchEditConfig().then(({ message }) => {
       saveConfigs();
       onClickSaveConfigs();
-      addSuccessNotification("Configs edited succesfully");
+      addSuccessNotification(message);
     });
   };
 
   const handleOnClickDefaultConfigs = () => {
     if (window.confirm("Are you sure you want reset configs to defaults?")) {
-      resetConfigsToDefaults().then(() => {
+      resetConfigsToDefaults().then(({ message }) => {
         saveConfigs();
         onClickDefaultConfigs();
+        addSuccessNotification(message);
       });
     }
   };
