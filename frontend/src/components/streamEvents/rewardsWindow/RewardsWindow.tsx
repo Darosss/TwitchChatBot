@@ -3,13 +3,9 @@ import "react-notifications-component/dist/theme.css";
 
 import Modal from "@components/modal";
 import { CustomRewardData, useSocketContext } from "@socket";
-import { useFileUpload } from "@hooks";
+import { useAxiosWithConfirmation, useFileUpload } from "@hooks";
 import { useGetAlertSoundsMp3Names, useDeleteAlertSound } from "@services";
-import {
-  addErrorNotification,
-  addSuccessNotification,
-  handleActionOnChangeState,
-} from "@utils";
+import { addErrorNotification, addSuccessNotification } from "@utils";
 
 export default function MessagesWindow() {
   const socketContext = useSocketContext();
@@ -23,34 +19,18 @@ export default function MessagesWindow() {
   const [editingAlertSound, setEditingAlertSound] = useState("");
 
   const [alertSoundsServer, setAlertSoundsServer] = useState([""]);
-  const [alertSoundNameDelete, setAlertSoundNameDelete] = useState<
-    string | null
-  >(null);
   const { handleFileUpload } = useFileUpload(`files/upload/alertSounds`);
 
   const { data: mp3AlertSounds, refetchData: refetchMp3AlertSounds } =
     useGetAlertSoundsMp3Names();
 
-  const { refetchData: refetchDeleteAlertSound } = useDeleteAlertSound(
-    alertSoundNameDelete || ""
-  );
-
-  useEffect(() => {
-    handleActionOnChangeState(
-      alertSoundNameDelete,
-      setAlertSoundNameDelete,
-      () => {
-        refetchDeleteAlertSound().then(() => {
-          refetchMp3AlertSounds();
-          addSuccessNotification(
-            "Alert sound from server deleted successfully"
-          );
-          setAlertSoundNameDelete(null);
-        });
-      }
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [alertSoundNameDelete]);
+  const setAlertSoundNameDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteAlertSound,
+    opts: {
+      onFullfiled: () => refetchMp3AlertSounds(),
+      showConfirmation: false,
+    },
+  });
 
   useEffect(() => {
     if (!mp3AlertSounds) return;
@@ -78,22 +58,18 @@ export default function MessagesWindow() {
       const {
         emits: { deleteCustomReward, getCustomRewards },
       } = socketContext;
-      if (window.confirm(`Are you sure to delete custom reward: ${name}`)) {
-        deleteCustomReward(id, (succes) => {
-          if (!succes) {
-            addErrorNotification("Custom reward couldn't be removed");
-            return;
-          }
-
-          addSuccessNotification("Custom reward removed successfully");
-
-          setAlertSoundNameDelete(name);
-        });
-
+      if (!window.confirm("Are you sure to delete custom reward?")) return;
+      deleteCustomReward(id, (succes) => {
+        if (!succes) {
+          addErrorNotification("Custom reward couldn't be removed");
+          return;
+        }
+        setAlertSoundNameDelete(name);
         getCustomRewards();
-      }
+        addSuccessNotification("Custom reward removed successfully");
+      });
     },
-    [socketContext]
+    [socketContext, setAlertSoundNameDelete]
   );
 
   const emitCreateAlertSoundReward = useCallback(() => {
@@ -233,9 +209,9 @@ export default function MessagesWindow() {
             </div>
             <div>
               <button
-                onClick={() => {
-                  emitRemoveAlertSoundReward(reward.id, reward.title);
-                }}
+                onClick={() =>
+                  emitRemoveAlertSoundReward(reward.id, reward.title)
+                }
                 className="common-button danger-button"
               >
                 X

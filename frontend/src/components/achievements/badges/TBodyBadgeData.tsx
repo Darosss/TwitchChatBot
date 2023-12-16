@@ -6,6 +6,7 @@ import { useBadgesContext } from "./ContextManyData";
 export default function TBodyManyBadgesData() {
   const {
     badgesState: { data },
+    setBadgeIdToDelete,
   } = useBadgesContext();
   const {
     badgeState: [, dispatch],
@@ -33,7 +34,7 @@ export default function TBodyManyBadgesData() {
                   className="common-button danger-button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    // delet
+                    setBadgeIdToDelete(badge._id);
                   }}
                 >
                   Delete

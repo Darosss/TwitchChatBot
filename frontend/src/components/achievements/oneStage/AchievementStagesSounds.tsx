@@ -5,23 +5,16 @@ import {
   useGetAchievementStageSounds,
   useGetAchievementStageSoundsBasePath,
 } from "@services";
-import { addSuccessNotification, handleActionOnChangeState } from "@utils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AvailableAchievementSounds from "./AvailableAchievementSounds";
 import { viteBackendUrl } from "src/configs/envVariables";
 import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function AchievementStagesSounds() {
   const [showModal, setShowModal] = useState(false);
-  const [soundNameToDelete, setSoundNameToDelete] = useState<string | null>(
-    null
-  );
+  const [choosenSound, setChoosenSound] = useState("");
 
-  const [choosenSound, setChoosenSound] = useState<string | null>(null);
-
-  const { refetchData: fetchDeleteSound } = useDeleteAchievementStageSound(
-    soundNameToDelete || ""
-  );
   const {
     data: stagesSoundResponseData,
     loading,
@@ -31,16 +24,10 @@ export default function AchievementStagesSounds() {
 
   const { data: basePathData } = useGetAchievementStageSoundsBasePath();
 
-  useEffect(() => {
-    handleActionOnChangeState(soundNameToDelete, setSoundNameToDelete, () => {
-      fetchDeleteSound().then((data) => {
-        setSoundNameToDelete(null);
-        refetchData();
-        addSuccessNotification(data.message);
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [soundNameToDelete]);
+  const setSoundNameToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteAchievementStageSound,
+    opts: { onFullfiled: () => refetchData() },
+  });
 
   const handleOnClickSoundName = (url: string) => {
     setChoosenSound(url);
@@ -48,7 +35,7 @@ export default function AchievementStagesSounds() {
   };
 
   const handleOnHideModal = () => {
-    setChoosenSound(null);
+    setChoosenSound("");
     setShowModal(false);
   };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useReducer, useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
@@ -12,12 +12,13 @@ import {
   TimerCreateData,
 } from "@services";
 import { useSocketContext } from "@socket";
-import { addSuccessNotification, handleActionOnChangeState } from "@utils";
+import { addSuccessNotification } from "@utils";
 import { useGetAllModes } from "@utils";
 import { DispatchAction } from "./types";
 import TimersData from "./TimersData";
 import TimerModalData from "./TimerModalData";
 import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function TimersList() {
   const [showModal, setShowModal] = useState(false);
@@ -27,7 +28,6 @@ export default function TimersList() {
   } = useSocketContext();
 
   const [editingTimer, setEditingTimer] = useState("");
-  const [timerIdDelete, setTimerIdDelete] = useState<string | null>(null);
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -37,20 +37,13 @@ export default function TimersList() {
 
   const { refetchData: fetchEditTimer } = useEditTimer(editingTimer, state);
   const { refetchData: fetchCreateTimer } = useCreateTimer(state);
-  const { refetchData: fetchDeleteCommand } = useDeleteTimer(
-    timerIdDelete || ""
-  );
 
-  useEffect(() => {
-    handleActionOnChangeState(timerIdDelete, setTimerIdDelete, () => {
-      fetchDeleteCommand().then(() => {
-        refetchData();
-        addSuccessNotification("Timer deleted successfully");
-        setTimerIdDelete(null);
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timerIdDelete]);
+  const setTimerIdDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteTimer,
+    opts: {
+      onFullfiled: () => refetchData(),
+    },
+  });
 
   if (error) return <AxiosError error={error} />;
   if (loading || !commandsData || !modes) return <Loading />;

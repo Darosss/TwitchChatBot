@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useReducer, useState } from "react";
 import PreviousPage from "@components/previousPage";
 import FilterBarSongs from "./filterBarSongs";
 import Pagination from "@components/pagination";
@@ -13,9 +13,10 @@ import {
 import SongsData from "./SongsData";
 import { DispatchAction } from "./types";
 import Modal from "@components/modal";
-import { addSuccessNotification, handleActionOnChangeState } from "@utils";
+import { addSuccessNotification } from "@utils";
 import SongModalData from "./SongModalData";
 import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function SongsLIst() {
   const [showModal, setShowModal] = useState(false);
@@ -24,22 +25,14 @@ export default function SongsLIst() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const [editingSong, setEditingSong] = useState("");
-  const [songIdToDelete, setSongIdToDelete] = useState<string | null>(null);
 
   const { refetchData: fetchEditSong } = useEditSong(editingSong, state);
   const { refetchData: fetchCreateSong } = useCreateSong(state);
-  const { refetchData: fetchDeleteSong } = useDeleteSong(songIdToDelete || "");
 
-  useEffect(() => {
-    handleActionOnChangeState(songIdToDelete, setSongIdToDelete, () => {
-      fetchDeleteSong().then(() => {
-        refetchData();
-        addSuccessNotification("Song deleted successfully");
-        setSongIdToDelete(null);
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [songIdToDelete]);
+  const setSongIdToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteSong,
+    opts: { onFullfiled: () => refetchData() },
+  });
 
   if (error) return <AxiosError error={error} />;
   if (loading || !songsData) return <Loading />;

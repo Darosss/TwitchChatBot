@@ -7,7 +7,7 @@ export default function UploadMp3Form() {
   const [fileList, setFileList] = useState<FileList | null>(null);
   const [folderName, setFolderName] = useState("");
 
-  const { data: foldersData } = useGetFoldersList();
+  const { data: foldersData } = useGetFoldersList("music");
 
   const { uploadProgress, handleFileUpload, error, success } = useFileUpload(
     `files/upload/audio-mp3/${folderName}`

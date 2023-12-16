@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useReducer, useState } from "react";
 
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
@@ -15,16 +15,15 @@ import Modal from "@components/modal";
 import FilterBarCategories from "./filterBarCategories";
 import { addSuccessNotification, useGetAllModes } from "@utils";
 import { DispatchAction } from "./types";
-import { handleActionOnChangeState } from "@utils";
 import CategoriesData from "./CategoriesData";
 import CategoriesModalData from "./CategoriesModalData";
 import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function MessageCategoriesList() {
   const [showModal, setShowModal] = useState(false);
 
   const [editingCategory, setEditingCategory] = useState("");
-  const [categoryIdDelete, setCategoryIdDelete] = useState<string | null>(null);
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -42,20 +41,11 @@ export default function MessageCategoriesList() {
     state
   );
   const { refetchData: fetchCreateCategory } = useCreateMessageCategory(state);
-  const { refetchData: fetchDeleteCategory } = useDeleteMessageCategoryById(
-    categoryIdDelete || ""
-  );
 
-  useEffect(() => {
-    handleActionOnChangeState(categoryIdDelete, setCategoryIdDelete, () => {
-      fetchDeleteCategory().then(() => {
-        refetchData();
-        addSuccessNotification("Message category deleted successfully");
-        setCategoryIdDelete(null);
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryIdDelete]);
+  const setCategoryIdToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteMessageCategoryById,
+    opts: { onFullfiled: () => refetchData() },
+  });
 
   if (error) return <AxiosError error={error} />;
   if (!categoriesData || loading || !modes) return <Loading />;
@@ -119,7 +109,7 @@ export default function MessageCategoriesList() {
         data={data}
         handleOnShowCreateModal={handleOnShowCreateModal}
         handleOnShowEditModal={handleOnShowEditModal}
-        setCategoryIdToDelete={setCategoryIdDelete}
+        setCategoryIdToDelete={setCategoryIdToDelete}
       />
 
       <div className="table-list-pagination">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
@@ -9,16 +9,16 @@ import {
   useDeleteTag,
   Tag,
 } from "@services";
-import { addSuccessNotification, handleActionOnChangeState } from "@utils";
+import { addSuccessNotification } from "@utils";
 import FilterBarModes from "../filterBarModes";
 import ModalDataWrapper from "@components/modalDataWrapper";
 import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function Tags() {
   const [showModal, setShowModal] = useState(false);
 
   const [editingTag, setEditingTag] = useState("");
-  const [tagIdDelete, setTagIdDelete] = useState<string | null>(null);
 
   const [name, setName] = useState("");
   const [createName, setCreateName] = useState("");
@@ -31,20 +31,10 @@ export default function Tags() {
     name: createName,
   });
 
-  const { refetchData: fetchDeleteTag } = useDeleteTag(
-    tagIdDelete ? tagIdDelete : ""
-  );
-
-  useEffect(() => {
-    handleActionOnChangeState(tagIdDelete, setTagIdDelete, () => {
-      fetchDeleteTag().then(() => {
-        refetchData();
-        addSuccessNotification("Tag deleted successfully");
-        setTagIdDelete(null);
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tagIdDelete]);
+  const setTagIdToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteTag,
+    opts: { onFullfiled: () => refetchData() },
+  });
 
   if (error) return <AxiosError error={error} />;
   if (loading || !tagsData) return <Loading />;
@@ -106,7 +96,7 @@ export default function Tags() {
               {tag.name}
             </button>
             <button
-              onClick={() => setTagIdDelete(tag._id)}
+              onClick={() => setTagIdToDelete(tag._id)}
               className="common-button danger-button remove-mode-btn"
             >
               X

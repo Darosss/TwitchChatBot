@@ -6,6 +6,7 @@ import {
 } from "@services";
 
 export interface BadgesContextType {
+  setBadgeIdToDelete: (value: string) => void;
   badgesState: PaginationData<Badge>;
   refetchBadgeData: () => Promise<void>;
 }

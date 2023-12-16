@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { useGetBadges } from "@services";
+import { useDeleteBadge, useGetBadges } from "@services";
 import { BadgesContextType } from "./types";
 import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 const initialBadgeState: BadgesContextType["badgesState"] = {
   count: 0,
   totalPages: 0,
@@ -23,6 +24,11 @@ export const BadgesContextProvider = ({
     useState<BadgesContextType["badgesState"]>(initialBadgeState);
   const { data: badgesData, error, loading, refetchData } = useGetBadges();
 
+  const setBadgeIdToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteBadge,
+    opts: { onFullfiled: () => refetchData() },
+  });
+
   const refetchBadgeData = async (): Promise<void> => {
     await refetchData();
   };
@@ -38,6 +44,7 @@ export const BadgesContextProvider = ({
   return (
     <BadgesContext.Provider
       value={{
+        setBadgeIdToDelete,
         badgesState,
         refetchBadgeData,
       }}

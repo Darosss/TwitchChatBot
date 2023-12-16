@@ -1,9 +1,8 @@
 import { DateTooltip } from "@components/dateTooltip";
 import { useDeleteAchievementStage, AchievementStage } from "@services";
-import { handleActionOnChangeState, addSuccessNotification } from "@utils";
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useManyAchievementStagesContext } from "./ManyAchievementStagesContext";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function TBodyManyStagesData() {
   const {
@@ -11,28 +10,18 @@ export default function TBodyManyStagesData() {
     refetchStages,
   } = useManyAchievementStagesContext();
 
-  const [stageIdToDelete, setStageIdToDelete] = useState<string | null>(null);
-  const { refetchData: fetchDeleteStage } = useDeleteAchievementStage(
-    stageIdToDelete || ""
-  );
-  useEffect(() => {
-    handleActionOnChangeState(stageIdToDelete, setStageIdToDelete, () => {
-      fetchDeleteStage()
-        .then(() => {
-          refetchStages();
-          addSuccessNotification("Achievement stage deleted successfully");
-        })
-        .finally(() => setStageIdToDelete(null));
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stageIdToDelete]);
+  const setAchievementStageIdToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteAchievementStage,
+    opts: { onFullfiled: () => refetchStages() },
+  });
+
   return (
     <>
       {data.map((stage) => (
         <TBodyStageData
           key={stage._id}
           stage={stage}
-          onClickDelete={(stageId) => setStageIdToDelete(stageId)}
+          onClickDelete={(stageId) => setAchievementStageIdToDelete(stageId)}
         />
       ))}
     </>

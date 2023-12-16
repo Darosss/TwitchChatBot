@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useReducer, useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
@@ -11,13 +11,14 @@ import {
   useDeleteTrigger,
   TriggerCreateData,
 } from "@services";
-import { addSuccessNotification, handleActionOnChangeState } from "@utils";
+import { addSuccessNotification } from "@utils";
 import { useGetAllModes } from "@utils";
 import TriggersData from "./TriggersData";
 import TriggerModalData from "./TriggerModalData";
 import { DispatchAction } from "./types";
 import { useSocketContext } from "@socket";
 import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function TriggersList() {
   const [showModal, setShowModal] = useState(false);
@@ -26,7 +27,6 @@ export default function TriggersList() {
   } = useSocketContext();
 
   const [editingTrigger, setEditingTrigger] = useState("");
-  const [triggerIdDelete, setTriggerIdDelete] = useState<string | null>(null);
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -39,20 +39,13 @@ export default function TriggersList() {
     state
   );
   const { refetchData: fetchCreateTrigger } = useCreateTrigger(state);
-  const { refetchData: fetchDeleteTrigger } = useDeleteTrigger(
-    triggerIdDelete || ""
-  );
 
-  useEffect(() => {
-    handleActionOnChangeState(triggerIdDelete, setTriggerIdDelete, () => {
-      fetchDeleteTrigger().then(() => {
-        refetchData();
-        addSuccessNotification("Trigger deleted successfully");
-        setTriggerIdDelete(null);
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [triggerIdDelete]);
+  const setTriggerIdDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteTrigger,
+    opts: {
+      onFullfiled: () => refetchData(),
+    },
+  });
 
   if (error) return <AxiosError error={error} />;
   if (loading || !commandsData || !modes) return <Loading />;

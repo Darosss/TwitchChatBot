@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
@@ -9,16 +9,16 @@ import {
   useDeleteAffix,
   Affix,
 } from "@services";
-import { addSuccessNotification, handleActionOnChangeState } from "@utils";
+import { addSuccessNotification } from "@utils";
 import FilterBarModes from "../filterBarModes";
 import ModalDataWrapper from "@components/modalDataWrapper";
 import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function Affixes() {
   const [showModal, setShowModal] = useState(false);
 
   const [editingAffix, setEditingAffix] = useState("");
-  const [affixIdDelete, setAffixIdDelete] = useState<string | null>(null);
 
   const [createName, setCreateName] = useState("");
   const [name, setName] = useState("");
@@ -41,20 +41,10 @@ export default function Affixes() {
     name: createName,
   });
 
-  const { refetchData: fetchDeleteAffix } = useDeleteAffix(
-    affixIdDelete ? affixIdDelete : ""
-  );
-
-  useEffect(() => {
-    handleActionOnChangeState(affixIdDelete, setAffixIdDelete, () => {
-      fetchDeleteAffix().then(() => {
-        refetchData();
-        addSuccessNotification("Affix deleted successfully");
-        setAffixIdDelete(null);
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [affixIdDelete]);
+  const setAffixIdToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteAffix,
+    opts: { onFullfiled: () => refetchData() },
+  });
 
   if (error) return <AxiosError error={error} />;
   if (loading || !affixesData) return <Loading />;
@@ -120,7 +110,7 @@ export default function Affixes() {
               {affix.name}
             </button>
             <button
-              onClick={() => setAffixIdDelete(affix._id)}
+              onClick={() => setAffixIdToDelete(affix._id)}
               className="common-button danger-button remove-mode-btn"
             >
               X

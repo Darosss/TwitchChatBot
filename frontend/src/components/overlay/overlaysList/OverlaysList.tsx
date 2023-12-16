@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { addSuccessNotification, handleActionOnChangeState } from "@utils";
+import React, { useState } from "react";
+import { addSuccessNotification } from "@utils";
 import { Link } from "react-router-dom";
 import { initialLayoutOverlays, initialToolboxOverlays } from "src/layout";
 import {
@@ -12,13 +12,12 @@ import CardboxWrapper, {
   CardboxItem,
 } from "@components/cardboxWrapper/CardboxWrapper";
 import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function OverlaysList() {
   const { data, loading, error, refetchData } = useGetOverlays();
 
   const [overlayName, setLayoutName] = useState<string>("");
-
-  const [overlayIdDelete, setLayoutIdDelete] = useState<string | null>(null);
 
   const { refetchData: fetchCreateLayout } = useCreateOverlay({
     name: overlayName,
@@ -26,20 +25,10 @@ export default function OverlaysList() {
     toolbox: initialToolboxOverlays,
   });
 
-  const { refetchData: fetchDeleteLayout } = useRemoveOverlayById(
-    overlayIdDelete ? overlayIdDelete : ""
-  );
-
-  useEffect(() => {
-    handleActionOnChangeState(overlayIdDelete, setLayoutIdDelete, () => {
-      fetchDeleteLayout().then(() => {
-        refetchData();
-        addSuccessNotification("Stream events overlay removed successfully");
-        setLayoutIdDelete(null);
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [overlayIdDelete]);
+  const setOverlayIdToDelete = useAxiosWithConfirmation({
+    hookToProceed: useRemoveOverlayById,
+    opts: { onFullfiled: () => refetchData() },
+  });
 
   if (error) return <AxiosError error={error} />;
   if (!data || loading) return <Loading />;
@@ -74,7 +63,7 @@ export default function OverlaysList() {
           <CardboxItem
             title={overlay.name}
             onClickX={() => {
-              setLayoutIdDelete(overlay._id);
+              setOverlayIdToDelete(overlay._id);
             }}
             key={index}
           >

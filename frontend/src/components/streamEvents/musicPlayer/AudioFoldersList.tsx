@@ -1,46 +1,29 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSocketContext } from "@socket";
 import {
   useDeleteMp3File,
   useGetFolderMp3Files,
   useGetFoldersList,
 } from "@services";
-import { addSuccessNotification, handleActionOnChangeState } from "@utils";
+import { useAxiosWithConfirmation } from "@hooks";
 export default function AudioFoldersList() {
   const socketContext = useSocketContext();
   const [folderName, setFolderName] = useState("");
-  const [fileNameToDelete, setFileNameToDelete] = useState<string | null>(null);
 
-  const { data: foldersData } = useGetFoldersList();
+  const { data: foldersData } = useGetFoldersList("music");
 
   const { data: mp3Data, refetchData: refetchMp3Files } =
     useGetFolderMp3Files(folderName);
 
-  const { refetchData: fetchDeleteFile } = useDeleteMp3File(
-    folderName,
-    fileNameToDelete || ""
-  );
-
   const handleOnClickChangeFolder = (folder: string) => {
     setFolderName(folder);
   };
-
-  const handleOnDeleteFolderName = useCallback(
-    (folderName: string) => {
-      handleActionOnChangeState(folderName, setFileNameToDelete, () => {
-        fetchDeleteFile().then(() => {
-          refetchMp3Files();
-          addSuccessNotification("File deleted successfully");
-          setFileNameToDelete(null);
-        });
-      });
+  const setFolderAndFileNameToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteMp3File,
+    opts: {
+      onFullfiled: () => refetchMp3Files(),
     },
-    [fetchDeleteFile, refetchMp3Files]
-  );
-
-  useEffect(() => {
-    if (fileNameToDelete) handleOnDeleteFolderName(fileNameToDelete);
-  }, [handleOnDeleteFolderName, fileNameToDelete]);
+  });
 
   useEffect(() => {
     if (!folderName) return;
@@ -92,7 +75,9 @@ export default function AudioFoldersList() {
           <div key={index} className="mp3-file list-with-x-buttons">
             <div>
               <button
-                onClick={() => setFileNameToDelete(mp3)}
+                onClick={() =>
+                  setFolderAndFileNameToDelete({ folderName, fileName: mp3 })
+                }
                 className="common-button danger-button"
               >
                 x

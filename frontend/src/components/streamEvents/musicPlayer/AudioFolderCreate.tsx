@@ -1,34 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   useCreateAudioFolder,
   useDeleteAudioFolder,
   useGetFoldersList,
 } from "@services";
-import { addSuccessNotification, handleActionOnChangeState } from "@utils";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function AudioFolderCreate() {
   const [folderName, setFolderName] = useState("");
-  const [folderToDelete, setFolderToDelete] = useState<string | null>(null);
 
   const { data: foldersData, refetchData: refetchFolders } =
-    useGetFoldersList();
+    useGetFoldersList("music");
 
   const { refetchData: fetchCreateFolder } = useCreateAudioFolder(folderName);
 
-  const { refetchData: fetchDeleteFolder } = useDeleteAudioFolder(
-    folderToDelete || ""
-  );
-
-  useEffect(() => {
-    handleActionOnChangeState(folderToDelete, setFolderToDelete, () => {
-      fetchDeleteFolder().then(() => {
-        refetchFolders();
-        addSuccessNotification("Folder deleted successfully");
-        setFolderToDelete(null);
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [folderToDelete]);
+  const setFolderNameToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteAudioFolder,
+    opts: { onFullfiled: () => refetchFolders() },
+  });
 
   const handleCreateButton = () => {
     fetchCreateFolder();
@@ -51,7 +40,7 @@ export default function AudioFolderCreate() {
           <div key={index} className="folder-file list-with-x-buttons">
             <div>
               <button
-                onClick={() => setFolderToDelete(folder)}
+                onClick={() => setFolderNameToDelete(folder)}
                 className="common-button danger-button"
               >
                 x

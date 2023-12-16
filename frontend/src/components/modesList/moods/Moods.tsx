@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
@@ -9,16 +9,16 @@ import {
   useDeleteMood,
   Mood,
 } from "@services";
-import { addSuccessNotification, handleActionOnChangeState } from "@utils";
+import { addSuccessNotification } from "@utils";
 import FilterBarModes from "../filterBarModes";
 import ModalDataWrapper from "@components/modalDataWrapper";
 import { AxiosError, Loading } from "@components/axiosHelper";
+import { useAxiosWithConfirmation } from "@hooks";
 
 export default function Moods() {
   const [showModal, setShowModal] = useState(false);
 
   const [editingMood, setEditingMood] = useState("");
-  const [moodIdDelete, setMoodIdDelete] = useState<string | null>(null);
 
   const [name, setName] = useState("");
   const [createName, setCreateName] = useState("");
@@ -39,20 +39,10 @@ export default function Moods() {
     sufixes: sufixes,
   });
 
-  const { refetchData: fetchDeleteMood } = useDeleteMood(
-    moodIdDelete ? moodIdDelete : ""
-  );
-
-  useEffect(() => {
-    handleActionOnChangeState(moodIdDelete, setMoodIdDelete, () => {
-      fetchDeleteMood().then(() => {
-        refetchData();
-        addSuccessNotification("Mood deleted successfully");
-        setMoodIdDelete(null);
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [moodIdDelete]);
+  const setMoodIdToDelete = useAxiosWithConfirmation({
+    hookToProceed: useDeleteMood,
+    opts: { onFullfiled: () => refetchData() },
+  });
 
   if (error) return <AxiosError error={error} />;
   if (loading || !moodsData) return <Loading />;
@@ -116,7 +106,7 @@ export default function Moods() {
               {mood.name}
             </button>
             <button
-              onClick={() => setMoodIdDelete(mood._id)}
+              onClick={() => setMoodIdToDelete(mood._id)}
               className="common-button danger-button remove-mode-btn"
             >
               X
