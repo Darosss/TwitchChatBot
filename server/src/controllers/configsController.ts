@@ -6,7 +6,7 @@ export const getConfigsList = async (req: Request, res: Response, next: NextFunc
   try {
     const configs = await getConfigs();
 
-    return res.status(200).send(configs);
+    return res.status(200).send({ data: configs });
   } catch (err) {
     next(err);
   }
