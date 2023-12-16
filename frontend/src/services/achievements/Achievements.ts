@@ -1,4 +1,8 @@
-import useAxiosCustom, { PaginationData, ResponseData } from "../api";
+import useAxiosCustom, {
+  PaginationData,
+  ResponseData,
+  ResponseMessage,
+} from "../api";
 import {
   Achievement,
   AchievementUpdateData,
@@ -28,7 +32,7 @@ export const useGetAchievements = (searchParams?: AchievementsSearchParams) => {
   });
 };
 export const useEditAchievement = (id: string, data: AchievementUpdateData) => {
-  return useAxiosCustom({
+  return useAxiosCustom<ResponseData<Achievement>, AchievementUpdateData>({
     url: `${BASE_URL}/${id}`,
     method: "POST",
     manual: true,
@@ -40,17 +44,19 @@ export const useEditAchievement = (id: string, data: AchievementUpdateData) => {
 export const useCreateCustomAchievement = (
   data: CustomAchievementCreateData
 ) => {
-  return useAxiosCustom({
-    url: `${BASE_URL}/custom/create`,
-    method: "POST",
-    bodyData: data,
-    manual: true,
-    urlParams: false,
-  });
+  return useAxiosCustom<ResponseData<Achievement>, CustomAchievementCreateData>(
+    {
+      url: `${BASE_URL}/custom/create`,
+      method: "POST",
+      bodyData: data,
+      manual: true,
+      urlParams: false,
+    }
+  );
 };
 
 export const useDeleteCustomAchievement = (id: string) => {
-  return useAxiosCustom({
+  return useAxiosCustom<ResponseMessage>({
     url: `${BASE_URL}/custom/${id}`,
     method: "DELETE",
     manual: true,
@@ -62,13 +68,15 @@ export const useUpdateCustomAchievement = (
   id: string,
   data: CustomAchievementUpdateData
 ) => {
-  return useAxiosCustom({
-    url: `${BASE_URL}/custom/${id}`,
-    method: "POST",
-    bodyData: data,
-    manual: true,
-    urlParams: false,
-  });
+  return useAxiosCustom<ResponseData<Achievement>, CustomAchievementUpdateData>(
+    {
+      url: `${BASE_URL}/custom/${id}`,
+      method: "POST",
+      bodyData: data,
+      manual: true,
+      urlParams: false,
+    }
+  );
 };
 
 /* PROGRESSES */
@@ -98,7 +106,7 @@ export const useGetBadgesIamgesBasePath = () => {
 };
 
 export const useEditBadge = (id: string, data: BadgeUpdateData) => {
-  return useAxiosCustom<Badge>({
+  return useAxiosCustom<ResponseData<Badge>, BadgeUpdateData>({
     url: `${BASE_BADGES_URL}/${id}`,
     method: "POST",
     bodyData: data,
@@ -108,7 +116,7 @@ export const useEditBadge = (id: string, data: BadgeUpdateData) => {
 };
 
 export const useCreateBadge = (data: BadgeCreateData) => {
-  return useAxiosCustom<Badge>({
+  return useAxiosCustom<ResponseData<Badge>, BadgeCreateData>({
     url: `${BASE_BADGES_URL}/create/`,
     method: "POST",
     bodyData: data,
@@ -118,7 +126,7 @@ export const useCreateBadge = (data: BadgeCreateData) => {
 };
 
 export const useDeleteBadge = (id: string | null) => {
-  return useAxiosCustom({
+  return useAxiosCustom<ResponseMessage>({
     url: `${BASE_BADGES_URL}/delete/${id}`,
     method: "DELETE",
     manual: true,
@@ -127,7 +135,7 @@ export const useDeleteBadge = (id: string | null) => {
 };
 
 export const useDeleteBadgeImage = (badgeName: string | null) => {
-  return useAxiosCustom<{ message: string }>({
+  return useAxiosCustom<ResponseMessage>({
     url: `${BASE_BADGES_URL}/images/${badgeName}/delete`,
     method: "DELETE",
     manual: true,
@@ -145,7 +153,7 @@ export const useGetAchievementStages = (customParams?: string) => {
 };
 
 export const useDeleteAchievementStage = (id: string | null) => {
-  return useAxiosCustom({
+  return useAxiosCustom<ResponseMessage>({
     url: `${BASE_STAGES_URL}/delete/${id}`,
     method: "DELETE",
     manual: true,
@@ -165,7 +173,7 @@ export const useEditAchievementStage = (
   id: string,
   data: AchievementStageUpdateData
 ) => {
-  return useAxiosCustom<Badge>({
+  return useAxiosCustom<ResponseData<Badge>, AchievementStageUpdateData>({
     url: `${BASE_STAGES_URL}/${id}`,
     method: "POST",
     bodyData: data,
@@ -187,7 +195,7 @@ export const useGetAchievementStageSoundsBasePath = () => {
 };
 
 export const useDeleteAchievementStageSound = (soundName: string | null) => {
-  return useAxiosCustom<{ message: string }>({
+  return useAxiosCustom<ResponseMessage>({
     url: `${BASE_STAGES_URL}/sounds/${soundName}/delete`,
     method: "DELETE",
     manual: true,
@@ -196,7 +204,10 @@ export const useDeleteAchievementStageSound = (soundName: string | null) => {
 };
 
 export const useCreateAchievementStage = (data: AchievementStageCreateData) => {
-  return useAxiosCustom<Badge>({
+  return useAxiosCustom<
+    ResponseData<AchievementStage>,
+    AchievementStageCreateData
+  >({
     url: `${BASE_STAGES_URL}/create/`,
     method: "POST",
     bodyData: data,

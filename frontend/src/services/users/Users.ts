@@ -3,9 +3,9 @@ import { Message } from "../messages";
 import { Redemption } from "../redemptions";
 import {
   User,
-  GetUsersByIds,
   UserUpdateData,
   FirstAndLatestMsgs,
+  GetUsersByIdsResponse,
 } from "./types";
 
 export const useGetUsersList = (urlParams = true, customUrlParams = "") => {
@@ -16,7 +16,7 @@ export const useGetUsersList = (urlParams = true, customUrlParams = "") => {
 };
 
 export const useGetUsersByIds = (ids: string[]) => {
-  return useAxiosCustom<GetUsersByIds>({
+  return useAxiosCustom<GetUsersByIdsResponse>({
     url: `/users/by-ids/${ids.join(",")}`,
   });
 };
@@ -28,7 +28,7 @@ export const useGetUser = (userId: string) => {
 };
 
 export const useEditUser = (userId: string, data: UserUpdateData) => {
-  return useAxiosCustom<User>({
+  return useAxiosCustom<ResponseData<User>, UserUpdateData>({
     url: `/users/${userId}`,
     method: "POST",
     bodyData: data,
@@ -43,7 +43,7 @@ export const useGetUserMessages = (userId: string) => {
 };
 
 export const useGetLatestEldestMsgs = (userId: string) => {
-  return useAxiosCustom<{ data: FirstAndLatestMsgs }>({
+  return useAxiosCustom<ResponseData<FirstAndLatestMsgs>>({
     url: `/users/${userId}/messages/latest-eldest`,
   });
 };

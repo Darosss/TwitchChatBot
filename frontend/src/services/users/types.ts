@@ -1,4 +1,4 @@
-import { BaseModelProperties } from "../api";
+import { BaseModelProperties, ResponseData } from "../api";
 import { Message } from "../messages";
 
 export interface User extends BaseModelProperties {
@@ -25,7 +25,6 @@ export interface FirstAndLatestMsgs {
   latestMessages: Message[];
 }
 
-export interface GetUsersByIds {
-  data: User[];
+export interface GetUsersByIdsResponse extends ResponseData<User[]> {
   count: number;
 }

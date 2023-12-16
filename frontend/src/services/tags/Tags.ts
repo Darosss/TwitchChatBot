@@ -1,4 +1,8 @@
-import useAxiosCustom, { PaginationData } from "../api";
+import useAxiosCustom, {
+  PaginationData,
+  ResponseData,
+  ResponseMessage,
+} from "../api";
 import { Tag, TagCreateData, TagUpdateData } from "./types";
 
 export const useGetTags = (urlParams = true) => {
@@ -9,7 +13,7 @@ export const useGetTags = (urlParams = true) => {
 };
 
 export const useEditTag = (id: string, data: TagUpdateData) => {
-  return useAxiosCustom<Tag>({
+  return useAxiosCustom<ResponseData<Tag>, TagUpdateData>({
     url: `/tags/${id}`,
     method: "POST",
     bodyData: data,
@@ -18,7 +22,7 @@ export const useEditTag = (id: string, data: TagUpdateData) => {
 };
 
 export const useCreateTag = (data: TagCreateData) => {
-  return useAxiosCustom<Tag>({
+  return useAxiosCustom<ResponseData<Tag>, TagCreateData>({
     url: `/tags/create/`,
     method: "POST",
     bodyData: data,
@@ -28,7 +32,7 @@ export const useCreateTag = (data: TagCreateData) => {
 };
 
 export const useDeleteTag = (id: string | null) => {
-  return useAxiosCustom<Tag>({
+  return useAxiosCustom<ResponseMessage>({
     url: `/tags/delete/${id}`,
     method: "DELETE",
     manual: true,

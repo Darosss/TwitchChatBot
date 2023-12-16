@@ -1,4 +1,8 @@
-import useAxiosCustom, { PaginationData } from "../api";
+import useAxiosCustom, {
+  PaginationData,
+  ResponseData,
+  ResponseMessage,
+} from "../api";
 import { Mood, MoodUpdateData, MoodCreateData } from "./types";
 
 export const useGetMoods = (urlParams = true) => {
@@ -9,7 +13,7 @@ export const useGetMoods = (urlParams = true) => {
 };
 
 export const useEditMood = (id: string, data: MoodUpdateData) => {
-  return useAxiosCustom<Mood>({
+  return useAxiosCustom<ResponseData<Mood>, MoodUpdateData>({
     url: `/moods/${id}`,
     method: "POST",
     bodyData: data,
@@ -18,7 +22,7 @@ export const useEditMood = (id: string, data: MoodUpdateData) => {
 };
 
 export const useCreateMood = (data: MoodCreateData) => {
-  return useAxiosCustom<Mood>({
+  return useAxiosCustom<ResponseData<Mood>, MoodCreateData>({
     url: `/moods/create/`,
     method: "POST",
     bodyData: data,
@@ -28,7 +32,7 @@ export const useCreateMood = (data: MoodCreateData) => {
 };
 
 export const useDeleteMood = (id: string | null) => {
-  return useAxiosCustom<Mood>({
+  return useAxiosCustom<ResponseMessage>({
     url: `/moods/delete/${id}`,
     method: "DELETE",
     manual: true,

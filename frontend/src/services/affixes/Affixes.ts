@@ -1,4 +1,8 @@
-import useAxiosCustom, { PaginationData } from "../api";
+import useAxiosCustom, {
+  PaginationData,
+  ResponseData,
+  ResponseMessage,
+} from "../api";
 import { Affix, AffixUpdateData, AffixCreateData } from "./types";
 
 export const useGetAffixes = (urlParams = true) => {
@@ -9,7 +13,7 @@ export const useGetAffixes = (urlParams = true) => {
 };
 
 export const useEditAffix = (id: string, data: AffixUpdateData) => {
-  return useAxiosCustom<Affix>({
+  return useAxiosCustom<ResponseData<Affix>, AffixUpdateData>({
     url: `/affixes/${id}`,
     method: "POST",
     bodyData: data,
@@ -18,7 +22,7 @@ export const useEditAffix = (id: string, data: AffixUpdateData) => {
 };
 
 export const useCreateAffix = (data: AffixCreateData) => {
-  return useAxiosCustom<Affix>({
+  return useAxiosCustom<ResponseData<Affix>, AffixCreateData>({
     url: `/affixes/create/`,
     method: "POST",
     bodyData: data,
@@ -28,7 +32,7 @@ export const useCreateAffix = (data: AffixCreateData) => {
 };
 
 export const useDeleteAffix = (id: string | null) => {
-  return useAxiosCustom<Affix>({
+  return useAxiosCustom<ResponseMessage>({
     url: `/affixes/delete/${id}`,
     method: "DELETE",
     manual: true,
