@@ -3,6 +3,7 @@ import useAxiosCustom from "./Api";
 export type {
   PaginationData,
   ResponseData,
+  ResponseMessage,
   BaseModelProperties,
   SearchParams,
   AxiosCustomReturnErrorType,
