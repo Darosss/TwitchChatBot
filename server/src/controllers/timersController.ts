@@ -53,21 +53,12 @@ export const addNewTimer = async (req: Request<{}, {}, TimerCreateData, {}>, res
     description
   } = req.body;
 
-  try {
-    const newTimer = await createTimer({
-      name: name,
-      messages: messages,
-      enabled: enabled,
-      reqPoints: reqPoints,
-      description: description,
-      delay: delay,
-      tag: tag,
-      mood: mood,
-      nonFollowMulti: nonFollowMulti,
-      nonSubMulti: nonSubMulti
-    });
+  const createData = { name, messages, enabled, reqPoints, description, delay, tag, mood, nonFollowMulti, nonSubMulti };
 
-    return res.status(200).send({ message: "Timmer added successfully", timmer: newTimer });
+  try {
+    const newTimer = await createTimer(createData);
+
+    return res.status(200).send({ message: "Timmer added successfully", data: newTimer });
   } catch (err) {
     next(err);
   }
@@ -91,20 +82,9 @@ export const editTimerById = async (
     reqPoints,
     description
   } = req.body;
-
+  const updateData = { name, enabled, delay, messages, nonFollowMulti, nonSubMulti, reqPoints, description, tag, mood };
   try {
-    const updatedTimer = await updateTimerById(id, {
-      name: name,
-      enabled: enabled,
-      delay: delay,
-      messages: messages,
-      nonFollowMulti: nonFollowMulti,
-      nonSubMulti: nonSubMulti,
-      reqPoints: reqPoints,
-      description: description,
-      tag: tag,
-      mood: mood
-    });
+    const updatedTimer = await updateTimerById(id, updateData);
 
     return res.status(200).send({
       message: "Timmer updated successfully",

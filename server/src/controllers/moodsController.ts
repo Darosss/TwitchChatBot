@@ -39,9 +39,7 @@ export const addNewMood = async (req: Request<{}, {}, MoodCreateData, {}>, res: 
   const { name } = req.body;
 
   try {
-    const newMood = await createMood({
-      name: name
-    });
+    const newMood = await createMood({ name });
 
     return res.status(200).send({ message: "Mood added successfully", mood: newMood });
   } catch (err) {
@@ -57,11 +55,9 @@ export const editMoodById = async (
   const { id } = req.params;
   const { name, enabled } = req.body;
 
+  const updateData = { name, enabled };
   try {
-    const updatedMood = await updateMoodById(id, {
-      name: name,
-      enabled: enabled
-    });
+    const updatedMood = await updateMoodById(id, updateData);
 
     return res.status(200).send({
       message: "Mood updated successfully",

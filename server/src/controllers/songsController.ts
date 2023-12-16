@@ -51,13 +51,43 @@ export const editSongById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
+  const {
+    botUses,
+    customId,
+    customTitle,
+    duration,
+    enabled,
+    lastUsed,
+    likes,
+    songRequestUses,
+    title,
+    usersUses,
+    uses,
+    whoAdded,
+    youtubeId
+  } = req.body;
 
+  const updateData = {
+    botUses,
+    customId,
+    customTitle,
+    duration,
+    enabled,
+    lastUsed,
+    likes,
+    songRequestUses,
+    title,
+    usersUses,
+    uses,
+    whoAdded,
+    youtubeId
+  };
   try {
-    const updatedSong = await updateSongById(id, req.body);
+    const updatedSong = await updateSongById(id, updateData);
 
     return res.status(200).send({
-      message: "Updated successfully",
-      song: updatedSong
+      message: "Song updated successfully",
+      data: updatedSong
     });
   } catch (err) {
     next(err);

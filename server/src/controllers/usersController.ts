@@ -84,8 +84,8 @@ export const editUserProfile = async (
   const { notes } = req.body;
 
   try {
-    await updateUserById(id, { notes: notes });
-    return res.status(200).send({ message: "Updated successfully" });
+    await updateUserById(id, { notes });
+    return res.status(200).send({ message: "User updated successfully" });
   } catch (err) {
     next(err);
   }

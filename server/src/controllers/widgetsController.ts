@@ -54,14 +54,12 @@ export const addNewWidget = async (
   next: NextFunction
 ) => {
   const { name, layout, toolbox } = req.body;
-  try {
-    const newWidget = await createWidget({
-      name: name,
-      layout: layout,
-      toolbox: toolbox
-    });
 
-    return res.status(201).send({ message: "Added successfully", widget: newWidget });
+  const createData = { name, layout, toolbox };
+  try {
+    const newWidget = await createWidget(createData);
+
+    return res.status(201).send({ message: "Widget added successfully", data: newWidget });
   } catch (err) {
     next(err);
   }
@@ -74,16 +72,14 @@ export const editWidgetById = async (
 ) => {
   const { id } = req.params;
   const { name, layout, toolbox } = req.body;
+
+  const updateData = { name, layout, toolbox };
   try {
-    const updatedWidget = await updateWidgetById(id, {
-      name: name,
-      layout: layout,
-      toolbox: toolbox
-    });
+    const updatedWidget = await updateWidgetById(id, updateData);
 
     return res.status(200).send({
-      message: "Updated successfully",
-      widget: updatedWidget
+      message: "Widget updated successfully",
+      data: updatedWidget
     });
   } catch (err) {
     next(err);

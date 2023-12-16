@@ -55,14 +55,11 @@ export const addNewOverlay = async (
 ) => {
   const { name, layout, toolbox } = req.body;
 
+  const createData = { name, layout, toolbox };
   try {
-    const newOverlay = await createOverlay({
-      name: name,
-      layout: layout,
-      toolbox: toolbox
-    });
+    const newOverlay = await createOverlay(createData);
 
-    return res.status(201).send({ message: "Added successfully", overlay: newOverlay });
+    return res.status(201).send({ message: "Overlay added successfully", data: newOverlay });
   } catch (err) {
     next(err);
   }
@@ -76,17 +73,13 @@ export const editOverlayById = async (
   const { id } = req.params;
   const { name, layout, toolbox, styles } = req.body;
 
+  const updateData = { name, layout, toolbox, styles };
   try {
-    const updatedOverlay = await updateOverlayById(id, {
-      name: name,
-      layout: layout,
-      toolbox: toolbox,
-      styles
-    });
+    const updatedOverlay = await updateOverlayById(id, updateData);
 
     return res.status(200).send({
-      message: "Updated successfully",
-      overlay: updatedOverlay
+      message: "Overlay updated successfully",
+      data: updatedOverlay
     });
   } catch (err) {
     next(err);

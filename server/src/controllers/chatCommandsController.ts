@@ -49,19 +49,11 @@ export const addNewCommand = async (
 ) => {
   const { name, description, enabled, aliases, messages, privilege, tag, mood } = req.body;
 
+  const createData = { name, description, enabled, aliases, tag, mood, messages, privilege };
   try {
-    const newChatCommand = await createChatCommand({
-      name: name,
-      description: description,
-      enabled: enabled,
-      aliases: aliases,
-      tag: tag,
-      mood: mood,
-      messages: messages,
-      privilege: privilege
-    });
+    const newChatCommand = await createChatCommand(createData);
 
-    return res.status(201).send({ message: "Added successfully", chatCommand: newChatCommand });
+    return res.status(201).send({ message: "Chat command added successfully", data: newChatCommand });
   } catch (err) {
     next(err);
   }
@@ -75,20 +67,13 @@ export const editChatCommandById = async (
   const { id } = req.params;
   const { name, description, enabled, aliases, messages, privilege, tag, mood } = req.body;
 
+  const updateData = { name, description, enabled, aliases, tag, mood, messages, privilege };
+
   try {
-    const updatedChatCommand = await updateChatCommandById(id, {
-      name: name,
-      description: description,
-      enabled: enabled,
-      aliases: aliases,
-      tag: tag,
-      mood: mood,
-      messages: messages,
-      privilege: privilege
-    });
+    const updatedChatCommand = await updateChatCommandById(id, updateData);
 
     return res.status(200).send({
-      message: "Updated successfully",
+      message: "Chat command updated successfully",
       chatCommand: updatedChatCommand
     });
   } catch (err) {

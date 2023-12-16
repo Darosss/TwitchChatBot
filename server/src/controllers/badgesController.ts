@@ -119,12 +119,9 @@ export const deleteBadgeImageByName = async (req: Request, res: Response, next: 
 
   const { fileName, extension } = getFileNameAndExtension(badgeName);
 
+  const deleteFilter = { name: fileName, extension, sizesToDelete: badgeModelIMagesUrlsSizesNumbers };
   try {
-    const message = await deleteBadgeImages({
-      name: fileName,
-      extension,
-      sizesToDelete: badgeModelIMagesUrlsSizesNumbers
-    });
+    const message = await deleteBadgeImages(deleteFilter);
     return res.status(200).send({ message });
   } catch (err) {
     logger.error(`Error when trying to delete badge image ${badgeName}: ${err}`);
@@ -176,12 +173,9 @@ export const editBadgeById = async (
   const { id } = req.params;
   const { name, imagesUrls, description } = req.body;
 
+  const updateData = { name, imagesUrls, description };
   try {
-    const updatedBadge = await updateBadgeById(id, {
-      name,
-      imagesUrls,
-      description
-    });
+    const updatedBadge = await updateBadgeById(id, updateData);
 
     return res.status(200).send({
       message: "Badge updated successfully",
@@ -196,10 +190,11 @@ export const editBadgeById = async (
 export const addNewBadge = async (req: Request<{}, {}, BadgeCreateData, {}>, res: Response, next: NextFunction) => {
   const { name, imagesUrls, description } = req.body;
 
+  const createData = { name, imagesUrls, description };
   try {
-    const newBadge = await createBadge({ name, description, imagesUrls });
+    const newBadge = await createBadge(createData);
 
-    return res.status(200).send({ message: "Badge added successfully", badge: newBadge });
+    return res.status(200).send({ message: "Badge added successfully", data: newBadge });
   } catch (err) {
     logger.error(`Error when trying to addNewBadge ${err}`);
     next(err);

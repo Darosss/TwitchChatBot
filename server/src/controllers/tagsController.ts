@@ -39,9 +39,9 @@ export const addNewTag = async (req: Request<{}, {}, TagCreateData, {}>, res: Re
   const { name } = req.body;
 
   try {
-    const newTag = await createTag({ name: name });
+    const newTag = await createTag({ name });
 
-    return res.status(200).send({ message: "Tag added successfully", tag: newTag });
+    return res.status(200).send({ message: "Tag added successfully", data: newTag });
   } catch (err) {
     next(err);
   }
@@ -55,11 +55,9 @@ export const editTagById = async (
   const { id } = req.params;
   const { name, enabled } = req.body;
 
+  const updateData = { name, enabled };
   try {
-    const updatedTag = await updateTagById(id, {
-      name: name,
-      enabled: enabled
-    });
+    const updatedTag = await updateTagById(id, updateData);
 
     return res.status(200).send({
       message: "Tag updated successfully",

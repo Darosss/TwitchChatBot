@@ -24,18 +24,19 @@ export const editConfigs = async (req: Request<{}, {}, ConfigUpdateData, {}>, re
     headConfigs
   } = req.body;
 
+  const updateData = {
+    commandsConfigs,
+    timersConfigs,
+    chatGamesConfigs,
+    triggersConfigs,
+    pointsConfigs,
+    musicConfigs,
+    loyaltyConfigs,
+    headConfigs
+  };
   try {
-    await updateConfigs({
-      commandsConfigs: commandsConfigs,
-      timersConfigs: timersConfigs,
-      chatGamesConfigs: chatGamesConfigs,
-      triggersConfigs: triggersConfigs,
-      pointsConfigs: pointsConfigs,
-      musicConfigs: musicConfigs,
-      loyaltyConfigs: loyaltyConfigs,
-      headConfigs: headConfigs
-    });
-    return res.status(200).send({ message: "Updated successfully" });
+    await updateConfigs(updateData);
+    return res.status(200).send({ message: "Configs updated successfully" });
   } catch (err) {
     next(err);
   }
