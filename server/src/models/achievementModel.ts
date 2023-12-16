@@ -8,21 +8,23 @@ import {
 } from "./types";
 import { enabledField, tagModeField } from "@utils";
 
-const AchievementStageSchema = new Schema<AchievementStageDocument>({
-  name: { type: String, required: true, unique: true },
-  stageData: [
-    {
-      name: { type: String, required: true },
-      stage: { type: Number, required: true },
-      goal: { type: Number, required: true },
-      badge: { type: Schema.Types.ObjectId, required: true, ref: "Badge" },
-      sound: { type: String, required: false },
-      rarity: { type: Number, required: false },
-      showTimeMs: { type: Number, required: true }
-    },
-    { timestamps: true }
-  ]
-});
+const AchievementStageSchema = new Schema<AchievementStageDocument>(
+  {
+    name: { type: String, required: true, unique: true },
+    stageData: [
+      {
+        name: { type: String, required: true },
+        stage: { type: Number, required: true },
+        goal: { type: Number, required: true },
+        badge: { type: Schema.Types.ObjectId, required: true, ref: "Badge" },
+        sound: { type: String, required: false },
+        rarity: { type: Number, required: false },
+        showTimeMs: { type: Number, required: true }
+      }
+    ]
+  },
+  { timestamps: true }
+);
 
 const AchievementCustomSchema: Schema<AchievementCustomModel> = new Schema({
   stringValues: { type: [String], required: false },

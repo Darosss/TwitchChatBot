@@ -162,7 +162,7 @@ class AchievementsHandler extends QueueHandler<
   }
 
   public override enqueue(item: ObtainAchievementDataWithCollectedAchievement | ObtainAchievementDataWithProgressOnly) {
-    super.enqueue(item);
+    super.enqueue(item, `${item.username} - ${item.achievement.name}`);
 
     this.startTimeout(500);
   }

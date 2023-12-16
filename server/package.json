@@ -1,22 +1,23 @@
 {
-  "name": "server",
+  "name": "twitchchatbot-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Server for TwitchChatBot repository",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.ts",
-    "dev": "cross-env NODE_ENV=development tsc-watch --onSuccess \"nodemon --inspect --ignore '*.json' dist/index.js\" ",
     "build": "tsc",
+    "start": "npm run start:dev",
+    "start:prod": "cross-env NODE_ENV=production node dist/index.js",
+    "start:dev": "cross-env NODE_ENV=development tsc-watch --onSuccess \"nodemon --inspect dist/index.js\" ",
     "lint": "eslint src/**/*.ts",
-    "format": "eslint src/**/*.ts --fix"
+    "format": "eslint src/**/*.ts --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Darosss",
+  "license": "MIT",
   "dependencies": {
     "@twurple/api": "^7.0.3",
     "@twurple/eventsub-http": "^7.0.3",
