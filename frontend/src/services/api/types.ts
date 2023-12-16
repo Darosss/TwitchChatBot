@@ -44,3 +44,7 @@ export interface SearchParams {
   limit?: number;
   page?: number;
 }
+
+export interface CommonDeleteHookParams {
+  id: string;
+}

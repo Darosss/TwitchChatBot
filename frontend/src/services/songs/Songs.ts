@@ -26,7 +26,7 @@ export const useCreateSong = (data: SongCreateData) => {
   });
 };
 
-export const useDeleteSong = (songId: string) => {
+export const useDeleteSong = (songId: string | null) => {
   return useAxiosCustom<Song>({
     url: `/songs/delete/${songId}`,
     method: "DELETE",

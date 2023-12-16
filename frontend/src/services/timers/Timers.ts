@@ -26,7 +26,7 @@ export const useCreateTimer = (data: TimerCreateData) => {
   });
 };
 
-export const useDeleteTimer = (timerId: string) => {
+export const useDeleteTimer = (timerId: string | null) => {
   return useAxiosCustom<Timer>({
     url: `/timers/delete/${timerId}`,
     method: "DELETE",

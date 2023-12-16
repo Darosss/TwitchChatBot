@@ -117,7 +117,7 @@ export const useCreateBadge = (data: BadgeCreateData) => {
   });
 };
 
-export const useDeleteBadge = (id: string) => {
+export const useDeleteBadge = (id: string | null) => {
   return useAxiosCustom({
     url: `${BASE_BADGES_URL}/delete/${id}`,
     method: "DELETE",
@@ -126,7 +126,7 @@ export const useDeleteBadge = (id: string) => {
   });
 };
 
-export const useDeleteBadgeImage = (badgeName: string) => {
+export const useDeleteBadgeImage = (badgeName: string | null) => {
   return useAxiosCustom<{ message: string }>({
     url: `${BASE_BADGES_URL}/images/${badgeName}/delete`,
     method: "DELETE",
@@ -144,7 +144,7 @@ export const useGetAchievementStages = (customParams?: string) => {
   });
 };
 
-export const useDeleteAchievementStage = (id: string) => {
+export const useDeleteAchievementStage = (id: string | null) => {
   return useAxiosCustom({
     url: `${BASE_STAGES_URL}/delete/${id}`,
     method: "DELETE",
@@ -186,7 +186,7 @@ export const useGetAchievementStageSoundsBasePath = () => {
   });
 };
 
-export const useDeleteAchievementStageSound = (soundName: string) => {
+export const useDeleteAchievementStageSound = (soundName: string | null) => {
   return useAxiosCustom<{ message: string }>({
     url: `${BASE_STAGES_URL}/sounds/${soundName}/delete`,
     method: "DELETE",

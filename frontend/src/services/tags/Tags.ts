@@ -27,7 +27,7 @@ export const useCreateTag = (data: TagCreateData) => {
   });
 };
 
-export const useDeleteTag = (id: string) => {
+export const useDeleteTag = (id: string | null) => {
   return useAxiosCustom<Tag>({
     url: `/tags/delete/${id}`,
     method: "DELETE",

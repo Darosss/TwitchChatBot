@@ -43,7 +43,7 @@ export const useCreateMessageCategory = (data: MessageCategoryCreateData) => {
   });
 };
 
-export const useDeleteMessageCategoryById = (id: string) => {
+export const useDeleteMessageCategoryById = (id: string | null) => {
   return useAxiosCustom<any>({
     url: `/message-categories/delete/${id}`,
     method: "DELETE",

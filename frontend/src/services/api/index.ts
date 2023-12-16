@@ -6,6 +6,7 @@ export type {
   BaseModelProperties,
   SearchParams,
   AxiosCustomReturnErrorType,
+  AxiosCustomReturn,
 } from "./types";
 
 export default useAxiosCustom;
