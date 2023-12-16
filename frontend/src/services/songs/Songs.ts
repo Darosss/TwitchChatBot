@@ -1,4 +1,4 @@
-import useAxiosCustom, { PaginationData } from "../api";
+import useAxiosCustom, { PaginationData, ResponseData } from "../api";
 import { Song, SongUpdateData, SongCreateData } from "./types";
 
 export const useGetSongs = () => {
@@ -8,7 +8,7 @@ export const useGetSongs = () => {
 };
 
 export const useEditSong = (commandId: string, data: SongUpdateData) => {
-  return useAxiosCustom<SongUpdateData>({
+  return useAxiosCustom<ResponseData<Song>, SongUpdateData>({
     url: `/songs/${commandId}`,
     method: "POST",
     bodyData: data,
@@ -17,7 +17,7 @@ export const useEditSong = (commandId: string, data: SongUpdateData) => {
 };
 
 export const useCreateSong = (data: SongCreateData) => {
-  return useAxiosCustom<SongCreateData>({
+  return useAxiosCustom<ResponseData<Song>, SongCreateData>({
     url: `/songs/create`,
     method: "POST",
     bodyData: data,
@@ -27,7 +27,7 @@ export const useCreateSong = (data: SongCreateData) => {
 };
 
 export const useDeleteSong = (songId: string | null) => {
-  return useAxiosCustom<Song>({
+  return useAxiosCustom<ResponseData<Song>>({
     url: `/songs/delete/${songId}`,
     method: "DELETE",
     manual: true,

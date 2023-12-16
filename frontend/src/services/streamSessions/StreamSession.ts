@@ -40,7 +40,7 @@ export const useGetCurrentSessionRedemptions = () => {
 };
 
 export const useGetCurrentSessionStatistics = () => {
-  return useAxiosCustom<{ data: StreamSessionStatistics }>({
+  return useAxiosCustom<ResponseData<StreamSessionStatistics>>({
     url: `/stream-sessions/current-session/statistics`,
   });
 };

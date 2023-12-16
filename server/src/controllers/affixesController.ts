@@ -39,11 +39,11 @@ export const addNewAffix = async (req: Request<{}, {}, AffixCreateData, {}>, res
   const { name } = req.body;
 
   try {
-    const newAffix = await createAffix({ name: name });
+    const newAffix = await createAffix({ name });
 
     return res.status(200).send({
       message: "Affix added successfully",
-      affix: newAffix
+      data: newAffix
     });
   } catch (err) {
     next(err);
@@ -59,14 +59,7 @@ export const editAffixById = async (
   const { name, enabled, prefixes, suffixes, prefixChance, suffixChance } = req.body;
 
   try {
-    const updatedAffix = await updateAffixById(id, {
-      name: name,
-      enabled: enabled,
-      prefixes: prefixes,
-      suffixes: suffixes,
-      prefixChance: prefixChance,
-      suffixChance: suffixChance
-    });
+    const updatedAffix = await updateAffixById(id, { name, enabled, prefixes, suffixes, prefixChance, suffixChance });
 
     return res.status(200).send({
       message: "Affix updated successfully",

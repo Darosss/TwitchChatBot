@@ -1,4 +1,8 @@
-import useAxiosCustom, { PaginationData, ResponseData } from "../api";
+import useAxiosCustom, {
+  PaginationData,
+  ResponseData,
+  ResponseMessage,
+} from "../api";
 import { Overlay, OverlayCreateData, OverlaysUpdateData } from "./types";
 
 export const useGetOverlays = () => {
@@ -14,7 +18,7 @@ export const useGetOverlayById = (id: string) => {
 };
 
 export const useCreateOverlay = (data: OverlayCreateData) => {
-  return useAxiosCustom<Overlay>({
+  return useAxiosCustom<ResponseData<Overlay>, OverlayCreateData>({
     url: `/overlays/create`,
     method: "POST",
     bodyData: data,
@@ -24,7 +28,7 @@ export const useCreateOverlay = (data: OverlayCreateData) => {
 };
 
 export const useEditOverlayById = (id: string, data: OverlaysUpdateData) => {
-  return useAxiosCustom<Overlay>({
+  return useAxiosCustom<ResponseData<Overlay>, OverlaysUpdateData>({
     url: `/overlays/${id}`,
     method: "POST",
     bodyData: data,
@@ -33,7 +37,7 @@ export const useEditOverlayById = (id: string, data: OverlaysUpdateData) => {
 };
 
 export const useRemoveOverlayById = (id: string | null) => {
-  return useAxiosCustom<Overlay>({
+  return useAxiosCustom<ResponseMessage>({
     url: `/overlays/delete/${id}`,
     method: "DELETE",
     manual: true,

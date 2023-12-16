@@ -1,4 +1,8 @@
-import useAxiosCustom, { PaginationData } from "../api";
+import useAxiosCustom, {
+  PaginationData,
+  ResponseData,
+  ResponseMessage,
+} from "../api";
 import { Trigger, TriggerUpdateData, TriggerCreateData } from "./types";
 
 export const useGetTriggers = () => {
@@ -8,7 +12,7 @@ export const useGetTriggers = () => {
 };
 
 export const useEditTrigger = (commandId: string, data: TriggerUpdateData) => {
-  return useAxiosCustom<TriggerUpdateData>({
+  return useAxiosCustom<ResponseData<Trigger>, TriggerUpdateData>({
     url: `/triggers/${commandId}`,
     method: "POST",
     bodyData: data,
@@ -17,7 +21,7 @@ export const useEditTrigger = (commandId: string, data: TriggerUpdateData) => {
 };
 
 export const useCreateTrigger = (data: TriggerCreateData) => {
-  return useAxiosCustom<TriggerCreateData>({
+  return useAxiosCustom<ResponseData<Trigger>, TriggerCreateData>({
     url: `/triggers/create`,
     method: "POST",
     bodyData: data,
@@ -27,7 +31,7 @@ export const useCreateTrigger = (data: TriggerCreateData) => {
 };
 
 export const useDeleteTrigger = (triggerId: string | null) => {
-  return useAxiosCustom<Trigger>({
+  return useAxiosCustom<ResponseMessage>({
     url: `/triggers/delete/${triggerId}`,
     method: "DELETE",
     manual: true,

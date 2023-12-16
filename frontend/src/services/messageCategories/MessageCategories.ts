@@ -1,4 +1,8 @@
-import useAxiosCustom, { PaginationData } from "../api";
+import useAxiosCustom, {
+  PaginationData,
+  ResponseData,
+  ResponseMessage,
+} from "../api";
 import {
   MessageCategory,
   MessageCategoryUpdateData,
@@ -15,7 +19,10 @@ export const useEditMessageCategoryById = (
   id: string,
   data: MessageCategoryUpdateData
 ) => {
-  return useAxiosCustom<MessageCategoryUpdateData>({
+  return useAxiosCustom<
+    ResponseData<MessageCategory>,
+    MessageCategoryUpdateData
+  >({
     url: `/message-categories/${id}`,
     method: "POST",
     bodyData: data,
@@ -25,7 +32,7 @@ export const useEditMessageCategoryById = (
 };
 
 export const useIncrementUsesCategoryById = (id: string) => {
-  return useAxiosCustom<MessageCategory>({
+  return useAxiosCustom<ResponseData<MessageCategory>>({
     url: `/message-categories/${id}/uses`,
     method: "POST",
     manual: true,
@@ -34,7 +41,10 @@ export const useIncrementUsesCategoryById = (id: string) => {
 };
 
 export const useCreateMessageCategory = (data: MessageCategoryCreateData) => {
-  return useAxiosCustom<MessageCategoryCreateData>({
+  return useAxiosCustom<
+    ResponseData<MessageCategory>,
+    MessageCategoryCreateData
+  >({
     url: `/message-categories/create`,
     method: "POST",
     bodyData: data,
@@ -44,7 +54,7 @@ export const useCreateMessageCategory = (data: MessageCategoryCreateData) => {
 };
 
 export const useDeleteMessageCategoryById = (id: string | null) => {
-  return useAxiosCustom<any>({
+  return useAxiosCustom<ResponseMessage>({
     url: `/message-categories/delete/${id}`,
     method: "DELETE",
     manual: true,

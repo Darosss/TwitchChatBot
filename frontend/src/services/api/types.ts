@@ -1,4 +1,8 @@
-export interface ResponseData<T> {
+export interface ResponseMessage {
+  message: string;
+}
+
+export interface ResponseData<T> extends Partial<ResponseMessage> {
   data: T;
 }
 
@@ -9,10 +13,10 @@ export interface PaginationData<T> {
   currentPage: number;
 }
 
-export interface AxiosCustomOptions<T> {
+export interface AxiosCustomOptions<TBody> {
   url: string | URL;
   method?: string;
-  bodyData?: Partial<T>;
+  bodyData?: Partial<TBody>;
   manual?: boolean;
   urlParams?: boolean;
 }

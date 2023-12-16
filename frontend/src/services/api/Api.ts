@@ -14,9 +14,9 @@ const axios = Axios.create({
 
 configure({ axios });
 
-const useAxiosCustom = <T>(
-  options: AxiosCustomOptions<T>
-): AxiosCustomReturn<T> => {
+const useAxiosCustom = <TResponse, TBody = unknown>(
+  options: AxiosCustomOptions<TBody>
+): AxiosCustomReturn<TResponse> => {
   const {
     method = "GET",
     url,
@@ -26,7 +26,11 @@ const useAxiosCustom = <T>(
   } = options;
 
   const [searchParams] = useSearchParams();
-  const [{ data, loading, error }, refetch] = useAxios<T, any, BackendError>(
+  const [{ data, loading, error }, refetch] = useAxios<
+    TResponse,
+    TBody,
+    BackendError
+  >(
     {
       url: url + (urlParams ? "?" + searchParams : ""),
       method: method,

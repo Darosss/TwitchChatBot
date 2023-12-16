@@ -47,7 +47,7 @@ export default function ConfigsList() {
 
     dispatchConfigState({
       type: ConfigsDispatchActionType.SET_STATE,
-      payload: data,
+      payload: data.data,
     });
   }, [data, dispatchConfigState]);
 

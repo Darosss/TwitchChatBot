@@ -1,5 +1,9 @@
 import { Widgets, WidgetsCreateData, WidgetsUpdateData } from "./types";
-import useAxiosCustom, { PaginationData, ResponseData } from "../api";
+import useAxiosCustom, {
+  PaginationData,
+  ResponseData,
+  ResponseMessage,
+} from "../api";
 
 export const useGetWidgets = () => {
   return useAxiosCustom<PaginationData<Widgets>>({
@@ -14,7 +18,7 @@ export const useGetWidgetById = (id: string) => {
 };
 
 export const useCreateLayout = (data: WidgetsCreateData) => {
-  return useAxiosCustom<Widgets>({
+  return useAxiosCustom<ResponseData<Widgets>, WidgetsCreateData>({
     url: `/widgets/create`,
     method: "POST",
     bodyData: data,
@@ -24,7 +28,7 @@ export const useCreateLayout = (data: WidgetsCreateData) => {
 };
 
 export const useEditWidgetById = (id: string, data: WidgetsUpdateData) => {
-  return useAxiosCustom<Widgets>({
+  return useAxiosCustom<ResponseData<Widgets>, WidgetsUpdateData>({
     url: `/widgets/${id}`,
     method: "POST",
     bodyData: data,
@@ -33,7 +37,7 @@ export const useEditWidgetById = (id: string, data: WidgetsUpdateData) => {
 };
 
 export const useRemoveWidgetById = (widgetId: string | null) => {
-  return useAxiosCustom<Widgets>({
+  return useAxiosCustom<ResponseMessage>({
     url: `/widgets/delete/${widgetId}`,
     method: "DELETE",
     manual: true,

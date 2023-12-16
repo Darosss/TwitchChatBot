@@ -1,4 +1,8 @@
-import useAxiosCustom, { PaginationData } from "../api";
+import useAxiosCustom, {
+  PaginationData,
+  ResponseData,
+  ResponseMessage,
+} from "../api";
 import {
   ChatCommandUpdateData,
   ChatCommandCreateData,
@@ -15,7 +19,7 @@ export const useEditCommand = (
   commandId: string,
   data: ChatCommandUpdateData
 ) => {
-  return useAxiosCustom<ChatCommandUpdateData>({
+  return useAxiosCustom<ResponseData<ChatCommand>, ChatCommandUpdateData>({
     url: `/chat-commands/${commandId}`,
     method: "POST",
     bodyData: data,
@@ -24,7 +28,7 @@ export const useEditCommand = (
 };
 
 export const useCreateCommand = (data: ChatCommandCreateData) => {
-  return useAxiosCustom<ChatCommandCreateData>({
+  return useAxiosCustom<ResponseData<ChatCommand>, ChatCommandCreateData>({
     url: `/chat-commands/create/`,
     method: "POST",
     bodyData: data,
@@ -34,7 +38,7 @@ export const useCreateCommand = (data: ChatCommandCreateData) => {
 };
 
 export const useDeleteCommand = (commandId: string | null) => {
-  return useAxiosCustom<any>({
+  return useAxiosCustom<ResponseMessage>({
     url: `/chat-commands/delete/${commandId}`,
     method: "DELETE",
     manual: true,

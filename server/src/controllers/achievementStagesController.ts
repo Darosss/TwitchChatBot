@@ -101,10 +101,10 @@ export const editAchievementStageById = async (
 ) => {
   const { id } = req.params;
   const { name, stageData } = req.body;
-
+  const updateData = { name, stageData };
   //TODO: add handling for rarirty 1-10
   try {
-    const updatedAchievementStage = await updateOneAchievementStage({ _id: id }, { name, stageData });
+    const updatedAchievementStage = await updateOneAchievementStage({ _id: id }, updateData);
 
     const foundAchievementStage = checkExistResource(updatedAchievementStage, "Achievement stage");
     return res.status(200).send({
@@ -173,9 +173,10 @@ export const addNewAchievementStage = async (
   next: NextFunction
 ) => {
   const { name, stageData } = req.body;
+  const createData = { name, stageData };
 
   try {
-    const newBadge = await createAchievementStage({ name, stageData });
+    const newBadge = await createAchievementStage(createData);
 
     return res.status(200).send({ message: "Achievement stage added successfully", badge: newBadge });
   } catch (err) {

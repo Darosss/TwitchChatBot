@@ -51,14 +51,9 @@ export const editMessageCategoryById = async (
   const { id } = req.params;
   const { name, messages, tag, mood, enabled } = req.body;
 
+  const updateData = { name, messages, tag, mood, enabled };
   try {
-    const updatedCategoryMessage = await updateMessageCategoryById(id, {
-      name: name,
-      messages: messages,
-      tag: tag,
-      mood: mood,
-      enabled: enabled
-    });
+    const updatedCategoryMessage = await updateMessageCategoryById(id, updateData);
 
     return res.status(200).send({
       message: "Message category updated successfully",
@@ -97,18 +92,13 @@ export const addNewCategory = async (
 ) => {
   const { name, messages, tag, mood, enabled } = req.body;
 
+  const createData = { name, messages, enabled, tag, mood };
   try {
-    const newMessageCategory = await createMessageCategories({
-      name: name,
-      messages: messages,
-      enabled: enabled,
-      tag: tag,
-      mood: mood
-    });
+    const newMessageCategory = await createMessageCategories(createData);
 
     return res.status(200).send({
       message: "Message category added successfully",
-      messageCategory: newMessageCategory
+      data: newMessageCategory
     });
   } catch (err) {
     next(err);
