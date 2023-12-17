@@ -1,6 +1,6 @@
 import { Model, model, Schema } from "mongoose";
 import { ConfigDocument } from "./types";
-import { configDefaults } from "../defaults/configsDefaults";
+import { configDefaults } from "@defaults";
 import { prefixChanceField, suffixChanceField } from "@utils";
 const {
   commandsConfigs,

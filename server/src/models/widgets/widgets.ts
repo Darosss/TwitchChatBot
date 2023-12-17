@@ -1,7 +1,7 @@
 import { nameField } from "@utils";
 import { Model, model, Schema } from "mongoose";
 import { WidgetsDocument } from "./types";
-import { layoutBreakpointSchema } from "./layoutBreakpointModel";
+import { layoutBreakpointSchema } from "../layouts";
 
 const WidgetsModel: Schema<WidgetsDocument> = new Schema(
   {

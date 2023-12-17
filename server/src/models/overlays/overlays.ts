@@ -1,7 +1,7 @@
 import { Model, model, Schema } from "mongoose";
 import { OverlayDocument } from "./types";
 import { nameField } from "@utils";
-import { layoutBreakpointSchema } from "./layoutBreakpointModel";
+import { layoutBreakpointSchema } from "../layouts";
 
 const OverlaySchema: Schema<OverlayDocument> = new Schema(
   {

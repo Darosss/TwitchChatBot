@@ -1,11 +1,11 @@
 import { Model, model, Schema } from "mongoose";
 import {
-  CustomAchievementAction,
   AchievementCustomModel,
   AchievementDocument,
   AchievementStageDocument,
   AchievementUserProgressDocument
 } from "./types";
+import { CustomAchievementAction } from "./enums";
 import { enabledField, tagModeField } from "@utils";
 
 const AchievementStageSchema = new Schema<AchievementStageDocument>(
