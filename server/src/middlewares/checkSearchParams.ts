@@ -1,4 +1,4 @@
-import { RequestQuery } from "@types";
+import { RequestQuery } from "../controllers";
 import { NextFunction, Request, Response } from "express";
 
 export const checkSearchParams = (req: Request<{}, {}, {}, RequestQuery>, res: Response, next: NextFunction) => {

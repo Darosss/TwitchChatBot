@@ -1,7 +1,6 @@
-import { RequestQueryAuthorizationTwitch } from "@types";
+import { RequestQueryAuthorizationTwitch, AuthorizationTwitch } from "@controllers";
 import { retryWithCatch } from "@utils";
 import { NextFunction, Request, Response } from "express";
-import { AuthorizationTwitch } from "@types";
 import { createNewAuth } from "@services";
 import { clientId, clientSecret, redirectUrl } from "@configs";
 import init from "../stream/initializeHandlers";
