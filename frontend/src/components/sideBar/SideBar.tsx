@@ -7,6 +7,7 @@ import DrawerBar from "@components/drawer";
 import { routes } from "@routes";
 import ChangeTheme from "@components/changeTheme";
 import { useSocketContext } from "@socket";
+import DiscordInviteButton from "./DiscordInviteButton";
 
 interface NavLinkProps extends LinkProps {
   label: string;
@@ -51,25 +52,6 @@ export default function SideBar() {
           <NavLink key={index} to={route.path} label={route.label} />
         ))}
 
-        <li>
-          {error || !authData ? (
-            <button
-              className="common-button tertiary-button"
-              onClick={refetchAuthData}
-            >
-              Refresh Link
-            </button>
-          ) : (
-            <a
-              className="common-button tertiary-button"
-              href={authData ? authData.data : "_blank"}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Connect with twitch
-            </a>
-          )}
-        </li>
         {loggedUser ? (
           <>
             <li>
@@ -86,7 +68,30 @@ export default function SideBar() {
               </button>
             </li>
           </>
-        ) : null}
+        ) : error || !authData ? (
+          <li>
+            <button
+              className="common-button tertiary-button"
+              onClick={refetchAuthData}
+            >
+              Refresh Link
+            </button>
+          </li>
+        ) : (
+          <li>
+            <a
+              className="common-button tertiary-button"
+              href={authData ? authData.data : "_blank"}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Connect with twitch
+            </a>
+          </li>
+        )}
+        <li>
+          <DiscordInviteButton />
+        </li>
       </ul>
     </DrawerBar>
   );
