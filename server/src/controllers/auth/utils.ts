@@ -1,4 +1,4 @@
-import { clientId, redirectUrl } from "@configs";
+import { clientId, discordClientId, redirectUrl } from "@configs";
 
 export const getTwitchAuthUrl = () => {
   const scopes = [
@@ -25,4 +25,14 @@ export const getTwitchAuthUrl = () => {
   authUrl.searchParams.append("state", state);
 
   return authUrl;
+};
+
+export const getDiscordInviteUrl = () => {
+  const scopes = ["applications.commands", "bot"];
+
+  const url = new URL("https://discord.com/api/oauth2/authorize");
+  url.searchParams.append("client_id", discordClientId);
+  url.searchParams.append("permissions", "8");
+
+  return url + `&scope=${scopes.join("+")}`;
 };

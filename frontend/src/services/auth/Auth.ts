@@ -5,3 +5,9 @@ export const useGetAuthorizeUrl = () => {
     url: `/auth/authorize-url`,
   });
 };
+
+export const useGetDiscordInviteUrl = () => {
+  return useAxiosCustom<ResponseData<string>>({
+    url: `/auth/discord/invite`,
+  });
+};

@@ -3,6 +3,9 @@
   font-size: 1.7vw;
   margin: 0;
   padding: 1vw;
+  position: relative;
+  max-height: 90dvh;
+  overflow-x: hidden;
 
   li {
     margin: 0.1rem;
