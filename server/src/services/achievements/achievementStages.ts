@@ -15,9 +15,9 @@ import { promises as fsPromises } from "fs";
 
 export const getAchievementStages = async (
   filter: FilterQuery<AchievementStageDocument> = {},
-  affixFindOptions: ManyAchievementsFindOptions<AchievementStageDocument>
+  findOptions: ManyAchievementsFindOptions<AchievementStageDocument>
 ) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = affixFindOptions;
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = findOptions;
 
   try {
     const affix = await AchievementStage.find(filter)
@@ -53,9 +53,9 @@ export const getAchievementStagesCount = async (filter: FilterQuery<AchievementS
 
 export const getOneAchievementStage = async (
   filter: FilterQuery<AchievementStageDocument> = {},
-  achievementFindOptions: AchievementsFindOptions<AchievementStageDocument>
+  findOptions: AchievementsFindOptions<AchievementStageDocument>
 ) => {
-  const { select = { __v: 0 } } = achievementFindOptions;
+  const { select = { __v: 0 } } = findOptions;
   try {
     const foundAchievement = await AchievementStage.findOne(filter).select(select);
 
@@ -68,10 +68,10 @@ export const getOneAchievementStage = async (
 
 export const updateOneAchievementStage = async (
   filter: FilterQuery<AchievementStageDocument>,
-  achievementUpdateData: UpdateQuery<AchievementStageUpdateData>
+  updateData: UpdateQuery<AchievementStageUpdateData>
 ) => {
   try {
-    const updatedAchievement = await AchievementStage.findOneAndUpdate(filter, achievementUpdateData, {
+    const updatedAchievement = await AchievementStage.findOneAndUpdate(filter, updateData, {
       new: true
     });
 
