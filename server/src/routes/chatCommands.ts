@@ -6,7 +6,7 @@ const chatCommandsRouter = Router();
 
 chatCommandsRouter.get("/", checkSearchParams, getChatCommandsList);
 chatCommandsRouter.post("/create", addNewCommand);
-chatCommandsRouter.post("/:id", isParamObjectId, editChatCommandById);
+chatCommandsRouter.patch("/:id", isParamObjectId, editChatCommandById);
 chatCommandsRouter.delete("/delete/:id", isParamObjectId, deleteCommandById);
 
 export default chatCommandsRouter;

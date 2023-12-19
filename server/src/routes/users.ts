@@ -18,6 +18,6 @@ usersRouter.get("/:id", isParamObjectId, getUsersProfile);
 usersRouter.get("/:id/messages", isParamObjectId, getUserMessages);
 usersRouter.get("/:id/redemptions", isParamObjectId, getUserRedemptions);
 usersRouter.get("/:id/messages/latest-eldest", isParamObjectId, getLatestEldestUserMessages);
-usersRouter.post("/:id", isParamObjectId, editUserProfile);
+usersRouter.patch("/:id", isParamObjectId, editUserProfile);
 
 export default usersRouter;
