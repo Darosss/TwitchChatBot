@@ -4,8 +4,8 @@ import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { ManyAffixesFindOptions, AffixCreateData, AffixUpdateData } from "./types";
 
-export const getAffixes = async (filter: FilterQuery<AffixDocument> = {}, affixFindOptions: ManyAffixesFindOptions) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = affixFindOptions;
+export const getAffixes = async (filter: FilterQuery<AffixDocument> = {}, findOptions: ManyAffixesFindOptions) => {
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = findOptions;
 
   try {
     const affix = await Affix.find(filter)

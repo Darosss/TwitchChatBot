@@ -4,8 +4,8 @@ import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { ManyMoodsFindOptions, MoodCreateData, MoodUpdateData } from "./types";
 
-export const getMoods = async (filter: FilterQuery<MoodDocument> = {}, moodFindOptions: ManyMoodsFindOptions) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = moodFindOptions;
+export const getMoods = async (filter: FilterQuery<MoodDocument> = {}, findOptions: ManyMoodsFindOptions) => {
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = findOptions;
 
   try {
     const mood = await Mood.find(filter)

@@ -1,4 +1,4 @@
-export * from "./messagesService";
+export * from "./messages";
 export * from "./";
 
 export type { MessageCreateData } from "./types";

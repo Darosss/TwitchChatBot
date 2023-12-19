@@ -3,11 +3,8 @@ import { handleAppError, logger } from "@utils";
 import { FilterQuery } from "mongoose";
 import { ManyMessageFindOptions, MessageCreateData } from "./types";
 
-export const getMessages = async (
-  filter: FilterQuery<MessageDocument> = {},
-  messageFindOptions: ManyMessageFindOptions
-) => {
-  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 }, populate = [] } = messageFindOptions;
+export const getMessages = async (filter: FilterQuery<MessageDocument> = {}, findOptions: ManyMessageFindOptions) => {
+  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 }, populate = [] } = findOptions;
   try {
     const messages = await Message.find(filter)
       .limit(limit * 1)
@@ -22,9 +19,9 @@ export const getMessages = async (
   }
 };
 
-export const createMessage = async (messageData: MessageCreateData) => {
+export const createMessage = async (createData: MessageCreateData) => {
   try {
-    const message = await Message.create(messageData);
+    const message = await Message.create(createData);
     return message;
   } catch (err) {
     logger.error(`Error occured while creating message: ${err}`);

@@ -16,8 +16,8 @@ import { badgesPath } from "@configs";
 export const SEPARATOR_BADGE_IMAGE_SIZE = `-xSize-`;
 export const badgeModelIMagesUrlsSizesNumbers = Object.values(BadgeModelImagesUrlsSizes).filter(Number) as number[];
 
-export const getBadges = async (filter: FilterQuery<BadgeDocument> = {}, affixFindOptions: ManyBadgesFindOptions) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = affixFindOptions;
+export const getBadges = async (filter: FilterQuery<BadgeDocument> = {}, findOptions: ManyBadgesFindOptions) => {
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = findOptions;
 
   try {
     const affix = await Badge.find(filter)
@@ -51,8 +51,8 @@ export const createBadge = async (createData: BadgeCreateData) => {
   }
 };
 
-export const getBadgeById = async (id: string, streamSessionFindOptions: BadgeFindOptions) => {
-  const { select = { __v: 0 } } = streamSessionFindOptions;
+export const getBadgeById = async (id: string, findOptions: BadgeFindOptions) => {
+  const { select = { __v: 0 } } = findOptions;
 
   try {
     const foundBadge = await Badge.findById(id).select(select);

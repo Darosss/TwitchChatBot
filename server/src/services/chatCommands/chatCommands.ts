@@ -11,15 +11,9 @@ import { modesPipeline } from "../aggregations";
 
 export const getChatCommands = async (
   filter: FilterQuery<ChatCommandDocument> = {},
-  chatCommandsFindOptions: ManyChatCommandsFindOptions
+  findOptions: ManyChatCommandsFindOptions
 ) => {
-  const {
-    limit = 50,
-    skip = 1,
-    sort = { createdAt: -1 },
-    select = { __v: 0 },
-    populate = []
-  } = chatCommandsFindOptions;
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 }, populate = [] } = findOptions;
 
   try {
     const chatCommands = await ChatCommand.find(filter)
@@ -79,8 +73,8 @@ export const createChatCommand = async (createData: ChatCommandCreateData | Chat
   }
 };
 
-export const getChatCommandById = async (id: string, chatCommandFindOptions: ChatCommandsFindOptions) => {
-  const { select = { __v: 0 } } = chatCommandFindOptions;
+export const getChatCommandById = async (id: string, findOptions: ChatCommandsFindOptions) => {
+  const { select = { __v: 0 } } = findOptions;
 
   try {
     const foundChatCommand = await ChatCommand.findById(id).select(select);

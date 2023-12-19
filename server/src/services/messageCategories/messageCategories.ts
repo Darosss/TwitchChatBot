@@ -11,9 +11,9 @@ import {
 
 export const getMessageCategories = async (
   filter: FilterQuery<MessageCategoryModel> = {},
-  categoriesFindOptions: ManyMessageCategoriesFindOptions
+  findOptions: ManyMessageCategoriesFindOptions
 ) => {
-  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 }, populate = [] } = categoriesFindOptions;
+  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 }, populate = [] } = findOptions;
   try {
     const categories = await MessageCategory.find(filter)
       .limit(limit * 1)
@@ -34,8 +34,8 @@ export const getMessageCategoriesCount = async (filter: FilterQuery<MessageCateg
   return count;
 };
 
-export const getMessageCategoryById = async (id: string, categoryFindOptions: MessageCategoryFindOptions) => {
-  const { select = { __v: 0 }, populate = [] } = categoryFindOptions;
+export const getMessageCategoryById = async (id: string, findOptions: MessageCategoryFindOptions) => {
+  const { select = { __v: 0 }, populate = [] } = findOptions;
   try {
     const foundCategory = await MessageCategory.findById(id).select(select).populate(populate);
 
@@ -158,10 +158,10 @@ export const getLeastMessagesFromEnabledCategories = async (
   }
 };
 
-export const createMessageCategories = async (messageCategoryData: MessageCategoryCreateData) => {
+export const createMessageCategories = async (createData: MessageCategoryCreateData) => {
   const modifiedCategoryData: MessageCategoryData = {
-    ...messageCategoryData,
-    messages: messageCategoryData.messages.map((msg) => [msg, 0])
+    ...createData,
+    messages: createData.messages.map((msg) => [msg, 0])
   };
   try {
     const messageCategory = await MessageCategory.create(modifiedCategoryData);

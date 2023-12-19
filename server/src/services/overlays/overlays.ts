@@ -3,11 +3,8 @@ import { AppError, handleAppError, checkExistResource, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { OverlayCreateData, OverlaysFindOptions, OverlayUpdateData, ManyOverlaysFindOptions } from "./types/";
 
-export const getOverlays = async (
-  filter: FilterQuery<OverlayDocument> = {},
-  overlayFindOptions: ManyOverlaysFindOptions
-) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = overlayFindOptions;
+export const getOverlays = async (filter: FilterQuery<OverlayDocument> = {}, findOptions: ManyOverlaysFindOptions) => {
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = findOptions;
 
   try {
     const overlay = await Overlay.find(filter)
@@ -42,8 +39,8 @@ export const createOverlay = async (createData: OverlayCreateData | OverlayCreat
   }
 };
 
-export const getOverlayById = async (id: string, overlayFindOptions: OverlaysFindOptions) => {
-  const { select = { __v: 0 } } = overlayFindOptions;
+export const getOverlayById = async (id: string, findOptions: OverlaysFindOptions) => {
+  const { select = { __v: 0 } } = findOptions;
 
   try {
     const foundOverlay = await Overlay.findById(id).select(select);

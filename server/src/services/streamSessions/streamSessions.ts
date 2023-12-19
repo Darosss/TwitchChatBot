@@ -18,9 +18,9 @@ import {
 
 export const getStreamSessions = async (
   filter: FilterQuery<StreamSessionDocument> = {},
-  streamSessionFindOptions: ManyStreamSessionsFindOptions
+  findOptions: ManyStreamSessionsFindOptions
 ) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = streamSessionFindOptions;
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = findOptions;
   try {
     const streamSessions = await StreamSession.find(filter)
       .limit(limit * 1)
@@ -35,8 +35,8 @@ export const getStreamSessions = async (
   }
 };
 
-export const getStreamSessionById = async (id: string, streamSessionFindOptions: StreamSessionFindOptions) => {
-  const { select = { __v: 0 } } = streamSessionFindOptions;
+export const getStreamSessionById = async (id: string, findOptions: StreamSessionFindOptions) => {
+  const { select = { __v: 0 } } = findOptions;
 
   try {
     const foundStreamSession = await StreamSession.findById(id).select(select).populate("events.user");
@@ -50,8 +50,8 @@ export const getStreamSessionById = async (id: string, streamSessionFindOptions:
   }
 };
 
-export const getCurrentStreamSession = async (streamSessionFindOptions: StreamSessionFindOptions) => {
-  const { select = { __v: 0 } } = streamSessionFindOptions;
+export const getCurrentStreamSession = async (findOptions: StreamSessionFindOptions) => {
+  const { select = { __v: 0 } } = findOptions;
 
   const currentDate = new Date();
   const filter = {
@@ -92,8 +92,8 @@ export const updateCurrentStreamSession = async (updateData: UpdateQuery<StreamS
   }
 };
 
-export const getLatestStreamSession = async (streamSessionFindOptions: StreamSessionFindOptions) => {
-  const { select = { __v: 0 } } = streamSessionFindOptions;
+export const getLatestStreamSession = async (findOptions: StreamSessionFindOptions) => {
+  const { select = { __v: 0 } } = findOptions;
 
   try {
     const foundStreamSession = await StreamSession.findOne({})
@@ -146,9 +146,9 @@ export const getStreamSessionsCount = async (filter: FilterQuery<StreamSessionDo
   return await StreamSession.countDocuments(filter);
 };
 
-export const createStreamSession = async (streamSessionData: StreamSessionCreateData) => {
+export const createStreamSession = async (createData: StreamSessionCreateData) => {
   try {
-    const streamSession = await StreamSession.create(streamSessionData);
+    const streamSession = await StreamSession.create(createData);
     return streamSession;
   } catch (err) {
     console.error(err);
