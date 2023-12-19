@@ -3,11 +3,8 @@ import { AppError, handleAppError, logger, checkExistResource } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { WidgetCreateData, WidgetsFindOptions, WidgetUpdateData, ManyWidgetsFindOptions } from "./types/";
 
-export const getWidgets = async (
-  filter: FilterQuery<WidgetsDocument> = {},
-  widgetFindOptions: ManyWidgetsFindOptions
-) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = widgetFindOptions;
+export const getWidgets = async (filter: FilterQuery<WidgetsDocument> = {}, findOptions: ManyWidgetsFindOptions) => {
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = findOptions;
 
   try {
     const widget = await Widgets.find(filter)
@@ -41,8 +38,8 @@ export const createWidget = async (createData: WidgetCreateData | WidgetCreateDa
   }
 };
 
-export const getWidgetById = async (id: string, widgetFindOptions: WidgetsFindOptions) => {
-  const { select = { __v: 0 } } = widgetFindOptions;
+export const getWidgetById = async (id: string, findOptions: WidgetsFindOptions) => {
+  const { select = { __v: 0 } } = findOptions;
 
   try {
     const foundWidget = await Widgets.findById(id).select(select);

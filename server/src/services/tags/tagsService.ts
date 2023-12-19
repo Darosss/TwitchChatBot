@@ -10,8 +10,8 @@ import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { ManyTagsFindOptions, TagCreateData, TagUpdateData } from "./types";
 
-export const getTags = async (filter: FilterQuery<TagDocument> = {}, tagFindOptions: ManyTagsFindOptions) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = tagFindOptions;
+export const getTags = async (filter: FilterQuery<TagDocument> = {}, findOptions: ManyTagsFindOptions) => {
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = findOptions;
 
   try {
     const tags = await Tag.find(filter)

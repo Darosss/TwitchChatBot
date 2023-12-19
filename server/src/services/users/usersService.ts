@@ -3,8 +3,8 @@ import { checkExistResource, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { ManyUsersFindOptions, UserCreateData, UserFindOptions, UserUpdateData } from "./types";
 
-export const getUsers = async (filter: FilterQuery<UserDocument> = {}, userFindOptions: ManyUsersFindOptions) => {
-  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 }, populate } = userFindOptions;
+export const getUsers = async (filter: FilterQuery<UserDocument> = {}, findOptions: ManyUsersFindOptions) => {
+  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 }, populate } = findOptions;
 
   try {
     const users = await User.find(filter)
@@ -20,8 +20,8 @@ export const getUsers = async (filter: FilterQuery<UserDocument> = {}, userFindO
   }
 };
 
-export const getOneUser = async (filter: FilterQuery<UserDocument> = {}, userFindOptions: UserFindOptions) => {
-  const { select = { __v: 0 }, populate } = userFindOptions;
+export const getOneUser = async (filter: FilterQuery<UserDocument> = {}, findOptions: UserFindOptions) => {
+  const { select = { __v: 0 }, populate } = findOptions;
   try {
     const userFiltered = await User.findOne(filter)
       .select(select)
@@ -36,8 +36,8 @@ export const getOneUser = async (filter: FilterQuery<UserDocument> = {}, userFin
   }
 };
 
-export const getUserById = async (id: string, userFindOptions: UserFindOptions) => {
-  const { select = { __v: 0 } } = userFindOptions;
+export const getUserById = async (id: string, findOptions: UserFindOptions) => {
+  const { select = { __v: 0 } } = findOptions;
   try {
     const userById = await User.findById(id).select(select);
 
@@ -50,9 +50,9 @@ export const getUserById = async (id: string, userFindOptions: UserFindOptions) 
   }
 };
 
-export const updateUserById = async (id: string, userUpdateData: UpdateQuery<UserUpdateData>) => {
+export const updateUserById = async (id: string, updateData: UpdateQuery<UserUpdateData>) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(id, userUpdateData, {
+    const updatedUser = await User.findByIdAndUpdate(id, updateData, {
       new: true
     });
 
@@ -115,14 +115,14 @@ export const getTwitchNames = async (
   }
 };
 
-export const isUserInDB = async (userFilter: FilterQuery<UserDocument>) => {
-  const user = await User.findOne(userFilter);
+export const isUserInDB = async (filter: FilterQuery<UserDocument>) => {
+  const user = await User.findOne(filter);
   if (user) return user;
 };
 
-export const createUser = async (userData: UserCreateData) => {
+export const createUser = async (createData: UserCreateData) => {
   try {
-    const user = await User.create(userData);
+    const user = await User.create(createData);
     return user;
   } catch (err) {
     logger.error(`Error occured while create user. ${err}`);
@@ -130,9 +130,9 @@ export const createUser = async (userData: UserCreateData) => {
   }
 };
 
-export const createUserIfNotExist = async (userFilter: FilterQuery<UserDocument>, userData: UserCreateData) => {
+export const createUserIfNotExist = async (filter: FilterQuery<UserDocument>, createData: UserCreateData) => {
   try {
-    const user = await User.findOneAndUpdate(userFilter, userData, { upsert: true, new: true });
+    const user = await User.findOneAndUpdate(filter, createData, { upsert: true, new: true });
 
     return user;
   } catch (err) {

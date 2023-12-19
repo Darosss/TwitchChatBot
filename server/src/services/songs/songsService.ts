@@ -11,8 +11,8 @@ import {
 import { SongsDocument, Songs, UserModel } from "@models";
 import { getUserById } from "@services";
 
-export const getSongs = async (filter: FilterQuery<SongsDocument> = {}, songsFindOptions: ManySongsFindOptions) => {
-  const { limit = 50, skip = 1, sort = { createdAt: 1 }, select = { __v: 0 }, populate = [] } = songsFindOptions;
+export const getSongs = async (filter: FilterQuery<SongsDocument> = {}, findOptions: ManySongsFindOptions) => {
+  const { limit = 50, skip = 1, sort = { createdAt: 1 }, select = { __v: 0 }, populate = [] } = findOptions;
 
   try {
     const songs = await Songs.find(filter)
@@ -126,8 +126,8 @@ export const getSongById = async (id: string, filter: FilterQuery<SongsDocument>
   }
 };
 
-export const getOneSong = async (filter: FilterQuery<SongsDocument> = {}, songsFindOptions: SongsFindOptions) => {
-  const { populate = [], select = { __v: 0 } } = songsFindOptions;
+export const getOneSong = async (filter: FilterQuery<SongsDocument> = {}, findOptions: SongsFindOptions) => {
+  const { populate = [], select = { __v: 0 } } = findOptions;
   try {
     const foundSong = await Songs.findOne(filter).select(select).populate(populate);
 

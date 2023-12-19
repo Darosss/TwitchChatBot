@@ -4,11 +4,8 @@ import { modesPipeline } from "../aggregations";
 import { FilterQuery, PipelineStage, UpdateQuery } from "mongoose";
 import { ManyTriggersFindOptions, TriggerCreateData, TriggerFindOptions, TriggerUpdateData } from "./types";
 
-export const getTriggers = async (
-  filter: FilterQuery<TriggerDocument> = {},
-  triggerFindOptions: ManyTriggersFindOptions
-) => {
-  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 }, populate = [] } = triggerFindOptions;
+export const getTriggers = async (filter: FilterQuery<TriggerDocument> = {}, findOptions: ManyTriggersFindOptions) => {
+  const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 }, populate = [] } = findOptions;
 
   try {
     const trigger = await Trigger.find(filter)
@@ -98,11 +95,8 @@ export const getTriggerById = async (id: string, filter: FilterQuery<TriggerDocu
   }
 };
 
-export const getOneTrigger = async (
-  filter: FilterQuery<TriggerDocument> = {},
-  triggerFindOptions: TriggerFindOptions
-) => {
-  const { populate = [], select = { __v: 0 } } = triggerFindOptions;
+export const getOneTrigger = async (filter: FilterQuery<TriggerDocument> = {}, findOptions: TriggerFindOptions) => {
+  const { populate = [], select = { __v: 0 } } = findOptions;
   try {
     const foundTrigger = await Trigger.findOne(filter).select(select).populate(populate);
 

@@ -5,9 +5,9 @@ import { ManyRedemptionsFindOptions, RedemptionCreateData } from "./types";
 
 export const getRedemptions = async (
   filter: FilterQuery<RedemptionDocument> = {},
-  redemptionsFindOptions: ManyRedemptionsFindOptions
+  findOptions: ManyRedemptionsFindOptions
 ) => {
-  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 } } = redemptionsFindOptions;
+  const { limit = 50, skip = 1, sort = {}, select = { __v: 0 } } = findOptions;
   try {
     const redemptions = await Redemption.find(filter)
       .limit(limit * 1)
@@ -26,9 +26,9 @@ export const getRedemptionsCount = async (filter: FilterQuery<RedemptionDocument
   return await Redemption.countDocuments(filter);
 };
 
-export const createRedemption = async (redemptionData: RedemptionCreateData) => {
+export const createRedemption = async (createData: RedemptionCreateData) => {
   try {
-    const redemption = await Redemption.create(redemptionData);
+    const redemption = await Redemption.create(createData);
 
     if (!redemption) {
       throw new AppError(400, "Couldn't create new redemption");
