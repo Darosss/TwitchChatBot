@@ -14,7 +14,7 @@ export const useGetTimers = () => {
 export const useEditTimer = (commandId: string, data: TimerUpdateData) => {
   return useAxiosCustom<ResponseData<Timer>, TimerUpdateData>({
     url: `/timers/${commandId}`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
   });

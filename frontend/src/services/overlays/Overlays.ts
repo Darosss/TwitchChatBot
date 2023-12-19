@@ -30,7 +30,7 @@ export const useCreateOverlay = (data: OverlayCreateData) => {
 export const useEditOverlayById = (id: string, data: OverlaysUpdateData) => {
   return useAxiosCustom<ResponseData<Overlay>, OverlaysUpdateData>({
     url: `/overlays/${id}`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
   });

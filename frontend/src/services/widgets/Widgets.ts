@@ -30,7 +30,7 @@ export const useCreateLayout = (data: WidgetsCreateData) => {
 export const useEditWidgetById = (id: string, data: WidgetsUpdateData) => {
   return useAxiosCustom<ResponseData<Widgets>, WidgetsUpdateData>({
     url: `/widgets/${id}`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
   });

@@ -14,7 +14,7 @@ export const useGetTriggers = () => {
 export const useEditTrigger = (commandId: string, data: TriggerUpdateData) => {
   return useAxiosCustom<ResponseData<Trigger>, TriggerUpdateData>({
     url: `/triggers/${commandId}`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
   });

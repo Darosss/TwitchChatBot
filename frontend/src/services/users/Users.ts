@@ -30,7 +30,7 @@ export const useGetUser = (userId: string) => {
 export const useEditUser = (userId: string, data: UserUpdateData) => {
   return useAxiosCustom<ResponseData<User>, UserUpdateData>({
     url: `/users/${userId}`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
   });

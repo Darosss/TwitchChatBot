@@ -15,7 +15,7 @@ export const useGetAffixes = (urlParams = true) => {
 export const useEditAffix = (id: string, data: AffixUpdateData) => {
   return useAxiosCustom<ResponseData<Affix>, AffixUpdateData>({
     url: `/affixes/${id}`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
   });
