@@ -1,5 +1,11 @@
 import { Tag, TagDocument } from "@models";
-import { getChatCommandsCount, getMessageCategoriesCount, getTimersCount, getTriggersCount } from "@services";
+import {
+  getAchievementsCount,
+  getChatCommandsCount,
+  getMessageCategoriesCount,
+  getTimersCount,
+  getTriggersCount
+} from "@services";
 import { checkExistResource, AppError, handleAppError, logger } from "@utils";
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { ManyTagsFindOptions, TagCreateData, TagUpdateData } from "./types";
@@ -72,7 +78,8 @@ export const deleteTagById = async (id: string) => {
       getTriggersCount(filter),
       getChatCommandsCount(filter),
       getTimersCount(filter),
-      getMessageCategoriesCount(filter)
+      getMessageCategoriesCount(filter),
+      getAchievementsCount(filter)
     ]);
 
     if (countTagsInDocs.reduce((a, b) => a + b) > 0) {
