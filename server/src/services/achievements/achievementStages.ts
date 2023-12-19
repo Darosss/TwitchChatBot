@@ -8,7 +8,7 @@ import {
   ManyAchievementsFindOptions
 } from "./types";
 import { AppError, checkExistResource, handleAppError, logger } from "@utils";
-import { getAchievements } from "./achievementsService";
+import { getAchievements } from "./achievements";
 import path from "path";
 import { achievementsStagesSoundsPath } from "@configs";
 import { promises as fsPromises } from "fs";

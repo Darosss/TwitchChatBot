@@ -1,2 +1,2 @@
-export * from "./badgesService";
+export * from "./badges";
 export * from "./types";

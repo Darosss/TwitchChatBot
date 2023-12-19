@@ -1,4 +1,4 @@
-export * from "./usersService";
+export * from "./users";
 export * from "./";
 
 export { UserCreateData, UserUpdateData } from "./types";
