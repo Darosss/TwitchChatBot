@@ -17,7 +17,7 @@ export default function AchievementStageLists({
   achievement,
   expandAll,
 }: AchievementStagesListsProps) {
-  const [showSection, setShowSection] = useState(true);
+  const [showSection, setShowSection] = useState(false);
 
   return (
     <div
