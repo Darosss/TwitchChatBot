@@ -12,8 +12,8 @@ const messageCategoriesRouter = Router();
 
 messageCategoriesRouter.get("/", checkSearchParams, getMessageCategoriesList);
 messageCategoriesRouter.post("/create", addNewCategory);
-messageCategoriesRouter.post("/:id", isParamObjectId, editMessageCategoryById);
-messageCategoriesRouter.post("/:id/uses", isParamObjectId, updateUsesCategoryById);
+messageCategoriesRouter.patch("/:id", isParamObjectId, editMessageCategoryById);
+messageCategoriesRouter.patch("/:id/uses", isParamObjectId, updateUsesCategoryById);
 messageCategoriesRouter.delete("/delete/:id", isParamObjectId, deleteMessageCategoryById);
 
 export default messageCategoriesRouter;

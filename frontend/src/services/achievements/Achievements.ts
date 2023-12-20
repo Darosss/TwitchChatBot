@@ -34,7 +34,7 @@ export const useGetAchievements = (searchParams?: AchievementsSearchParams) => {
 export const useEditAchievement = (id: string, data: AchievementUpdateData) => {
   return useAxiosCustom<ResponseData<Achievement>, AchievementUpdateData>({
     url: `${BASE_URL}/${id}`,
-    method: "POST",
+    method: "PATCH",
     manual: true,
     urlParams: false,
     bodyData: data,
@@ -71,7 +71,7 @@ export const useUpdateCustomAchievement = (
   return useAxiosCustom<ResponseData<Achievement>, CustomAchievementUpdateData>(
     {
       url: `${BASE_URL}/custom/${id}`,
-      method: "POST",
+      method: "PATCH",
       bodyData: data,
       manual: true,
       urlParams: false,
@@ -108,7 +108,7 @@ export const useGetBadgesIamgesBasePath = () => {
 export const useEditBadge = (id: string, data: BadgeUpdateData) => {
   return useAxiosCustom<ResponseData<Badge>, BadgeUpdateData>({
     url: `${BASE_BADGES_URL}/${id}`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
     urlParams: false,
@@ -175,7 +175,7 @@ export const useEditAchievementStage = (
 ) => {
   return useAxiosCustom<ResponseData<Badge>, AchievementStageUpdateData>({
     url: `${BASE_STAGES_URL}/${id}`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
   });

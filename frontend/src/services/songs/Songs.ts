@@ -10,7 +10,7 @@ export const useGetSongs = () => {
 export const useEditSong = (commandId: string, data: SongUpdateData) => {
   return useAxiosCustom<ResponseData<Song>, SongUpdateData>({
     url: `/songs/${commandId}`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
   });

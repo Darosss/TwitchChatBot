@@ -15,7 +15,7 @@ export const useGetMoods = (urlParams = true) => {
 export const useEditMood = (id: string, data: MoodUpdateData) => {
   return useAxiosCustom<ResponseData<Mood>, MoodUpdateData>({
     url: `/moods/${id}`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
   });

@@ -24,7 +24,7 @@ export const useEditMessageCategoryById = (
     MessageCategoryUpdateData
   >({
     url: `/message-categories/${id}`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
     urlParams: false,
@@ -34,7 +34,7 @@ export const useEditMessageCategoryById = (
 export const useIncrementUsesCategoryById = (id: string) => {
   return useAxiosCustom<ResponseData<MessageCategory>>({
     url: `/message-categories/${id}/uses`,
-    method: "POST",
+    method: "PATCH",
     manual: true,
     urlParams: false,
   });

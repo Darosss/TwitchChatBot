@@ -21,7 +21,7 @@ export const useEditCommand = (
 ) => {
   return useAxiosCustom<ResponseData<ChatCommand>, ChatCommandUpdateData>({
     url: `/chat-commands/${commandId}`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
   });

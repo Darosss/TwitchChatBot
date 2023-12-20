@@ -4,7 +4,7 @@ import { Config, ConfigUpdateData } from "./types";
 export const useEditConfig = (data: ConfigUpdateData) => {
   return useAxiosCustom<ResponseMessage, ConfigUpdateData>({
     url: `/configs/edit`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
   });

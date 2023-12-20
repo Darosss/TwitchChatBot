@@ -7,8 +7,7 @@ const timersRouter = Router();
 
 timersRouter.get("/", checkSearchParams, getTimersList);
 timersRouter.post("/create", addNewTimer);
-// timersRouter.get("/:id", isParamObjectId, getTimerById);
-timersRouter.post("/:id", isParamObjectId, editTimerById);
+timersRouter.patch("/:id", isParamObjectId, editTimerById);
 timersRouter.delete("/delete/:id", isParamObjectId, deleteTimer);
 
 export default timersRouter;

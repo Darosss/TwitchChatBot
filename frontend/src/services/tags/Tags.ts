@@ -15,7 +15,7 @@ export const useGetTags = (urlParams = true) => {
 export const useEditTag = (id: string, data: TagUpdateData) => {
   return useAxiosCustom<ResponseData<Tag>, TagUpdateData>({
     url: `/tags/${id}`,
-    method: "POST",
+    method: "PATCH",
     bodyData: data,
     manual: true,
   });
