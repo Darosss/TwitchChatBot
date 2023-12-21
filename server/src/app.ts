@@ -16,7 +16,7 @@ const expressApp = () => {
   app.use(
     cors({
       origin: [hostFrontendURL, localFrontendURL],
-      methods: ["POST", "GET", "DELETE"],
+      methods: ["POST", "GET", "DELETE", "PUT", "PATCH"],
       allowedHeaders: ["Content-Type", "Authorization", "Accept"],
       credentials: true
     })
