@@ -26,13 +26,21 @@ export default function Home() {
       </div>
       <div className="home-content">
         <div className="home-content-tiles">
-          {routes.map((route, index) => (
-            <div key={index}>
-              <Link to={route.path} className="common-button primary-button">
-                {route.label}
-              </Link>
-            </div>
-          ))}
+          {routes.map((route, index) =>
+            route.path !== "/" ? (
+              <div key={index} className="tile-wrapper">
+                <div className="tile-description">
+                  <Link to={route.path}>
+                    {" "}
+                    <pre>{route.description}</pre>{" "}
+                  </Link>
+                </div>
+                <div className="common-button primary-button">
+                  {route.label}
+                </div>
+              </div>
+            ) : null
+          )}
         </div>
         <ChatBackground />
       </div>
