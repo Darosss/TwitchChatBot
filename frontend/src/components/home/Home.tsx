@@ -45,9 +45,29 @@ export default function Home() {
         <ChatBackground />
       </div>
       <div className="home-footer">
-        <div>Footer</div>
-        <div>Footer</div>
-        <div>Footer</div>
+        <div>
+          Created by @Darosss{" "}
+          <Link target="_blank" to="https://github.com/Darosss">
+            github.com/Darosss
+          </Link>
+        </div>
+        <div>
+          Repository:{" "}
+          <Link target="_blank" to="https://github.com/Darosss/TwitchChatBot">
+            github.com/TwitchChatBot
+          </Link>
+        </div>
+        <div>
+          Email: darosss12@proton.me{" "}
+          <button
+            className="common-button primary-button"
+            onClick={() => {
+              window.location.href = "mailto:darosss12@proton.me";
+            }}
+          >
+            Send
+          </button>
+        </div>
       </div>
     </div>
   );
