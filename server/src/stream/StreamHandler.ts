@@ -77,12 +77,23 @@ class StreamHandler {
 
   private async init() {
     const { id } = this.configuration.authorizedUser;
+    await this.createBotUser();
     await this.refreshConfigs();
     clearInterval(this.checkViewersInterval);
     this.checkViewersInterval = setInterval(async () => {
       await this.checkCountOfViewers(id);
     }, this.configuration.configs.headConfigs.intervalCheckViewersPeek * 1000);
     await this.handlers.eventSubHandler.init();
+  }
+  private async createBotUser() {
+    await createUserIfNotExist(
+      { twitchId: botId },
+      {
+        username: botUsername,
+        twitchId: botId,
+        twitchName: botUsername //TODO: bot username just for now -> change later
+      }
+    );
   }
 
   public updateOptions({ configuration, handlers }: StreamHandlerConstructorType): void {
