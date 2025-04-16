@@ -1,9 +1,9 @@
 import { useFileUpload } from "@hooks";
 import ProgressBar from "@ramonak/react-progress-bar";
-import { useGetAchievementStageSoundsBasePath } from "@services";
+import { useGetAchievementStagesSoundsBasePath } from "@services";
 import { addErrorNotification, addSuccessNotification } from "@utils";
 import { useEffect, useState } from "react";
-import { viteBackendUrl } from "src/configs/envVariables";
+import { viteBackendUrl } from "@configs/envVariables";
 
 interface OnClickSoundType {
   basePath: string;
@@ -25,7 +25,7 @@ export default function AvailableAchievementSounds({
   currentSoundPath,
   className,
 }: AvailableAchievementSoundsProps) {
-  const { data: basePathData } = useGetAchievementStageSoundsBasePath();
+  const { data: basePathData } = useGetAchievementStagesSoundsBasePath();
   const [filterSoundNames, setFilterSoundNames] = useState("");
 
   if (!basePathData) return <>No base path sounds</>;

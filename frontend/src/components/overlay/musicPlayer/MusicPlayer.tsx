@@ -1,144 +1,41 @@
-import React, { useEffect, useState } from "react";
-
-import {
-  AudioStreamDataInfo,
-  AudioStreamData,
-  useSocketContext,
-} from "@socket";
-import SongProgress from "../SongProgress";
-import { useOverlayDataContext } from "../OverlayDataContext";
+import { useEffect, useState } from "react";
+import moment from "moment";
+import { useSelector } from "react-redux";
+import { useSocketContext } from "@socket";
+import { RootStore } from "@redux/store";
+import SongProgress from "../songProgress";
+import useMusicPlayer from "@hooks/useMusicPlayer";
+import { RequestSongData } from "@socketTypes";
+import { DownloadedSongPlayer, YoutubePlayer } from "@components/musicPlayers";
 
 export default function MusicPlayer() {
+  const overlaysStateRedux = useSelector((state: RootStore) => state.overlays);
   const {
-    stylesState: [{ overlayMusicPlayer: styles }],
-    isEditorState: [isEditor],
-  } = useOverlayDataContext();
+    isEditor,
+    baseData: {
+      styles: { overlayMusicPlayer: styles },
+    },
+  } = overlaysStateRedux;
 
-  //TODO: refactor to one state
-  const socketContext = useSocketContext();
-  const [songName, setSongName] = useState("");
-  const [songDuration, setSongDuration] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [showPlaylist, setShowPlaylist] = useState(false);
-  const [audioData, setAudioData] = useState<AudioStreamDataInfo>();
+  const { audioData, isPlaying, songsInQue, setAudioData } = useMusicPlayer();
 
   useEffect(() => {
-    if (isEditor) {
-      setSongName("Test song name - test");
-      setSongDuration(200);
-      setCurrentTime(120);
-    }
-  }, [isEditor]);
+    if (!isEditor || audioData.id) return;
 
-  useEffect(() => {
-    const { emits, events } = socketContext;
-
-    let source: AudioBufferSourceNode | null = null;
-    let gain: GainNode | null = null;
-    let timer: NodeJS.Timer | undefined;
-    let globalVolume: number | null;
-    const musicStop = () => {
-      clearInterval(timer);
-      if (source) {
-        source.stop();
-      }
-    };
-
-    const countSongTime = (time: number, duration: number) => {
-      setCurrentTime(time);
-      time++;
-      if (time >= duration) {
-        setCurrentTime(0);
-        clearInterval(timer);
-      }
-    };
-
-    const changeVolumeGain = (volume: number) => {
-      if (!gain) return;
-      let volumeToSet = volume;
-      if (volume > 100) volumeToSet = 100;
-      else if (volume < 0) volumeToSet = 0;
-
-      gain.gain.value = volumeToSet / 100;
-
-      globalVolume = volumeToSet / 100;
-    };
-
-    const onGetAudioSoundData = (data: AudioStreamData) => {
-      setSongName(data.name);
-      setSongDuration(data.duration);
-
-      clearInterval(timer);
-      let currTime = data.currentTime;
-      timer = setInterval(() => {
-        currTime++;
-        countSongTime(currTime, data.duration);
-      }, 1000);
-      const audioCtx = new AudioContext();
-      audioCtx.decodeAudioData(data.audioBuffer, (buffer) => {
-        if (source) {
-          source.stop();
-        }
-        if (gain) {
-          gain.disconnect();
-        }
-
-        source = new AudioBufferSourceNode(audioCtx, {
-          buffer: buffer,
-        });
-
-        gain = audioCtx.createGain();
-        source.connect(gain);
-        gain.connect(audioCtx.destination);
-        changeVolumeGain(data.volume);
-
-        gain.gain.value = globalVolume || 0.1;
-
-        source.start(0, data.currentTime);
-      });
-    };
-
-    events.audio.on((data) => {
-      onGetAudioSoundData(data);
+    setAudioData({
+      id: "djV11Xbc914",
+      name: "a-ha - Take On Me",
+      duration: 240,
+      currentTime: 100,
+      volume: 25,
+      type: "yt",
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioData.id, isEditor]);
 
-    events.audioStop.on(() => musicStop());
-
-    events.changeVolume.on((volume) => {
-      changeVolumeGain(volume);
-    });
-
-    const intervalContentId = setInterval(() => {
-      setShowPlaylist((prevShow) => !prevShow);
-    }, 20000);
-
-    events.getAudioInfo.on((data) => {
-      setAudioData(data);
-    });
-
-    emits.getAudioInfo((cb) => {
-      setAudioData(cb);
-    });
-
-    emits.getAudioStreamData((isPlaying, cb) => {
-      if (!isPlaying) return;
-
-      onGetAudioSoundData(cb);
-    });
-
-    return () => {
-      events.audio.off();
-      events.audioStop.off();
-      events.getAudioInfo.off();
-      events.changeVolume.off();
-
-      clearInterval(intervalContentId);
-      musicStop();
-    };
-  }, [socketContext]);
   return (
     <div
-      className={`music-player-wrapper ${songName ? "" : "hidden"}`}
+      className={`music-player-wrapper ${isPlaying ? "" : "hidden"}`}
       style={{ borderRadius: styles.borderRadius }}
     >
       <div
@@ -149,58 +46,158 @@ export default function MusicPlayer() {
           boxShadow: styles.boxShadow,
         }}
       ></div>
+      <div className="music-song-details">
+        <div className="song-site">{audioData.type}</div>
+        <div
+          className="music-current-song"
+          style={{
+            fontSize: styles.currentSong.fontSize,
+            color: styles.currentSong.color,
+          }}
+        >
+          {audioData.name}{" "}
+          {audioData.requester ? (
+            <>
+              <span className="music-song-requester-name">
+                {"->  "}
+                {audioData.requester}
+              </span>{" "}
+            </>
+          ) : null}
+        </div>
+        <div className="music-song-progress">
+          <SongProgress
+            songDuration={audioData.duration || 0}
+            currentTime={audioData.currentTime}
+            progressBarProps={{
+              labelColor: styles.progressBar.color,
+              labelSize: styles.progressBar.fontSize,
+              bgColor: styles.progressBar.background,
+              baseBgColor: styles.progressBar.baseBackground,
+            }}
+          />
+        </div>
+      </div>
 
-      {showPlaylist && audioData ? (
-        <SongsPlaylist songs={audioData.songsInQue} />
-      ) : (
-        <>
-          <div>
-            <div
-              className="music-player-song-name"
-              style={{
-                fontSize: styles.currentSong.fontSize,
-                color: styles.currentSong.color,
-              }}
-            >
-              {songName}
-            </div>
-          </div>
-          <div className="music-player-song-duration">
-            <SongProgress
-              songDuration={songDuration}
-              currentTime={currentTime}
-              progressBarProps={{
-                labelColor: styles.progressBar.color,
-                labelSize: styles.progressBar.fontSize,
-                bgColor: styles.progressBar.background,
-                baseBgColor: styles.progressBar.baseBackground,
-              }}
-            />
-          </div>
-        </>
-      )}
+      <div className="music-player">
+        {audioData.type === "yt" ? (
+          <YoutubePlayer isPlaying={isPlaying} songId={audioData.id} />
+        ) : audioData.downloadedData ? (
+          <DownloadedSongPlayer
+            data={{
+              audioData,
+              isPlaying,
+              songsInQue,
+            }}
+          />
+        ) : null}
+      </div>
+      <RequestedSongsAnimation />
     </div>
   );
 }
 
-interface SongsPlaylistProps {
-  songs: AudioStreamDataInfo["songsInQue"];
-}
+//TODO: when widget is < 500 px show only name, <= 1000 show name + progress
 
-function SongsPlaylist({ songs }: SongsPlaylistProps) {
-  return (
-    <div className="music-player-playlist prevent-select">
-      <div className="music-player-playlist-songs">
-        {songs.map(([songName, requester], index) => (
-          <div key={index} className="music-player-playlist-song-wrapper">
-            <div className="music-player-playlist-index">{index + 1}. </div>
-            <div className="music-player-playlist-song-name">{songName} </div>
-            <div className="music-player-playlist-requester">
-              {requester?.username || "default"}
+function RequestedSongsAnimation() {
+  const {
+    isEditor,
+    baseData: {
+      styles: {
+        overlayMusicPlayer: { requests: styles },
+      },
+    },
+  } = useSelector((state: RootStore) => state.overlays);
+
+  const [requestedSongs, setRequestedSongs] = useState<RequestSongData[]>([]);
+
+  const socket = useSocketContext();
+
+  function addRequestedSong(songName: string, username: string) {
+    setRequestedSongs((prevState) => [{ songName, username }, ...prevState]);
+  }
+
+  function removeLastFromRequestedSongs() {
+    setRequestedSongs((prevState) => {
+      prevState.pop();
+      return [...prevState];
+    });
+  }
+  useEffect(() => {
+    if (!isEditor) return;
+
+    setInterval(() => {
+      setRequestedSongs((prevState) => [
+        {
+          songName: `Random song ${moment.now()}`,
+          username: `random username ${moment.now()}`,
+        },
+        ...prevState,
+      ]);
+    }, 2500);
+  }, [isEditor]);
+
+  useEffect(() => {
+    if (requestedSongs.length > 0) {
+      setTimeout(() => {
+        removeLastFromRequestedSongs();
+      }, 20000);
+    }
+  }, [requestedSongs]);
+
+  useEffect(() => {
+    socket?.events?.requestSong.on((data) => {
+      addRequestedSong(data.songName, data.username);
+    });
+
+    return () => {
+      socket?.events?.requestSong.off();
+    };
+  }, [socket]);
+  return requestedSongs.length > 0 ? (
+    <div
+      className="request-wrapper"
+      style={{
+        boxShadow: styles.boxShadow,
+        color: styles.color,
+        background: styles.background,
+      }}
+    >
+      <div
+        className="request-wrapper-header"
+        style={{
+          fontSize: styles.headerFontSize,
+        }}
+      >
+        Requests
+      </div>
+      <div className="request-notifications-wrapper">
+        {requestedSongs.map(({ username, songName }, idx) => {
+          return (
+            <div
+              key={username + songName + Math.random()} // add this for trigger animation with same index it doesnt work
+            >
+              <div
+                style={{
+                  fontSize: styles.fontSize,
+                }}
+              >
+                <div>
+                  <span
+                    style={{
+                      color: styles.nicknameColor,
+                    }}
+                  >
+                    {username}
+                  </span>
+                  <span style={{ color: styles.color }}> requested:</span>
+                </div>
+                <div>{songName}</div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
-  );
+  ) : null;
 }

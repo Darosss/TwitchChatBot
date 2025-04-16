@@ -1,25 +1,49 @@
-import React, { useState } from "react";
-import { Song } from "@services";
-import { TableListWrapper } from "@components/tableWrapper";
-import SortByParamsButton from "@components/SortByParamsButton";
+import { useState } from "react";
 import { DateTooltip } from "@components/dateTooltip";
-import PreviewSongModal from "./PreviewSongModal";
+import SortByParamsButton from "@components/SortByParamsButton";
+import { TableListWrapper } from "@components/tableWrapper";
+import { Song, useDeleteSong } from "@services";
 import { generateEnabledDisabledDiv } from "@utils";
+import PreviewSongModal from "./PreviewSongModal";
+import {
+  openModal,
+  resetSongState,
+  setEditingId,
+  setSongState,
+} from "@redux/songsSlice";
+import { useDispatch } from "react-redux";
+import { HandleShowModalParams } from "@components/types";
 
 interface SongsDataProps {
   data: Song[];
-  handleOnShowEditModal: (song: Song) => void;
-  handleOnShowCreateModal: (song?: Song) => void;
-  setSongIdDelete: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-export default function SongsData({
-  data,
-  handleOnShowCreateModal,
-  handleOnShowEditModal,
-  setSongIdDelete,
-}: SongsDataProps) {
+export default function SongsData({ data }: SongsDataProps) {
+  const dispatch = useDispatch();
   const [previewedSong, setPrevievedSong] = useState<Song | null>(null);
+
+  const deleteSongMutation = useDeleteSong();
+  const handleDeleteSong = (id: string) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete the song with ID: ${id}?`
+      )
+    )
+      return;
+    deleteSongMutation.mutate(id);
+  };
+  const handleShowModal = (params: HandleShowModalParams<Song>) => {
+    dispatch(openModal());
+    if (params?.type === "create") {
+      dispatch(resetSongState());
+
+      return;
+    }
+    const { type, data } = params;
+    if (type === "edit") dispatch(setEditingId(data._id));
+    dispatch(setSongState({ ...data, whoAdded: data.whoAdded._id }));
+  };
+
   return (
     <>
       <TableListWrapper
@@ -29,7 +53,7 @@ export default function SongsData({
               Actions
               <button
                 className="common-button primary-button"
-                onClick={(e) => handleOnShowCreateModal()}
+                onClick={() => handleShowModal({ type: "create" })}
               >
                 New
               </button>
@@ -39,24 +63,20 @@ export default function SongsData({
             </th>
             <th>
               <SortByParamsButton buttonText="Youtube Id" sortBy="youtubeId" />
+              <SortByParamsButton buttonText="Suno Id" sortBy="sunoId" />
             </th>
             <th>Custom Id</th>
             <th>
               <SortByParamsButton buttonText="Uses" sortBy="uses" />
-            </th>
-            <th>
-              <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
-            </th>
-            <th>
               <SortByParamsButton buttonText="botUses" sortBy="botUses" />
-            </th>
-            <th>
+
               <SortByParamsButton
                 buttonText="SR Uses"
                 sortBy="songRequestUses"
               />
             </th>
             <th>
+              <SortByParamsButton buttonText="Enabled" sortBy="enabled" />
               <SortByParamsButton buttonText="Duration" sortBy="duration" />
             </th>
             <th>
@@ -64,11 +84,8 @@ export default function SongsData({
             </th>
             <th>
               <SortByParamsButton buttonText="Created At" sortBy="createdAt" />
-            </th>
-            <th>
               <SortByParamsButton buttonText="Updated at" sortBy="updatedAt" />
             </th>
-            <th>Who added</th>
           </tr>
         }
         tbodyChildren={data.map((song, index) => {
@@ -86,7 +103,7 @@ export default function SongsData({
                     className="common-button primary-button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleOnShowEditModal(song);
+                      handleShowModal({ type: "edit", data: song });
                     }}
                   >
                     Edit
@@ -95,7 +112,7 @@ export default function SongsData({
                     className="common-button danger-button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setSongIdDelete(song._id);
+                      handleDeleteSong(song._id);
                     }}
                   >
                     Delete
@@ -103,28 +120,27 @@ export default function SongsData({
                 </div>
               </td>
               <td>{song.title}</td>
-              <td>{song.youtubeId}</td>
+              <td>{song.youtubeId || song.sunoId || "Local"}</td>
               <td>{song.customId || ""}</td>
-              <td>{song.uses}</td>
+              <td>
+                {song.uses} - {song.botUses} - {song.songRequestUses}
+              </td>
               <td>
                 {generateEnabledDisabledDiv(
                   song.enabled,
                   song.enabled.toString()
                 )}
+                ~~~~~~~~~
+                <br />
+                {song.duration}s
               </td>
-              <td>{song.botUses}</td>
-              <td>{song.songRequestUses}</td>
-              <td>{song.duration}</td>
               <td>
                 {song.lastUsed ? <DateTooltip date={song.lastUsed} /> : null}
               </td>
               <td>
-                <DateTooltip date={song.createdAt} />
-              </td>
-              <td>
+                <DateTooltip date={song.createdAt} /> ~~~~~~
                 <DateTooltip date={song.updatedAt} />
               </td>
-              <td>{song.whoAdded.username}</td>
             </tr>
           );
         })}

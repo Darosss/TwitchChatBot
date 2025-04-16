@@ -1,5 +1,3 @@
-import React from "react";
-
 import Pagination from "@components/pagination";
 import { Link, useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
@@ -10,11 +8,13 @@ import {
   Message,
   useGetUserMessages,
   useGetSessionMessages,
+  fetchMessagesDefaultParams,
 } from "@services";
 import { DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
-import AxiosError from "@components/axiosHelper/errors";
+import Error from "@components/axiosHelper/errors";
 import Loading from "@components/axiosHelper/loading";
+import { useQueryParams } from "@hooks/useQueryParams";
 
 interface MessagesDetailsProp {
   messages: Message[];
@@ -39,29 +39,31 @@ export default function MessagesList({ messages }: MessagesListProps) {
       return <MessagesAll />;
   }
 }
+//TODO: add query params to user/session based
 
 const MessagesUser = () => {
   const { userId } = useParams();
-  const { data, loading, error } = useGetUserMessages(userId!);
-  if (error) return <AxiosError error={error} />;
-  if (!data || loading) return <Loading />;
+  const { data, isLoading, error } = useGetUserMessages(userId!);
+  if (error) return <Error error={error} />;
+  if (!data || isLoading) return <Loading />;
 
   return <Messages messagesData={data} />;
 };
 
 const MessagesSession = () => {
   const { sessionId } = useParams();
-  const { data, loading, error } = useGetSessionMessages(sessionId!);
-  if (error) return <AxiosError error={error} />;
-  if (!data || loading) return <Loading />;
+  const { data, isLoading, error } = useGetSessionMessages(sessionId!);
+  if (error) return <Error error={error} />;
+  if (!data || isLoading) return <Loading />;
 
   return <Messages messagesData={data} />;
 };
 
 const MessagesAll = () => {
-  const { data, loading, error } = useGetMessages();
-  if (error) return <AxiosError error={error} />;
-  if (!data || loading) return <Loading />;
+  const queryParams = useQueryParams(fetchMessagesDefaultParams);
+  const { data, isLoading, error } = useGetMessages(queryParams);
+  if (error) return <Error error={error} />;
+  if (!data || isLoading) return <Loading />;
 
   return <Messages messagesData={data} />;
 };

@@ -2,13 +2,13 @@ import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
 import {
   useDeleteAchievementStageSound,
-  useGetAchievementStageSounds,
-  useGetAchievementStageSoundsBasePath,
+  useGetAchievementStagesSounds,
+  useGetAchievementStagesSoundsBasePath,
 } from "@services";
 import { useState } from "react";
 import AvailableAchievementSounds from "./AvailableAchievementSounds";
-import { viteBackendUrl } from "src/configs/envVariables";
-import { AxiosError, Loading } from "@components/axiosHelper";
+import { viteBackendUrl } from "@configs/envVariables";
+import { Error, Loading } from "@components/axiosHelper";
 import { useAxiosWithConfirmation } from "@hooks";
 
 export default function AchievementStagesSounds() {
@@ -17,16 +17,16 @@ export default function AchievementStagesSounds() {
 
   const {
     data: stagesSoundResponseData,
-    loading,
+    isLoading,
     error,
-    refetchData,
-  } = useGetAchievementStageSounds();
+    refetch,
+  } = useGetAchievementStagesSounds();
 
-  const { data: basePathData } = useGetAchievementStageSoundsBasePath();
+  const { data: basePathData } = useGetAchievementStagesSoundsBasePath();
 
   const setSoundNameToDelete = useAxiosWithConfirmation({
     hookToProceed: useDeleteAchievementStageSound,
-    opts: { onFullfiled: () => refetchData() },
+    opts: { onFullfiled: refetch },
   });
 
   const handleOnClickSoundName = (url: string) => {
@@ -39,8 +39,8 @@ export default function AchievementStagesSounds() {
     setShowModal(false);
   };
 
-  if (loading) return <Loading />;
-  if (error) return <AxiosError error={error} />;
+  if (isLoading) return <Loading />;
+  if (error) return <Error error={error} />;
   if (!stagesSoundResponseData) return null;
 
   return (
@@ -48,7 +48,7 @@ export default function AchievementStagesSounds() {
       <PreviousPage />
       <AvailableAchievementSounds
         soundPaths={stagesSoundResponseData.data}
-        onClickRefresh={refetchData}
+        onClickRefresh={refetch}
         onClickSound={({ soundName }) => {
           handleOnClickSoundName(soundName);
         }}

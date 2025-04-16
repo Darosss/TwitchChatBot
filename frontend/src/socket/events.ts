@@ -17,22 +17,6 @@ export const getSocketEventsFunctions = (
         socketConnection.off("sendLoggedUserInfo");
       },
     },
-    noArg: {
-      on: (cb) => {
-        socketConnection.on("noArg", () => cb());
-      },
-      off: () => {
-        socketConnection.off("noArg");
-      },
-    },
-    withAck: {
-      on: (cb) => {
-        socketConnection.on("withAck", (e) => cb(e));
-      },
-      off: () => {
-        socketConnection.off("withAck");
-      },
-    },
     messageServer: {
       on: (cb) => {
         socketConnection.on("messageServer", (data) => cb(data));
@@ -85,94 +69,6 @@ export const getSocketEventsFunctions = (
         socketConnection.off("getCustomRewards");
       },
     },
-    changeYTVolume: {
-      on: (cb) => {
-        socketConnection.on("changeYTVolume", (volume) => cb(volume));
-      },
-      off: () => {
-        socketConnection.off("changeYTVolume");
-      },
-    },
-    musicYTNext: {
-      on: (cb) => {
-        socketConnection.on("musicYTNext", () => cb());
-      },
-      off: () => {
-        socketConnection.off("musicYTNext");
-      },
-    },
-    musicYTPause: {
-      on: (cb) => {
-        socketConnection.on("musicYTPause", () => cb());
-      },
-      off: () => {
-        socketConnection.off("musicYTPause");
-      },
-    },
-    musicYTStop: {
-      on: (cb) => {
-        socketConnection.on("musicYTStop", () => cb());
-      },
-      off: () => {
-        socketConnection.off("musicYTStop");
-      },
-    },
-    musicYTPlay: {
-      on: (cb) => {
-        socketConnection.on("musicYTPlay", () => cb());
-      },
-      off: () => {
-        socketConnection.off("musicYTPlay");
-      },
-    },
-    audioYT: {
-      on: (cb) => {
-        socketConnection.on("audioYT", (data) => cb(data));
-      },
-      off: () => {
-        socketConnection.off("audioYT");
-      },
-    },
-    getAudioYTInfo: {
-      on: (cb) => {
-        socketConnection.on("getAudioYTInfo", (data) => cb(data));
-      },
-      off: () => {
-        socketConnection.off("getAudioYTInfo");
-      },
-    },
-    audio: {
-      on: (cb) => {
-        socketConnection.on("audio", (data) => cb(data));
-      },
-      off: () => {
-        socketConnection.off("audio");
-      },
-    },
-    audioStop: {
-      on: (cb) => {
-        socketConnection.on("audioStop", () => cb());
-      },
-      off: () => {
-        socketConnection.off("audioStop");
-      },
-    },
-    getAudioInfo: {
-      on: (cb) => {
-        socketConnection.on("getAudioInfo", (data) => cb(data));
-      },
-      off: () => {
-        socketConnection.off("getAudioInfo");
-      },
-    },
-    changeVolume: {
-      on: (cb) => {
-        socketConnection.on("changeVolume", (volume) => cb(volume));
-      },
-      off: () => {
-        socketConnection.off("changeVolume");
-      },
-    },
     obtainAchievement: {
       on: (cb) => {
         socketConnection.on("obtainAchievement", (data) => cb(data));
@@ -197,6 +93,70 @@ export const getSocketEventsFunctions = (
       },
       off: () => {
         socketConnection.off("refreshOverlayLayout");
+      },
+    },
+    changeVolume: {
+      on: (cb) => {
+        socketConnection.on("changeVolume", (data) => cb(data));
+      },
+      off: () => {
+        socketConnection.off("changeVolume");
+      },
+    },
+    musicNext: {
+      on: (cb) => {
+        socketConnection.on("musicNext", () => cb());
+      },
+      off: () => {
+        socketConnection.off("musicNext");
+      },
+    },
+    musicPause: {
+      on: (cb) => {
+        socketConnection.on("musicPause", (isPlaying) => cb(isPlaying));
+      },
+      off: () => {
+        socketConnection.off("musicPause");
+      },
+    },
+    musicStop: {
+      on: (cb) => {
+        socketConnection.on("musicStop", () => cb());
+      },
+      off: () => {
+        socketConnection.off("musicStop");
+      },
+    },
+    musicPlay: {
+      on: (cb) => {
+        socketConnection.on("musicPlay", () => cb());
+      },
+      off: () => {
+        socketConnection.off("musicPlay");
+      },
+    },
+    audioStreamData: {
+      on: (cb) => {
+        socketConnection.on("audioStreamData", (data) => cb(data));
+      },
+      off: () => {
+        socketConnection.off("audioStreamData");
+      },
+    },
+    audioChunk: {
+      on: (cb) => {
+        socketConnection.on("audioChunk", (data) => cb(data));
+      },
+      off: () => {
+        socketConnection.off("audioChunk");
+      },
+    },
+    requestSong: {
+      on: (cb) => {
+        socketConnection.on("requestSong", (data) => cb(data));
+      },
+      off: () => {
+        socketConnection.off("requestSong");
       },
     },
   };

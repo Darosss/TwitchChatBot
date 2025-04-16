@@ -1,59 +1,55 @@
+import { setChatGamesConfigs } from "@redux/configsSlice";
+import { RootStore } from "@redux/store";
 import ConfigInput from "./ConfigInput";
-import { useConfigsContext } from "./ConfigsContext";
-import { ConfigsDispatchActionType, ConfigsWrapperSharedProps } from "./types";
+import { useDispatch, useSelector } from "react-redux";
 
-const DISPATCH_TYPE = ConfigsDispatchActionType.SET_CHAT_GAMES;
-
-export default function ChatGamesConfigsWrapper({
-  showEdit,
-}: ConfigsWrapperSharedProps) {
+export default function ChatGamesConfigsWrapper() {
+  const dispatch = useDispatch();
   const {
-    configState: [{ chatGamesConfigs }, dispatch],
-  } = useConfigsContext();
+    isUpdateMode,
+    config: { chatGamesConfigs },
+  } = useSelector((state: RootStore) => state.configs);
 
   return (
     <>
       <ConfigInput
         optionName="Max time active user"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...chatGamesConfigs,
-              activeUserTimeDelay: e.target.valueAsNumber,
-            },
-          })
+          dispatch(
+            setChatGamesConfigs([
+              "activeUserTimeDelay",
+              e.currentTarget.valueAsNumber,
+            ])
+          )
         }
         value={chatGamesConfigs.activeUserTimeDelay}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
       <ConfigInput
         optionName="Chat games interval delay"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...chatGamesConfigs,
-              chatGamesIntervalDelay: e.target.valueAsNumber,
-            },
-          })
+          dispatch(
+            setChatGamesConfigs([
+              "chatGamesIntervalDelay",
+              e.currentTarget.valueAsNumber,
+            ])
+          )
         }
         value={chatGamesConfigs.chatGamesIntervalDelay}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
       <ConfigInput
         optionName="Minimum active users threshhold"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...chatGamesConfigs,
-              minActiveUsersThreshold: e.target.valueAsNumber,
-            },
-          })
+          dispatch(
+            setChatGamesConfigs([
+              "minActiveUsersThreshold",
+              e.currentTarget.valueAsNumber,
+            ])
+          )
         }
         value={chatGamesConfigs.minActiveUsersThreshold}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
     </>
   );

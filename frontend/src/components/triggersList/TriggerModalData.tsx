@@ -1,94 +1,92 @@
-import React from "react";
-import { TriggerCreateData, TriggerMode } from "@services";
-import { AllModesReturn, generateSelectModes } from "@utils";
-import { DispatchAction } from "./types";
-import ModalDataWrapper from "@components/modalDataWrapper/ModalDataWrapper";
+import { useDispatch, useSelector } from "react-redux";
 
-interface TriggerModalDataProps {
-  state: TriggerCreateData;
-  dispatch: React.Dispatch<DispatchAction>;
-  modes: AllModesReturn;
-}
+import ModalDataWrapper from "@components/modalDataWrapper";
+import { TriggerMode } from "@services";
+import { useGetAllModes, generateSelectModes } from "@utils";
+import { setEnabled } from "@redux/songsSlice";
+import { RootStore } from "@redux/store";
+import {
+  setChance,
+  setDelay,
+  setMessages,
+  setMode,
+  setMood,
+  setName,
+  setTag,
+  setWords,
+} from "@redux/triggersSlice";
 
-export default function TriggerModalData({
-  state,
-  dispatch,
-  modes: { tags, moods },
-}: TriggerModalDataProps) {
+export default function TriggerModalData() {
+  const modes = useGetAllModes();
+  const { tags, moods } = modes;
+
+  const dispatch = useDispatch();
+  const triggerState = useSelector(
+    (state: RootStore) => state.triggers.trigger
+  );
+
   return (
     <ModalDataWrapper>
       <div>Name</div>
       <div>
         <input
           type="text"
-          value={state.name}
-          onChange={(e) => {
-            dispatch({ type: "SET_NAME", payload: e.target.value });
-          }}
+          value={triggerState.name}
+          onChange={(e) => dispatch(setName(e.currentTarget.value))}
         />
       </div>
       <div> Enabled </div>
       <div>
         <button
-          onClick={() => dispatch({ type: "SET_ENABLED" })}
-          className={
-            `${!state.enabled ? "danger-button" : "primary-button"} ` +
-            "common-button "
-          }
+          onClick={() => dispatch(setEnabled(!triggerState.enabled))}
+          className={`common-button ${
+            triggerState.enabled ? "primary-button" : "danger-button"
+          } `}
         >
-          {state.enabled.toString()}
+          {triggerState.enabled.toString()}
         </button>
       </div>
       <div>Chance </div>
       <div>
         <input
           type="number"
-          value={state.chance}
-          onChange={(e) => {
-            dispatch({
-              type: "SET_CHANCE",
-              payload: e.target.valueAsNumber,
-            });
-          }}
+          value={triggerState.chance}
+          onChange={(e) => dispatch(setChance(e.currentTarget.valueAsNumber))}
         />
       </div>
       <div>Mode </div>
       <div>
         <select
-          value={state.mode}
+          value={triggerState.mode}
           onChange={(e) =>
-            dispatch({
-              type: "SET_MODE",
-              payload: e.target.value as TriggerMode,
-            })
+            dispatch(setMode(e.currentTarget.value as TriggerMode))
           }
         >
           {(["ALL", "STARTS-WITH", "WHOLE-WORD"] as TriggerMode[]).map(
-            (modeTrigger, index) => (
-              <option key={index} value={modeTrigger}>
-                {modeTrigger}
-              </option>
-            )
+            (modeTrigger, index) => {
+              return (
+                <option key={index} value={modeTrigger}>
+                  {modeTrigger}
+                </option>
+              );
+            }
           )}
         </select>
       </div>
       <div>Tag</div>
       <div>
         {generateSelectModes(
-          state.tag,
-          (e) => {
-            dispatch({ type: "SET_TAG", payload: e });
-          },
+          triggerState.tag,
+          (e) => dispatch(setTag(e)),
           tags
         )}
       </div>
       <div>Mood</div>
       <div>
         {generateSelectModes(
-          state.mood,
-          (e) => {
-            dispatch({ type: "SET_MOOD", payload: e });
-          },
+          triggerState.mood,
+          (e) => dispatch(setMood(e)),
+
           moods
         )}
       </div>
@@ -97,37 +95,26 @@ export default function TriggerModalData({
       <div>
         <input
           type="number"
-          value={state.delay}
-          onChange={(e) => {
-            dispatch({
-              type: "SET_DELAY",
-              payload: e.target.valueAsNumber,
-            });
-          }}
+          value={triggerState.delay}
+          onChange={(e) => dispatch(setDelay(e.currentTarget.valueAsNumber))}
         />
       </div>
       <div>Words</div>
       <div>
         <textarea
-          value={state.words?.join("\n")}
-          onChange={(e) => {
-            dispatch({
-              type: "SET_WORDS",
-              payload: e.target.value?.split("\n"),
-            });
-          }}
+          value={triggerState.words?.join("\n")}
+          onChange={(e) =>
+            dispatch(setWords(e.currentTarget.value?.split("\n") || []))
+          }
         />
       </div>
       <div>Messages</div>
       <div>
         <textarea
-          value={state.messages?.join("\n")}
-          onChange={(e) => {
-            dispatch({
-              type: "SET_MESSAGES",
-              payload: e.target.value?.split("\n"),
-            });
-          }}
+          value={triggerState.messages?.join("\n")}
+          onChange={(e) =>
+            dispatch(setMessages(e.currentTarget.value?.split("\n") || []))
+          }
         />
       </div>
     </ModalDataWrapper>

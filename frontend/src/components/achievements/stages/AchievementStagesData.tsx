@@ -2,8 +2,15 @@ import SortByParamsButton from "@components/SortByParamsButton";
 import { TableListWrapper } from "@components/tableWrapper";
 import TBodyManyStagesData from "./TBodyManyStagesData";
 import CreateStage from "./CreateStage";
+import { AchievementStage } from "@services";
 
-export default function AchievementStagesData() {
+interface AchievementStagesDataProps {
+  data: AchievementStage[];
+}
+
+export default function AchievementStagesData({
+  data,
+}: AchievementStagesDataProps) {
   return (
     <>
       <TableListWrapper
@@ -24,7 +31,7 @@ export default function AchievementStagesData() {
             </th>
           </tr>
         }
-        tbodyChildren={<TBodyManyStagesData />}
+        tbodyChildren={<TBodyManyStagesData data={data} />}
       />
     </>
   );

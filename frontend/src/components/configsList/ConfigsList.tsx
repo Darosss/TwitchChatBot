@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import PreviousPage from "@components/previousPage";
 import { useGetConfigs } from "@services";
@@ -10,9 +10,11 @@ import PointsConfigsWrapper from "./PointsConfigs";
 import LoyaltyConfigsWrapper from "./LoyaltyConfigs";
 import MusicConfigsWrapper from "./MusicConfigs";
 import HeadConfigsWrapper from "./HeadConfigs";
-import { useConfigsContext } from "./ConfigsContext";
-import { ConfigsDispatchActionType } from "./types";
 import EditConfigs from "./EditConfigs";
+import Error from "@components/axiosHelper/errors";
+import { Loading } from "@components/axiosHelper";
+import { useDispatch } from "react-redux";
+import { setConfigState } from "@redux/configsSlice";
 
 enum ConfigsListTabNames {
   HEAD = "Head options",
@@ -26,70 +28,47 @@ enum ConfigsListTabNames {
 }
 
 export default function ConfigsList() {
-  const {
-    configState: [, dispatchConfigState],
-  } = useConfigsContext();
+  const dispatch = useDispatch();
 
-  const [showEdit, setShowEdit] = useState(false);
   const [currentTab, setCurrentTab] = useState<ConfigsListTabNames>(
     ConfigsListTabNames.HEAD
   );
 
-  const {
-    data,
-    loading,
-    error,
-    refetchData: refetchConfigsData,
-  } = useGetConfigs();
-
+  const { data: configs, isLoading, error } = useGetConfigs();
   useEffect(() => {
-    if (!data) return;
+    if (!configs) return;
+    dispatch(setConfigState(configs.data));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configs]);
 
-    dispatchConfigState({
-      type: ConfigsDispatchActionType.SET_STATE,
-      payload: data.data,
-    });
-  }, [data, dispatchConfigState]);
-
-  if (error) return <>There is an error.</>;
-  if (!data || loading) return <>Someting went wrong</>;
+  if (error) return <Error error={error} />;
+  if (isLoading || !configs) return <Loading />;
 
   const renderTabComponent = () => {
     switch (currentTab) {
       case ConfigsListTabNames.COMMANDS:
-        return <CommandsConfigsWrapper showEdit={showEdit} />;
+        return <CommandsConfigsWrapper />;
       case ConfigsListTabNames.TIMERS:
-        return <TimersConfigsWrapper showEdit={showEdit} />;
+        return <TimersConfigsWrapper />;
       case ConfigsListTabNames.CHAT_GAMES:
-        return <ChatGamesConfigsWrapper showEdit={showEdit} />;
+        return <ChatGamesConfigsWrapper />;
       case ConfigsListTabNames.TRIGGERS:
-        return <TriggersConfigsWrapper showEdit={showEdit} />;
+        return <TriggersConfigsWrapper />;
       case ConfigsListTabNames.POINTS:
-        return <PointsConfigsWrapper showEdit={showEdit} />;
+        return <PointsConfigsWrapper />;
       case ConfigsListTabNames.LOYALTY:
-        return <LoyaltyConfigsWrapper showEdit={showEdit} />;
+        return <LoyaltyConfigsWrapper />;
       case ConfigsListTabNames.MUSIC:
-        return <MusicConfigsWrapper showEdit={showEdit} />;
+        return <MusicConfigsWrapper />;
       case ConfigsListTabNames.HEAD:
-        return <HeadConfigsWrapper showEdit={showEdit} />;
+        return <HeadConfigsWrapper />;
     }
   };
 
   return (
     <>
       <PreviousPage />
-      <EditConfigs
-        showEdit={showEdit}
-        onClickShowEdit={() => setShowEdit(!showEdit)}
-        onClickSaveConfigs={() => {
-          refetchConfigsData();
-          setShowEdit(!showEdit);
-        }}
-        onClickDefaultConfigs={() => {
-          refetchConfigsData();
-          setShowEdit(!showEdit);
-        }}
-      />
+      <EditConfigs />
 
       <div className="configs-list-tab-list-wrapper">
         {Object.values(ConfigsListTabNames).map((tabName, index) => (

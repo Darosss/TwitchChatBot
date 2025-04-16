@@ -1,0 +1,29 @@
+.upload-mp3-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .upload-folder-buttons-wrapper {
+    .upload-folder-buttons {
+      display: flex;
+      overflow-y: auto;
+      flex-wrap: wrap;
+      height: 80%;
+
+      & > * {
+        flex-grow: 1;
+        margin: 0.1rem;
+      }
+    }
+  }
+
+  .upload-mp3-progrees-bar {
+    margin-top: 0.2rem;
+  }
+
+  .upload-files-list {
+    max-height: 50dvh;
+    min-height: 50dvh;
+    overflow-x: hidden;
+  }
+}

@@ -1,4 +1,4 @@
 import "./style.scss";
-import AxiosError from "./AxiosError";
+import Error from "./error";
 
-export default AxiosError;
+export default Error;

@@ -3,7 +3,7 @@ import React, { CSSProperties, useMemo } from "react";
 import { DateTimeTooltip } from "@components/dateTooltip/DateTooltip";
 import moment from "moment";
 import { MessageServerData, MessageServerDataBadgesPathsType } from "@socket";
-import { viteBackendUrl } from "src/configs/envVariables";
+import { viteBackendUrl } from "@configs/envVariables";
 import { getMessagesWithEmotes, getTwitchEmoteUrl } from "@utils";
 
 type MessageStylesBadges = Partial<

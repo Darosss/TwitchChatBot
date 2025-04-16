@@ -1,18 +1,19 @@
-import { viteBackendUrl } from "src/configs/envVariables";
-import { useAchievementStageContext } from "./Context";
+import { viteBackendUrl } from "@configs/envVariables";
 import { TableDataWrapper } from "@components/tableWrapper";
 import { getDateFromSecondsToYMDHMS } from "@utils";
 import { useSocketContext } from "@socket";
 import { AchievementStageData } from "@services";
 
-export default function AchievementStageDisplayData() {
-  const {
-    achievementStageState: [state],
-  } = useAchievementStageContext();
+interface AchievementStageDisplayDataProps {
+  stageData: AchievementStageData[];
+}
 
+export default function AchievementStageDisplayData({
+  stageData,
+}: AchievementStageDisplayDataProps) {
   return (
     <>
-      {state.stageData.map((data, index) => (
+      {stageData.map((data, index) => (
         <tr key={index} className="stage-data-content">
           <td className="stage-data-content-nr-emulate">
             <div>

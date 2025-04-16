@@ -1,9 +1,8 @@
-import { BaseModelProperties } from "../api";
+import { BaseModelProperties, DefaultRequestParams } from "../api";
 
 interface OverlayStylesType {
   overlayRedemptions: string;
   overlayMusicPlayer: string;
-  overlayYoutubeMusicPlayer: string;
   overlayAchievements: string;
   overlayChat: string;
 }
@@ -14,8 +13,11 @@ export interface Overlay extends BaseModelProperties {
   styles?: OverlayStylesType;
 }
 export interface OverlayCreateData
-  extends Pick<Overlay, "name" | "layout" | "toolbox"> {}
+  extends Pick<Overlay, "name" | "layout" | "toolbox" | "styles"> {}
 
-export interface OverlaysUpdateData
-  extends Partial<OverlayCreateData>,
-    Pick<Overlay, "styles"> {}
+export interface OverlaysUpdateData extends Partial<OverlayCreateData> {}
+
+export interface FetchOverlaysParams
+  extends DefaultRequestParams<keyof Overlay> {
+  search_name?: string;
+}

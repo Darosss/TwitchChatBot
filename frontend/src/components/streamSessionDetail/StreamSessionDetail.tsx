@@ -1,4 +1,3 @@
-import React from "react";
 import { useParams } from "react-router-dom";
 import LineChart from "@components/lineChart";
 import PreviousPage from "@components/previousPage";
@@ -6,18 +5,18 @@ import SlideShow from "@components/slideShow";
 import { useGetSessionById } from "@services";
 import { DateTooltip } from "@components/dateTooltip";
 import StreamSessionEvents from "@components/streamSessionEvents";
-import { AxiosError, Loading } from "@components/axiosHelper";
+import { Error, Loading } from "@components/axiosHelper";
 
 export default function StreamSessionDetail() {
   const { sessionId } = useParams();
   const {
     data: sessionData,
-    loading,
+    isLoading,
     error,
   } = useGetSessionById(sessionId || "");
 
-  if (error) return <AxiosError error={error} />;
-  if (!sessionData || loading) return <Loading />;
+  if (error) return <Error error={error} />;
+  if (!sessionData || isLoading) return <Loading />;
 
   const { data } = sessionData;
 

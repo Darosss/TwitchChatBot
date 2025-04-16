@@ -6,7 +6,7 @@ import {
 } from "@services";
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { viteBackendUrl } from "src/configs/envVariables";
+import { viteBackendUrl } from "@configs/envVariables";
 
 interface AchievementStagesListsProps {
   achievement: Achievement;

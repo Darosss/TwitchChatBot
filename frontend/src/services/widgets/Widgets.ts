@@ -1,46 +1,142 @@
-import { Widgets, WidgetsCreateData, WidgetsUpdateData } from "./types";
-import useAxiosCustom, {
-  PaginationData,
-  ResponseData,
-  ResponseMessage,
+import { useQuery, useQueryClient, useMutation } from "react-query";
+import {
+  BaseEndpointNames,
+  QueryParams,
+  PromisePaginationData,
+  customAxios,
+  PromiseBackendData,
+  onErrorHelperService,
+  OnErrorHelperServiceAction,
+  OnErrorHelperServiceConcern,
+  refetchDataFunctionHelper,
 } from "../api";
+import {
+  FetchWidgetsParams,
+  Widget,
+  WidgetCreateData,
+  WidgetUpdateData,
+} from "./types";
 
-export const useGetWidgets = () => {
-  return useAxiosCustom<PaginationData<Widgets>>({
-    url: `/widgets`,
+const baseEndpointName = BaseEndpointNames.WIDGETS;
+export const queryKeysWidgets = {
+  allWidgets: "widgets",
+  widgetById: (id: string) => ["widgets", id] as [string, string],
+};
+
+export const fetchWidgetsDefaultParams: Required<FetchWidgetsParams> = {
+  limit: 10,
+  page: 1,
+  search_name: "",
+  sortOrder: "desc",
+  sortBy: "createdAt",
+};
+
+export const fetchWidgets = async (
+  params?: QueryParams<keyof FetchWidgetsParams>
+): PromisePaginationData<Widget> => {
+  const response = await customAxios.get(`/${baseEndpointName}`, { params });
+  return response.data;
+};
+
+export const fetchWidgetById = async (
+  id: string
+): PromiseBackendData<Widget> => {
+  const response = await customAxios.get(`/${baseEndpointName}/${id}`);
+  return response.data;
+};
+
+export const createWidget = async (
+  newWidgets: WidgetCreateData
+): PromiseBackendData<Widget> => {
+  const response = await customAxios.post(
+    `/${baseEndpointName}/create`,
+    newWidgets
+  );
+  return response.data;
+};
+
+export const editWidget = async ({
+  id,
+  updatedWidget,
+}: {
+  id: string;
+  updatedWidget: WidgetUpdateData;
+}): PromiseBackendData<Widget> => {
+  const response = await customAxios.patch(
+    `/${baseEndpointName}/${id}`,
+    updatedWidget
+  );
+  return response.data;
+};
+
+export const deleteWidget = async (id: string): PromiseBackendData<Widget> => {
+  const response = await customAxios.delete(
+    `/${baseEndpointName}/delete/${id}`
+  );
+  return response.data;
+};
+
+export const useGetWidgets = (
+  params?: QueryParams<keyof FetchWidgetsParams>
+) => {
+  return useQuery([queryKeysWidgets.allWidgets, params], () =>
+    fetchWidgets(params)
+  );
+};
+
+export const useEditWidget = () => {
+  const refetchWidgets = useRefetchWidgetsData();
+  return useMutation(editWidget, {
+    onSuccess: refetchWidgets,
+    onError: (error) => {
+      onErrorHelperService(
+        error,
+        OnErrorHelperServiceConcern.WIDGET,
+        OnErrorHelperServiceAction.EDIT
+      );
+    },
+  });
+};
+
+export const useCreateWidget = () => {
+  const refetchWidgets = useRefetchWidgetsData();
+  return useMutation(createWidget, {
+    onSuccess: refetchWidgets,
+    onError: (error) => {
+      onErrorHelperService(
+        error,
+        OnErrorHelperServiceConcern.WIDGET,
+        OnErrorHelperServiceAction.CREATE
+      );
+    },
+  });
+};
+
+export const useDeleteWidget = () => {
+  const refetchWidgets = useRefetchWidgetsData();
+  return useMutation(deleteWidget, {
+    onSuccess: refetchWidgets,
+    onError: (error) => {
+      onErrorHelperService(
+        error,
+        OnErrorHelperServiceConcern.WIDGET,
+        OnErrorHelperServiceAction.DELETE
+      );
+    },
   });
 };
 
 export const useGetWidgetById = (id: string) => {
-  return useAxiosCustom<ResponseData<Widgets>>({
-    url: `/widgets/${id}`,
-  });
+  return useQuery(queryKeysWidgets.widgetById(id), () => fetchWidgetById(id));
 };
 
-export const useCreateLayout = (data: WidgetsCreateData) => {
-  return useAxiosCustom<ResponseData<Widgets>, WidgetsCreateData>({
-    url: `/widgets/create`,
-    method: "POST",
-    bodyData: data,
-    manual: true,
-    urlParams: false,
-  });
-};
-
-export const useEditWidgetById = (id: string, data: WidgetsUpdateData) => {
-  return useAxiosCustom<ResponseData<Widgets>, WidgetsUpdateData>({
-    url: `/widgets/${id}`,
-    method: "PATCH",
-    bodyData: data,
-    manual: true,
-  });
-};
-
-export const useRemoveWidgetById = (widgetId: string | null) => {
-  return useAxiosCustom<ResponseMessage>({
-    url: `/widgets/delete/${widgetId}`,
-    method: "DELETE",
-    manual: true,
-    urlParams: false,
-  });
+export const useRefetchWidgetsData = (exact = false) => {
+  const queryClient = useQueryClient();
+  return refetchDataFunctionHelper(
+    queryKeysWidgets,
+    "allWidgets",
+    queryClient,
+    null,
+    exact
+  );
 };

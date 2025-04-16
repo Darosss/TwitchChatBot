@@ -1,200 +1,80 @@
-import React, { useState } from "react";
-import Pagination from "@components/pagination";
+import { Error, Loading } from "@components/axiosHelper";
+import CardboxWrapper from "@components/cardboxWrapper";
 import Modal from "@components/modal";
+import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
 import {
+  fetchAffixesDefaultParams,
   useGetAffixes,
-  useEditAffix,
   useCreateAffix,
-  useDeleteAffix,
-  Affix,
+  useEditAffix,
 } from "@services";
-import { addSuccessNotification } from "@utils";
+import { addNotification } from "@utils";
+import { useDispatch, useSelector } from "react-redux";
+import { useQueryParams } from "@hooks/useQueryParams";
+import { closeModal, resetAffixState, setEditingId } from "@redux/affixesSlice";
+import { RootStore } from "@redux/store";
 import FilterBarModes from "../filterBarModes";
-import ModalDataWrapper from "@components/modalDataWrapper";
-import { AxiosError, Loading } from "@components/axiosHelper";
-import { useAxiosWithConfirmation } from "@hooks";
+import AffixModalData from "./AffixModalData";
+import AffixesData from "./AffixesData";
 
 export default function Affixes() {
-  const [showModal, setShowModal] = useState(false);
+  const queryParams = useQueryParams(fetchAffixesDefaultParams);
+  const { data: affixes, isLoading, error } = useGetAffixes(queryParams);
+  const dispatch = useDispatch();
+  const {
+    isModalOpen,
+    affix: affixState,
+    editingId,
+  } = useSelector((state: RootStore) => state.affixes);
 
-  const [editingAffix, setEditingAffix] = useState("");
+  const createAffixMutation = useCreateAffix();
+  const updateAffixMutation = useEditAffix();
 
-  const [createName, setCreateName] = useState("");
-  const [name, setName] = useState("");
-  const [prefixChance, setPrefixChance] = useState<number>(5);
-  const [suffixChance, setSuffixChance] = useState<number>(5);
-  const [prefixes, setPrefixes] = useState<string[]>([""]);
-  const [suffixes, setSuffixes] = useState<string[]>([""]);
+  if (error) return <Error error={error} />;
+  if (isLoading || !affixes) return <Loading />;
 
-  const { data: affixesData, loading, error, refetchData } = useGetAffixes();
+  const handleCreateAffix = () => {
+    createAffixMutation.mutate(affixState);
+    dispatch(resetAffixState());
+  };
 
-  const { refetchData: fetchEditAffix } = useEditAffix(editingAffix, {
-    name: name,
-    prefixes: prefixes,
-    suffixes: suffixes,
-    prefixChance: prefixChance,
-    suffixChance: suffixChance,
-  });
-
-  const { refetchData: fetchCreateAffix } = useCreateAffix({
-    name: createName,
-  });
-
-  const setAffixIdToDelete = useAxiosWithConfirmation({
-    hookToProceed: useDeleteAffix,
-    opts: { onFullfiled: () => refetchData() },
-  });
-
-  if (error) return <AxiosError error={error} />;
-  if (loading || !affixesData) return <Loading />;
-
-  const { data, count, currentPage } = affixesData;
-
-  const createNewAffix = () => {
-    fetchCreateAffix().then(() => {
-      addSuccessNotification("Affix created successfully");
-      refetchData();
+  const handleUpdateAffix = () => {
+    if (!editingId) {
+      addNotification("Couldn't update affix", "No affix id", "warning");
+      return;
+    }
+    updateAffixMutation.mutate({
+      id: editingId,
+      updatedAffix: affixState,
     });
-  };
-
-  const onSubmitEditModal = () => {
-    fetchEditAffix().then(() => {
-      addSuccessNotification("Affix edited successfully");
-      refetchData();
-    });
-    setShowModal(false);
-  };
-
-  const onCloseModal = () => {
-    setShowModal(false);
-  };
-
-  const handleOnEdit = (affix: Affix) => {
-    setEditingAffix(affix._id);
-    setName(affix.name);
-    setPrefixChance(affix.prefixChance);
-    setSuffixChance(affix.suffixChance);
-    setPrefixes(affix.prefixes);
-    setSuffixes(affix.suffixes);
-    setShowModal(true);
+    dispatch(resetAffixState());
+    dispatch(setEditingId(""));
   };
 
   return (
     <>
       <PreviousPage />
       <FilterBarModes />
-      <div className="table-list-wrapper mode-list-wrapper">
-        <div>
-          <div className="mode-list-create">
-            <input
-              type="text"
-              placeholder="Name"
-              value={createName}
-              onChange={(e) => setCreateName(e.target.value)}
-            ></input>
-            <button
-              onClick={createNewAffix}
-              className="common-button primary-button"
-            >
-              Create
-            </button>
-          </div>
-        </div>
-        {data.map((affix, index) => (
-          <div key={index} className="mode-item">
-            <button
-              onClick={() => handleOnEdit(affix)}
-              className="common-button primary-button edit-mode-button"
-            >
-              {affix.name}
-            </button>
-            <button
-              onClick={() => setAffixIdToDelete(affix._id)}
-              className="common-button danger-button remove-mode-btn"
-            >
-              X
-            </button>
-          </div>
-        ))}
-      </div>
+      <CardboxWrapper title={"Affixes list"}>
+        <AffixesData data={affixes.data} />
+      </CardboxWrapper>
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
           localStorageName="affixesListPageSize"
-          currentPage={currentPage}
-          totalCount={count}
+          currentPage={affixes.currentPage}
+          totalCount={affixes.count}
           siblingCount={1}
         />
       </div>
       <Modal
-        title="Edit affix"
-        onClose={() => onCloseModal()}
-        onSubmit={() => {
-          onSubmitEditModal();
-        }}
-        show={showModal}
+        title={`${editingId ? "Edit" : "Create"} affix`}
+        onClose={() => dispatch(closeModal())}
+        onSubmit={() => (editingId ? handleUpdateAffix() : handleCreateAffix())}
+        show={isModalOpen}
       >
-        <ModalDataWrapper>
-          <div>Name</div>
-          <div>
-            <input
-              className="triggers-list-input"
-              type="text"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-            />
-          </div>
-          <div>PrefixChance</div>
-          <div>
-            <input
-              className="triggers-list-input"
-              type="number"
-              value={prefixChance}
-              min={0}
-              max={100}
-              onChange={(e) => {
-                setPrefixChance(e.target.valueAsNumber);
-              }}
-            />
-          </div>
-          <div>Prefixes</div>
-          <div>
-            <textarea
-              className="triggers-list-input"
-              value={prefixes.join("\n")}
-              onChange={(e) => {
-                setPrefixes(e.target.value.split("\n"));
-              }}
-            />
-          </div>
-          <div>SuffixChance</div>
-          <div>
-            <input
-              className="triggers-list-input"
-              type="number"
-              value={suffixChance}
-              min={0}
-              max={100}
-              onChange={(e) => {
-                setSuffixChance(e.target.valueAsNumber);
-              }}
-            />
-          </div>
-
-          <div>Suffixes</div>
-          <div>
-            <textarea
-              className="triggers-list-input"
-              value={suffixes.join("\n")}
-              onChange={(e) => {
-                setSuffixes(e.target.value.split("\n"));
-              }}
-            />
-          </div>
-        </ModalDataWrapper>
+        <AffixModalData />
       </Modal>
     </>
   );

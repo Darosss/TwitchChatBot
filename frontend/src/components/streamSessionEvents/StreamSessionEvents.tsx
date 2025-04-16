@@ -1,5 +1,3 @@
-import React from "react";
-
 import { DateTooltip } from "@components/dateTooltip/DateTooltip";
 import moment from "moment";
 import { Link } from "react-router-dom";

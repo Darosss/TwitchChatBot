@@ -1,45 +1,51 @@
 .music-player-widget {
   font-size: 1.5vmin;
   text-align: center;
-  height: 100%;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  max-height: 100%;
+
+  padding-right: 2%;
 
   .music-player-switch-wrapper {
-    flex: 1;
-    justify-content: center;
-    button.switch-players-button {
-      height: 2vh;
-      flex: 0.5;
+    justify-content: space-between;
 
-      font-size: 1vh;
+    display: flex;
+    button.switch-players-button {
+      margin: 0 0.2rem;
+      height: 3cqh;
+      flex-grow: 1;
     }
+  }
+
+  .music-player-current-actions {
+  }
+  .music-player-steering-buttons {
+  }
+  .music-player-audio-info {
+    flex-grow: 1;
   }
 
   .music-player-sterring-wrapper {
-    flex: 1;
-    button {
-      height: 3vmin;
-      margin: 0.1rem;
-      font-size: 1.5vmin;
-    }
-  }
+    max-height: 25%;
+    min-height: 25%;
 
-  & > div:not(:first-child) {
-    flex: 1 1 50%;
+    button {
+      margin: 0.1rem;
+    }
   }
 
   .music-player-tabs-wrapper {
+    display: flex;
     margin: 0.1rem;
     * {
-      font-size: 1vmin;
-      flex: 1;
-      margin: 0.1rem;
-    }
-  }
+      height: 3cqh;
 
-  .tab-containter {
-    overflow: hidden;
-    height: 70%;
+      flex: 1;
+      margin: 0.2rem 0.5rem;
+    }
   }
 }
 
@@ -47,13 +53,10 @@
   margin-top: 0.3rem;
   display: flex;
   flex-direction: column;
-  height: 80%;
-  width: 100%;
   & > div {
-    font-size: 1.5vmin;
-    height: 15%;
     border-top: 0.1rem solid $primary-color;
     overflow-y: auto;
+    font-size: 1.5em;
 
     ul {
       text-align: left;
@@ -75,114 +78,6 @@
       & > div {
         padding-left: 0.1rem;
       }
-    }
-  }
-}
-
-.upload-mp3-form-wrapper {
-  width: 100%;
-  display: flex;
-  margin-top: 0.2rem;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-
-  .upload-folder-buttons-wrapper {
-    .upload-folder-buttons {
-      display: flex;
-      overflow-y: auto;
-      flex-wrap: wrap;
-      height: 80%;
-      button {
-        font-size: 1vmin;
-        margin: 0.1rem;
-        flex: 1 1 20%;
-        width: 20%;
-        max-width: 50%;
-      }
-    }
-  }
-
-  & > div {
-    flex: 1 1 40%;
-    max-height: 40%;
-    margin-top: 0.1rem;
-
-    &.upload-input-file {
-      flex: 0 0 15%;
-    }
-  }
-
-  .upload-mp3-progrees-bar {
-    margin-top: 0.2rem;
-  }
-
-  .upload-files-list {
-    overflow-x: hidden;
-  }
-}
-
-.audio-files-list-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 80%;
-  overflow-x: hidden;
-
-  > div {
-    overflow-x: hidden;
-    flex: 1 50%;
-  }
-  .audio-folders-list-wrapper {
-    width: 100%;
-    position: sticky;
-    top: 0;
-    background-color: var(--background-color);
-    border-bottom: 0.1rem solid $primary-color;
-    padding: 0.2rem;
-    display: flex;
-    flex-wrap: wrap;
-    button {
-      flex: 1 1 25%;
-      font-size: 1vmin;
-      margin: 0.1rem;
-      // width: 100%;
-    }
-
-    button.load-folder-btn {
-      width: 99%;
-      flex: 1;
-    }
-  }
-
-  .mp3-files-wrapper {
-    text-align: left;
-
-    .mp3-file {
-      border-bottom: 0.1rem solid $primary-color;
-    }
-  }
-}
-
-.folders-create-wrapper {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  font-size: 2vmin;
-  overflow-x: hidden;
-  height: 100%;
-
-  .folders-create-list {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    overflow-x: hidden;
-  }
-
-  .folder-file {
-    border-bottom: 0.1rem solid $primary-color;
-
-    div {
-      align-self: center;
     }
   }
 }

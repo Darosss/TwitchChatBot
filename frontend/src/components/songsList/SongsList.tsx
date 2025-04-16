@@ -1,171 +1,77 @@
-import React, { useReducer, useState } from "react";
-import PreviousPage from "@components/previousPage";
-import FilterBarSongs from "./filterBarSongs";
-import Pagination from "@components/pagination";
-import {
-  Song,
-  SongCreateData,
-  useCreateSong,
-  useDeleteSong,
-  useEditSong,
-  useGetSongs,
-} from "@services";
-import SongsData from "./SongsData";
-import { DispatchAction } from "./types";
+import { Loading, Error } from "@components/axiosHelper";
 import Modal from "@components/modal";
-import { addSuccessNotification } from "@utils";
+import Pagination from "@components/pagination";
+import PreviousPage from "@components/previousPage";
+import {
+  fetchSongsDefaultParams,
+  useGetSongs,
+  useCreateSong,
+  useEditSong,
+} from "@services";
+import { addNotification } from "@utils";
+import { useDispatch, useSelector } from "react-redux";
+import { useQueryParams } from "@hooks/useQueryParams";
+import { resetSongState, closeModal, setEditingId } from "@redux/songsSlice";
+import { RootStore } from "@redux/store";
+import FilterBarSongs from "./filterBarSongs";
 import SongModalData from "./SongModalData";
-import { AxiosError, Loading } from "@components/axiosHelper";
-import { useAxiosWithConfirmation } from "@hooks";
+import SongsData from "./SongsData";
 
-export default function SongsLIst() {
-  const [showModal, setShowModal] = useState(false);
-  const { data: songsData, loading, error, refetchData } = useGetSongs();
+export default function SongsList() {
+  const queryParams = useQueryParams(fetchSongsDefaultParams);
+  const { data: songs, isLoading, error } = useGetSongs(queryParams);
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const dispatch = useDispatch();
+  const { isModalOpen, song, editingId } = useSelector(
+    (state: RootStore) => state.songs
+  );
 
-  const [editingSong, setEditingSong] = useState("");
+  const createSongMutation = useCreateSong();
+  const updateSongMutation = useEditSong();
 
-  const { refetchData: fetchEditSong } = useEditSong(editingSong, state);
-  const { refetchData: fetchCreateSong } = useCreateSong(state);
+  if (error) return <Error error={error} />;
+  if (isLoading || !songs) return <Loading />;
 
-  const setSongIdToDelete = useAxiosWithConfirmation({
-    hookToProceed: useDeleteSong,
-    opts: { onFullfiled: () => refetchData() },
-  });
-
-  if (error) return <AxiosError error={error} />;
-  if (loading || !songsData) return <Loading />;
-
-  const { data, count, currentPage } = songsData;
-
-  const onSubmitModalCreate = () => {
-    fetchCreateSong().then(() => {
-      addSuccessNotification("Song created successfully");
-      refetchData();
-      setShowModal(false);
-    });
+  const handleCreateSong = () => {
+    createSongMutation.mutate(song);
+    dispatch(resetSongState());
   };
 
-  const onSubmitModalEdit = () => {
-    fetchEditSong().then(() => {
-      addSuccessNotification("Song edited successfully");
-      refetchData();
-      handleOnHideModal();
-    });
-  };
-
-  const handleOnShowEditModal = (song: Song) => {
-    setEditingSong(song._id);
-    setState(song);
-    setShowModal(true);
-  };
-
-  const handleOnShowCreateModal = (song?: Song) => {
-    if (song) {
-      setState(song);
-    } else {
-      dispatch({ type: "SET_STATE", payload: initialState });
+  const handleUpdateSong = () => {
+    if (!editingId) {
+      addNotification("Couldn't update song", "No song id", "warning");
+      return;
     }
-
-    setShowModal(true);
-  };
-
-  const handleOnHideModal = () => {
-    setShowModal(false);
-    setEditingSong("");
-  };
-
-  const setState = ({
-    title,
-    youtubeId,
-    customTitle,
-    customId,
-    duration,
-    whoAdded,
-    enabled,
-    lastUsed,
-  }: Song) => {
-    dispatch({
-      type: "SET_STATE",
-      payload: {
-        title,
-        whoAdded: whoAdded._id,
-        youtubeId,
-        customTitle,
-        duration,
-        customId,
-        enabled,
-        lastUsed,
-      },
+    updateSongMutation.mutate({
+      id: editingId,
+      updatedSong: song,
     });
+    dispatch(resetSongState());
+    dispatch(setEditingId(""));
   };
 
   return (
     <>
       <PreviousPage />
       <FilterBarSongs />
-      <SongsData
-        data={data}
-        handleOnShowCreateModal={handleOnShowCreateModal}
-        handleOnShowEditModal={handleOnShowEditModal}
-        setSongIdDelete={setSongIdToDelete}
-      />
+      <SongsData data={songs.data} />
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
           localStorageName="songsListPageSize"
-          currentPage={currentPage}
-          totalCount={count}
+          currentPage={songs.currentPage}
+          totalCount={songs.count}
           siblingCount={1}
         />
       </div>
       <Modal
-        title={`${editingSong ? "Edit" : "Create"} trigger`}
-        onClose={handleOnHideModal}
-        onSubmit={() => {
-          editingSong ? onSubmitModalEdit() : onSubmitModalCreate();
-        }}
-        show={showModal}
+        title={`${editingId ? "Edit" : "Create"} song`}
+        onClose={() => dispatch(closeModal())}
+        onSubmit={() => (editingId ? handleUpdateSong() : handleCreateSong())}
+        show={isModalOpen}
       >
-        <SongModalData state={state} dispatch={dispatch} />
+        <SongModalData />
       </Modal>
     </>
   );
-}
-
-const initialState: SongCreateData = {
-  title: "",
-  youtubeId: "",
-  customTitle: { title: "", band: "" },
-  duration: 0,
-  customId: "",
-  whoAdded: "",
-  enabled: true,
-};
-
-function reducer(
-  state: SongCreateData,
-  action: DispatchAction
-): SongCreateData {
-  switch (action.type) {
-    case "SET_TITLE":
-      return { ...state, title: action.payload };
-    case "SET_YOUTUBE_ID":
-      return { ...state, youtubeId: action.payload };
-    case "SET_ENABLED":
-      return { ...state, enabled: action.payload };
-    case "SET_CUSTOM_TITLE":
-      return { ...state, customTitle: action.payload };
-    case "SET_DURATION":
-      return { ...state, duration: action.payload };
-    case "SET_CUSTOM_ID":
-      return { ...state, customId: action.payload };
-    case "SET_WHO_ADDED":
-      return { ...state, whoAdded: action.payload };
-    case "SET_STATE":
-      return { ...action.payload };
-    default:
-      throw new Error("Invalid action type");
-  }
 }

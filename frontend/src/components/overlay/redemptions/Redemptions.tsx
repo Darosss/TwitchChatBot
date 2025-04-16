@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useSocketContext } from "@socket";
-import { useOverlayDataContext } from "../OverlayDataContext";
 import { getTwitchEmoteUrl, randomWithMax } from "@utils";
 import { commonData } from "../commonExampleData";
+import { RootStore } from "@redux/store";
+import { useSelector } from "react-redux";
 
 export default function Redemptions() {
   const {
@@ -11,9 +12,11 @@ export default function Redemptions() {
   } = useSocketContext();
 
   const {
-    isEditorState: [isEditor],
-    stylesState: [{ overlayRedemptions: styles }],
-  } = useOverlayDataContext();
+    isEditor,
+    baseData: {
+      styles: { overlayRedemptions: styles },
+    },
+  } = useSelector((state: RootStore) => state.overlays);
 
   const [redemptionInfo, setRedemptionInfo] = useState("");
   const [redemptionImg, setRedemptionImg] = useState("");

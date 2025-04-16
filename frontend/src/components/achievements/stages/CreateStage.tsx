@@ -1,22 +1,17 @@
 import Modal from "@components/modal";
 import { useCreateAchievementStage } from "@services";
-import { addSuccessNotification } from "@utils";
 import { useState } from "react";
-import { useManyAchievementStagesContext } from "./ManyAchievementStagesContext";
 
 export default function CreateStages() {
   const [showModal, setShowModal] = useState(false);
   const [newStageName, setNewStageName] = useState("");
-  const { refetchStages } = useManyAchievementStagesContext();
-  const { refetchData: fetchCreateStage } = useCreateAchievementStage({
-    name: newStageName,
-    stageData: [],
-  });
+
+  const createAchievementStageMutation = useCreateAchievementStage();
 
   const handleOnSubmit = () => {
-    fetchCreateStage().then(() => {
-      addSuccessNotification("Stage added successfully.");
-      refetchStages();
+    createAchievementStageMutation.mutate({
+      name: newStageName,
+      stageData: [],
     });
   };
   return (

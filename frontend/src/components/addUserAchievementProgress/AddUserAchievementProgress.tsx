@@ -1,7 +1,7 @@
-import { AxiosError, Loading } from "@components/axiosHelper";
+import { Error, Loading } from "@components/axiosHelper";
 import Modal from "@components/modal";
 import SelectWithData from "@components/selectWithData";
-import { AchievementsSearchParams, useGetAchievements } from "@services";
+import { fetchAchievementsDefaultParams, useGetAchievements } from "@services";
 import { AddAchievementProgressToUserData, useSocketContext } from "@socket";
 import { addErrorNotification, addSuccessNotification } from "@utils";
 import React, { useCallback, useEffect, useState } from "react";
@@ -18,6 +18,7 @@ export default function UserAchievementProgress({
   const {
     emits: { addAchievementProgressToUser },
   } = useSocketContext();
+
   const [showModal, setShowModal] = useState(true);
   const [addProgressData, setAddProgressData] =
     useState<AddAchievementProgressToUserData>({
@@ -28,10 +29,10 @@ export default function UserAchievementProgress({
     });
 
   const [getAchievementsSearchParams, setGetAchievementsSearchParams] =
-    useState<AchievementsSearchParams>();
+    useState(fetchAchievementsDefaultParams);
   const {
     data: achievementsData,
-    loading,
+    isLoading,
     error,
   } = useGetAchievements(getAchievementsSearchParams);
 
@@ -53,8 +54,8 @@ export default function UserAchievementProgress({
       }));
   }, [achievementsData]);
 
-  if (error) return <AxiosError error={error} />;
-  if (loading || !achievementsData) return <Loading />;
+  if (error) return <Error error={error} />;
+  if (isLoading || !achievementsData) return <Loading />;
 
   const handleOnClickAddUserProgress = () => {
     addAchievementProgressToUser(

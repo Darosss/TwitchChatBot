@@ -1,87 +1,92 @@
-import React from "react";
-import { SongCreateData } from "@services";
-import { DispatchAction } from "./types";
 import ModalDataWrapper from "@components/modalDataWrapper/ModalDataWrapper";
 import SearchUsers from "./SearchUsers";
-interface SongModalDataProps {
-  state: SongCreateData;
-  dispatch: React.Dispatch<DispatchAction>;
-}
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
+import {
+  setTitle,
+  setYoutubeId,
+  setSunoId,
+  setDuration,
+  setEnabled,
+  setCustomTitle,
+  setCustomId,
+  setWhoAdded,
+} from "@redux/songsSlice";
 
-export default function SongModalData({ state, dispatch }: SongModalDataProps) {
+export default function SongModalData() {
+  const dispatch = useDispatch();
+  const songState = useSelector((state: RootStore) => state.songs.song);
   return (
     <ModalDataWrapper>
       <div>Title</div>
       <div>
         <input
           type="text"
-          value={state.title}
-          onChange={(e) =>
-            dispatch({ type: "SET_TITLE", payload: e.target.value })
-          }
+          value={songState.title}
+          onChange={(e) => dispatch(setTitle(e.currentTarget.value))}
         />
       </div>
       <div>Youtube Id </div>
       <div>
         <input
           type="text"
-          value={state.youtubeId}
-          onChange={(e) =>
-            dispatch({ type: "SET_YOUTUBE_ID", payload: e.target.value })
-          }
+          value={songState.youtubeId}
+          onChange={(e) => dispatch(setYoutubeId(e.currentTarget.value))}
+        />
+      </div>
+      <div>Suno Id </div>
+      <div>
+        <input
+          type="text"
+          value={songState.sunoId}
+          onChange={(e) => dispatch(setSunoId(e.currentTarget.value))}
         />
       </div>
       <div>Duration</div>
       <div>
         <input
           type="number"
-          value={state.duration}
-          onChange={(e) =>
-            dispatch({ type: "SET_DURATION", payload: e.target.valueAsNumber })
-          }
+          value={songState.duration}
+          onChange={(e) => dispatch(setDuration(e.currentTarget.valueAsNumber))}
         />
       </div>
       <div>Enabled</div>
       <div>
         <button
           className={`common-button ${
-            state.enabled ? "primary-button" : "danger-button"
+            songState.enabled ? "primary-button" : "danger-button"
           }`}
-          onClick={() =>
-            dispatch({ type: "SET_ENABLED", payload: !state.enabled })
-          }
+          onClick={() => dispatch(setEnabled(!songState.enabled))}
         >
-          {state.enabled ? "TRUE" : "FALSE"}
+          {songState.enabled ? "TRUE" : "FALSE"}
         </button>
       </div>
       <div>Custom title</div>
       <div>
         <input
           type="text"
-          value={state.customTitle?.band || ""}
+          value={songState.customTitle?.band || ""}
           placeholder="band"
           onChange={(e) =>
-            dispatch({
-              type: "SET_CUSTOM_TITLE",
-              payload: {
-                title: state.customTitle?.title || "",
+            dispatch(
+              setCustomTitle({
+                title: songState.customTitle?.title || "",
                 band: e.target.value,
-              },
-            })
+              })
+            )
           }
         />
         <input
           type="text"
-          value={state.customTitle?.title || ""}
+          value={songState.customTitle?.title || ""}
           placeholder="title"
           onChange={(e) =>
-            dispatch({
-              type: "SET_CUSTOM_TITLE",
-              payload: {
+            dispatch(
+              setCustomTitle({
                 title: e.target.value,
-                band: state.customTitle?.band || "",
-              },
-            })
+                band: songState.customTitle?.band || "",
+              })
+            )
           }
         />
       </div>
@@ -89,18 +94,15 @@ export default function SongModalData({ state, dispatch }: SongModalDataProps) {
       <div>
         <input
           type="text"
-          value={state.customId || ""}
-          onChange={(e) =>
-            dispatch({ type: "SET_CUSTOM_ID", payload: e.target.value })
-          }
+          value={songState.customId || ""}
+          onChange={(e) => dispatch(setCustomId(e.currentTarget.value))}
         />
       </div>
       <div>Who added</div>
       <div>
         <SearchUsers
-          onClickUser={(user) =>
-            dispatch({ type: "SET_WHO_ADDED", payload: user._id })
-          }
+          currentUserId={songState.whoAdded}
+          onClickUser={(user) => dispatch(setWhoAdded(user._id))}
         />
       </div>
     </ModalDataWrapper>

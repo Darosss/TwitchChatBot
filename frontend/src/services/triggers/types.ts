@@ -1,4 +1,4 @@
-import { BaseModelProperties } from "../api";
+import { BaseModelProperties, DefaultRequestParams } from "../api";
 import { Mood } from "../moods";
 import { Tag } from "../tags";
 
@@ -28,3 +28,12 @@ export interface TriggerCreateData
 }
 
 export interface TriggerUpdateData extends Partial<TriggerCreateData> {}
+
+export interface FetchTriggerParams
+  extends DefaultRequestParams<keyof Trigger> {
+  search_name?: string;
+  words?: string;
+  messages?: string;
+  start_date?: string;
+  end_date?: string;
+}

@@ -1,20 +1,17 @@
 import SortByParamsButton from "@components/SortByParamsButton";
 import { Link } from "react-router-dom";
-import { useBadgeContextEditCreateData } from "./ContextEditCreateData";
+import { useDispatch } from "react-redux";
+import { openModal } from "@redux/badgesSlice";
 
 export default function THeadBadgeData() {
-  const {
-    showModalState: [, setModalState],
-  } = useBadgeContextEditCreateData();
+  const dispatch = useDispatch();
   return (
     <tr>
       <th>
         Actions
         <button
           className="common-button primary-button"
-          onClick={(e) => {
-            setModalState(true);
-          }}
+          onClick={() => dispatch(openModal())}
         >
           New
         </button>

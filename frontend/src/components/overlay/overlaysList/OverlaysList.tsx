@@ -1,45 +1,56 @@
-import React, { useState } from "react";
-import { addSuccessNotification } from "@utils";
+import { useState } from "react";
+import { addNotification } from "@utils";
 import { Link } from "react-router-dom";
-import { initialLayoutOverlays, initialToolboxOverlays } from "src/layout";
 import {
+  fetchOverlaysDefaultParams,
   useCreateOverlay,
+  useDeleteOverlay,
   useGetOverlays,
-  useRemoveOverlayById,
 } from "@services";
 import CardboxWrapper, {
   CardboxInput,
   CardboxItem,
 } from "@components/cardboxWrapper/CardboxWrapper";
-import { AxiosError, Loading } from "@components/axiosHelper";
-import { useAxiosWithConfirmation } from "@hooks";
+import { Error, Loading } from "@components/axiosHelper";
+import { useQueryParams } from "@hooks/useQueryParams";
+import { initialLayoutOverlays, initialToolboxOverlays } from "@layout";
 
 export default function OverlaysList() {
-  const { data, loading, error, refetchData } = useGetOverlays();
+  const queryParams = useQueryParams(fetchOverlaysDefaultParams);
+
+  const { data, isLoading, error } = useGetOverlays(queryParams);
 
   const [overlayName, setLayoutName] = useState<string>("");
 
-  const { refetchData: fetchCreateLayout } = useCreateOverlay({
-    name: overlayName,
-    layout: initialLayoutOverlays,
-    toolbox: initialToolboxOverlays,
-  });
+  const createOverlayMutation = useCreateOverlay();
+  const deleteOverlayMutation = useDeleteOverlay();
 
-  const setOverlayIdToDelete = useAxiosWithConfirmation({
-    hookToProceed: useRemoveOverlayById,
-    opts: { onFullfiled: () => refetchData() },
-  });
-
-  if (error) return <AxiosError error={error} />;
-  if (!data || loading) return <Loading />;
+  if (error) return <Error error={error} />;
+  if (!data || isLoading) return <Loading />;
 
   const { data: overlays } = data;
 
-  const createNewOverlay = () => {
-    fetchCreateLayout().then(() => {
-      refetchData();
-      addSuccessNotification("Overlay created successfully");
+  const handleCreateOverlay = () => {
+    if (!overlayName)
+      return addNotification(
+        "Provide name",
+        "You need to provide overlay name",
+        "danger"
+      );
+    createOverlayMutation.mutate({
+      name: overlayName,
+      layout: initialLayoutOverlays,
+      toolbox: initialToolboxOverlays,
     });
+  };
+  const handleDeleteOverlay = (id: string) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete the overlay with ID: ${id}?`
+      )
+    )
+      return;
+    deleteOverlayMutation.mutate(id);
   };
 
   return (
@@ -53,7 +64,7 @@ export default function OverlaysList() {
             onChange={(e) => setLayoutName(e.target.value)}
           ></input>
           <button
-            onClick={() => createNewOverlay()}
+            onClick={handleCreateOverlay}
             className="common-button primary-button"
           >
             Create
@@ -63,7 +74,7 @@ export default function OverlaysList() {
           <CardboxItem
             title={overlay.name}
             onClickX={() => {
-              setOverlayIdToDelete(overlay._id);
+              handleDeleteOverlay(overlay._id);
             }}
             key={index}
           >

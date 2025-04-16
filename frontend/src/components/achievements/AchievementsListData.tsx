@@ -1,10 +1,16 @@
-import React from "react";
 import { TableListWrapper } from "@components/tableWrapper";
 import SortByParamsButton from "@components/SortByParamsButton";
 import TBodyData from "./TBodyData";
 import { CreateCustomAchievementButton } from "./CreateCustomAchievementButton";
+import { Achievement } from "@services";
 
-export default function AchievementsListData() {
+interface AchievementsListDataProps {
+  achievements: Achievement[];
+}
+
+export default function AchievementsListData({
+  achievements,
+}: AchievementsListDataProps) {
   return (
     <>
       <TableListWrapper
@@ -43,7 +49,7 @@ export default function AchievementsListData() {
             </th>
           </tr>
         }
-        tbodyChildren={<TBodyData />}
+        tbodyChildren={<TBodyData data={achievements} />}
       />
     </>
   );

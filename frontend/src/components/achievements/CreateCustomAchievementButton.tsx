@@ -1,34 +1,37 @@
 import { CustomAchievementAction } from "@services";
+import { useDispatch } from "react-redux";
 import {
-  initialAchievementData,
-  useManageAchievementContext,
-} from "./ManageAchievementContext";
-import { AchievementStateType, ManageAchievementsCurrentAction } from "./types";
+  AchievementSliceDataType,
+  ManageAchievementsCurrentAction,
+  openModal,
+  setAchievementState,
+  setCurrentAction,
+} from "@redux/achievementsSlice";
 
-const initialAchievementCustomData: AchievementStateType &
-  Required<Pick<AchievementStateType, "custom">> = {
-  ...initialAchievementData,
+const initialAchievementData: Required<AchievementSliceDataType> = {
+  name: "",
+  description: "",
+  isTime: false,
+  enabled: true,
+  stages: "",
+  tag: "",
   custom: { action: CustomAchievementAction.ALL },
+  hidden: false,
 };
 
 export function CreateCustomAchievementButton() {
-  const {
-    achievementState: [, dispatch],
-    showModalState: [, setShowModal],
-    setCurrentAction,
-  } = useManageAchievementContext();
-
+  const dispatch = useDispatch();
   return (
     <div>
       <button
         className="common-button primary-button"
         onClick={() => {
-          setShowModal(true);
-          setCurrentAction(ManageAchievementsCurrentAction.CREATE_CUSTOM);
-          dispatch({
-            type: "SET_STATE",
-            payload: initialAchievementCustomData,
-          });
+          dispatch(openModal());
+
+          dispatch(
+            setCurrentAction(ManageAchievementsCurrentAction.CREATE_CUSTOM)
+          );
+          dispatch(setAchievementState(initialAchievementData));
         }}
       >
         Create custom

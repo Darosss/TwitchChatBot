@@ -1,4 +1,4 @@
-import { BaseModelProperties } from "../api";
+import { BaseModelProperties, DefaultRequestParams } from "../api";
 import { User } from "../users";
 
 export interface SongCustomTitle {
@@ -8,20 +8,32 @@ export interface SongCustomTitle {
 
 export type SongLikesAction = -1 | 0 | 1;
 
+export interface DownloadedData {
+  fileName: string;
+  folderName: string;
+  publicPath: string;
+}
 export interface Song extends BaseModelProperties {
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
   title: string;
-  youtubeId: string;
+  youtubeId?: string;
+  sunoId?: string;
+  localSong?: boolean;
+  downloadedData?: DownloadedData;
+  duration: number;
   customTitle?: SongCustomTitle;
+  customId?: string;
   uses: number;
   usersUses: Record<string, number>;
   botUses: number;
   songRequestUses: number;
-  duration: number;
-  customId?: string;
-  whoAdded: Pick<User, "_id" | "username" | "twitchName">;
+  whoAdded: User;
   likes: Record<string, SongLikesAction>;
   enabled: boolean;
   lastUsed?: Date;
+  tags: string;
 }
 
 export interface SongCreateData
@@ -43,3 +55,9 @@ export interface SongCreateData
 export interface SongUpdateData
   extends Partial<SongCreateData>,
     Partial<Pick<Song, "enabled">> {}
+
+export interface FetchSongsParams extends DefaultRequestParams<keyof Song> {
+  customId?: string;
+  start_date?: string;
+  end_date?: string;
+}

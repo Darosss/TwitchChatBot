@@ -1,4 +1,3 @@
-import React from "react";
 import UrlParamsInput, { FilterBarInput } from "@components/urlParamsInputs";
 
 export default function FilterBarCommands() {

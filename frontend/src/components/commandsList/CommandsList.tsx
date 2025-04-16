@@ -1,181 +1,91 @@
-import React, { useReducer, useState } from "react";
-import FilterBarCommands from "./filterBarCommands";
 import Modal from "@components/modal";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-import { addSuccessNotification } from "@utils";
 import {
-  useGetCommands,
-  useEditCommand,
-  useCreateCommand,
-  useDeleteCommand,
-  ChatCommand,
-  ChatCommandCreateData,
+  fetchChatCommandsDefaultParams,
+  useCreateChatCommand,
+  useEditChatCommand,
+  useGetChatCommands,
 } from "@services";
-import { useGetAllModes } from "@utils";
-import { DispatchAction } from "./types";
-import CommandsData from "./CommandsData";
+import { addNotification } from "@utils";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  resetCommandState,
+  setEditingId,
+  closeModal,
+} from "@redux/commandsSlice";
+import { RootStore } from "@redux/store";
 import CommandModalData from "./CommandModalData";
-import { useSocketContext } from "@socket";
-import { AxiosError, Loading } from "@components/axiosHelper";
-import { useAxiosWithConfirmation } from "@hooks";
+import CommandsData from "./CommandsData";
+import FilterBarCommands from "./filterBarCommands";
+import { Error, Loading } from "@components/axiosHelper";
+import { useQueryParams } from "@hooks/useQueryParams";
 
 export default function CommandsList() {
-  const [showModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
+  const queryParams = useQueryParams(fetchChatCommandsDefaultParams);
 
   const {
-    emits: { refreshCommands: emitRefreshCommands },
-  } = useSocketContext();
+    isModalOpen,
+    command: commandState,
+    editingId,
+  } = useSelector((state: RootStore) => state.commands);
 
-  const [editingCommand, setEditingCommand] = useState("");
+  const createCommandMutation = useCreateChatCommand();
+  const updateCommandMutation = useEditChatCommand();
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const {
+    data: commandsData,
+    isLoading,
+    error,
+  } = useGetChatCommands(queryParams);
 
-  const modes = useGetAllModes();
-
-  const { data: commandsData, loading, error, refetchData } = useGetCommands();
-
-  const { refetchData: fetchEditCommand } = useEditCommand(
-    editingCommand,
-    state
-  );
-  const { refetchData: fetchCreateCommand } = useCreateCommand(state);
-
-  const setCommandIdToDelete = useAxiosWithConfirmation({
-    hookToProceed: useDeleteCommand,
-    opts: { onFullfiled: () => refetchData() },
-  });
-
-  if (error) return <AxiosError error={error} />;
-  if (loading || !commandsData || !modes) return <Loading />;
-
-  const { data, count, currentPage } = commandsData;
-
-  const onSubmitModalCreate = () => {
-    fetchCreateCommand().then(() => {
-      emitRefreshCommands();
-      addSuccessNotification("Command created successfully");
-      refetchData();
-      handleOnHideModal();
-    });
+  const handleCreateCommand = () => {
+    createCommandMutation.mutate(commandState);
+    dispatch(closeModal());
+    dispatch(resetCommandState());
   };
 
-  const onSubmitModalEdit = () => {
-    fetchEditCommand().then(() => {
-      emitRefreshCommands();
-      addSuccessNotification("Command edited successfully");
-      refetchData();
-      handleOnHideModal();
-    });
-  };
-
-  const setState = (command: ChatCommand) => {
-    dispatch({
-      type: "SET_STATE",
-      payload: {
-        name: command.name,
-        description: command.description,
-        enabled: command.enabled,
-        aliases: command.aliases,
-        messages: command.messages,
-        privilege: command.privilege,
-        tag: command.tag._id,
-        mood: command.mood._id,
-      },
-    });
-  };
-
-  const handleOnShowEditModal = (command: ChatCommand) => {
-    setEditingCommand(command._id);
-    setState(command);
-    setShowModal(true);
-  };
-
-  const handleOnShowCreateModal = (command?: ChatCommand) => {
-    if (command) {
-      setState(command);
-    } else {
-      dispatch({ type: "SET_STATE", payload: initialState });
+  const handleUpdateCommand = () => {
+    if (!editingId) {
+      addNotification("Couldn't update command", "No command id", "warning");
+      return;
     }
-
-    setShowModal(true);
+    updateCommandMutation.mutate({
+      id: editingId,
+      updatedChatCommand: commandState,
+    });
+    dispatch(closeModal());
+    dispatch(resetCommandState());
+    dispatch(setEditingId(""));
   };
-
-  const handleOnHideModal = () => {
-    setShowModal(false);
-    setEditingCommand("");
-  };
+  if (error) return <Error error={error} />;
+  if (isLoading || !commandsData) return <Loading />;
 
   return (
     <>
       <PreviousPage />
       <FilterBarCommands />
-      <CommandsData
-        data={data}
-        handleOnShowCreateModal={handleOnShowCreateModal}
-        handleOnShowEditModal={handleOnShowEditModal}
-        setCommandIdDelete={setCommandIdToDelete}
-      />
+      <CommandsData commands={commandsData.data} />
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
           localStorageName="commandsListPageSize"
-          currentPage={currentPage}
-          totalCount={count}
+          currentPage={commandsData.currentPage}
+          totalCount={commandsData.count}
           siblingCount={1}
         />
       </div>
       <Modal
-        title={`${editingCommand ? "Edit" : "Create"} command`}
-        onClose={handleOnHideModal}
-        onSubmit={() => {
-          editingCommand ? onSubmitModalEdit() : onSubmitModalCreate();
-        }}
-        show={showModal}
+        title={`${editingId ? "Edit" : "Create"} command`}
+        onClose={() => dispatch(closeModal())}
+        onSubmit={() =>
+          editingId ? handleUpdateCommand() : handleCreateCommand()
+        }
+        show={isModalOpen}
       >
-        <CommandModalData state={state} dispatch={dispatch} modes={modes} />
+        <CommandModalData />
       </Modal>
     </>
   );
-}
-
-const initialState: ChatCommandCreateData = {
-  name: "",
-  description: "",
-  enabled: true,
-  aliases: [""],
-  messages: [""],
-  privilege: 0,
-  tag: "",
-  mood: "",
-};
-
-function reducer(
-  state: ChatCommandCreateData,
-  action: DispatchAction
-): ChatCommandCreateData {
-  switch (action.type) {
-    case "SET_NAME":
-      return { ...state, name: action.payload };
-    case "SET_ENABLED":
-      return { ...state, enabled: action.payload || !state.enabled };
-    // case "SET_DELAY":
-    //   return { ...state, delay: action.payload };
-    case "SET_PRIVILEGE":
-      return { ...state, privilege: action.payload };
-    case "SET_ALIASES":
-      return { ...state, aliases: action.payload };
-    case "SET_MESSAGES":
-      return { ...state, messages: action.payload };
-    case "SET_DESC":
-      return { ...state, description: action.payload };
-    case "SET_TAG":
-      return { ...state, tag: action.payload };
-    case "SET_MOOD":
-      return { ...state, mood: action.payload };
-    case "SET_STATE":
-      return { ...state, ...action.payload };
-    default:
-      throw new Error("Invalid action type");
-  }
 }

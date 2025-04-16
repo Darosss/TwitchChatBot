@@ -1,5 +1,7 @@
 import { DateTooltip } from "@components/dateTooltip";
-import { useAchievementStageContext } from "./Context";
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
+import { setName } from "@redux/stagesSlice";
 
 interface BaseDetailsAchievementStageProps {
   editing: boolean;
@@ -7,9 +9,9 @@ interface BaseDetailsAchievementStageProps {
 export default function BaseDetailsAchievementStage({
   editing,
 }: BaseDetailsAchievementStageProps) {
-  const {
-    achievementStageState: [state, dispatch],
-  } = useAchievementStageContext();
+  const dispatch = useDispatch();
+  const { stage } = useSelector((root: RootStore) => root.stages);
+
   return (
     <>
       <div>
@@ -18,23 +20,21 @@ export default function BaseDetailsAchievementStage({
           {editing ? (
             <input
               type="text"
-              value={state.name}
-              onChange={(e) =>
-                dispatch({ type: "SET_NAME", payload: e.target.value })
-              }
+              value={stage.name}
+              onChange={(e) => dispatch(setName(e.target.value))}
             />
           ) : (
-            state.name
+            stage.name
           )}
         </div>
       </div>
       <div>
         <div>Created / updated</div>
         <div>
-          <DateTooltip date={state.createdAt} />
+          <DateTooltip date={stage.createdAt} />
         </div>
         <div>
-          <DateTooltip date={state.updatedAt} />
+          <DateTooltip date={stage.updatedAt} />
         </div>
       </div>
     </>

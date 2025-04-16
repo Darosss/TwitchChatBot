@@ -1,169 +1,80 @@
-import React, { useState } from "react";
-import Pagination from "@components/pagination";
+import { Error, Loading } from "@components/axiosHelper";
+import CardboxWrapper from "@components/cardboxWrapper";
 import Modal from "@components/modal";
+import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
 import {
+  fetchMoodsDefaultParams,
   useGetMoods,
-  useEditMood,
   useCreateMood,
-  useDeleteMood,
-  Mood,
+  useEditMood,
 } from "@services";
-import { addSuccessNotification } from "@utils";
+import { addNotification } from "@utils";
+import { useDispatch, useSelector } from "react-redux";
+import { useQueryParams } from "@hooks/useQueryParams";
+import { closeModal, resetMoodState, setEditingId } from "@redux/moodsSlice";
+import { RootStore } from "@redux/store";
 import FilterBarModes from "../filterBarModes";
-import ModalDataWrapper from "@components/modalDataWrapper";
-import { AxiosError, Loading } from "@components/axiosHelper";
-import { useAxiosWithConfirmation } from "@hooks";
+import MoodsData from "./MoodsData";
+import MoodModalData from "./MoodModalData";
 
 export default function Moods() {
-  const [showModal, setShowModal] = useState(false);
+  const queryParams = useQueryParams(fetchMoodsDefaultParams);
+  const { data: moods, isLoading, error } = useGetMoods(queryParams);
+  const dispatch = useDispatch();
+  const {
+    isModalOpen,
+    mood: moodState,
+    editingId,
+  } = useSelector((state: RootStore) => state.moods);
 
-  const [editingMood, setEditingMood] = useState("");
+  const createMoodMutation = useCreateMood();
+  const updateMoodMutation = useEditMood();
 
-  const [name, setName] = useState("");
-  const [createName, setCreateName] = useState("");
-  const [prefixes, setPrefixes] = useState([""]);
-  const [sufixes, setSufixes] = useState([""]);
+  if (error) return <Error error={error} />;
+  if (isLoading || !moods) return <Loading />;
 
-  const { data: moodsData, loading, error, refetchData } = useGetMoods();
+  const handleCreateMood = () => {
+    createMoodMutation.mutate(moodState);
+    dispatch(resetMoodState());
+  };
 
-  const { refetchData: fetchEditMood } = useEditMood(editingMood, {
-    name: name,
-    sufixes: sufixes,
-    prefixes: prefixes,
-  });
-
-  const { refetchData: fetchCreateMood } = useCreateMood({
-    name: createName,
-    prefixes: prefixes,
-    sufixes: sufixes,
-  });
-
-  const setMoodIdToDelete = useAxiosWithConfirmation({
-    hookToProceed: useDeleteMood,
-    opts: { onFullfiled: () => refetchData() },
-  });
-
-  if (error) return <AxiosError error={error} />;
-  if (loading || !moodsData) return <Loading />;
-
-  const { data, count, currentPage } = moodsData;
-
-  const createNewMood = () => {
-    fetchCreateMood().then(() => {
-      addSuccessNotification("Mood created successfully");
-      refetchData();
+  const handleUpdateMood = () => {
+    if (!editingId) {
+      addNotification("Couldn't update mood", "No mood id", "warning");
+      return;
+    }
+    updateMoodMutation.mutate({
+      id: editingId,
+      updatedMood: moodState,
     });
-  };
-
-  const onSubmitEditModal = () => {
-    fetchEditMood().then(() => {
-      addSuccessNotification("Mood edited successfully");
-      refetchData();
-    });
-    setShowModal(false);
-  };
-
-  const onCloseModal = () => {
-    setShowModal(false);
-  };
-
-  const handleOnEdit = (mood: Mood) => {
-    setEditingMood(mood._id);
-    setName(mood.name);
-    setPrefixes(mood.prefixes);
-    setSufixes(mood.sufixes);
-    setShowModal(true);
+    dispatch(resetMoodState());
+    dispatch(setEditingId(""));
   };
 
   return (
     <>
       <PreviousPage />
       <FilterBarModes />
-      <div className="table-list-wrapper mode-list-wrapper">
-        <div>
-          <div className="mode-list-create">
-            <input
-              type="text"
-              placeholder="Name"
-              value={createName}
-              onChange={(e) => setCreateName(e.target.value)}
-            ></input>
-            <button
-              onClick={createNewMood}
-              className="common-button primary-button"
-            >
-              Create
-            </button>
-          </div>
-        </div>
-        {data.map((mood, index) => (
-          <div key={index} className="mode-item">
-            <button
-              onClick={() => handleOnEdit(mood)}
-              className="common-button primary-button edit-mode-button"
-            >
-              {mood.name}
-            </button>
-            <button
-              onClick={() => setMoodIdToDelete(mood._id)}
-              className="common-button danger-button remove-mode-btn"
-            >
-              X
-            </button>
-          </div>
-        ))}
-      </div>
+      <CardboxWrapper title={"Moods list"}>
+        <MoodsData data={moods.data} />
+      </CardboxWrapper>
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
           localStorageName="moodsListPageSize"
-          currentPage={currentPage}
-          totalCount={count}
+          currentPage={moods.currentPage}
+          totalCount={moods.count}
           siblingCount={1}
         />
       </div>
       <Modal
-        title="Edit mood"
-        onClose={() => onCloseModal()}
-        onSubmit={() => {
-          onSubmitEditModal();
-        }}
-        show={showModal}
+        title={`${editingId ? "Edit" : "Create"} mood`}
+        onClose={() => dispatch(closeModal())}
+        onSubmit={() => (editingId ? handleUpdateMood() : handleCreateMood())}
+        show={isModalOpen}
       >
-        <ModalDataWrapper>
-          <div>Name</div>
-          <div>
-            <input
-              className="triggers-list-input"
-              type="text"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-            />
-          </div>
-          <div>Prefixes</div>
-          <div>
-            <textarea
-              className="triggers-list-input"
-              value={prefixes.join("\n")}
-              onChange={(e) => {
-                setPrefixes(e.target.value.split("\n"));
-              }}
-            />
-          </div>
-          <div>Sufixes</div>
-          <div>
-            <textarea
-              className="triggers-list-input"
-              value={sufixes.join("\n")}
-              onChange={(e) => {
-                setSufixes(e.target.value.split("\n"));
-              }}
-            />
-          </div>
-        </ModalDataWrapper>
+        <MoodModalData />
       </Modal>
     </>
   );

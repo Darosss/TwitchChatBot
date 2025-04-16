@@ -1,31 +1,25 @@
+import { setCommandsConfigs } from "@redux/configsSlice";
 import ConfigInput from "./ConfigInput";
-import { useConfigsContext } from "./ConfigsContext";
-import { ConfigsDispatchActionType, ConfigsWrapperSharedProps } from "./types";
-
-const DISPATCH_TYPE = ConfigsDispatchActionType.SET_COMMANDS;
-
-export default function CommandsConfigsWrapper({
-  showEdit,
-}: ConfigsWrapperSharedProps) {
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
+export default function CommandsConfigsWrapper() {
+  const dispatch = useDispatch();
   const {
-    configState: [{ commandsConfigs }, dispatch],
-  } = useConfigsContext();
+    isUpdateMode,
+    config: { commandsConfigs },
+  } = useSelector((state: RootStore) => state.configs);
 
   return (
     <>
       <ConfigInput
         optionName="Commands prefix"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...commandsConfigs,
-              commandsPrefix: e.target.value,
-            },
-          })
+          dispatch(
+            setCommandsConfigs(["commandsPrefix", e.currentTarget.value])
+          )
         }
         value={commandsConfigs.commandsPrefix}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
         inputType="text"
       />
     </>

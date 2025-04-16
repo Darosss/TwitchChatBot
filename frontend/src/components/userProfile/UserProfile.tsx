@@ -1,35 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import Message from "@components/message";
-import AddUserAchievementProgress from "@components/addUserAchievementProgress";
 import { DateTooltip } from "@components/dateTooltip";
 import { HelmetTitle } from "@components/componentWithTitle";
 import { useEditUser, useGetLatestEldestMsgs, useGetUser } from "@services";
-import { AxiosError, Loading } from "@components/axiosHelper";
-import { addSuccessNotification } from "@utils";
+import { Error, Loading } from "@components/axiosHelper";
 
 export default function UserProfile() {
-  const { userId } = useParams();
+  //Note: userId should be as it is taken from route
+  const params = useParams();
+  const userId = params.userId!;
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notes, setNotes] = useState("");
 
-  const {
-    data: userData,
-    loading,
-    error,
-    refetchData,
-  } = useGetUser(userId || "");
+  const { data: userData, isLoading, error } = useGetUser(userId);
 
-  const { refetchData: fetchEditUser } = useEditUser(userId || "", {
-    notes: notes.split("\n"),
-  });
+  const editUserMutation = useEditUser();
 
   const {
     data: msgsData,
-    loading: msgLoading,
+    isLoading: msgLoading,
     error: msgsError,
-  } = useGetLatestEldestMsgs(userId || "");
+  } = useGetLatestEldestMsgs(userId);
 
   const showEdit = () => {
     setIsEditingNotes((prevState) => {
@@ -37,22 +30,19 @@ export default function UserProfile() {
     });
   };
 
-  const saveNote = () => {
-    fetchEditUser().then(() => {
-      refetchData();
-      addSuccessNotification("User edited successfully");
-      setIsEditingNotes(false);
-    });
+  const handleSaveNote = () => {
+    editUserMutation.mutate(
+      { id: userId, updatedUser: { notes: notes.split("\n") } },
+      { onSuccess: () => setIsEditingNotes(false) }
+    );
   };
 
   useEffect(() => {
     setNotes(userData?.data.notes?.join("\n") || "");
   }, [userData]);
 
-  if (error) return <AxiosError error={error} />;
-  if (msgsError) return <AxiosError error={msgsError} />;
-
-  if (!userData || !msgsData || msgLoading || loading) return <Loading />;
+  if (error || msgsError) return <Error error={error || msgsError} />;
+  if (!userData || !msgsData || msgLoading || isLoading) return <Loading />;
   const { data } = userData;
   return (
     <>
@@ -62,21 +52,8 @@ export default function UserProfile() {
         <div className="detail-section-wrapper">
           <div>
             <div>Username:</div> <div>{data.username}</div>
-            <div>Twitch name:</div>
+            <div>Kick name:</div>
             <div>{data.twitchName}</div>
-            <div>
-              <Link to="./achievements" className="primary-button">
-                Achievements
-              </Link>
-            </div>
-            <div>
-              {userId ? (
-                <AddUserAchievementProgress
-                  userId={userId}
-                  username={data.username}
-                />
-              ) : null}
-            </div>
           </div>
           <div>
             <div>First seen:</div>
@@ -118,7 +95,7 @@ export default function UserProfile() {
               {isEditingNotes ? (
                 <button
                   className="common-button danger-button profile-button"
-                  onClick={saveNote}
+                  onClick={handleSaveNote}
                 >
                   Save
                 </button>
@@ -135,9 +112,9 @@ export default function UserProfile() {
                 </div>
               ) : (
                 <ul>
-                  {data.notes?.map((note, index) => (
-                    <li key={index}>{note}</li>
-                  ))}
+                  {data.notes?.map((note, index) => {
+                    return <li key={index}>{note}</li>;
+                  })}
                 </ul>
               )}
             </div>
@@ -147,25 +124,29 @@ export default function UserProfile() {
           <div>
             <div className="profile-messages">
               <div className="profile-messages-header"> First messages</div>
-              {msgsData.data.firstMessages.map((msg, index) => (
-                <Message
-                  key={index}
-                  date={msg.date}
-                  username={msg.owner.username}
-                  message={msg.message}
-                />
-              ))}
+              {msgsData.data.firstMessages.map((msg) => {
+                return (
+                  <Message
+                    key={msg._id}
+                    date={msg.date}
+                    username={msg.owner?.username || ""}
+                    message={msg.message}
+                  />
+                );
+              })}
             </div>
             <div className="profile-messages">
               <div className="profile-messages-header"> Latest messages</div>
-              {msgsData.data.latestMessages.map((msg, index) => (
-                <Message
-                  key={index}
-                  date={msg.date}
-                  username={msg.owner.username}
-                  message={msg.message}
-                />
-              ))}
+              {msgsData.data.latestMessages.map((msg) => {
+                return (
+                  <Message
+                    key={msg._id}
+                    date={msg.date}
+                    username={msg.owner?.username || ""}
+                    message={msg.message}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>

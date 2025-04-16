@@ -1,5 +1,4 @@
-import React from "react";
-import { Timer } from "@services";
+import { Timer, TimerCreateData, useDeleteTimer } from "@services";
 import { generateEnabledDisabledDiv } from "@utils";
 import { DateTooltip } from "@components/dateTooltip";
 import {
@@ -8,20 +7,51 @@ import {
   TableListWrapper,
 } from "@components/tableWrapper";
 import SortByParamsButton from "@components/SortByParamsButton";
+import { useDispatch } from "react-redux";
+import {
+  openModal,
+  resetTimerState,
+  setEditingId,
+  setTimerState,
+} from "@redux/timersSlice";
+import { HandleShowModalParams } from "@components/types";
 
 interface TimersDataProps {
   data: Timer[];
-  handleOnShowEditModal: (timer: Timer) => void;
-  handleOnShowCreateModal: (timer?: Timer) => void;
-  setTimerIdToDelete: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-export default function TimersData({
-  data,
-  handleOnShowCreateModal,
-  handleOnShowEditModal,
-  setTimerIdToDelete,
-}: TimersDataProps) {
+const getTimerStateDataHelper = (timer: Timer): TimerCreateData => {
+  return {
+    ...timer,
+    tag: timer.tag._id,
+    mood: timer.mood._id,
+  };
+};
+
+export default function TimersData({ data }: TimersDataProps) {
+  const dispatch = useDispatch();
+
+  const deleteTimerMutation = useDeleteTimer();
+  const handleDeleteTimer = (id: string) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete the timer with ID: ${id}?`
+      )
+    )
+      return;
+    deleteTimerMutation.mutate(id);
+  };
+  const handleShowModal = (params: HandleShowModalParams<Timer>) => {
+    dispatch(openModal());
+    if (params?.type === "create") {
+      dispatch(resetTimerState());
+
+      return;
+    }
+    const { type, data } = params;
+    if (type === "edit") dispatch(setEditingId(data._id));
+    dispatch(setTimerState(getTimerStateDataHelper(data)));
+  };
   return (
     <>
       <TableListWrapper
@@ -31,7 +61,7 @@ export default function TimersData({
               Actions
               <button
                 className="common-button primary-button"
-                onClick={(e) => handleOnShowCreateModal()}
+                onClick={() => handleShowModal({ type: "create" })}
               >
                 New
               </button>
@@ -69,19 +99,23 @@ export default function TimersData({
                 <div>
                   <button
                     className="common-button primary-button"
-                    onClick={() => handleOnShowCreateModal(timer)}
+                    onClick={() =>
+                      handleShowModal({ type: "duplicate", data: timer })
+                    }
                   >
                     Duplicate
                   </button>
                   <button
                     className="common-button primary-button"
-                    onClick={() => handleOnShowEditModal(timer)}
+                    onClick={() =>
+                      handleShowModal({ type: "edit", data: timer })
+                    }
                   >
                     Edit
                   </button>
                   <button
                     className="common-button danger-button"
-                    onClick={() => setTimerIdToDelete(timer._id)}
+                    onClick={() => handleDeleteTimer(timer._id)}
                   >
                     Delete
                   </button>

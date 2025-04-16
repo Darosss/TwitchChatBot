@@ -1,4 +1,4 @@
-import { viteBackendUrl } from "src/configs/envVariables";
+import { viteBackendUrl } from "@configs/envVariables";
 
 export const getYoutubeStreamUrl = (id: string) =>
   `${viteBackendUrl}/youtube/videos/${id}`;

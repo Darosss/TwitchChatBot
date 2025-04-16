@@ -18,7 +18,6 @@ export const stringifyOverlayKeysType = (
     {
       overlayRedemptions: "",
       overlayMusicPlayer: "",
-      overlayYoutubeMusicPlayer: "",
       overlayAchievements: "",
       overlayChat: "",
     }

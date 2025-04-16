@@ -1,33 +1,39 @@
-import React from "react";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
 
 import AchievementsListData from "./AchievementsListData";
 import FilterBarAchievements from "./FilterBarAchievements";
-import { useAchievementsListContext } from "./AchievementsContext";
-import { ManageAchievementContextProvider } from "./ManageAchievementContext";
+import { fetchChatCommandsDefaultParams, useGetAchievements } from "@services";
+import { Error, Loading } from "@components/axiosHelper";
+import EditCreateAchievementModal from "./EditCreateAchievementModal";
+import { useQueryParams } from "@hooks/useQueryParams";
 
 export default function AchievementsList() {
+  const queryParams = useQueryParams(fetchChatCommandsDefaultParams);
   const {
-    achievementsState: { count, currentPage },
-  } = useAchievementsListContext();
+    data: achievementsData,
+    isLoading,
+    error,
+  } = useGetAchievements(queryParams);
+
+  if (error) return <Error error={error} />;
+  if (isLoading || !achievementsData) return <Loading />;
 
   return (
     <>
       <PreviousPage />
       <FilterBarAchievements />
-      <ManageAchievementContextProvider>
-        <AchievementsListData />
-      </ManageAchievementContextProvider>
+      <AchievementsListData achievements={achievementsData.data} />
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
           localStorageName="achievementsListPageSize"
-          currentPage={currentPage}
-          totalCount={count}
+          currentPage={achievementsData.currentPage}
+          totalCount={achievementsData.count}
           siblingCount={1}
         />
       </div>
+      <EditCreateAchievementModal />
     </>
   );
 }

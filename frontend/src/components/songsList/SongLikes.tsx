@@ -19,7 +19,7 @@ interface MappedLikesType {
 }
 
 export default function SongLikes({ likes }: SongLikesProps) {
-  const { data, error, loading } = useGetUsersByIds(Object.keys(likes));
+  const { data, error, isLoading } = useGetUsersByIds(Object.keys(likes));
   const [showLikes, setShowLikes] = useState<string>("");
   const mappedLikes = useMemo<MappedLikesType[] | null>(() => {
     if (!data) return null;
@@ -39,7 +39,7 @@ export default function SongLikes({ likes }: SongLikesProps) {
     });
   }, [data, likes]);
 
-  if (error || loading) return null;
+  if (error || isLoading) return null;
 
   return (
     <div className="preview-song-modal-song-users-data">

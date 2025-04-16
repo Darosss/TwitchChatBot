@@ -3,18 +3,18 @@ import { useGetAchievements } from "@services";
 import AchievementStageLists from "./AchievementStagesList";
 import Pagination from "@components/pagination";
 import { useLocalStorage } from "@hooks";
-import { AxiosError, Loading } from "@components/axiosHelper";
+import { Error, Loading } from "@components/axiosHelper";
 
 export default function UserAchievements() {
-  const { data: achievementsData, loading, error } = useGetAchievements();
+  const { data: achievementsData, isLoading, error } = useGetAchievements();
 
   const [expandAllSections, setExpandAllSections] = useLocalStorage(
     "expandAllAchievements",
     false
   );
 
-  if (error) return <AxiosError error={error} />;
-  if (!achievementsData || loading) return <Loading />;
+  if (error) return <Error error={error} />;
+  if (!achievementsData || isLoading) return <Loading />;
 
   const { data, count, currentPage } = achievementsData;
   return (

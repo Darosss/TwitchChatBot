@@ -1,21 +1,29 @@
 import { DateTooltip } from "@components/dateTooltip";
-import { viteBackendUrl } from "src/configs/envVariables";
-import { useBadgeContextEditCreateData } from "./ContextEditCreateData";
-import { useBadgesContext } from "./ContextManyData";
+import { viteBackendUrl } from "@configs/envVariables";
+import { useDispatch } from "react-redux";
+import { openModal, setBadgeState, setEditingId } from "@redux/badgesSlice";
+import { Badge, useDeleteBadge } from "@services";
 
-export default function TBodyManyBadgesData() {
-  const {
-    badgesState: { data },
-    setBadgeIdToDelete,
-  } = useBadgesContext();
-  const {
-    badgeState: [, dispatch],
-    showModalState: [, setModalState],
-  } = useBadgeContextEditCreateData();
+interface TBodyManyBadgesDataProps {
+  badges: Badge[];
+}
 
+export default function TBodyManyBadgesData({
+  badges,
+}: TBodyManyBadgesDataProps) {
+  const dispatch = useDispatch();
+  const deleteBadgeMutation = useDeleteBadge();
+
+  const handleDeleteBadge = (id: string) => {
+    if (
+      !window.confirm(`Are you sure you want to delete the badge with: ${id}?`)
+    )
+      return;
+    deleteBadgeMutation.mutate(id);
+  };
   return (
     <>
-      {data.map((badge, index) => {
+      {badges?.map((badge, index) => {
         return (
           <tr key={index} className="badges-list-data-tbody">
             <td>
@@ -24,8 +32,9 @@ export default function TBodyManyBadgesData() {
                   className="common-button primary-button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    dispatch({ type: "SET_STATE", payload: badge });
-                    setModalState(true);
+                    dispatch(setEditingId(badge._id));
+                    dispatch(setBadgeState(badge));
+                    dispatch(openModal());
                   }}
                 >
                   Edit
@@ -34,7 +43,7 @@ export default function TBodyManyBadgesData() {
                   className="common-button danger-button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setBadgeIdToDelete(badge._id);
+                    handleDeleteBadge(badge._id);
                   }}
                 >
                   Delete

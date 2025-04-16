@@ -1,13 +1,19 @@
 import Modal from "@components/modal";
-import { AchievementStageData, useGetAchievementStageSounds } from "@services";
+import { StageDataRarity, useGetAchievementStagesSounds } from "@services";
 import { useCallback, useState } from "react";
-import { viteBackendUrl } from "src/configs/envVariables";
+import { viteBackendUrl } from "@configs/envVariables";
 import AvailableAchievementSounds from "./AvailableAchievementSounds";
-import { useAchievementStageContext } from "./Context";
 import moment from "moment";
 import { TableDataWrapper } from "@components/tableWrapper";
 import { getDateFromSecondsToYMDHMS } from "@utils";
-import { AxiosError, Loading } from "@components/axiosHelper";
+import { Error, Loading } from "@components/axiosHelper";
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
+import {
+  removeStageDataByIndex,
+  updateStageDataPropertyByIndex,
+} from "@redux/stagesSlice";
+import { closeModal, openModal } from "@redux/achievementsSlice";
 
 interface AchievementStageEditDataProps {
   onClickBadge: (indexOfStage: number) => void;
@@ -16,53 +22,32 @@ interface AchievementStageEditDataProps {
 export default function AchievementStageEditData({
   onClickBadge,
 }: AchievementStageEditDataProps) {
-  const {
-    achievementStageState: [state, dispatch],
-    updateStageDataByIndex,
-    isGoalTimeState: [isGoalTime],
-  } = useAchievementStageContext();
-  const [showModal, setShowModal] = useState(false);
+  const { isModalOpen, isGoalTime, stage } = useSelector(
+    (root: RootStore) => root.stages
+  );
+
   const [currentChoosenStageIndex, setCurrentChoosenStageIndex] = useState(-1);
+
+  const dispatch = useDispatch();
 
   const {
     data: stagesSoundResponseData,
-    loading,
+    isLoading,
     error,
-    refetchData,
-  } = useGetAchievementStageSounds();
+    refetch: refetchAchievementStagesSounds,
+  } = useGetAchievementStagesSounds();
 
   const handleOnClickRemoveStage = (index: number) => {
-    const { stageData } = state;
-    if (index === stageData.length) return;
-    stageData.splice(index, 1);
-
-    const newStageData = stageData.map((data, stageDataIndex) => {
-      if (stageDataIndex >= index) return { ...data, stage: data.stage - 1 };
-
-      return data;
-    });
-
-    dispatch({ type: "SET_STAGE_DATA", payload: newStageData });
+    dispatch(removeStageDataByIndex(index));
   };
 
-  const updateStageDataKeyByIndex = (
-    index: number,
-    key: keyof AchievementStageData,
-    value: number | string
-  ) => {
-    updateStageDataByIndex(index, {
-      ...state.stageData[index],
-      [key]: value,
-    });
-  };
-
-  if (loading) return <Loading />;
-  if (error) return <AxiosError error={error} />;
+  if (isLoading) return <Loading />;
+  if (error) return <Error error={error} />;
   if (!stagesSoundResponseData) return null;
 
   return (
     <>
-      {state.stageData.map((data, index) => (
+      {stage.stageData.map((data, index) => (
         <tr key={index} className="stage-data-content stage-data-edit">
           <td className="stage-data-content-nr-delete-td">
             {index + 1}
@@ -81,7 +66,13 @@ export default function AchievementStageEditData({
                   type="text"
                   value={data.name}
                   onChange={(e) =>
-                    updateStageDataKeyByIndex(index, "name", e.target.value)
+                    dispatch(
+                      updateStageDataPropertyByIndex({
+                        index,
+                        keyName: "name",
+                        value: e.target.value,
+                      })
+                    )
                   }
                 />
               </div>
@@ -92,14 +83,21 @@ export default function AchievementStageEditData({
                 <input
                   type="number"
                   min={1}
-                  max={10}
+                  max={9}
                   value={data.rarity}
                   onChange={(e) => {
-                    let value = e.target.valueAsNumber;
-                    if (value <= 0 || isNaN(value)) value = 1;
-                    else if (value > 10) value = 10;
+                    let value: StageDataRarity = e.target
+                      .valueAsNumber as StageDataRarity;
 
-                    updateStageDataKeyByIndex(index, "rarity", value);
+                    if (value <= 0 || isNaN(value)) value = 1;
+                    else if (value > 9) value = 9;
+                    dispatch(
+                      updateStageDataPropertyByIndex({
+                        index,
+                        keyName: "rarity",
+                        value,
+                      })
+                    );
                   }}
                 />
               </div>
@@ -111,7 +109,13 @@ export default function AchievementStageEditData({
                 <TimeGoalInput
                   goal={data.goal}
                   onChangeCallback={(value) =>
-                    updateStageDataKeyByIndex(index, "goal", value)
+                    dispatch(
+                      updateStageDataPropertyByIndex({
+                        index,
+                        keyName: "goal",
+                        value,
+                      })
+                    )
                   }
                 />
               </TableDataWrapper>
@@ -120,10 +124,12 @@ export default function AchievementStageEditData({
                 type="number"
                 value={data.goal}
                 onChange={(e) =>
-                  updateStageDataKeyByIndex(
-                    index,
-                    "goal",
-                    e.target.valueAsNumber
+                  dispatch(
+                    updateStageDataPropertyByIndex({
+                      index,
+                      keyName: "goal",
+                      value: e.target.valueAsNumber,
+                    })
                   )
                 }
               />
@@ -137,7 +143,14 @@ export default function AchievementStageEditData({
               onChange={(e) => {
                 let value = e.target.valueAsNumber;
                 if (value < 1 || isNaN(value)) value = 1;
-                updateStageDataKeyByIndex(index, "showTimeMs", value * 1000);
+
+                dispatch(
+                  updateStageDataPropertyByIndex({
+                    index,
+                    keyName: "showTimeMs",
+                    value: value * 1000,
+                  })
+                );
               }}
             />
           </td>
@@ -152,7 +165,7 @@ export default function AchievementStageEditData({
             <div
               onClick={() => {
                 setCurrentChoosenStageIndex(index);
-                setShowModal(true);
+                dispatch(openModal());
               }}
             >
               {data.sound}
@@ -162,23 +175,25 @@ export default function AchievementStageEditData({
       ))}
       <Modal
         title={`Edit stage: ${
-          state.stageData.at(currentChoosenStageIndex)?.name
+          stage.stageData.at(currentChoosenStageIndex)?.name
         }`}
-        onClose={() => setShowModal(false)}
-        show={showModal}
+        onClose={() => dispatch(closeModal())}
+        show={isModalOpen}
       >
         <AvailableAchievementSounds
           className="achievement-stage-edit-sound"
           soundPaths={stagesSoundResponseData.data}
-          onClickRefresh={refetchData}
+          onClickRefresh={refetchAchievementStagesSounds}
           onClickSound={({ basePath, soundName }) => {
-            updateStageDataKeyByIndex(
-              currentChoosenStageIndex,
-              "sound",
-              `${basePath}\\${soundName}`
+            dispatch(
+              updateStageDataPropertyByIndex({
+                index: currentChoosenStageIndex,
+                keyName: "sound",
+                value: `${basePath}\\${soundName}`,
+              })
             );
           }}
-          currentSoundPath={state.stageData.at(currentChoosenStageIndex)?.sound}
+          currentSoundPath={stage.stageData.at(currentChoosenStageIndex)?.sound}
         />
       </Modal>
     </>

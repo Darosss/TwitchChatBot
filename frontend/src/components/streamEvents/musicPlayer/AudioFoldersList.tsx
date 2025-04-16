@@ -1,69 +1,79 @@
-import React, { useEffect, useState } from "react";
-import { useSocketContext } from "@socket";
+import { useState, useEffect } from "react";
+import { Loading } from "@components/axiosHelper";
 import {
-  useDeleteMp3File,
-  useGetFolderMp3Files,
   useGetFoldersList,
+  useGetFolderMp3Files,
+  useDeleteMp3File,
+  DeleteMp3FileParams,
+  useRefetchFoldersFilesAudioData,
 } from "@services";
-import { useAxiosWithConfirmation } from "@hooks";
+import { useSocketContext } from "@socket";
+
 export default function AudioFoldersList() {
-  const socketContext = useSocketContext();
+  const socket = useSocketContext();
+  const refetchFolderFilesAudioData = useRefetchFoldersFilesAudioData();
   const [folderName, setFolderName] = useState("");
+  const { data: foldersData } = useGetFoldersList();
 
-  const { data: foldersData } = useGetFoldersList("music");
+  const { data: mp3Data } = useGetFolderMp3Files(folderName);
 
-  const { data: mp3Data, refetchData: refetchMp3Files } =
-    useGetFolderMp3Files(folderName);
+  const deletMp3FileMutation = useDeleteMp3File();
+  const handleDeleteMp3File = (data: DeleteMp3FileParams) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete the mp3 file in folder: ${data.folderName} | named: ${data.fileName}?`
+      )
+    )
+      return;
+    deletMp3FileMutation.mutate(data);
+  };
+
+  const emitLoadSongs = () => {
+    socket.emits.loadFolder(folderName);
+  };
 
   const handleOnClickChangeFolder = (folder: string) => {
     setFolderName(folder);
   };
-  const setFolderAndFileNameToDelete = useAxiosWithConfirmation({
-    hookToProceed: useDeleteMp3File,
-    opts: {
-      onFullfiled: () => refetchMp3Files(),
-    },
-  });
 
   useEffect(() => {
     if (!folderName) return;
-    refetchMp3Files();
+    refetchFolderFilesAudioData(folderName);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [folderName]);
 
   useEffect(() => {
-    const {
-      emits: { getAudioInfo },
-    } = socketContext;
-
-    getAudioInfo((cb) => {
-      setFolderName(cb.currentFolder);
+    socket.emits.getAudioData((cb) => {
+      if (!cb.audioData.downloadedData) return;
+      setFolderName(cb.audioData.downloadedData.folderName);
     });
-  }, [socketContext]);
+  }, [socket]);
 
-  if (!foldersData) return <> No folders.</>;
+  if (!foldersData) return <Loading />;
 
   const { data: folders } = foldersData;
 
   return (
     <div className="audio-files-list-wrapper">
       <div className="audio-folders-list-wrapper">
-        {folders.map((folder, index) => (
-          <button
-            key={index}
-            onClick={() => handleOnClickChangeFolder(folder)}
-            className={`common-button ${
-              folder === folderName ? "primary-button" : "danger-button"
-            }`}
-          >
-            {folder}
-          </button>
-        ))}
+        {folders.map((folder, index) => {
+          return (
+            <button
+              key={index}
+              onClick={() => handleOnClickChangeFolder(folder)}
+              className={`common-button ${
+                folder === folderName ? "primary-button" : "danger-button"
+              }`}
+            >
+              {folder}
+            </button>
+          );
+        })}
       </div>
       {folderName ? (
         <button
           onClick={() => {
-            socketContext.emits.loadSongs(folderName);
+            emitLoadSongs();
           }}
           className="load-folder-btn common-button primary-button"
         >
@@ -71,21 +81,23 @@ export default function AudioFoldersList() {
         </button>
       ) : null}
       <div className="mp3-files-wrapper">
-        {mp3Data?.data.map((mp3, index) => (
-          <div key={index} className="mp3-file list-with-x-buttons">
-            <div>
-              <button
-                onClick={() =>
-                  setFolderAndFileNameToDelete({ folderName, fileName: mp3 })
-                }
-                className="common-button danger-button"
-              >
-                x
-              </button>
+        {mp3Data?.data.map((mp3, index) => {
+          return (
+            <div key={index} className="mp3-file list-with-x-buttons">
+              <div>
+                <button
+                  onClick={() =>
+                    handleDeleteMp3File({ folderName, fileName: mp3 })
+                  }
+                  className="common-button danger-button"
+                >
+                  x
+                </button>
+              </div>
+              <div> {mp3} </div>
             </div>
-            <div> {mp3} </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

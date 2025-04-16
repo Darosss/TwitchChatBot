@@ -1,5 +1,3 @@
-import React from "react";
-
 import Pagination from "@components/pagination";
 import { Link, useParams } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
@@ -8,12 +6,14 @@ import {
   useGetRedemptions,
   Redemption,
   PaginationData,
-  useGetSessionRedemptions,
   useGetUserRedemptions,
+  useGetSessionRedemptions,
+  fetchRedemptionsDefaultParams,
 } from "@services";
 import { DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
-import { AxiosError, Loading } from "@components/axiosHelper";
+import { Error, Loading } from "@components/axiosHelper";
+import { useQueryParams } from "@hooks/useQueryParams";
 
 interface RedemptionsListProps {
   redemptions: "all" | "session" | "user";
@@ -39,28 +39,31 @@ export default function RedemptionsList({ redemptions }: RedemptionsListProps) {
   }
 }
 
+//TODO: add query params to user/session based
+
 const RedemptionsUser = () => {
   const { userId } = useParams();
-  const { data, loading, error } = useGetUserRedemptions(userId!);
-  if (error) return <AxiosError error={error} />;
-  if (!data || loading) return <Loading />;
+  const { data, isLoading, error } = useGetUserRedemptions(userId!);
+  if (error) return <Error error={error} />;
+  if (!data || isLoading) return <Loading />;
 
   return <Redemptions redemptionsData={data} />;
 };
 
 const RedemptionsSession = () => {
   const { sessionId } = useParams();
-  const { data, loading, error } = useGetSessionRedemptions(sessionId!);
-  if (error) return <AxiosError error={error} />;
-  if (!data || loading) return <Loading />;
+  const { data, isLoading, error } = useGetSessionRedemptions(sessionId!);
+  if (error) return <Error error={error} />;
+  if (!data || isLoading) return <Loading />;
 
   return <Redemptions redemptionsData={data} />;
 };
 
 const RedemptionsAll = () => {
-  const { data, loading, error } = useGetRedemptions();
-  if (error) return <AxiosError error={error} />;
-  if (!data || loading) return <Loading />;
+  const queryParms = useQueryParams(fetchRedemptionsDefaultParams);
+  const { data, isLoading, error } = useGetRedemptions(queryParms);
+  if (error) return <Error error={error} />;
+  if (!data || isLoading) return <Loading />;
 
   return <Redemptions redemptionsData={data} />;
 };

@@ -1,0 +1,31 @@
+.folders-create-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-size: 2vmin;
+  overflow-x: hidden;
+  height: 100%;
+
+  .folders-create-actions {
+    display: flex;
+    justify-content: center;
+    & > * {
+      margin: 0.1rem;
+    }
+  }
+
+  .folders-create-list {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    overflow-x: hidden;
+  }
+
+  .folder-file {
+    border-bottom: 0.1rem solid $primary-color;
+
+    div {
+      align-self: center;
+    }
+  }
+}

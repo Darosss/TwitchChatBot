@@ -1,22 +1,18 @@
-import React from "react";
-
 interface SterringButtonsProps {
   playing: boolean;
-  togglePlayPauseFn: () => void;
+  playFn: () => void;
+  pauseFn: () => void;
   onNextSongFn: () => void;
 }
-export default function SterringButtons({
-  playing,
-  togglePlayPauseFn,
-  onNextSongFn,
-}: SterringButtonsProps) {
+export default function SterringButtons(props: SterringButtonsProps) {
+  const { playing, playFn, pauseFn, onNextSongFn } = props;
   return (
     <div className="music-player-sterring-wrapper">
       <button
         className={`common-button ${
           playing ? "danger-button" : "primary-button"
         }`}
-        onClick={togglePlayPauseFn}
+        onClick={() => (playing ? pauseFn() : playFn())}
       >
         {playing ? "PAUSE" : "PLAY"}
       </button>

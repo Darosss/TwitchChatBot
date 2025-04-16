@@ -2,14 +2,14 @@ import DrawerBar from "@components/drawer";
 import PreviousPage from "@components/previousPage";
 import { addSuccessNotification } from "@utils";
 
-interface LayoutDrawerBarProps<T> {
+interface LayoutDrawerBarProps {
   layoutName: string;
   toolbox: ReactGridLayout.Layouts;
   currentBreakpoint: string;
   onTakeItem: (item: ReactGridLayout.Layout) => void;
   setLayout: React.Dispatch<React.SetStateAction<ReactGridLayout.Layouts>>;
   isEditState: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-  editFn: () => Promise<T>;
+  editFn: () => void;
 }
 
 interface ToolBoxProps {
@@ -22,7 +22,7 @@ interface ToolBoxItemProps {
   onTakeItem: (item: ReactGridLayout.Layout) => void;
 }
 
-export default function LayoutDrawerBar<T = unknown>({
+export default function LayoutDrawerBar({
   layoutName,
   toolbox,
   currentBreakpoint,
@@ -30,7 +30,7 @@ export default function LayoutDrawerBar<T = unknown>({
   setLayout,
   isEditState,
   editFn,
-}: LayoutDrawerBarProps<T>) {
+}: LayoutDrawerBarProps) {
   const [isEdit, setIsEdit] = isEditState;
   const toggleEditMode = () => {
     setEditableInLayout(isEdit);

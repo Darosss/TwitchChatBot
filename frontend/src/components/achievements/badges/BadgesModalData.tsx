@@ -1,23 +1,23 @@
 import ModalDataWrapper from "@components/modalDataWrapper";
 import AvailableBadgeImages from "./AvailableBadgeImages";
-import { useBadgeContextEditCreateData } from "./ContextEditCreateData";
 import { BadgeModelImagesUrls, useGetBadgesImages } from "@services";
-import { viteBackendUrl } from "src/configs/envVariables";
-import { AxiosError, Loading } from "@components/axiosHelper";
+import { viteBackendUrl } from "@configs/envVariables";
+import { Error, Loading } from "@components/axiosHelper";
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
+import { setDescription, setImagesUrls, setName } from "@redux/badgesSlice";
 
 export default function BadgeModalData() {
   const {
-    badgeState: [state, dispatch],
-  } = useBadgeContextEditCreateData();
-  const {
     data: badgeImagesResponseData,
-    loading,
+    isLoading,
     error,
-    refetchData,
   } = useGetBadgesImages();
+  const dispatch = useDispatch();
+  const { badge } = useSelector((root: RootStore) => root.badges);
 
-  if (error) return <AxiosError error={error} />;
-  if (loading) return <Loading />;
+  if (error) return <Error error={error} />;
+  if (isLoading) return <Loading />;
   if (!badgeImagesResponseData) return null;
 
   const { data } = badgeImagesResponseData;
@@ -27,32 +27,28 @@ export default function BadgeModalData() {
       <div>
         <input
           type="text"
-          value={state.name}
-          onChange={(e) =>
-            dispatch({ type: "SET_NAME", payload: e.target.value })
-          }
+          value={badge.name}
+          onChange={(e) => dispatch(setName(e.target.value))}
         />
       </div>
       <div>Description</div>
       <div>
         <input
           type="text"
-          value={state.description}
-          onChange={(e) =>
-            dispatch({ type: "SET_DESCRIPTION", payload: e.target.value })
-          }
+          value={badge.description}
+          onChange={(e) => dispatch(setDescription(e.target.value))}
         />
       </div>
       <div className="badges-modal-data-images">
-        {Object.keys(state.imagesUrls).map((key, index) => {
+        {Object.keys(badge.imagesUrls).map((key, index) => {
           const keyAsKeyOfBadgeImagesUrlsState =
             key as keyof BadgeModelImagesUrls;
           return (
             <div key={index}>
               {key}
-              {state.imagesUrls[keyAsKeyOfBadgeImagesUrlsState] ? (
+              {badge.imagesUrls[keyAsKeyOfBadgeImagesUrlsState] ? (
                 <img
-                  src={`${viteBackendUrl}\\${state.imagesUrls[keyAsKeyOfBadgeImagesUrlsState]}`}
+                  src={`${viteBackendUrl}\\${badge.imagesUrls[keyAsKeyOfBadgeImagesUrlsState]}`}
                   alt={key}
                 />
               ) : null}
@@ -64,11 +60,10 @@ export default function BadgeModalData() {
       <div>
         <AvailableBadgeImages
           className="available-badge-images-modal-edit"
-          onClickRefresh={refetchData}
           badgesData={data}
           onClickBadge={({ basePath, badgeName, badgeExtension }) => {
             const updatePayloadData: Partial<BadgeModelImagesUrls> = {};
-            Object.keys(state.imagesUrls).forEach((key) => {
+            Object.keys(badge.imagesUrls).forEach((key) => {
               const foundSize = data.availableSizes.find((size) =>
                 key.includes(String(size))
               );
@@ -77,15 +72,14 @@ export default function BadgeModalData() {
               ] = `${basePath}\\${badgeName}${data.separatorSizes}${foundSize}${badgeExtension}`;
             });
 
-            dispatch({
-              type: "SET_IMAGES_URLS",
-              payload: {
-                ...state.imagesUrls,
+            dispatch(
+              setImagesUrls({
+                ...badge.imagesUrls,
                 ...updatePayloadData,
-              },
-            });
+              })
+            );
           }}
-          currentImgPath={state.imagesUrls.x128}
+          currentImgPath={badge.imagesUrls.x128}
         />
       </div>
     </ModalDataWrapper>

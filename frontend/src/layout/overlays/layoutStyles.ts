@@ -187,6 +187,14 @@ const initialOverlayMusicPlayerStyles: OverlayMusicPlayerStyleParsed = {
     background: "blue",
     baseBackground: "white",
   },
+  requests: {
+    boxShadow: "1px 2px 3px 4px lightblue",
+    headerFontSize: "1rem",
+    nicknameColor: "green",
+    fontSize: "1rem",
+    color: "black",
+    background: "lightblue",
+  },
 };
 const initialOverlayRedemptionsStyles: OverlayRedemptionsStyleParsed = {
   background: "transparent",

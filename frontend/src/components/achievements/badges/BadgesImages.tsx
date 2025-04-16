@@ -1,49 +1,54 @@
 import PreviousPage from "@components/previousPage";
-import AvailableBadgeImages, { OnClickBadgeType } from "./AvailableBadgeImages";
+import AvailableBadgeImages from "./AvailableBadgeImages";
 import { useState } from "react";
 import { useDeleteBadgeImage, useGetBadgesImages } from "@services";
 import Modal from "@components/modal";
 import ModalDataWrapper from "@components/modalDataWrapper";
-import { viteBackendUrl } from "src/configs/envVariables";
+import { viteBackendUrl } from "@configs/envVariables";
 import React from "react";
-import { AxiosError, Loading } from "@components/axiosHelper";
-import { useAxiosWithConfirmation } from "@hooks";
+import { Error, Loading } from "@components/axiosHelper";
+import { OnClickBadgeType } from "./types";
+import { closeModal, openModal } from "@redux/badgesSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
 
 export default function BadgesImages() {
-  const [showModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
+  const { isModalOpen } = useSelector((root: RootStore) => root.badges);
 
   const {
     data: badgeImagesResponseData,
-    loading,
+    isLoading,
     error,
-    refetchData,
   } = useGetBadgesImages();
   const [choosenBadge, setChoosenBadge] = useState<OnClickBadgeType | null>(
     null
   );
-
-  const setBadgeImageToDelete = useAxiosWithConfirmation({
-    hookToProceed: useDeleteBadgeImage,
-    opts: {
-      onFullfiled: () => {
-        refetchData();
-        setShowModal(false);
-      },
-    },
-  });
-
+  const deleteBadgeMutation = useDeleteBadgeImage();
+  const handleDeleteBadge = () => {
+    if (
+      !choosenBadge ||
+      !window.confirm(
+        `Are you sure you want to delete the badge: ${choosenBadge.badgeName}.${choosenBadge.badgeExtension}?`
+      )
+    )
+      return;
+    deleteBadgeMutation.mutate(
+      `${choosenBadge?.badgeName}${choosenBadge?.badgeExtension}`
+    );
+  };
   const handleOnClickBadgeImage = (data: OnClickBadgeType) => {
     setChoosenBadge(data);
-    setShowModal(true);
+    dispatch(openModal());
   };
 
   const handleOnHideModal = () => {
     setChoosenBadge(null);
-    setShowModal(false);
+    dispatch(closeModal());
   };
 
-  if (error) return <AxiosError error={error} />;
-  if (loading) return <Loading />;
+  if (error) return <Error error={error} />;
+  if (isLoading) return <Loading />;
   if (!badgeImagesResponseData) return null;
 
   return (
@@ -54,14 +59,13 @@ export default function BadgesImages() {
           handleOnClickBadgeImage(data);
         }}
         badgesData={badgeImagesResponseData.data}
-        onClickRefresh={refetchData}
         showNames={true}
       />
 
       <Modal
         title={`Badge image ${choosenBadge?.badgeName}`}
         onClose={handleOnHideModal}
-        show={showModal}
+        show={isModalOpen}
       >
         <div className="badge-images-modal-content">
           <ModalDataWrapper>
@@ -87,11 +91,7 @@ export default function BadgesImages() {
             <div>
               <button
                 className="danger-button common-button"
-                onClick={() =>
-                  setBadgeImageToDelete(
-                    `${choosenBadge?.badgeName}${choosenBadge?.badgeExtension}`
-                  )
-                }
+                onClick={handleDeleteBadge}
               >
                 Delete
               </button>
