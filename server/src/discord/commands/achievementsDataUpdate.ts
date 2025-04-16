@@ -19,7 +19,7 @@ import { generateRandomWord, getDateFromSecondsToYMDHMS } from "@utils";
 import { clearChannelFromMessages, findTextBasedChannelById, sendMessageInChannelByChannel } from "../utils";
 import { getAchievements, getBadges } from "@services";
 import { BadgeModel, StageData } from "@models";
-import { publicPath } from "@configs";
+import { publicEndpointPath } from "@configs";
 
 const randomWordToProceed = generateRandomWord();
 const randomWordToProceedLength = randomWordToProceed.length;
@@ -199,7 +199,7 @@ const getBadgesListMessagesData = async () => {
   if (!foundBadges) return;
 
   const badgesData = foundBadges.map(({ _id, name, description, imagesUrls }) => {
-    const absolutePathImage = `${publicPath}/${imagesUrls.x128}`;
+    const absolutePathImage = `${publicEndpointPath}/${imagesUrls.x128}`;
     return { _id, name, description, imageUrl: absolutePathImage };
   });
 

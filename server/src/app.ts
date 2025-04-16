@@ -5,6 +5,7 @@ import http from "http";
 import { errorResponder, invalidPathHandler } from "@middlewares";
 import { hostFrontendURL, localFrontendURL } from "@configs";
 import path from "path";
+import { SocketHandler } from "@socket";
 
 const expressApp = () => {
   const app = express();
@@ -22,6 +23,7 @@ const expressApp = () => {
     })
   );
   app.use(express.urlencoded({ extended: true }));
+  SocketHandler.getInstance(server);
 
   initRoutes(app);
 

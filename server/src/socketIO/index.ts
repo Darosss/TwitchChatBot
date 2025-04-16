@@ -1,2 +1,2 @@
 export * from "./types";
-export { isObtainedAchievement, newSocket, getSocketInstance } from "./socket";
+export { isObtainedAchievement, SocketHandler } from "./socket";

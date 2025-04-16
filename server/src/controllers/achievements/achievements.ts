@@ -13,6 +13,7 @@ import {
 } from "@services";
 import { AppError, checkExistResource, logger } from "@utils";
 import { filterAchievementsByUrlParams } from "./filters";
+import { CustomAchievementAction } from "@models";
 
 export const getManyAchievements = async (
   req: Request<{}, {}, {}, RequestSearch>,
@@ -94,9 +95,18 @@ export const addCustomAchievement = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, description, custom, stages, tag, isTime, enabled, hidden } = req.body;
+  const { name, description, custom, stages, tag, enabled, hidden } = req.body;
 
-  const createData = { name, enabled, description, custom, stages, tag, isTime, hidden };
+  const createData = {
+    name,
+    enabled,
+    description,
+    custom,
+    stages,
+    tag,
+    hidden,
+    isTime: custom?.action === CustomAchievementAction.WATCH_TIME ? true : false
+  };
   try {
     if (!custom) throw new AppError(400, `Custom options must be provided.`);
     const newCustomAchievement = await createCustomAchievement(createData);
@@ -131,8 +141,17 @@ export const editCustomAchievementById = async (
   next: NextFunction
 ) => {
   const { id } = req.params;
-  const { name, enabled, description, custom, stages, tag, isTime, hidden } = req.body;
-  const updateData = { name, enabled, description, custom, stages, tag, isTime, hidden };
+  const { name, enabled, description, custom, stages, tag, hidden } = req.body;
+  const updateData = {
+    name,
+    enabled,
+    description,
+    custom,
+    stages,
+    tag,
+    hidden,
+    isTime: custom?.action === CustomAchievementAction.WATCH_TIME ? true : false
+  };
 
   try {
     const updatedAchievement = await updateOneAchievement({ _id: id }, updateData);

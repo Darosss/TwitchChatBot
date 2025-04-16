@@ -1,12 +1,14 @@
 import { checkExistResource, AppError, handleAppError, logger } from "@utils";
-import { FilterQuery, UpdateQuery } from "mongoose";
+import mongoose, { FilterQuery, UpdateQuery } from "mongoose";
 import {
   CreateSongReturn,
   ManageSongLikesAction,
+  ManageSongLikesByIds,
   ManySongsFindOptions,
   SongsCreateData,
   SongsFindOptions,
-  SongsUpdateData
+  SongsUpdateData,
+  UsesType
 } from "./types";
 import { SongsDocument, Songs, UserModel } from "@models";
 import { getUserById } from "@services";
@@ -34,8 +36,25 @@ export const getSongsCount = async (filter: FilterQuery<SongsDocument> = {}) => 
 };
 
 export const createSong = async (createData: SongsCreateData): Promise<CreateSongReturn | undefined> => {
-  const foundSong = await getOneSong({ youtubeId: createData.youtubeId }, {});
-  if (foundSong) return { isNew: false, song: foundSong };
+  const { youtubeId, sunoId, downloadedData } = createData;
+  const foundSong = await getOneSong(
+    {
+      $and: [
+        ...(sunoId ? [{ sunoId: sunoId }] : []),
+        ...(youtubeId ? [{ youtubeId: youtubeId }] : []),
+        ...(!sunoId && !youtubeId && downloadedData?.fileName
+          ? [{ "downloadedData.fileName": downloadedData.fileName }]
+          : [])
+      ]
+      //TODO: add here to check if exisist as local
+    },
+    {}
+  );
+
+  if (foundSong) {
+    const updatedSong = await updateSongById(foundSong._id, createData);
+    return { isNew: false, song: updatedSong! };
+  }
 
   const { whoAdded, ...rest } = createData;
   try {
@@ -83,19 +102,26 @@ export const updateSongById = async (id: string, updateData: UpdateQuery<SongsUp
   }
 };
 
-export const manageSongLikesByYoutubeId = async (youtubeId: string, action: ManageSongLikesAction, userId: string) => {
+export const manageSongLikesById = async (id: ManageSongLikesByIds, action: ManageSongLikesAction, userId: string) => {
+  const filter =
+    "id" in id
+      ? { _id: new mongoose.Types.ObjectId(id.id) }
+      : {
+          youtubeId: id.youtubeId
+        };
+  const songID = filter._id || filter.youtubeId;
   try {
     const updatedSong = await Songs.findOneAndUpdate(
-      { youtubeId: youtubeId },
+      filter,
       { $set: { [`likes.${userId}`]: action === "like" ? 1 : action === "dislike" ? -1 : 0 } },
       { new: true }
     );
 
-    const songs = checkExistResource(updatedSong, `Song with youtubeId(${youtubeId})`);
+    const songs = checkExistResource(updatedSong, `Song with id(${songID})`);
 
     return songs;
   } catch (err) {
-    logger.error(`Error occured while editing song by youtubeId(${youtubeId}). ${err}`);
+    logger.error(`Error occured while editing song by youtubeId(${songID}). ${err}`);
     handleAppError(err);
   }
 };
@@ -126,14 +152,31 @@ export const getSongById = async (id: string, filter: FilterQuery<SongsDocument>
   }
 };
 
-export const getOneSong = async (filter: FilterQuery<SongsDocument> = {}, findOptions: SongsFindOptions) => {
-  const { populate = [], select = { __v: 0 } } = findOptions;
+export const getOneSong = async (filter: FilterQuery<SongsDocument> = {}, findOptions?: SongsFindOptions) => {
+  const { populate = [], select = { __v: 0 } } = findOptions || {};
   try {
     const foundSong = await Songs.findOne(filter).select(select).populate(populate);
 
     return foundSong;
   } catch (err) {
     logger.error(`Error occured while getting songs: ${err}`);
+    handleAppError(err);
+  }
+};
+export const updateSongUsesById = async (id: string, useType: UsesType) => {
+  const incrementData = {
+    botUses: useType === "botUses" ? 1 : 0,
+    songRequestUses: useType === "songRequestUses" ? 1 : 0,
+    uses: 1
+  };
+  try {
+    const updatedSong = await Songs.findByIdAndUpdate(id, { $inc: incrementData }, { new: true });
+
+    const song = checkExistResource(updatedSong, `Song with id(${id})`);
+
+    return song;
+  } catch (err) {
+    logger.error(`Error occured while editing song by id(${id}). ${err}`);
     handleAppError(err);
   }
 };

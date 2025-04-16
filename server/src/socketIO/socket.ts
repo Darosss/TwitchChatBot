@@ -1,33 +1,13 @@
-import { Server } from "socket.io";
+import { Server as IOServer, Socket } from "socket.io";
 import {
   ClientToServerEvents,
-  InterServerEvents,
   ObtainAchievementDataWithCollectedAchievement,
   ObtainAchievementDataWithProgressOnly,
-  ServerSocket,
-  ServerToClientEvents,
-  SocketData
+  ServerToClientEvents
 } from "./types";
-import http from "http";
-
-let SOCKET_IO: ServerSocket | null = null;
-
-export const newSocket = (httpServer: http.Server) => {
-  const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer, {
-    cors: { origin: "*", methods: ["GET", "POST"] }
-  });
-
-  io.on("connection", async (socket) => {
-    console.log(socket.id, "connected");
-
-    socket.on("refreshOverlayLayout", (id) => io.emit("refreshOverlayLayout", id));
-  });
-
-  SOCKET_IO = io;
-  return SOCKET_IO;
-};
-
-export const getSocketInstance = () => SOCKET_IO;
+import { Server } from "http";
+import { hostFrontendURL, localFrontendURL } from "@configs";
+import { ConfigManager } from "../stream/ConfigManager";
 
 //TODO: duplicate function is in frontend utils
 export const isObtainedAchievement = (
@@ -38,3 +18,82 @@ export const isObtainedAchievement = (
     (data as ObtainAchievementDataWithCollectedAchievement).stage !== null
   );
 };
+
+type EventCallback = (...args: any[]) => void | Promise<void>;
+
+type ClientToServerEventsKeys = keyof ClientToServerEvents;
+
+class SocketHandler {
+  private io: IOServer<ClientToServerEvents, ServerToClientEvents>;
+  private static instance: SocketHandler;
+  private connectedSockets: Set<Socket<ClientToServerEvents, ServerToClientEvents>> = new Set();
+  private subscriptionsFromClient: Map<ClientToServerEventsKeys, EventCallback[]> = new Map();
+  private constructor(httpServer: Server) {
+    this.io = new IOServer(httpServer, { cors: { origin: [localFrontendURL, hostFrontendURL] } });
+
+    this.setupSocketConnection();
+  }
+
+  public static getInstance(httpServer?: Server) {
+    if (!SocketHandler.instance) {
+      if (!httpServer) throw new Error("httpServer must be provided for the first initialization");
+      SocketHandler.instance = new SocketHandler(httpServer);
+    }
+    return SocketHandler.instance;
+  }
+
+  public getConnectedSockets() {
+    return this.connectedSockets;
+  }
+
+  public getIO(): IOServer<ClientToServerEvents, ServerToClientEvents> {
+    return this.io;
+  }
+
+  private setupSocketConnection(): void {
+    const configInstance = ConfigManager.getInstance();
+    this.io.on("connection", (socket) => {
+      this.connectedSockets.add(socket);
+
+      socket.on("refreshOverlayLayout", (id) => this.io.emit("refreshOverlayLayout", id));
+
+      socket.on("saveConfigs", () => {
+        ConfigManager.getInstance().updateConfig();
+      });
+
+      socket.on("disconnect", () => {
+        this.connectedSockets.delete(socket);
+      });
+
+      this.handleSubscriptionsFromClient(socket);
+    });
+  }
+
+  private handleSubscriptionsFromClient(socket: any): void {
+    this.subscriptionsFromClient.forEach((callbacks, event) => {
+      callbacks.forEach((callback) => {
+        socket.on(event, (data: any) => {
+          callback(data);
+          console.log("Triggered socket event: ", event);
+        });
+      });
+    });
+  }
+
+  /**
+   *
+   * @param event
+   * @param callback
+   * @param ovveride - should ovveride existing subscription (default false = pushes new event to existing events)
+   */
+
+  public subscribe(event: ClientToServerEventsKeys, callback: EventCallback, ovveride = false): void {
+    if (!this.subscriptionsFromClient.has(event) || ovveride) {
+      this.subscriptionsFromClient.set(event, []);
+    }
+    this.subscriptionsFromClient.get(event)?.push(callback);
+  }
+  public setupEventsOnConnection() {}
+}
+
+export { SocketHandler };

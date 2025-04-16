@@ -36,10 +36,9 @@ export const getAffixesList = async (req: Request<{}, {}, {}, RequestSearch>, re
 };
 
 export const addNewAffix = async (req: Request<{}, {}, AffixCreateData, {}>, res: Response, next: NextFunction) => {
-  const { name } = req.body;
-
+  const { name, enabled, prefixChance, prefixes, suffixChance, suffixes } = req.body;
   try {
-    const newAffix = await createAffix({ name });
+    const newAffix = await createAffix({ name, enabled, prefixChance, prefixes, suffixChance, suffixes });
 
     return res.status(200).send({
       message: "Affix added successfully",

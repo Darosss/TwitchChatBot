@@ -10,7 +10,7 @@ import {
   getListOfFilesWithExtensionInFolder,
   logger
 } from "@utils";
-import { alertSoundsPath, musicPath, alertSoundPrefix, publicPath } from "@configs";
+import { alertSoundsPath, musicPath, alertSoundPrefix, publicEndpointPath } from "@configs";
 import path from "path";
 
 const maxFilesAtOnce = 30;
@@ -55,7 +55,7 @@ export const uploadMp3File = (req: Request, res: Response, next: NextFunction) =
 export const getFoldersList = (req: Request, res: Response, next: NextFunction) => {
   const { folder } = req.params;
   getListOfDirectoryNames(
-    folder ? path.join(publicPath, folder) : publicPath,
+    folder ? path.join(publicEndpointPath, folder) : publicEndpointPath,
     (folders) => {
       return res.status(200).send({ data: folders });
     },
@@ -69,7 +69,7 @@ export const getFolderMp3Files = (req: Request, res: Response, next: NextFunctio
   const { folder } = req.params;
   getListOfFilesWithExtensionInFolder(
     path.join(musicPath, folder),
-    [".mp3"],
+    ["mp3"],
     (folders) => {
       return res.status(200).send({ data: folders });
     },
@@ -159,7 +159,7 @@ export const uploadAlertSound = (req: Request, res: Response, next: NextFunction
 export const getAlertSoundsList = (req: Request, res: Response, next: NextFunction) => {
   getListOfFilesWithExtensionInFolder(
     alertSoundsPath,
-    [".mp3"],
+    ["mp3"],
     (sounds) => {
       return res.status(200).send({ data: sounds });
     },

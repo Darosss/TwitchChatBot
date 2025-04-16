@@ -1,5 +1,5 @@
+import ytdl from "@distube/ytdl-core";
 import { Request, Response } from "express";
-import ytdl from "ytdl-core";
 
 export const streamYoutubeVideo = async (req: Request, res: Response) => {
   const videoId = req.params.id;
