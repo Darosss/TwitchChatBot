@@ -1,13 +1,10 @@
-import { AxiosCustomReturn } from "@services";
 import { addSuccessNotification } from "@utils";
 import { useState, useEffect } from "react";
 
-type DefaultHookType<TParams, TReturn> = (
-  params: TParams | null
-) => AxiosCustomReturn<TReturn>;
+type DefaultHookType<TParams> = (params: TParams | null) => any;
 
-interface UseAxiosWithConfirmationParams<TParams, TReturn> {
-  hookToProceed: DefaultHookType<TParams, TReturn>;
+interface UseAxiosWithConfirmationParams<TParams> {
+  hookToProceed: DefaultHookType<TParams>;
   opts?: UseAxiosWithConfirmation;
 }
 
@@ -19,7 +16,7 @@ interface UseAxiosWithConfirmation {
   onRejected?: () => void;
 }
 
-export const useAxiosWithConfirmation = <TParams, TReturn>({
+export const useAxiosWithConfirmation = <TParams>({
   hookToProceed,
   opts: {
     showConfirmation = true,
@@ -28,7 +25,7 @@ export const useAxiosWithConfirmation = <TParams, TReturn>({
     onFullfiled,
     onRejected,
   } = {},
-}: UseAxiosWithConfirmationParams<TParams, TReturn>) => {
+}: UseAxiosWithConfirmationParams<TParams>) => {
   const [id, setId] = useState<TParams | null>(null);
 
   const { refetchData } = hookToProceed(id);

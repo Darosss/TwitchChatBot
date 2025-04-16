@@ -1,85 +1,81 @@
-import React from "react";
-import { TimerCreateData } from "@services";
-import { AllModesReturn, generateSelectModes } from "@utils";
-import { DispatchAction } from "./types";
 import ModalDataWrapper from "@components/modalDataWrapper";
+import { useGetAllModes, generateSelectModes } from "@utils";
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
+import {
+  setDelay,
+  setEnabled,
+  setTag,
+  setMood,
+  setDescription,
+  setMessages,
+  setNonFollowMultiplier,
+  setNonSubMultiplier,
+  setRequirementPoints,
+  setName,
+} from "@redux/timersSlice";
 
-interface TimerModalDataProps {
-  state: TimerCreateData;
-  dispatch: React.Dispatch<DispatchAction>;
-  modes: AllModesReturn;
-}
+export default function TimerModalData() {
+  const modes = useGetAllModes();
+  const { tags, moods } = modes;
 
-export default function TimerModalData({
-  state,
-  dispatch,
-  modes: { tags, moods },
-}: TimerModalDataProps) {
+  const dispatch = useDispatch();
+  const timerState = useSelector((state: RootStore) => state.timers.timer);
+
   return (
     <ModalDataWrapper>
       <div>Name</div>
       <div>
         <input
           type="text"
-          value={state.name}
-          onChange={(e) => {
-            dispatch({ type: "SET_NAME", payload: e.target.value });
-          }}
+          value={timerState.name}
+          onChange={(e) => dispatch(setName(e.currentTarget.value))}
         />
       </div>
       <div> Enabled </div>
       <div>
         <button
-          onClick={() => dispatch({ type: "SET_ENABLED" })}
-          className={
-            `${!state.enabled ? "danger-button" : "primary-button"} ` +
-            "common-button "
-          }
+          onClick={() => dispatch(setEnabled(!timerState.enabled))}
+          className={`common-button ${
+            timerState.enabled ? "primary-button" : "danger-button"
+          }`}
         >
-          {state.enabled.toString()}
+          {timerState.enabled.toString()}
         </button>
       </div>
       <div>Non follow multi </div>
       <div>
         <button
-          onClick={() => dispatch({ type: "SET_NON_FOLLOW_MULTI" })}
-          className={
-            `${!state.nonFollowMulti ? "danger-button" : "primary-button"} ` +
-            "common-button "
+          onClick={() =>
+            dispatch(setNonFollowMultiplier(!timerState.nonFollowMulti))
           }
+          className={`common-button ${
+            timerState.nonFollowMulti ? "primary-button" : "danger-button"
+          }`}
         >
-          {state.nonFollowMulti.toString()}
+          {timerState.nonFollowMulti.toString()}
         </button>
       </div>
       <div>Non sub multi </div>
       <div>
         <button
-          onClick={() => dispatch({ type: "SET_NON_SUB_MULTI" })}
-          className={
-            `${!state.nonSubMulti ? "danger-button" : "primary-button"} ` +
-            "common-button "
-          }
+          onClick={() => dispatch(setNonSubMultiplier(!timerState.nonSubMulti))}
+          className={`common-button ${
+            timerState.nonSubMulti ? "primary-button" : "danger-button"
+          }`}
         >
-          {state.nonSubMulti.toString()}
+          {timerState.nonSubMulti.toString()}
         </button>
       </div>
       <div>Tag</div>
       <div>
-        {generateSelectModes(
-          state.tag,
-          (e) => {
-            dispatch({ type: "SET_TAG", payload: e });
-          },
-          tags
-        )}
+        {generateSelectModes(timerState.tag, (e) => dispatch(setTag(e)), tags)}
       </div>
       <div>Mood</div>
       <div>
         {generateSelectModes(
-          state.mood,
-          (e) => {
-            dispatch({ type: "SET_MOOD", payload: e });
-          },
+          timerState.mood,
+          (e) => dispatch(setMood(e)),
           moods
         )}
       </div>
@@ -87,47 +83,34 @@ export default function TimerModalData({
       <div>
         <input
           type="number"
-          value={state.delay}
-          onChange={(e) => {
-            dispatch({ type: "SET_DELAY", payload: e.target.valueAsNumber });
-          }}
+          value={timerState.delay}
+          onChange={(e) => dispatch(setDelay(e.currentTarget.valueAsNumber))}
         />
       </div>
       <div>Req points</div>
       <div>
         <input
           type="number"
-          value={state.reqPoints}
-          onChange={(e) => {
-            dispatch({
-              type: "SET_REQ_POINTS",
-              payload: e.target.valueAsNumber,
-            });
-          }}
+          value={timerState.reqPoints}
+          onChange={(e) =>
+            dispatch(setRequirementPoints(e.currentTarget.valueAsNumber))
+          }
         />
       </div>
       <div>description </div>
       <div>
         <input
-          value={state.description}
-          onChange={(e) => {
-            dispatch({
-              type: "SET_DESC",
-              payload: e.target.value,
-            });
-          }}
+          value={timerState.description}
+          onChange={(e) => dispatch(setDescription(e.currentTarget.value))}
         />
       </div>
       <div>Messages</div>
       <div>
         <textarea
-          value={state.messages?.join("\n")}
-          onChange={(e) => {
-            dispatch({
-              type: "SET_MESSAGES",
-              payload: e.target.value?.split("\n"),
-            });
-          }}
+          value={timerState.messages?.join("\n")}
+          onChange={(e) =>
+            dispatch(setMessages(e.currentTarget.value?.split("\n") || []))
+          }
         />
       </div>
     </ModalDataWrapper>

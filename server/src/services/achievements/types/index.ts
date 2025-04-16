@@ -25,9 +25,12 @@ export type AchievementUpdateData = Partial<
   Omit<AchievementModel, "_id" | "createdAt" | "updatedAt" | "stages" | "tag">
 > & { stages?: string; tag?: string };
 
-export type AchievementCreateData = Omit<AchievementUpdateData, "name" | "custom" | "description"> &
-  Pick<AchievementModel, "name" | "description"> & { stages: string; tag: string };
-
+export interface AchievementCreateData
+  extends Pick<AchievementModel, "name" | "description" | "hidden">,
+    Partial<Pick<AchievementModel, "enabled" | "showProgress" | "isTime">> {
+  stages: string;
+  tag: string;
+}
 export type AchievementUpdateDataController = Pick<
   AchievementUpdateData,
   "description" | "enabled" | "tag" | "stages" | "hidden"

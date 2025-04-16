@@ -14,7 +14,7 @@ import { NextFunction, Request, Response } from "express";
 import { filterAchievementStagesByUrlParams } from "./filters";
 import { AppError, checkExistResource, filterMp3, getListOfFilesWithExtensionInFolder, logger } from "@utils";
 import path from "path";
-import { achievementsStagesSoundsPath, publicPath } from "@configs";
+import { achievementsStagesSoundsPath, publicEndpointPath } from "@configs";
 import multer from "multer";
 
 const storageAchievementStagesSounds = multer.diskStorage({
@@ -118,14 +118,14 @@ export const editAchievementStageById = async (
 };
 
 export const getAchievementStageSoundsBaseUrl = (req: Request, res: Response) => {
-  return res.status(200).send({ data: path.relative(publicPath, achievementsStagesSoundsPath) });
+  return res.status(200).send({ data: path.relative(publicEndpointPath, achievementsStagesSoundsPath) });
 };
 
 export const getAchievementStageSoundsList = (req: Request, res: Response, next: NextFunction) => {
   try {
     getListOfFilesWithExtensionInFolder(
       achievementsStagesSoundsPath,
-      [".mp3"],
+      ["mp3"],
       (soundsPaths) => {
         return res.status(200).send({ data: soundsPaths });
       },

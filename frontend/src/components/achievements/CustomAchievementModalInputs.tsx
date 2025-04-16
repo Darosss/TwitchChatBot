@@ -1,18 +1,19 @@
 import { AchievementCustomField, CustomAchievementAction } from "@services";
 import { useMemo } from "react";
-import { useManageAchievementContext } from "./ManageAchievementContext";
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
+import { setCustom, setIsTime, setName } from "@redux/achievementsSlice";
 
 export default function CustomAchievementModalInputs() {
-  const {
-    achievementState: [state, dispatch],
-  } = useManageAchievementContext();
+  const dispatch = useDispatch();
+  const { achievement } = useSelector((root: RootStore) => root.achievements);
 
   const renderDataInputDependsOnAction = useMemo(() => {
-    if (!state.custom) return;
+    if (!achievement.custom) return;
     const initialCustom: AchievementCustomField = {
       action: CustomAchievementAction.INCLUDES,
     };
-    switch (state.custom?.action) {
+    switch (achievement.custom?.action) {
       case CustomAchievementAction.ALL:
         return null;
       case CustomAchievementAction.WATCH_TIME:
@@ -22,11 +23,11 @@ export default function CustomAchievementModalInputs() {
             <div>
               <button
                 className={`common-button ${
-                  state.isTime ? "primary-button" : "danger-button"
+                  achievement.isTime ? "primary-button" : "danger-button"
                 }`}
-                onClick={() => dispatch({ type: "SET_IS_TIME", payload: true })}
+                onClick={() => dispatch(setIsTime(!achievement.isTime))}
               >
-                {String(state.isTime)}
+                {String(achievement.isTime)}
               </button>
             </div>
           </>
@@ -40,36 +41,34 @@ export default function CustomAchievementModalInputs() {
             <div>
               <textarea
                 onChange={(e) =>
-                  dispatch({
-                    type: "SET_CUSTOM",
-                    payload: {
-                      ...(state.custom || initialCustom),
+                  dispatch(
+                    setCustom({
+                      ...(achievement.custom || initialCustom),
                       stringValues: e.target.value.split("\n"),
-                    },
-                  })
+                    })
+                  )
                 }
-                value={state.custom.stringValues?.join("\n")}
+                value={achievement.custom.stringValues?.join("\n")}
               />
             </div>
             <div> Case sensitive </div>
             <div>
               <button
                 className={`common-button ${
-                  state.custom.caseSensitive
+                  achievement.custom.caseSensitive
                     ? "primary-button"
                     : "danger-button"
                 }`}
                 onClick={() =>
-                  dispatch({
-                    type: "SET_CUSTOM",
-                    payload: {
-                      ...(state.custom || initialCustom),
-                      caseSensitive: !state.custom?.caseSensitive,
-                    },
-                  })
+                  dispatch(
+                    setCustom({
+                      ...(achievement.custom || initialCustom),
+                      caseSensitive: !achievement.custom?.caseSensitive,
+                    })
+                  )
                 }
               >
-                {String(state.custom.caseSensitive) || "False"}
+                {String(achievement.custom.caseSensitive) || "False"}
               </button>
             </div>
           </>
@@ -85,23 +84,21 @@ export default function CustomAchievementModalInputs() {
                 min={1}
                 onChange={(e) => {
                   const value = e.target.valueAsNumber;
-
-                  dispatch({
-                    type: "SET_CUSTOM",
-                    payload: {
-                      ...(state.custom || initialCustom),
+                  dispatch(
+                    setCustom({
+                      ...(achievement.custom || initialCustom),
                       numberValue: value > 0 ? value : 5,
-                    },
-                  });
+                    })
+                  );
                 }}
-                value={state.custom.numberValue || 5}
+                value={achievement.custom.numberValue || 5}
               />
             </div>
           </>
         );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
+  }, [achievement]);
 
   return (
     <>
@@ -109,25 +106,22 @@ export default function CustomAchievementModalInputs() {
       <div className="modal-custom-achievement-name">
         <input
           type="text"
-          onChange={(e) =>
-            dispatch({ type: "SET_NAME", payload: e.target.value })
-          }
-          value={state.name}
+          onChange={(e) => dispatch(setName(e.target.value))}
+          value={achievement.name}
         />
       </div>
       <div>Set custom action </div>
       <div>
         Action:
         <select
-          value={state.custom?.action}
+          value={achievement.custom?.action}
           onChange={(e) =>
-            dispatch({
-              type: "SET_CUSTOM",
-              payload: {
-                ...state.custom,
+            dispatch(
+              setCustom({
+                ...achievement.custom,
                 action: e.target.value as CustomAchievementAction,
-              },
-            })
+              })
+            )
           }
         >
           {Object.values(CustomAchievementAction).map((value, index) => (

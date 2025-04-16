@@ -1,26 +1,63 @@
-import React from "react";
 import { generateEnabledDisabledDiv } from "@utils";
 import {
   TableDataWrapper,
   TableItemsListWrapper,
   TableListWrapper,
 } from "@components/tableWrapper";
-import { MessageCategory } from "@services";
+import {
+  MessageCategory,
+  MessageCategoryCreateData,
+  useDeleteMessageCategory,
+} from "@services";
 import SortByParamsButton from "@components/SortByParamsButton";
+import { useDispatch } from "react-redux";
+import {
+  openModal,
+  resetMessageCategoryState,
+  setEditingId,
+  setMessageCategoryState,
+} from "@redux/messageCategoriesSlice";
+import { HandleShowModalParams } from "@components/types";
 
 interface CategoriesDataProps {
   data: MessageCategory[];
-  handleOnShowEditModal: (category: MessageCategory) => void;
-  handleOnShowCreateModal: (category?: MessageCategory) => void;
-  setCategoryIdToDelete: React.Dispatch<React.SetStateAction<string | null>>;
 }
+const getMessageCategoryStateDataHelper = (
+  messageCategory: MessageCategory
+): MessageCategoryCreateData => {
+  return {
+    ...messageCategory,
+    messages: messageCategory.messages.map(([mess]) => mess),
+    tag: messageCategory.tag._id,
+    mood: messageCategory.mood._id,
+  };
+};
 
-export default function CategoriesData({
-  data,
-  handleOnShowCreateModal,
-  handleOnShowEditModal,
-  setCategoryIdToDelete,
-}: CategoriesDataProps) {
+export default function CategoriesData({ data }: CategoriesDataProps) {
+  const dispatch = useDispatch();
+
+  const deleteMsgCategoryMutation = useDeleteMessageCategory();
+  const handleDeleteMessageCategory = (id: string) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete the message category with ID: ${id}?`
+      )
+    )
+      return;
+    deleteMsgCategoryMutation.mutate(id);
+  };
+
+  const handleShowModal = (params: HandleShowModalParams<MessageCategory>) => {
+    dispatch(openModal());
+    if (params?.type === "create") {
+      dispatch(resetMessageCategoryState());
+
+      return;
+    }
+    const { type, data } = params;
+    if (type === "edit") dispatch(setEditingId(data._id));
+    dispatch(setMessageCategoryState(getMessageCategoryStateDataHelper(data)));
+  };
   return (
     <>
       <TableListWrapper
@@ -30,7 +67,7 @@ export default function CategoriesData({
               Actions
               <button
                 className="common-button primary-button"
-                onClick={(e) => handleOnShowCreateModal()}
+                onClick={() => handleShowModal({ type: "create" })}
               >
                 New
               </button>
@@ -53,23 +90,23 @@ export default function CategoriesData({
                 <div>
                   <button
                     className="common-button primary-button"
-                    onClick={() => {
-                      handleOnShowEditModal(category);
-                    }}
+                    onClick={() =>
+                      handleShowModal({ type: "edit", data: category })
+                    }
                   >
                     Edit
                   </button>
                   <button
                     className="common-button primary-button"
-                    onClick={() => {
-                      handleOnShowCreateModal(category);
-                    }}
+                    onClick={() =>
+                      handleShowModal({ type: "duplicate", data: category })
+                    }
                   >
                     Duplicate
                   </button>
                   <button
                     className="common-button danger-button"
-                    onClick={() => setCategoryIdToDelete(category._id)}
+                    onClick={() => handleDeleteMessageCategory(category._id)}
                   >
                     Delete
                   </button>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ReactGridLayout from "react-grid-layout";
 
 import StreamChat from "./streamChat";
@@ -6,21 +6,20 @@ import StreamChatters from "./streamChatters";
 import StreamNotifications from "./streamNotifications";
 import StreamStatistics from "./streamStatistics";
 import MessagesWindow from "./messageWindow";
-
 import {
   initialLayoutWidgets,
   initialToolboxWidgets,
   widgetsKeys,
-} from "src/layout";
+} from "@layout";
 import { useParams } from "react-router-dom";
-import { useEditWidgetById, useGetWidgetById } from "@services";
+import { useEditWidget, useGetWidgetById } from "@services";
 import StreamModes from "./streamModes";
-import { getInitialCurrentBreakpoint } from "@utils";
+import { addNotification, getInitialCurrentBreakpoint } from "@utils";
 import ReactGrid from "@components/reactGrid";
 import MusicPlayer from "./musicPlayer";
 import RewardsWindow from "./rewardsWindow";
 import { HelmetTitle } from "@components/componentWithTitle";
-import { AxiosError, Loading } from "@components/axiosHelper";
+import { Error, Loading } from "@components/axiosHelper";
 
 const components = new Map([
   [widgetsKeys.streamChat, StreamChat],
@@ -45,33 +44,48 @@ export default function StreamEvents(params: { editor?: boolean }) {
     getInitialCurrentBreakpoint()
   );
 
-  const { data, loading, error } = useGetWidgetById(eventsId || "");
-  const { refetchData: fetchEditWidgets } = useEditWidgetById(
-    data?.data?._id || "",
-    { layout: layoutWidgets, toolbox: toolbox }
-  );
+  const updateWidgetMutation = useEditWidget();
+  const {
+    data: widgetData,
+    isLoading,
+    error,
+  } = useGetWidgetById(eventsId || "");
 
   useEffect(() => {
-    if (!data) return;
-    const { data: layoutData } = data;
+    if (!widgetData) return;
+    const { data: layoutData } = widgetData;
 
     setLayoutWidgets(layoutData.layout);
     setToolbox(layoutData.toolbox);
-  }, [data]);
+  }, [widgetData]);
 
-  if (error) return <AxiosError error={error} />;
-  if (!data || loading) return <Loading />;
-
+  if (error) return <Error error={error} />;
+  if (!widgetData || isLoading) return <Loading />;
+  const handleUpdateWidget = (
+    layoutState: ReactGridLayout.Layouts,
+    toolboxState: ReactGridLayout.Layouts
+  ) => {
+    if (!eventsId) {
+      addNotification("Couldn't update widget", "No widget id", "warning");
+      return;
+    }
+    setLayoutWidgets(layoutState);
+    setToolbox(toolboxState);
+    updateWidgetMutation.mutate({
+      id: eventsId,
+      updatedWidget: { layout: layoutState, toolbox: toolboxState },
+    });
+  };
   return (
     <div>
-      <HelmetTitle title={"Events " + data.data.name} />
+      <HelmetTitle title={"Events " + widgetData.data.name} />
       <ReactGrid
-        layoutName={data.data.name}
-        layoutState={[layoutWidgets, setLayoutWidgets]}
-        toolboxState={[toolbox, setToolbox]}
+        layoutName={widgetData.data.name}
+        layoutState={layoutWidgets}
+        toolboxState={toolbox}
         currentBreakpointState={[currentBreakpoint, setCurrentBreakpoint]}
         componentsMap={components}
-        onEdit={fetchEditWidgets}
+        onEdit={handleUpdateWidget}
         showDrawer={editor}
       ></ReactGrid>
     </div>

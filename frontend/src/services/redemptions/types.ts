@@ -1,3 +1,5 @@
+import { DefaultRequestParams } from "../api";
+
 export interface Redemption {
   _id: string;
   rewardId: string;
@@ -10,4 +12,13 @@ export interface Redemption {
   rewardCost: number;
   rewardImage: string;
   message?: string;
+}
+
+export interface FetchRedemptionsParams
+  extends DefaultRequestParams<keyof Redemption> {
+  message?: string;
+  receiver?: string;
+  cost?: number;
+  start_date?: string;
+  end_date?: string;
 }

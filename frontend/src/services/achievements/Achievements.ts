@@ -1,217 +1,186 @@
-import useAxiosCustom, {
-  PaginationData,
-  ResponseData,
-  ResponseMessage,
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import {
+  BaseEndpointNames,
+  customAxios,
+  onErrorHelperService,
+  OnErrorHelperServiceAction,
+  OnErrorHelperServiceConcern,
+  PromiseBackendData,
+  PromisePaginationData,
+  QueryParams,
+  refetchDataFunctionHelper,
 } from "../api";
 import {
   Achievement,
   AchievementUpdateData,
+  AchievementUserProgress,
   CustomAchievementCreateData,
   CustomAchievementUpdateData,
-  AchievementUserProgress,
-  Badge,
-  GetBagesImagesResponseData,
-  BadgeUpdateData,
-  BadgeCreateData,
-  AchievementStage,
-  AchievementStageUpdateData,
-  AchievementStageCreateData,
-  AchievementsSearchParams,
+  FetchAchievementsParams,
 } from "./types";
 
-const BASE_URL = "/achievements";
-const BASE_BADGES_URL = `${BASE_URL}/badges`;
-const BASE_STAGES_URL = `${BASE_URL}/stages`;
+const baseEndpointName = BaseEndpointNames.ACHIEVEMENTS;
 
-export const useGetAchievements = (searchParams?: AchievementsSearchParams) => {
-  const urlSearchParams =
-    searchParams && new URLSearchParams(Object.entries(searchParams));
-  return useAxiosCustom<PaginationData<Achievement>>({
-    url: `${BASE_URL}/${urlSearchParams ? `?${urlSearchParams}` : ""}`,
-    urlParams: !searchParams,
-  });
-};
-export const useEditAchievement = (id: string, data: AchievementUpdateData) => {
-  return useAxiosCustom<ResponseData<Achievement>, AchievementUpdateData>({
-    url: `${BASE_URL}/${id}`,
-    method: "PATCH",
-    manual: true,
-    urlParams: false,
-    bodyData: data,
-  });
+export const fetchAchievementsDefaultParams: Required<FetchAchievementsParams> =
+  {
+    limit: 10,
+    page: 1,
+    search_name: "",
+    sortOrder: "asc",
+    sortBy: "createdAt",
+    custom_action: "",
+  };
+
+export const queryKeysAchievements = {
+  allAchievements: "achievements",
+  userAchievementsProgresses: (userId: string) =>
+    ["user-achievements-progresses", userId] as [string, string],
 };
 
-export const useCreateCustomAchievement = (
-  data: CustomAchievementCreateData
+export const fetchAchievements = async (
+  params?: QueryParams<keyof FetchAchievementsParams>
+): PromisePaginationData<Achievement> => {
+  const response = await customAxios.get(`/${baseEndpointName}/`, {
+    params,
+  });
+  return response.data;
+};
+
+export const createCustomAchievement = async (
+  newAchievement: CustomAchievementCreateData
+): PromiseBackendData<Achievement> => {
+  const response = await customAxios.post(
+    `/${baseEndpointName}/custom/create`,
+    newAchievement
+  );
+  return response.data;
+};
+
+export const editAchievement = async ({
+  id,
+  updatedAchievement,
+}: {
+  id: string;
+  updatedAchievement: AchievementUpdateData;
+}): PromiseBackendData<Achievement> => {
+  const response = await customAxios.patch(
+    `/${baseEndpointName}/${id}`,
+    updatedAchievement
+  );
+  return response.data;
+};
+
+export const editCustomAchievement = async ({
+  id,
+  updatedAchievement,
+}: {
+  id: string;
+  updatedAchievement: CustomAchievementUpdateData;
+}): PromiseBackendData<Achievement> => {
+  const response = await customAxios.patch(
+    `/${baseEndpointName}/custom/${id}`,
+    updatedAchievement
+  );
+  return response.data;
+};
+export const deleteCustomAchievement = async (
+  id: string
+): PromiseBackendData<Achievement> => {
+  const response = await customAxios.delete(
+    `/${baseEndpointName}/custom/${id}`
+  );
+  return response.data;
+};
+
+export const useGetAchievements = (
+  params?: QueryParams<keyof FetchAchievementsParams>
 ) => {
-  return useAxiosCustom<ResponseData<Achievement>, CustomAchievementCreateData>(
-    {
-      url: `${BASE_URL}/custom/create`,
-      method: "POST",
-      bodyData: data,
-      manual: true,
-      urlParams: false,
-    }
+  return useQuery([queryKeysAchievements.allAchievements, params], () =>
+    fetchAchievements(params)
   );
 };
 
-export const useDeleteCustomAchievement = (id: string) => {
-  return useAxiosCustom<ResponseMessage>({
-    url: `${BASE_URL}/custom/${id}`,
-    method: "DELETE",
-    manual: true,
-    urlParams: false,
+export const useEditAchievement = () => {
+  const refetchAchievements = useRefetchAchievementsData();
+
+  return useMutation(editAchievement, {
+    onSuccess: refetchAchievements,
+    onError: (error) => {
+      onErrorHelperService(
+        error,
+        OnErrorHelperServiceConcern.ACHIEVEMENT,
+        OnErrorHelperServiceAction.EDIT
+      );
+    },
   });
 };
 
-export const useUpdateCustomAchievement = (
-  id: string,
-  data: CustomAchievementUpdateData
-) => {
-  return useAxiosCustom<ResponseData<Achievement>, CustomAchievementUpdateData>(
-    {
-      url: `${BASE_URL}/custom/${id}`,
-      method: "PATCH",
-      bodyData: data,
-      manual: true,
-      urlParams: false,
-    }
-  );
+export const useCreateCustomAchievement = () => {
+  const refetchAchievements = useRefetchAchievementsData();
+
+  return useMutation(createCustomAchievement, {
+    onSuccess: refetchAchievements,
+    onError: (error) => {
+      onErrorHelperService(
+        error,
+        OnErrorHelperServiceConcern.ACHIEVEMENT,
+        OnErrorHelperServiceAction.CREATE
+      );
+    },
+  });
+};
+
+export const useDeleteCustomAchievement = () => {
+  const refetchAchievements = useRefetchAchievementsData();
+  return useMutation(deleteCustomAchievement, {
+    onSuccess: refetchAchievements,
+    onError: (error) => {
+      onErrorHelperService(
+        error,
+        OnErrorHelperServiceConcern.ACHIEVEMENT,
+        OnErrorHelperServiceAction.CREATE
+      );
+    },
+  });
+};
+
+export const useUpdateCustomAchievement = () => {
+  const refetchAchievements = useRefetchAchievementsData();
+
+  return useMutation(editCustomAchievement, {
+    onSuccess: refetchAchievements,
+    onError: (error) => {
+      onErrorHelperService(
+        error,
+        OnErrorHelperServiceConcern.ACHIEVEMENT,
+        OnErrorHelperServiceAction.CREATE
+      );
+    },
+  });
 };
 
 /* PROGRESSES */
+export const fetchProgresses = async (
+  userId: string
+): PromiseBackendData<AchievementUserProgress[]> => {
+  const response = await customAxios.get(`/${baseEndpointName}/user/${userId}`);
+  return response.data;
+};
+
 export const useGetUserAchievementsProgresses = (userId: string) => {
-  return useAxiosCustom<ResponseData<AchievementUserProgress[]>>({
-    url: `${BASE_URL}/user/${userId}`,
-  });
+  return useQuery(
+    [queryKeysAchievements.userAchievementsProgresses(userId)],
+    () => fetchProgresses(userId)
+  );
 };
 
-/* BADGES */
-export const useGetBadges = () => {
-  return useAxiosCustom<PaginationData<Badge>>({
-    url: `${BASE_BADGES_URL}/`,
-  });
-};
-
-export const useGetBadgesImages = () => {
-  return useAxiosCustom<ResponseData<GetBagesImagesResponseData>>({
-    url: `${BASE_BADGES_URL}/available-images`,
-  });
-};
-
-export const useGetBadgesIamgesBasePath = () => {
-  return useAxiosCustom<ResponseData<string>>({
-    url: `${BASE_BADGES_URL}/available-images/base-path`,
-  });
-};
-
-export const useEditBadge = (id: string, data: BadgeUpdateData) => {
-  return useAxiosCustom<ResponseData<Badge>, BadgeUpdateData>({
-    url: `${BASE_BADGES_URL}/${id}`,
-    method: "PATCH",
-    bodyData: data,
-    manual: true,
-    urlParams: false,
-  });
-};
-
-export const useCreateBadge = (data: BadgeCreateData) => {
-  return useAxiosCustom<ResponseData<Badge>, BadgeCreateData>({
-    url: `${BASE_BADGES_URL}/create/`,
-    method: "POST",
-    bodyData: data,
-    manual: true,
-    urlParams: false,
-  });
-};
-
-export const useDeleteBadge = (id: string | null) => {
-  return useAxiosCustom<ResponseMessage>({
-    url: `${BASE_BADGES_URL}/delete/${id}`,
-    method: "DELETE",
-    manual: true,
-    urlParams: false,
-  });
-};
-
-export const useDeleteBadgeImage = (badgeName: string | null) => {
-  return useAxiosCustom<ResponseMessage>({
-    url: `${BASE_BADGES_URL}/images/${badgeName}/delete`,
-    method: "DELETE",
-    manual: true,
-    urlParams: false,
-  });
-};
-
-/* STAGES */
-
-export const useGetAchievementStages = (customParams?: string) => {
-  return useAxiosCustom<PaginationData<AchievementStage>>({
-    url: `${BASE_STAGES_URL}${customParams ? `?${customParams}` : ""}`,
-    urlParams: customParams ? false : true,
-  });
-};
-
-export const useDeleteAchievementStage = (id: string | null) => {
-  return useAxiosCustom<ResponseMessage>({
-    url: `${BASE_STAGES_URL}/delete/${id}`,
-    method: "DELETE",
-    manual: true,
-    urlParams: false,
-  });
-};
-
-export const useGetAchievementStageById = (id: string) => {
-  return useAxiosCustom<ResponseData<AchievementStage>>({
-    url: `${BASE_STAGES_URL}/${id}`,
-    method: "GET",
-    urlParams: false,
-  });
-};
-
-export const useEditAchievementStage = (
-  id: string,
-  data: AchievementStageUpdateData
-) => {
-  return useAxiosCustom<ResponseData<Badge>, AchievementStageUpdateData>({
-    url: `${BASE_STAGES_URL}/${id}`,
-    method: "PATCH",
-    bodyData: data,
-    manual: true,
-  });
-};
-
-export const useGetAchievementStageSounds = () => {
-  return useAxiosCustom<ResponseData<string[]>>({
-    url: `${BASE_STAGES_URL}/available-sounds`,
-    urlParams: false,
-  });
-};
-
-export const useGetAchievementStageSoundsBasePath = () => {
-  return useAxiosCustom<ResponseData<string>>({
-    url: `${BASE_STAGES_URL}/available-sounds/base-path`,
-  });
-};
-
-export const useDeleteAchievementStageSound = (soundName: string | null) => {
-  return useAxiosCustom<ResponseMessage>({
-    url: `${BASE_STAGES_URL}/sounds/${soundName}/delete`,
-    method: "DELETE",
-    manual: true,
-    urlParams: false,
-  });
-};
-
-export const useCreateAchievementStage = (data: AchievementStageCreateData) => {
-  return useAxiosCustom<
-    ResponseData<AchievementStage>,
-    AchievementStageCreateData
-  >({
-    url: `${BASE_STAGES_URL}/create/`,
-    method: "POST",
-    bodyData: data,
-    manual: true,
-    urlParams: false,
-  });
+export const useRefetchAchievementsData = (exact = false) => {
+  const queryClient = useQueryClient();
+  return refetchDataFunctionHelper(
+    queryKeysAchievements,
+    "allAchievements",
+    queryClient,
+    null,
+    exact
+  );
 };

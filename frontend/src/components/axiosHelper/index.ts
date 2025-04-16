@@ -1,4 +1,4 @@
-import AxiosError from "./errors";
+import Error from "./errors";
 import Loading from "./loading";
 
-export { AxiosError, Loading };
+export { Error, Loading };

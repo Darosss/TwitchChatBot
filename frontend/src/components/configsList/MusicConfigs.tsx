@@ -1,60 +1,48 @@
 import ConfigInput from "./ConfigInput";
 import ConfigButton from "./ConfigButton";
-import { ConfigsDispatchActionType, ConfigsWrapperSharedProps } from "./types";
-import { useConfigsContext } from "./ConfigsContext";
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
+import { setMusicConfigs } from "@redux/configsSlice";
 
-const DISPATCH_TYPE = ConfigsDispatchActionType.SET_MUSIC;
-
-export default function MusicConfigsWrapper({
-  showEdit,
-}: ConfigsWrapperSharedProps) {
+export default function MusicConfigsWrapper() {
+  const dispatch = useDispatch();
   const {
-    configState: [{ musicConfigs }, dispatch],
-  } = useConfigsContext();
+    isUpdateMode,
+    config: { musicConfigs },
+  } = useSelector((state: RootStore) => state.configs);
 
   return (
     <>
       <ConfigButton
         optionName="Song request"
-        setState={() =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...musicConfigs,
-              songRequest: !musicConfigs.songRequest,
-            },
-          })
+        setState={(e) =>
+          dispatch(setMusicConfigs(["songRequest", !musicConfigs.songRequest]))
         }
         value={musicConfigs.songRequest}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
       <ConfigInput
         optionName="Max auto que size"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...musicConfigs,
-              maxAutoQueSize: e.target.valueAsNumber,
-            },
-          })
+          dispatch(
+            setMusicConfigs(["maxAutoQueSize", e.currentTarget.valueAsNumber])
+          )
         }
         value={musicConfigs.maxAutoQueSize}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
       <ConfigInput
         optionName="Max song request by user"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...musicConfigs,
-              maxSongRequestByUser: e.target.valueAsNumber,
-            },
-          })
+          dispatch(
+            setMusicConfigs([
+              "maxSongRequestByUser",
+              e.currentTarget.valueAsNumber,
+            ])
+          )
         }
         value={musicConfigs.maxSongRequestByUser}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
     </>
   );

@@ -38,7 +38,7 @@ It **SHOULD NOT** be on online hosting.
 
 ## Built with
 
-- React.js
+- React.js (Redux + Tanstack)
 - Express.js
 - MongoDB
 - Socket.IO

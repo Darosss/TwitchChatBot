@@ -1,16 +1,18 @@
 import React from "react";
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-import { useGetUsersList } from "@services";
+import { fetchUsersDefaultParams, useGetUsers } from "@services";
 import FilterBarUsers from "./filterBarUsers";
 import UsersDetails from "./UsersDetails";
-import { AxiosError, Loading } from "@components/axiosHelper";
+import { Error, Loading } from "@components/axiosHelper";
+import { useQueryParams } from "@hooks/useQueryParams";
 
 export default function Users() {
-  const { data: usersData, loading, error } = useGetUsersList();
+  const searchParams = useQueryParams(fetchUsersDefaultParams);
+  const { data: usersData, isLoading, error } = useGetUsers(searchParams);
 
-  if (error) return <AxiosError error={error} />;
-  if (!usersData || loading) return <Loading />;
+  if (error) return <Error error={error} />;
+  if (!usersData || isLoading) return <Loading />;
 
   const { data, count, currentPage } = usersData;
   return (

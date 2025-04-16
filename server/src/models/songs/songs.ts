@@ -8,9 +8,19 @@ const SongsSchema: Schema<SongsDocument> = new Schema(
       required: true
     },
     youtubeId: {
-      type: String,
-      required: true,
-      unique: true
+      type: String
+    },
+    sunoId: {
+      type: String
+    },
+    localSong: {
+      type: Boolean
+    },
+    downloadedData: {
+      fileName: { type: String },
+      folderName: { type: String },
+      publicPath: { type: String },
+      required: false
     },
     customTitle: {
       band: {
@@ -59,7 +69,8 @@ const SongsSchema: Schema<SongsDocument> = new Schema(
       default: new Map()
     },
     lastUsed: { type: Date },
-    enabled: { type: Boolean, default: true, required: true }
+    enabled: { type: Boolean, default: true, required: true },
+    tags: { type: String }
   },
   { timestamps: true }
 );

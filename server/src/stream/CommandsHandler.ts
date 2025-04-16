@@ -1,45 +1,24 @@
-import HeadHandler from "./HeadHandler";
-import { ApiClient } from "@twurple/api";
-import { ChatCommandModel, CommandsConfigs, HeadConfigs, UserModel } from "@models";
-import {
-  ManageSongLikesAction,
-  getChatCommands,
-  getChatCommandsAliases,
-  getOneChatCommand,
-  updateChatCommandById
-} from "@services";
+import { ChatCommandModel, ConfigModel, UserModel } from "@models";
+import { ManageSongLikesAction, getChatCommandsAliases, getOneChatCommand, updateChatCommandById } from "@services";
 import { commandLogger, randomWithMax } from "@utils";
-import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";
-import { Server } from "socket.io";
-import MusicYTHandler from "./MusicYTHandler";
-import { AuthorizedUserData, MusicPlayerCommands } from "./types";
+import { MusicPlayerCommands } from "./types";
 import AchievementsHandler from "./AchievementsHandler";
+import MusicHeadHandler from "./music/MusicHeadHandler";
+import { ConfigManager } from "./ConfigManager";
+import { SocketHandler } from "@socket";
 
-type CommandsHandlerConfigs = CommandsConfigs & Pick<HeadConfigs, "permissionLevels">;
-
-class CommandsHandler extends HeadHandler {
+class CommandsHandler {
+  private configs: ConfigModel = ConfigManager.getInstance().getConfig();
   private commandsAliases: string[] = [];
   private defaultsMusicAliases = new Map<MusicPlayerCommands, number>();
-  private musicCommandsPermission: number;
-  private musicCommandCommonPermission: number;
-  private configs: CommandsHandlerConfigs;
-  private readonly musicHandler: MusicYTHandler;
-  private achievementsHandler: AchievementsHandler;
+  private musicHandler: MusicHeadHandler = MusicHeadHandler.getInstance();
 
-  constructor(
-    twitchApi: ApiClient,
-    socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
-    authorizedUser: AuthorizedUserData,
-    musicHandler: MusicYTHandler,
-    configs: CommandsHandlerConfigs,
-    achievementsHandler: AchievementsHandler
-  ) {
-    super(socketIO, twitchApi, authorizedUser);
-    this.configs = configs;
-    this.musicHandler = musicHandler;
-    this.musicCommandsPermission = this.configs.permissionLevels.mod;
-    this.musicCommandCommonPermission = this.configs.permissionLevels.all;
-    this.achievementsHandler = achievementsHandler;
+  constructor() {
+    ConfigManager.getInstance().registerObserver(this.handleConfigUpdate.bind(this));
+    const socketHandler = SocketHandler.getInstance();
+    socketHandler.subscribe("refreshCommands", this.refreshCommands.bind(this));
+    socketHandler.subscribe("changeModes", this.refreshCommands.bind(this));
+
     this.prepareMusicDefaultAliases();
     this.init();
   }
@@ -48,34 +27,36 @@ class CommandsHandler extends HeadHandler {
     await this.refreshCommands();
   }
 
+  private async handleConfigUpdate(newConfig: ConfigModel) {
+    this.configs = newConfig;
+    this.commandsAliases = (await getChatCommandsAliases(true)) || [];
+    commandLogger.debug(`Commands words [${this.commandsAliases}]`);
+  }
+
   public async refreshCommands() {
     this.commandsAliases = (await getChatCommandsAliases(true)) || [];
     commandLogger.debug(`Commands words [${this.commandsAliases}]`);
   }
 
-  public async refreshConfigs(configs: CommandsHandlerConfigs) {
-    this.configs = configs;
-    this.musicCommandsPermission = this.configs.permissionLevels.mod;
-    this.musicCommandCommonPermission = this.configs.permissionLevels.all;
-    this.prepareMusicDefaultAliases();
-  }
-
   private prepareMusicDefaultAliases() {
+    const permissions = this.configs.headConfigs.permissionLevels;
+    const modPermission = permissions.mod;
+    const allPermission = permissions.all;
     this.defaultsMusicAliases = new Map([
-      ["skip", this.musicCommandsPermission],
-      ["pause", this.musicCommandsPermission],
-      ["resume", this.musicCommandsPermission],
-      ["stop", this.musicCommandsPermission],
-      ["play", this.musicCommandsPermission],
-      ["load", this.musicCommandsPermission],
-      ["volume", this.musicCommandsPermission],
-      ["next", this.musicCommandCommonPermission],
-      ["previous", this.musicCommandCommonPermission],
-      ["when", this.musicCommandCommonPermission],
-      ["sr", this.musicCommandCommonPermission],
-      ["like", this.musicCommandCommonPermission],
-      ["dislike", this.musicCommandCommonPermission],
-      ["unlike", this.musicCommandCommonPermission]
+      ["skip", modPermission],
+      ["pause", modPermission],
+      ["resume", modPermission],
+      ["stop", modPermission],
+      ["play", modPermission],
+      ["load", modPermission],
+      ["volume", modPermission],
+      ["next", allPermission],
+      ["previous", allPermission],
+      ["when", allPermission],
+      ["sr", allPermission],
+      ["like", allPermission],
+      ["dislike", allPermission],
+      ["unlike", allPermission]
     ]);
   }
 
@@ -83,7 +64,7 @@ class CommandsHandler extends HeadHandler {
     const isCommand = this.messageStartsWithPrefix(message);
     if (!isCommand) return false;
 
-    await this.achievementsHandler.incrementCommandAchievements({
+    await AchievementsHandler.getInstance().incrementCommandAchievements({
       userId: user._id,
       username: user.username
     });
@@ -101,14 +82,14 @@ class CommandsHandler extends HeadHandler {
 
   private async checkMessageForCustomCommand(user: UserModel, message: string) {
     const commandAlias = this.commandsAliases.find((alias) => message.toLowerCase().includes(alias));
-    if (!commandAlias) return await this.notFoundCommand();
+    if (!commandAlias) return commandLogger.info("Not found command");
 
     return await this.findAndCheckCommandByAlias(user, commandAlias);
   }
 
   private async checkMessageForDefaultMusicCommand(user: UserModel, message: string) {
     const defaultMusicAlias = [...this.defaultsMusicAliases.keys()].find((alias: string) =>
-      message.toLowerCase().startsWith(this.configs.commandsPrefix + alias)
+      message.toLowerCase().startsWith(this.configs.commandsConfigs.commandsPrefix + alias)
     );
     if (defaultMusicAlias) {
       return this.onMessageMusicCommand(defaultMusicAlias, user.privileges, user.username, user._id, message);
@@ -154,21 +135,16 @@ class CommandsHandler extends HeadHandler {
         this.musicHandler.sayWhenUserRequestedSong(username);
         return true;
       case "load":
-        const loadCommand = `${this.configs.commandsPrefix}load`;
+        const loadCommand = `${this.configs.commandsConfigs.commandsPrefix}load`;
         const loadOpt = message.replace(loadCommand, "").trim();
-        this.musicHandler.loadNewSongs(loadOpt, true);
-        return true;
+        return await this.musicHandler.loadNewSongs("yt", loadOpt, true);
       case "sr":
-        const srCommand = `${this.configs.commandsPrefix}sr`;
+        const srCommand = `${this.configs.commandsConfigs.commandsPrefix}sr`;
         const songName = message.replace(srCommand, "").trim();
-        await this.achievementsHandler.incrementMusicSongRequestCommandAchievements({
-          userId,
-          username
-        });
-        await this.musicHandler.requestSong(username, songName);
-        return true;
+
+        return await this.musicHandler.requestSongByCommand({ username, songName });
       case "volume":
-        const volumeCommand = `${this.configs.commandsPrefix}volume`;
+        const volumeCommand = `${this.configs.commandsConfigs.commandsPrefix}volume`;
         const volume = Number(message.replace(volumeCommand, "").trim());
 
         this.musicHandler.changeVolume(volume);
@@ -177,7 +153,7 @@ class CommandsHandler extends HeadHandler {
       case "like":
       case "dislike":
       case "unlike":
-        await this.achievementsHandler.incrementMusicLikesCommandAchievements({
+        await AchievementsHandler.getInstance().incrementMusicLikesCommandAchievements({
           userId,
           username
         });
@@ -187,7 +163,7 @@ class CommandsHandler extends HeadHandler {
   }
 
   private messageStartsWithPrefix(message: string) {
-    if (message.startsWith(this.configs.commandsPrefix)) return true;
+    if (message.startsWith(this.configs.commandsConfigs.commandsPrefix)) return true;
   }
 
   private async findAndCheckCommandByAlias(user: UserModel, alias: string) {
@@ -268,24 +244,6 @@ class CommandsHandler extends HeadHandler {
     else if (detail instanceof Date) return detail.toLocaleString();
 
     return String(detail);
-  }
-
-  private async notFoundCommand() {
-    //Hard codded
-    let notFoundCommandMessage = "Not found command. Most used commands are:";
-
-    const mostUsedCommands = await getChatCommands({}, { limit: 3, sort: { uses: -1 }, select: { aliases: 1 } });
-
-    mostUsedCommands.forEach((command) => {
-      notFoundCommandMessage += ` ${this.configs.commandsPrefix}${command.aliases[0]} `;
-    });
-    [...this.defaultsMusicAliases.entries()].forEach(([command, permission]) => {
-      if (permission > this.musicCommandCommonPermission) return;
-
-      notFoundCommandMessage += ` ${this.configs.commandsPrefix}${command}`;
-    });
-
-    return notFoundCommandMessage;
   }
 }
 

@@ -1,19 +1,21 @@
 import { TableListWrapper } from "@components/tableWrapper";
-import { BadgeContextEditCreateDataProvider } from "./ContextEditCreateData";
 import EditCreateBadgeModal from "./EditCreateBadgeModal";
 import THeadBadgeData from "./THeadBadgeData";
 import TBodyManyBadgesData from "./TBodyBadgeData";
+import { Badge } from "@services";
 
-export default function BadgesListData() {
+interface BadgesListDataProps {
+badges:Badge[]
+}
+
+export default function BadgesListData({badges}:BadgesListDataProps) {
   return (
     <div className="badges-list-data-wrapper">
-      <BadgeContextEditCreateDataProvider>
-        <TableListWrapper
-          theadChildren={<THeadBadgeData />}
-          tbodyChildren={<TBodyManyBadgesData />}
-        />
-        <EditCreateBadgeModal />
-      </BadgeContextEditCreateDataProvider>
+      <TableListWrapper
+        theadChildren={<THeadBadgeData />}
+        tbodyChildren={<TBodyManyBadgesData badges={badges} />}
+      />
+      <EditCreateBadgeModal />
     </div>
   );
 }

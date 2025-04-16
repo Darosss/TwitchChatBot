@@ -1,65 +1,119 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Redemptions from "./redemptions";
-import { overlaysKeys } from "src/layout";
-import { getInitialCurrentBreakpoint } from "@utils";
+import { overlaysKeys } from "@layout";
+import { addNotification, getInitialCurrentBreakpoint } from "@utils";
 import ReactGrid from "@components/reactGrid";
 import MusicPlayer from "./musicPlayer";
-import YoutubePlayerVideo from "./youtubePlayerVideo";
 import { HelmetTitle } from "@components/componentWithTitle";
 import Achievements from "./achievements";
 import Chat from "./chat";
 import PreviewImageSelector from "./PreviewImageSelector";
-import { useOverlayDataContext } from "./OverlayDataContext";
 import StyleCSSEditor from "./StyleCSSEditor";
 import { useSocketContext } from "@socket";
+import {
+  useEditOverlay,
+  useGetOverlayById,
+  useRefetchOverlayById,
+} from "@services";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setId,
+  setIsEditor,
+  setLayout,
+  setOverlayState,
+  setToolbox,
+} from "@redux/overlaysSlice";
+import { RootStore } from "@redux/store";
+import { useParams } from "react-router-dom";
+import { Error, Loading } from "@components/axiosHelper";
 
 const components = new Map([
   [overlaysKeys.overlayRedemptions, Redemptions],
   [overlaysKeys.overlayMusicPlayer, MusicPlayer],
-  [overlaysKeys.overlayYoutubeMusicPlayer, YoutubePlayerVideo],
   [overlaysKeys.overlayAchievements, Achievements],
   [overlaysKeys.overlayChat, Chat],
 ]);
 
 export default function Overlay(params: { editor?: boolean }) {
   const { editor = false } = params;
+  const { overlayId } = useParams();
   const {
-    emits: { refreshOverlayLayout },
     events: { refreshOverlayLayout: refreshOverlayLayoutEvent },
   } = useSocketContext();
-  const {
-    layoutState,
-    toolboxState,
-    baseData,
-    fetchEditOverlay,
-    fetchRefreshData,
-    isEditorState: [, setIsEditor],
-  } = useOverlayDataContext();
+  const dispatch = useDispatch();
+
+  const overlaysStateRedux = useSelector((state: RootStore) => state.overlays);
+  const { isEditor, overlay: overlayState } = overlaysStateRedux;
 
   const [currentBreakpoint, setCurrentBreakpoint] = useState(
     getInitialCurrentBreakpoint()
   );
+  const editOverlayMutation = useEditOverlay();
+
+  //Note: Overlay is in route where overlayId should be.
+  const { data: overlayData, isLoading, error } = useGetOverlayById(overlayId!);
+  const refetchOverlayById = useRefetchOverlayById();
 
   useEffect(() => {
-    setIsEditor(editor);
+    if (!overlayId) {
+      addNotification(
+        "No overlay id",
+        "Something went wrong, no overlay id",
+        "warning"
+      );
+      return;
+    }
+    dispatch(setId(overlayId));
+  }, [dispatch, overlayId]);
+
+  useEffect(() => {
+    dispatch(setIsEditor(editor));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
 
   useEffect(() => {
     refreshOverlayLayoutEvent.on((id) => {
-      if (baseData._id !== id) return;
-      fetchRefreshData();
+      refetchOverlayById(id);
     });
 
     return () => {
       refreshOverlayLayoutEvent.off();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshOverlayLayoutEvent, baseData]);
+  }, [refreshOverlayLayoutEvent]);
 
+  useEffect(() => {
+    if (!overlayData) return;
+
+    dispatch(setOverlayState(overlayData.data));
+
+    dispatch(setId(overlayData.data._id));
+  }, [overlayData, dispatch]);
+
+  if (error) return <Error error={error} />;
+  if (isLoading || !overlayData) return <Loading />;
+
+  const handleOnEditOverlay = (
+    layoutState: ReactGridLayout.Layouts,
+    toolboxState: ReactGridLayout.Layouts
+  ) => {
+    if (!overlayId) {
+      addNotification("Couldn't update overlay", "No overlay id", "warning");
+      return;
+    }
+    dispatch(setLayout(layoutState));
+    dispatch(setToolbox(toolboxState));
+    editOverlayMutation.mutate({
+      id: overlayId,
+      updatedOverlay: {
+        layout: layoutState,
+        toolbox: toolboxState,
+      },
+    });
+  };
   return (
     <div>
-      <HelmetTitle title={"Overlay " + baseData.name} />
+      <HelmetTitle title={"Overlay " + overlayState.name} />
       {editor ? (
         <>
           <StyleCSSEditor />
@@ -67,15 +121,13 @@ export default function Overlay(params: { editor?: boolean }) {
         </>
       ) : null}
       <ReactGrid
-        layoutName={baseData.name}
-        layoutState={layoutState}
-        toolboxState={toolboxState}
+        layoutName={overlayState.name}
+        layoutState={overlayState.layout}
+        toolboxState={overlayState.toolbox}
         currentBreakpointState={[currentBreakpoint, setCurrentBreakpoint]}
         componentsMap={components}
-        onEdit={() =>
-          fetchEditOverlay().then(() => refreshOverlayLayout(baseData._id))
-        }
-        showDrawer={editor}
+        onEdit={handleOnEditOverlay}
+        showDrawer={isEditor}
       />
     </div>
   );

@@ -1,13 +1,57 @@
 //TODO: I do not use tsconfig @paths here for one reason. These types right now are imported in /frontend @SocketTypes path
 // When using /server paths it does not know the proper path. So use ../../ paths instead for now.
-
+import { DownloadedData } from "../../models/songs";
 import { AchievementModel, StageDataWithBadgePopulated, UserModel } from "../../models";
 import { UpdateAchievementUserProgressProgressesArgs } from "../../services";
 import { CommonUserstate, DeleteUserstate } from "tmi.js";
 
+export type SongType = "yt" | "local";
+
+export interface SongProperties {
+  id: string;
+  name: string;
+  duration: number;
+  type: SongType;
+  downloadedData?: DownloadedData;
+}
+
+export interface AudioStreamData {
+  downloadedData?: SongProperties["downloadedData"];
+  id: string;
+  name: string;
+  duration: number;
+  currentTime: number;
+  requester?: string;
+  volume: number;
+  type: SongType;
+}
+
+export type AudioStreamDataEmitCb = {
+  audioData: AudioStreamData;
+  isPlaying: boolean;
+} & AudioStreamDataSongsInQue;
+
+export interface AudioStreamDataSongsInQue {
+  songsInQue: [string, string][];
+}
+
+export interface RequestSongData {
+  username: string;
+  songName: string;
+}
+
+export interface EventAndUser {
+  eventDate: Date;
+  eventName: string;
+  user: UserModel;
+}
+
+export interface AudioChunkData {
+  chunk: string | Buffer;
+}
+
 export type MessageServerDataBadgesPathsType = [string, string, string];
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface AddAchievementProgressToUserData extends UpdateAchievementUserProgressProgressesArgs {
   username: string;
 }
@@ -26,37 +70,6 @@ export interface MessageServerDeleteData {
   username: string;
   userstate: DeleteUserstate;
   deletedMessage: string;
-}
-
-export interface AudioDataRequester {
-  id: string;
-  username: string;
-}
-
-export interface AudioYTData {
-  id: string;
-  name: string;
-  duration: number;
-  currentTime: number;
-  requester?: AudioDataRequester;
-  volume: number;
-}
-
-export interface AudioStreamData extends AudioYTData {
-  audioBuffer: Buffer;
-}
-
-export interface AudioYTDataInfo {
-  name: string;
-  duration: number;
-  currentTime: number;
-  songsInQue: [string, AudioDataRequester | undefined][];
-  isPlaying: boolean;
-  volume: number;
-}
-
-export interface AudioStreamDataInfo extends AudioYTDataInfo {
-  currentFolder: string;
 }
 
 export interface CustomRewardCreateData {

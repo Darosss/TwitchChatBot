@@ -1,188 +1,81 @@
-import React, { useReducer, useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
 import FilterBarTimers from "./filterBarTimers";
 import {
-  Timer,
   useGetTimers,
   useEditTimer,
   useCreateTimer,
-  useDeleteTimer,
-  TimerCreateData,
+  fetchTimersDefaultParams,
 } from "@services";
-import { useSocketContext } from "@socket";
-import { addSuccessNotification } from "@utils";
-import { useGetAllModes } from "@utils";
-import { DispatchAction } from "./types";
 import TimersData from "./TimersData";
 import TimerModalData from "./TimerModalData";
-import { AxiosError, Loading } from "@components/axiosHelper";
-import { useAxiosWithConfirmation } from "@hooks";
+import { useQueryParams } from "@hooks/useQueryParams";
+import { RootStore } from "@redux/store";
+import { closeModal, resetTimerState, setEditingId } from "@redux/timersSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { Error, Loading } from "@components/axiosHelper";
+import { addNotification } from "@utils";
 
 export default function TimersList() {
-  const [showModal, setShowModal] = useState(false);
-
+  const queryParams = useQueryParams(fetchTimersDefaultParams);
+  const { data: timers, isLoading, error } = useGetTimers(queryParams);
+  const dispatch = useDispatch();
   const {
-    emits: { refreshTimers: emitRefreshTimers },
-  } = useSocketContext();
+    isModalOpen,
+    timer: timerState,
+    editingId,
+  } = useSelector((state: RootStore) => state.timers);
+  const createTimerMutation = useCreateTimer();
+  const updateTimerMutation = useEditTimer();
 
-  const [editingTimer, setEditingTimer] = useState("");
+  if (error) return <Error error={error} />;
+  if (isLoading || !timers) return <Loading />;
 
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const modes = useGetAllModes();
-
-  const { data: commandsData, loading, error, refetchData } = useGetTimers();
-
-  const { refetchData: fetchEditTimer } = useEditTimer(editingTimer, state);
-  const { refetchData: fetchCreateTimer } = useCreateTimer(state);
-
-  const setTimerIdDelete = useAxiosWithConfirmation({
-    hookToProceed: useDeleteTimer,
-    opts: {
-      onFullfiled: () => refetchData(),
-    },
-  });
-
-  if (error) return <AxiosError error={error} />;
-  if (loading || !commandsData || !modes) return <Loading />;
-
-  const { data, count, currentPage } = commandsData;
-
-  const onSubmitModalCreate = () => {
-    fetchCreateTimer().then(() => {
-      emitRefreshTimers();
-      addSuccessNotification("Timer created successfully");
-      refetchData();
-      setShowModal(false);
-    });
+  const handleCreateTimer = () => {
+    createTimerMutation.mutate(timerState);
+    dispatch(resetTimerState());
+    dispatch(closeModal());
   };
 
-  const onSubmitModalEdit = () => {
-    fetchEditTimer().then(() => {
-      emitRefreshTimers();
-      addSuccessNotification("Timer edited successfully");
-      refetchData();
-      handleOnHideModal();
-    });
-  };
-
-  const setState = (timer: Timer) => {
-    dispatch({
-      type: "SET_STATE",
-      payload: {
-        name: timer.name,
-        enabled: timer.enabled,
-        delay: timer.delay,
-        description: timer.description,
-        nonFollowMulti: timer.nonFollowMulti,
-        nonSubMulti: timer.nonSubMulti,
-        reqPoints: timer.reqPoints,
-        messages: timer.messages,
-        tag: timer.tag._id,
-        mood: timer.mood._id,
-      },
-    });
-  };
-
-  const handleOnShowEditModal = (timer: Timer) => {
-    setEditingTimer(timer._id);
-    setState(timer);
-    setShowModal(true);
-  };
-
-  const handleOnShowCreateModal = (timer?: Timer) => {
-    if (timer) {
-      setState(timer);
-    } else {
-      dispatch({ type: "SET_STATE", payload: initialState });
+  const handleUpdateTimer = () => {
+    if (!editingId) {
+      addNotification("Couldn't update timer", "No timer id", "warning");
+      return;
     }
-    setShowModal(true);
-  };
-
-  const handleOnHideModal = () => {
-    setShowModal(false);
-    setEditingTimer("");
+    updateTimerMutation.mutate({
+      id: editingId,
+      updatedTimer: timerState,
+    });
+    dispatch(resetTimerState());
+    dispatch(setEditingId(""));
+    dispatch(closeModal());
   };
 
   return (
     <>
       <PreviousPage />
       <FilterBarTimers />
-      <TimersData
-        data={data}
-        handleOnShowCreateModal={handleOnShowCreateModal}
-        handleOnShowEditModal={handleOnShowEditModal}
-        setTimerIdToDelete={setTimerIdDelete}
-      />
+      <TimersData data={timers.data} />
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
           localStorageName="timersListPageSize"
-          currentPage={currentPage}
-          totalCount={count}
+          currentPage={timers.currentPage}
+          totalCount={timers.count}
           siblingCount={1}
         />
       </div>
       <Modal
-        title={`${editingTimer ? "Edit" : "Create"} timer`}
-        onClose={handleOnHideModal}
+        title={`${editingId ? "Edit" : "Create"} timer`}
+        onClose={() => dispatch(closeModal())}
         onSubmit={() => {
-          editingTimer ? onSubmitModalEdit() : onSubmitModalCreate();
+          editingId ? handleUpdateTimer() : handleCreateTimer();
         }}
-        show={showModal}
+        show={isModalOpen}
       >
-        <TimerModalData state={state} dispatch={dispatch} modes={modes} />
+        <TimerModalData />
       </Modal>
     </>
   );
-}
-
-const initialState: TimerCreateData = {
-  name: "",
-  enabled: true,
-  delay: 360,
-  description: "",
-  nonFollowMulti: false,
-  nonSubMulti: false,
-  reqPoints: 10,
-  messages: [""],
-  tag: "",
-  mood: "",
-};
-
-function reducer(
-  state: TimerCreateData,
-  action: DispatchAction
-): TimerCreateData {
-  switch (action.type) {
-    case "SET_NAME":
-      return { ...state, name: action.payload };
-    case "SET_ENABLED":
-      return { ...state, enabled: action.payload || !state.enabled };
-    case "SET_DELAY":
-      return { ...state, delay: action.payload };
-    case "SET_REQ_POINTS":
-      return { ...state, reqPoints: action.payload };
-    case "SET_NON_FOLLOW_MULTI":
-      return {
-        ...state,
-        nonFollowMulti: action.payload || !state.nonFollowMulti,
-      };
-    case "SET_NON_SUB_MULTI":
-      return { ...state, nonSubMulti: action.payload || !state.nonSubMulti };
-    case "SET_DESC":
-      return { ...state, description: action.payload };
-    case "SET_MESSAGES":
-      return { ...state, messages: action.payload };
-    case "SET_TAG":
-      return { ...state, tag: action.payload };
-    case "SET_MOOD":
-      return { ...state, mood: action.payload };
-    case "SET_STATE":
-      return { ...state, ...action.payload };
-    default:
-      throw new Error("Invalid action type");
-  }
 }

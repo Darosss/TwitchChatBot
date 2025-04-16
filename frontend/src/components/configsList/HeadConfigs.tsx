@@ -1,31 +1,29 @@
+import { useDispatch, useSelector } from "react-redux";
 import ConfigInput from "./ConfigInput";
-import { useConfigsContext } from "./ConfigsContext";
-import { ConfigsDispatchActionType, ConfigsWrapperSharedProps } from "./types";
+import { RootStore } from "@redux/store";
+import { setHeadConfigs } from "@redux/configsSlice";
 
-const DISPATCH_TYPE = ConfigsDispatchActionType.SET_HEAD;
-
-export default function HeadConfigsWrapper({
-  showEdit,
-}: ConfigsWrapperSharedProps) {
+export default function HeadConfigsWrapper() {
+  const dispatch = useDispatch();
   const {
-    configState: [{ headConfigs }, dispatch],
-  } = useConfigsContext();
+    isUpdateMode,
+    config: { headConfigs },
+  } = useSelector((state: RootStore) => state.configs);
 
   return (
     <>
       <ConfigInput
         optionName="Interval check viewers peek delay"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...headConfigs,
-              intervalCheckViewersPeek: e.target.valueAsNumber,
-            },
-          })
+          dispatch(
+            setHeadConfigs([
+              "intervalCheckViewersPeek",
+              e.currentTarget.valueAsNumber,
+            ])
+          )
         }
         value={headConfigs.intervalCheckViewersPeek}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
       <div className="configs-section-inner-header">
         Delay between messages in ms
@@ -33,105 +31,99 @@ export default function HeadConfigsWrapper({
       <ConfigInput
         optionName="Min"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...headConfigs,
-              delayBetweenMessages: {
+          dispatch(
+            setHeadConfigs([
+              "delayBetweenMessages",
+              {
                 ...headConfigs.delayBetweenMessages,
-                min: e.target.valueAsNumber,
+                min: e.currentTarget.valueAsNumber,
               },
-            },
-          })
+            ])
+          )
         }
         value={headConfigs.delayBetweenMessages.min}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
       <ConfigInput
         optionName="Max"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...headConfigs,
-              delayBetweenMessages: {
+          dispatch(
+            setHeadConfigs([
+              "delayBetweenMessages",
+              {
                 ...headConfigs.delayBetweenMessages,
-                max: e.target.valueAsNumber,
+                max: e.currentTarget.valueAsNumber,
               },
-            },
-          })
+            ])
+          )
         }
         value={headConfigs.delayBetweenMessages.max}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
       <div className="configs-section-inner-header">Permissions levels</div>
       <ConfigInput
         optionName="Broadcaster"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...headConfigs,
-              permissionLevels: {
+          dispatch(
+            setHeadConfigs([
+              "permissionLevels",
+              {
                 ...headConfigs.permissionLevels,
-                broadcaster: e.target.valueAsNumber,
+                broadcaster: e.currentTarget.valueAsNumber,
               },
-            },
-          })
+            ])
+          )
         }
         value={headConfigs.permissionLevels.broadcaster}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
       <ConfigInput
         optionName="Mod"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...headConfigs,
-              permissionLevels: {
+          dispatch(
+            setHeadConfigs([
+              "permissionLevels",
+              {
                 ...headConfigs.permissionLevels,
-                mod: e.target.valueAsNumber,
+                mod: e.currentTarget.valueAsNumber,
               },
-            },
-          })
+            ])
+          )
         }
         value={headConfigs.permissionLevels.mod}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
       <ConfigInput
         optionName="Vip"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...headConfigs,
-              permissionLevels: {
+          dispatch(
+            setHeadConfigs([
+              "permissionLevels",
+              {
                 ...headConfigs.permissionLevels,
-                vip: e.target.valueAsNumber,
+                vip: e.currentTarget.valueAsNumber,
               },
-            },
-          })
+            ])
+          )
         }
         value={headConfigs.permissionLevels.vip}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
       <ConfigInput
         optionName="All"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...headConfigs,
-              permissionLevels: {
+          dispatch(
+            setHeadConfigs([
+              "permissionLevels",
+              {
                 ...headConfigs.permissionLevels,
-                all: e.target.valueAsNumber,
+                all: e.currentTarget.valueAsNumber,
               },
-            },
-          })
+            ])
+          )
         }
         value={headConfigs.permissionLevels.all}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
     </>
   );

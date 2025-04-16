@@ -1,4 +1,4 @@
-import { TriggerModel, TriggerMode, TriggersConfigs, MoodModel } from "@models";
+import { TriggerModel, TriggerMode, MoodModel, ConfigModel } from "@models";
 import {
   getEnabledSuffixesAndPrefixes,
   getMultiperEnabledAfixesChances,
@@ -10,15 +10,20 @@ import {
   updateTriggers
 } from "@services";
 import { percentChance, randomWithMax, triggerLogger } from "@utils";
+import { ConfigManager } from "./ConfigManager";
+import { SocketHandler } from "@socket";
 
 class TriggersHandler {
-  private configs: TriggersConfigs;
+  private configs: ConfigModel = ConfigManager.getInstance().getConfig();
   private triggersWords: string[] = [];
   private triggersOnDelay: Map<string, NodeJS.Timeout> = new Map();
   private affixesMultipler = { prefixMult: 1, suffixMult: 1 };
 
-  constructor(configs: TriggersConfigs) {
-    this.configs = configs;
+  constructor() {
+    ConfigManager.getInstance().registerObserver(this.handleConfigUpdate.bind(this));
+    SocketHandler.getInstance().subscribe("refreshTriggers", this.refreshTriggers.bind(this));
+    SocketHandler.getInstance().subscribe("changeModes", this.refreshTriggers.bind(this));
+
     this.init();
   }
 
@@ -26,14 +31,15 @@ class TriggersHandler {
     Promise.all([this.refreshTriggers(), this.setEveryTriggerDelayOff(), this.updateAffixesMultiplers()]);
   }
 
-  public async refreshTriggers() {
+  private async refreshTriggers() {
     this.triggersWords = (await getTriggersWords(true)) || [];
+    triggerLogger.info(`refreshTriggers invoked: [${this.triggersWords.join(" | ")}]`);
 
     await this.updateAffixesMultiplers();
   }
 
-  public async refreshConfigs(configs: TriggersConfigs) {
-    this.configs = configs;
+  private async handleConfigUpdate(newConfig: ConfigModel) {
+    this.configs = newConfig;
 
     await this.updateAffixesMultiplers();
   }
@@ -85,7 +91,7 @@ class TriggersHandler {
   }
 
   private canSendRandomMessage() {
-    if (percentChance(this.configs.randomMessageChance)) return true;
+    if (percentChance(this.configs.triggersConfigs.randomMessageChance)) return true;
     return false;
   }
 
@@ -108,14 +114,14 @@ class TriggersHandler {
   }
 
   private shouldGetPrefix() {
-    const prefixChance = this.configs.prefixChance * this.affixesMultipler.prefixMult;
+    const prefixChance = this.configs.triggersConfigs.prefixChance * this.affixesMultipler.prefixMult;
     if (percentChance(prefixChance)) {
       return true;
     }
     return false;
   }
   private shouldGetsuffix() {
-    const suffixChance = this.configs.suffixChance * this.affixesMultipler.suffixMult;
+    const suffixChance = this.configs.triggersConfigs.suffixChance * this.affixesMultipler.suffixMult;
     if (percentChance(suffixChance)) {
       return true;
     }

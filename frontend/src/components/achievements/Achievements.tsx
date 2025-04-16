@@ -1,5 +1,4 @@
 import PreviousPage from "@components/previousPage";
-import React from "react";
 import { Link } from "react-router-dom";
 
 export default function Achievements() {

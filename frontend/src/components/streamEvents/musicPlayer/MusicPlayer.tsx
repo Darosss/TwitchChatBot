@@ -1,35 +1,110 @@
-import React, { useState } from "react";
+import { useCallback, useState } from "react";
 
-import LocalMusicPlayer from "./LocalMusicPlayer";
-import YTMusicPlayer from "./YTMusicPlayer";
+import AudioInformation from "./AudioInformation";
+import YTMusicPlayer from "./yt/YTMusicPlayer";
+import LocalMusicPlayer from "./local/LocalMusicPlayer";
+import SterringButtons from "./SterringButtonsPlayer";
+import { AddSong } from "./addSong/AddSong";
+import { DownloadedSongPlayer, YoutubePlayer } from "@components/musicPlayers";
+import useMusicPlayer from "@hooks/useMusicPlayer";
+import PlayerOptions from "./PlayerOptions";
 
-type AvailableWindows = "local" | "yt";
+enum AvailableWindowsEnum {
+  LOCAL = "local",
+  YT = "yt",
+  ADD_SONG = "add song",
+  OPTIONS = "options",
+}
+
 export default function MusicPlayer() {
-  const [currentWindow, setCurrentWindow] = useState<AvailableWindows>("yt");
+  const [currentWindow, setCurrentWindow] = useState<AvailableWindowsEnum>(
+    AvailableWindowsEnum.YT
+  );
+  const [audioMonitor, setAudioMonitor] = useState(false);
 
-  const toggleMusicWindow = () => {
-    if (currentWindow === "local") setCurrentWindow("yt");
-    else {
-      setCurrentWindow("local");
+  const {
+    audioData,
+    isPlaying,
+    songsInQue,
+    setAudioData,
+    emitPlay,
+    emitPause,
+    emitNext,
+    emitChangeVolume,
+  } = useMusicPlayer();
+
+  const playersButtons = useCallback(
+    () =>
+      Object.values(AvailableWindowsEnum).map((window) => (
+        <button
+          key={window}
+          className={`common-button switch-players-button ${
+            currentWindow === window ? "primary-button" : "tertiary-button"
+          }`}
+          onClick={() => setCurrentWindow(window)}
+        >
+          {window}
+        </button>
+      )),
+    [currentWindow]
+  );
+
+  const currentPlayerActions = useCallback(() => {
+    switch (currentWindow) {
+      case AvailableWindowsEnum.LOCAL:
+        return <LocalMusicPlayer />;
+      case AvailableWindowsEnum.YT:
+        return <YTMusicPlayer />;
+      case AvailableWindowsEnum.ADD_SONG:
+        return <AddSong />;
+      case AvailableWindowsEnum.OPTIONS:
+        return (
+          <PlayerOptions
+            audioMonitor={audioMonitor}
+            onChangeAudioMonitor={(value) => {
+              setAudioMonitor(value);
+            }}
+          />
+        );
     }
-  };
-
+  }, [currentWindow, audioMonitor]);
   return (
     <div className="music-player-widget">
       <div className="widget-header">
-        {currentWindow === "local" ? "Local" : "YT"} Music player
+        {currentWindow.toUpperCase()} Music player
       </div>
-      <div className="music-player-switch-wrapper">
-        <button
-          className="common-button tertiary-button switch-players-button"
-          onClick={() => {
-            toggleMusicWindow();
+      <div className="music-player-switch-wrapper">{playersButtons()}</div>
+      <div className="music-player-current-actions">
+        {currentPlayerActions()}
+      </div>
+      <div className="music-player-steering-buttons">
+        <SterringButtons
+          playing={isPlaying}
+          pauseFn={emitPause}
+          playFn={emitPlay}
+          onNextSongFn={emitNext}
+        />
+      </div>
+      <div className="music-player-audio-info">
+        <AudioInformation
+          isPlaying={isPlaying}
+          audioServerData={{
+            audioData,
+            isPlaying,
+            songsInQue,
           }}
-        >
-          Switch to: {currentWindow === "local" ? "YT" : "Local"}
-        </button>
+          setAudioData={setAudioData}
+          changeVolumeFn={(value) => {
+            emitChangeVolume(value);
+          }}
+        />
       </div>
-      {currentWindow === "local" ? <LocalMusicPlayer /> : <YTMusicPlayer />}
+
+      {audioMonitor && audioData.downloadedData && audioData.type !== "yt" ? (
+        <DownloadedSongPlayer data={{ audioData, isPlaying, songsInQue }} />
+      ) : audioMonitor && audioData.type === "yt" ? (
+        <YoutubePlayer isPlaying={isPlaying} songId={audioData.id} />
+      ) : null}
     </div>
   );
 }

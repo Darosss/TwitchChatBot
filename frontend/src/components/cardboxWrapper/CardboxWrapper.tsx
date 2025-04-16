@@ -4,7 +4,7 @@ interface CardboxCommonProps {
 }
 
 interface CardboxItemProps extends CardboxCommonProps {
-  onClickX: () => void | unknown;
+  onClickX?: () => void | unknown;
 }
 
 export default function CardboxWrapper({

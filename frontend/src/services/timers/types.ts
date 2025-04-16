@@ -1,4 +1,4 @@
-import { BaseModelProperties } from "../api";
+import { BaseModelProperties, DefaultRequestParams } from "../api";
 import { Mood } from "../moods";
 import { Tag } from "../tags";
 
@@ -27,3 +27,8 @@ export interface TimerCreateData
 }
 
 export interface TimerUpdateData extends Partial<TimerCreateData> {}
+
+export interface FetchTimerParams extends DefaultRequestParams<keyof Timer> {
+  search_name?: string;
+  messages?: string;
+}

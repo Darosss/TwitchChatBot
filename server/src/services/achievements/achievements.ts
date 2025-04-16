@@ -110,9 +110,7 @@ export const updateOneAchievement = async (
   updateData: UpdateQuery<AchievementUpdateData>
 ) => {
   try {
-    const updatedAchievement = await Achievement.findOneAndUpdate(filter, updateData, {
-      new: true
-    });
+    const updatedAchievement = await Achievement.findOneAndUpdate(filter, updateData, { new: true });
 
     const achievement = checkExistResource(updatedAchievement, "Achievement");
 
@@ -129,11 +127,10 @@ export const createCustomAchievement = async (createData: CustomAchievementCreat
     const { custom } = createData;
     handleCustomAchievementActionData(custom);
 
-    //Make sure WATCH_TIME is checked as time
-    if (custom.action === CustomAchievementAction.WATCH_TIME) createData.isTime = true;
-    else createData.isTime = false;
-
-    const createdAchievementStage = await Achievement.create({ ...createData });
+    const createdAchievementStage = await Achievement.create({
+      ...createData,
+      isTime: custom.action === CustomAchievementAction.WATCH_TIME ? true : false
+    });
 
     if (!createdAchievementStage) {
       throw new AppError(400, "Couldn't create new custom achievement");

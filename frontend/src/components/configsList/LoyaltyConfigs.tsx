@@ -1,31 +1,29 @@
+import { useDispatch, useSelector } from "react-redux";
 import ConfigInput from "./ConfigInput";
-import { useConfigsContext } from "./ConfigsContext";
-import { ConfigsDispatchActionType, ConfigsWrapperSharedProps } from "./types";
+import { RootStore } from "@redux/store";
+import { setLoyaltyConfigs } from "@redux/configsSlice";
 
-const DISPATCH_TYPE = ConfigsDispatchActionType.SET_LOYALTY;
-
-export default function LoyaltyConfigsWrapper({
-  showEdit,
-}: ConfigsWrapperSharedProps) {
+export default function LoyaltyConfigsWrapper() {
+  const dispatch = useDispatch();
   const {
-    configState: [{ loyaltyConfigs }, dispatch],
-  } = useConfigsContext();
+    isUpdateMode,
+    config: { loyaltyConfigs },
+  } = useSelector((state: RootStore) => state.configs);
 
   return (
     <>
       <ConfigInput
         optionName="Interval check chatters delay"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...loyaltyConfigs,
-              intervalCheckChatters: e.target.valueAsNumber,
-            },
-          })
+          dispatch(
+            setLoyaltyConfigs([
+              "intervalCheckChatters",
+              e.currentTarget.valueAsNumber,
+            ])
+          )
         }
         value={loyaltyConfigs.intervalCheckChatters}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
     </>
   );

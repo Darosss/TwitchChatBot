@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Link, LinkProps, useLocation } from "react-router-dom";
 import { resetWindowScroll } from "@utils";
@@ -17,7 +17,7 @@ export default function SideBar() {
   const {
     data: authData,
     error,
-    refetchData: refetchAuthData,
+    refetch: refetchAuthorizeUrl,
   } = useGetAuthorizeUrl();
   const {
     emits: { logout: emitLogout },
@@ -72,7 +72,9 @@ export default function SideBar() {
           <li>
             <button
               className="common-button tertiary-button"
-              onClick={refetchAuthData}
+              onClick={() => {
+                refetchAuthorizeUrl();
+              }}
             >
               Refresh Link
             </button>

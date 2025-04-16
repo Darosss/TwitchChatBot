@@ -1,7 +1,7 @@
-import { AxiosError, Loading } from "@components/axiosHelper";
+import { Error, Loading } from "@components/axiosHelper";
 import Pagination from "@components/pagination";
 import { Badge, useGetBadges } from "@services";
-import { viteBackendUrl } from "src/configs/envVariables";
+import { viteBackendUrl } from "@configs/envVariables";
 
 interface ModalBadgesListProps {
   onClickBadge: (badge: Badge) => void;
@@ -10,9 +10,9 @@ interface ModalBadgesListProps {
 export default function ModalBadgesList({
   onClickBadge,
 }: ModalBadgesListProps) {
-  const { data: badgesData, loading, error } = useGetBadges();
-  if (error) return <AxiosError error={error} />;
-  if (loading || !badgesData) return <Loading />;
+  const { data: badgesData, isLoading, error } = useGetBadges();
+  if (error) return <Error error={error} />;
+  if (isLoading || !badgesData) return <Loading />;
 
   const { data, count, currentPage } = badgesData;
 

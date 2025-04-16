@@ -1,184 +1,86 @@
-import React, { useReducer, useState } from "react";
 import Pagination from "@components/pagination";
 import Modal from "@components/modal";
 import PreviousPage from "@components/previousPage";
 import FilterBarTriggers from "./filterBarTriggers";
 import {
-  Trigger,
   useGetTriggers,
   useEditTrigger,
   useCreateTrigger,
-  useDeleteTrigger,
-  TriggerCreateData,
+  fetchTriggersDefaultParams,
 } from "@services";
-import { addSuccessNotification } from "@utils";
-import { useGetAllModes } from "@utils";
+import { addNotification } from "@utils";
 import TriggersData from "./TriggersData";
 import TriggerModalData from "./TriggerModalData";
-import { DispatchAction } from "./types";
-import { useSocketContext } from "@socket";
-import { AxiosError, Loading } from "@components/axiosHelper";
-import { useAxiosWithConfirmation } from "@hooks";
+import { Loading } from "@components/axiosHelper";
+import { useDispatch, useSelector } from "react-redux";
+import { useQueryParams } from "@hooks/useQueryParams";
+import { RootStore } from "@redux/store";
+import Error from "@components/axiosHelper/errors";
+import {
+  closeModal,
+  resetTriggerState,
+  setEditingId,
+} from "@redux/triggersSlice";
 
 export default function TriggersList() {
-  const [showModal, setShowModal] = useState(false);
+  const queryParams = useQueryParams(fetchTriggersDefaultParams);
+  const { data: triggers, isLoading, error } = useGetTriggers(queryParams);
+  const dispatch = useDispatch();
   const {
-    emits: { refreshTriggers: emitRefreshTriggers },
-  } = useSocketContext();
+    isModalOpen,
+    trigger: triggerState,
+    editingId,
+  } = useSelector((state: RootStore) => state.triggers);
 
-  const [editingTrigger, setEditingTrigger] = useState("");
+  const createTriggerMutation = useCreateTrigger();
+  const updateTriggerMutation = useEditTrigger();
 
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const modes = useGetAllModes();
-
-  const { data: commandsData, loading, error, refetchData } = useGetTriggers();
-
-  const { refetchData: fetchEditTrigger } = useEditTrigger(
-    editingTrigger,
-    state
-  );
-  const { refetchData: fetchCreateTrigger } = useCreateTrigger(state);
-
-  const setTriggerIdDelete = useAxiosWithConfirmation({
-    hookToProceed: useDeleteTrigger,
-    opts: {
-      onFullfiled: () => refetchData(),
-    },
-  });
-
-  if (error) return <AxiosError error={error} />;
-  if (loading || !commandsData || !modes) return <Loading />;
-
-  const { data, count, currentPage } = commandsData;
-
-  const onSubmitModalCreate = () => {
-    fetchCreateTrigger().then(() => {
-      emitRefreshTriggers();
-      addSuccessNotification("Trigger created successfully");
-      refetchData();
-      setShowModal(false);
-    });
+  if (error) return <Error error={error} />;
+  if (isLoading || !triggers) return <Loading />;
+  const handleCreateTrigger = () => {
+    createTriggerMutation.mutate(triggerState);
+    dispatch(resetTriggerState());
+    dispatch(closeModal());
   };
 
-  const onSubmitModalEdit = () => {
-    fetchEditTrigger().then(() => {
-      emitRefreshTriggers();
-      addSuccessNotification("Trigger edited successfully");
-      refetchData();
-      handleOnHideModal();
-    });
-  };
-
-  const setState = (trigger: Trigger) => {
-    dispatch({
-      type: "SET_STATE",
-      payload: {
-        name: trigger.name,
-        delay: trigger.delay,
-        chance: trigger.chance,
-        enabled: trigger.enabled,
-        messages: trigger.messages,
-        mode: trigger.mode,
-        mood: trigger.mood._id,
-        tag: trigger.tag._id,
-        words: trigger.words,
-      },
-    });
-  };
-
-  const handleOnShowEditModal = (trigger: Trigger) => {
-    setEditingTrigger(trigger._id);
-    setState(trigger);
-    setShowModal(true);
-  };
-
-  const handleOnShowCreateModal = (trigger?: Trigger) => {
-    if (trigger) {
-      setState(trigger);
-    } else {
-      dispatch({ type: "SET_STATE", payload: initialState });
+  const handleUpdateTrigger = () => {
+    if (!editingId) {
+      addNotification("Couldn't update trigger", "No trigger id", "warning");
+      return;
     }
-
-    setShowModal(true);
-  };
-
-  const handleOnHideModal = () => {
-    setShowModal(false);
-    setEditingTrigger("");
+    updateTriggerMutation.mutate({
+      id: editingId,
+      updatedTrigger: triggerState,
+    });
+    dispatch(resetTriggerState());
+    dispatch(setEditingId(""));
+    dispatch(closeModal());
   };
 
   return (
     <>
       <PreviousPage />
       <FilterBarTriggers />
-      <TriggersData
-        data={data}
-        handleOnShowCreateModal={handleOnShowCreateModal}
-        handleOnShowEditModal={handleOnShowEditModal}
-        setTriggerIdDelete={setTriggerIdDelete}
-      />
+      <TriggersData data={triggers.data} />
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
           localStorageName="triggersListPageSize"
-          currentPage={currentPage}
-          totalCount={count}
+          currentPage={triggers.currentPage}
+          totalCount={triggers.count}
           siblingCount={1}
         />
       </div>
       <Modal
-        title={`${editingTrigger ? "Edit" : "Create"} trigger`}
-        onClose={handleOnHideModal}
+        title={`${editingId ? "Edit" : "Create"} trigger`}
+        onClose={() => dispatch(closeModal())}
         onSubmit={() => {
-          editingTrigger ? onSubmitModalEdit() : onSubmitModalCreate();
+          editingId ? handleUpdateTrigger() : handleCreateTrigger();
         }}
-        show={showModal}
+        show={isModalOpen}
       >
-        <TriggerModalData state={state} dispatch={dispatch} modes={modes} />
+        <TriggerModalData />
       </Modal>
     </>
   );
-}
-
-const initialState: TriggerCreateData = {
-  name: "",
-  chance: 50,
-  enabled: true,
-  delay: 360,
-  messages: [""],
-  words: [""],
-  mode: "ALL",
-  tag: "",
-  mood: "",
-};
-
-function reducer(
-  state: TriggerCreateData,
-  action: DispatchAction
-): TriggerCreateData {
-  switch (action.type) {
-    case "SET_NAME":
-      return { ...state, name: action.payload };
-    case "SET_CHANCE":
-      return { ...state, chance: action.payload };
-    case "SET_ENABLED":
-      return { ...state, enabled: action.payload || !state.enabled };
-    case "SET_DELAY":
-      return { ...state, delay: action.payload };
-    case "SET_MESSAGES":
-      return { ...state, messages: action.payload };
-    case "SET_WORDS":
-      return { ...state, words: action.payload };
-    case "SET_MODE":
-      return { ...state, mode: action.payload };
-    case "SET_TAG":
-      return { ...state, tag: action.payload };
-    case "SET_MOOD":
-      return { ...state, mood: action.payload };
-    case "SET_STATE":
-      return { ...state, ...action.payload };
-    default:
-      throw new Error("Invalid action type");
-  }
 }

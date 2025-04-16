@@ -7,11 +7,7 @@ import Achievements, {
   BadgesImages,
   OneAchievementStageData,
   AchievementStagesSounds,
-  AchievementStageContextProvider,
-  AchievementsContextProvider,
 } from "@components/achievements";
-import { ManyAchievementStagesContextProvider } from "@components/achievements/stages";
-import { BadgesContextProvider } from "@components/achievements/badges";
 
 export function AchievementsRoutes() {
   return (
@@ -30,11 +26,7 @@ export function AchievementsRoutes() {
         element={
           <ComponentWithTitle
             title="Achievements"
-            component={
-              <AchievementsContextProvider>
-                <AchievementsList />
-              </AchievementsContextProvider>
-            }
+            component={<AchievementsList />}
           />
         }
       />
@@ -44,11 +36,7 @@ export function AchievementsRoutes() {
           element={
             <ComponentWithTitle
               title="Achievements Stages"
-              component={
-                <ManyAchievementStagesContextProvider>
-                  <AchievementStagesList />
-                </ManyAchievementStagesContextProvider>
-              }
+              component={<AchievementStagesList />}
             />
           }
         />
@@ -57,11 +45,7 @@ export function AchievementsRoutes() {
           element={
             <ComponentWithTitle
               title="Achievement stage data"
-              component={
-                <AchievementStageContextProvider>
-                  <OneAchievementStageData />
-                </AchievementStageContextProvider>
-              }
+              component={<OneAchievementStageData />}
             />
           }
         />
@@ -81,11 +65,7 @@ export function AchievementsRoutes() {
           element={
             <ComponentWithTitle
               title="Achievement badges"
-              component={
-                <BadgesContextProvider>
-                  <BadgesList />
-                </BadgesContextProvider>
-              }
+              component={<BadgesList />}
             />
           }
         />
@@ -104,3 +84,4 @@ export function AchievementsRoutes() {
     </Routes>
   );
 }
+export {};

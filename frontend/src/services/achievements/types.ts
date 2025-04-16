@@ -1,9 +1,6 @@
-import { BaseModelProperties, SearchParams } from "../api";
+import { BaseModelProperties, DefaultRequestParams } from "../api";
 import { Tag } from "../tags";
-
-export interface AchievementsSearchParams extends SearchParams {
-  search_name?: string;
-}
+import { CustomAchievementAction } from "./enums";
 
 export interface BadgeModelImagesUrls {
   x32: string;
@@ -24,6 +21,7 @@ export type BadgeCreateData = Pick<
 export type BadgeUpdateData = Partial<BadgeCreateData>;
 
 export type StageDataRarity = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+
 export interface AchievementStageData<T = Badge> {
   name: string;
   stage: number;
@@ -45,15 +43,6 @@ export interface AchievementStageCreateData
 }
 export type AchievementStageUpdateData = Partial<AchievementStageCreateData>;
 
-export enum CustomAchievementAction {
-  ALL = "ALL MESSAGES",
-  INCLUDES = "INCLUDES",
-  STARTS_WITH = "STARTS WITH",
-  ENDS_WITH = "ENDS WITH",
-  MESSAGE_GT = "MESSAGE LENGTH GREATER THAN",
-  MESSAGE_LT = "MESSAGE LENGTH LESS THAN",
-  WATCH_TIME = "WATCH TIME",
-}
 export interface AchievementCustomField {
   stringValues?: string[];
   numberValue?: number;
@@ -100,4 +89,22 @@ export interface GetBagesImagesResponseData {
   imagesPaths: [string, string][];
   separatorSizes: string;
   availableSizes: number[];
+}
+
+export interface FetchAchievementsParams
+  extends DefaultRequestParams<keyof Achievement> {
+  search_name?: string;
+  custom_action: string;
+}
+
+export interface FetchBadgesParams extends DefaultRequestParams<keyof Badge> {
+  search_name?: string;
+  imagesUrls?: string;
+}
+
+export interface FetchStagesParams
+  extends DefaultRequestParams<keyof AchievementStage> {
+  search_name?: string;
+  stageName?: string;
+  sound?: string;
 }

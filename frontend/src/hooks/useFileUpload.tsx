@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { viteBackendUrl } from "src/configs/envVariables";
+import { viteBackendUrl } from "@configs/envVariables";
 
 type UseFileUploadReturnType = {
   uploadProgress: number;

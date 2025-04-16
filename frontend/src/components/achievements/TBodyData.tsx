@@ -1,15 +1,37 @@
 import { DateTooltip } from "@components/dateTooltip";
 import { TableDataWrapper } from "@components/tableWrapper";
-import { addSuccessNotification, generateEnabledDisabledDiv } from "@utils";
-import { useAchievementsListContext } from "./AchievementsContext";
+import { generateEnabledDisabledDiv } from "@utils";
 import { Achievement, useDeleteCustomAchievement } from "@services";
-import { useManageAchievementContext } from "./ManageAchievementContext";
-import { ManageAchievementsCurrentAction } from "./types";
+import { useDispatch } from "react-redux";
+import {
+  AchievementSliceType,
+  ManageAchievementsCurrentAction,
+  openModal,
+  setAchievementState,
+  setCurrentAction,
+} from "@redux/achievementsSlice";
 
-export default function TBodyData() {
-  const {
-    achievementsState: { data },
-  } = useAchievementsListContext();
+interface TBodyDataProps {
+  data: Achievement[];
+}
+
+const getAchievementsStateDataHelper = (
+  achievement: Achievement
+): AchievementSliceType["achievement"] => {
+  return {
+    ...achievement,
+    tag: achievement.tag._id,
+    stages: achievement.stages._id,
+  };
+};
+
+export default function TBodyData({ data }: TBodyDataProps) {
+  const deleteCustomAchievementMutate = useDeleteCustomAchievement();
+
+  const handleDeleteCustomAchievement = (id: string, name: string) => {
+    if (!window.confirm(`Are you sure you want to delete: ${name}`)) return;
+    deleteCustomAchievementMutate.mutate(id);
+  };
 
   return (
     <>
@@ -24,10 +46,17 @@ export default function TBodyData() {
               )}
               <EditAchievementButton achievement={achievement} />
               {achievement.custom ? (
-                <DeleteCustomAchievementButton
-                  achievementId={achievement._id}
-                  achievementName={achievement.name}
-                />
+                <button
+                  className="common-button danger-button"
+                  onClick={() =>
+                    handleDeleteCustomAchievement(
+                      achievement._id,
+                      achievement.name
+                    )
+                  }
+                >
+                  Delete
+                </button>
               ) : null}
             </td>
             <td>
@@ -62,7 +91,7 @@ export default function TBodyData() {
                     {generateEnabledDisabledDiv(
                       achievement.hidden,
                       String(achievement.hidden).toUpperCase() || "FALSE"
-                    )}{" "}
+                    )}
                   </>
                 ) : null}
                 {achievement.custom ? (
@@ -90,59 +119,30 @@ export default function TBodyData() {
     </>
   );
 }
-interface DeleteCustomAchievementButtonProps {
-  achievementId: string;
-  achievementName: string;
-}
-
-function DeleteCustomAchievementButton({
-  achievementId,
-  achievementName,
-}: DeleteCustomAchievementButtonProps) {
-  const { refetchAchievements } = useAchievementsListContext();
-  const { refetchData: fetchDeleteCustomAchievement } =
-    useDeleteCustomAchievement(achievementId);
-
-  const handleOnClickDelete = () => {
-    if (window.confirm(`Are you sure you want to delete: ${achievementName}`)) {
-      fetchDeleteCustomAchievement().then(() => {
-        refetchAchievements();
-        addSuccessNotification("Custom achievement deleted successfully");
-      });
-    }
-  };
-
-  return (
-    <button
-      className="common-button danger-button"
-      onClick={handleOnClickDelete}
-    >
-      Delete
-    </button>
-  );
-}
 
 interface EditAchievementButtonProps {
   achievement: Achievement;
 }
 
 function EditAchievementButton({ achievement }: EditAchievementButtonProps) {
-  const {
-    achievementState: [, dispatch],
-    showModalState: [, setShowModal],
-    setCurrentAction,
-  } = useManageAchievementContext();
+  const dispatch = useDispatch();
+
   return (
     <button
       className="common-button primary-button"
       onClick={() => {
-        setCurrentAction(
-          achievement.custom
-            ? ManageAchievementsCurrentAction.EDIT_CUSTOM
-            : ManageAchievementsCurrentAction.EDIT
+        dispatch(
+          setCurrentAction(
+            achievement.custom
+              ? ManageAchievementsCurrentAction.EDIT_CUSTOM
+              : ManageAchievementsCurrentAction.EDIT
+          )
+        );
+        dispatch(
+          setAchievementState(getAchievementsStateDataHelper(achievement))
         );
         dispatch({ type: "SET_STATE", payload: achievement });
-        setShowModal(true);
+        dispatch(openModal());
       }}
     >
       Edit

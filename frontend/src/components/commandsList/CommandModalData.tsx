@@ -1,51 +1,53 @@
-import React from "react";
-import { AllModesReturn, generateSelectModes } from "@utils";
-import { DispatchAction } from "./types";
 import ModalDataWrapper from "@components/modalDataWrapper/ModalDataWrapper";
-import { ChatCommandCreateData } from "@services";
+import { useGetAllModes, generateSelectModes } from "@utils";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setName,
+  setEnabled,
+  setTag,
+  setMood,
+  setPrivilege,
+  setDescription,
+  setAliases,
+  setMessages,
+} from "@redux/commandsSlice";
+import { RootStore } from "@redux/store";
 
-interface CommandModalDataProps {
-  state: ChatCommandCreateData;
-  dispatch: React.Dispatch<DispatchAction>;
-  modes: AllModesReturn;
-}
-
-export default function CommandModalData({
-  state,
-  dispatch,
-  modes: { tags, moods },
-}: CommandModalDataProps) {
+export default function CommandModalData() {
+  const dispatch = useDispatch();
+  const commandState = useSelector(
+    (state: RootStore) => state.commands.command
+  );
+  const modes = useGetAllModes();
+  const { tags, moods } = modes;
   return (
     <ModalDataWrapper>
       <div>Name </div>
       <div>
         <input
           type="text"
-          value={state.name}
-          onChange={(e) =>
-            dispatch({ type: "SET_NAME", payload: e.target.value })
-          }
+          value={commandState.name}
+          onChange={(e) => dispatch(setName(e.currentTarget.value))}
         />
       </div>
 
       <div> Enabled </div>
       <div>
         <button
-          onClick={() => dispatch({ type: "SET_ENABLED" })}
+          onClick={() => dispatch(setEnabled(!commandState.enabled))}
           className={`${
-            !state.enabled ? "danger-button" : "primary-button"
+            commandState.enabled ? "primary-button" : "danger-button"
           } common-button`}
         >
-          {state.enabled.toString()}
+          {commandState.enabled.toString()}
         </button>
       </div>
-
       <div>Tag</div>
       <div>
         {generateSelectModes(
-          state.tag,
+          commandState.tag,
           (e) => {
-            dispatch({ type: "SET_TAG", payload: e });
+            dispatch(setTag(e));
           },
           tags
         )}
@@ -53,9 +55,9 @@ export default function CommandModalData({
       <div>Mood</div>
       <div>
         {generateSelectModes(
-          state.mood,
+          commandState.mood,
           (e) => {
-            dispatch({ type: "SET_MOOD", payload: e });
+            dispatch(setMood(e));
           },
           moods
         )}
@@ -64,12 +66,9 @@ export default function CommandModalData({
       <div>
         <input
           type="number"
-          value={state.privilege}
+          value={commandState.privilege}
           onChange={(e) =>
-            dispatch({
-              type: "SET_PRIVILEGE",
-              payload: e.target.valueAsNumber,
-            })
+            dispatch(setPrivilege(e.currentTarget.valueAsNumber))
           }
         />
       </div>
@@ -77,25 +76,17 @@ export default function CommandModalData({
       <div>Description </div>
       <div>
         <textarea
-          value={state.description}
-          onChange={(e) =>
-            dispatch({
-              type: "SET_DESC",
-              payload: e.target.value,
-            })
-          }
+          value={commandState.description}
+          onChange={(e) => dispatch(setDescription(e.currentTarget.value))}
         />
       </div>
 
       <div>Aliases </div>
       <div>
         <textarea
-          value={state.aliases?.join("\n")}
+          value={commandState.aliases?.join("\n")}
           onChange={(e) =>
-            dispatch({
-              type: "SET_ALIASES",
-              payload: e.target.value?.split("\n"),
-            })
+            dispatch(setAliases(e.currentTarget.value?.split("\n") || []))
           }
         />
       </div>
@@ -103,12 +94,9 @@ export default function CommandModalData({
       <div>Messages </div>
       <div>
         <textarea
-          value={state.messages?.join("\n")}
+          value={commandState.messages?.join("\n")}
           onChange={(e) =>
-            dispatch({
-              type: "SET_MESSAGES",
-              payload: e.target.value?.split("\n"),
-            })
+            dispatch(setMessages(e.currentTarget.value?.split("\n") || []))
           }
         />
       </div>

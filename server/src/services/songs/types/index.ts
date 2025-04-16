@@ -29,3 +29,7 @@ export interface SongsUpdateData
 export type ManageSongLikesAction = "like" | "dislike" | "nothing";
 
 export type CreateSongReturn = { isNew: boolean; song: SongsModel };
+
+export type UsesType = "botUses" | "songRequestUses";
+
+export type ManageSongLikesByIds = { youtubeId: string } | { id: string };

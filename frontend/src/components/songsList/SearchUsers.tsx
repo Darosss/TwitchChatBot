@@ -1,24 +1,27 @@
-import { User, useGetUsersList } from "@services";
+import { User, useGetUsers } from "@services";
 import { useState } from "react";
 
 interface SearchUsersProps {
   onClickUser: (user: User) => void;
+  value?: User | null;
+  currentUserId?: string;
 }
 
-export default function SearchUsers({ onClickUser }: SearchUsersProps) {
+export default function SearchUsers({
+  value = null,
+  onClickUser,
+  currentUserId,
+}: SearchUsersProps) {
   const [searchName, setSearchName] = useState("");
-  const [whoAdded, setWhoAdded] = useState<User | null>(null);
+  const [whoAdded, setWhoAdded] = useState<User | null>(value);
 
-  const { data } = useGetUsersList(
-    false,
-    `search_name=${searchName}&limit=5&page=1`
-  );
+  const { data } = useGetUsers({ search_name: searchName, limit: 5, page: 1 });
 
   return (
     <div className="search-users-wrapper">
       {whoAdded ? (
         <div className="who-added-wrapper">
-          {whoAdded?.twitchName}
+          {whoAdded.username}
           <button className="danger-button" onClick={() => setWhoAdded(null)}>
             x
           </button>
@@ -42,13 +45,17 @@ export default function SearchUsers({ onClickUser }: SearchUsersProps) {
             {data?.data?.map((user, index) => (
               <button
                 key={index}
-                className="primary-button"
+                className={`${
+                  currentUserId === user._id
+                    ? "primary-button"
+                    : "tertiary-button"
+                }`}
                 onClick={() => {
                   onClickUser(user);
                   setWhoAdded(user);
                 }}
               >
-                {user.twitchName}
+                {user.username}
               </button>
             ))}
           </div>
@@ -57,5 +64,3 @@ export default function SearchUsers({ onClickUser }: SearchUsersProps) {
     </div>
   );
 }
-
-//TODO: add whoAdded into localstorage?

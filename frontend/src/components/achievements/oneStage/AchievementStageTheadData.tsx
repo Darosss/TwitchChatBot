@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
-import { useAchievementStageContext } from "./Context";
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
+import { setIsGoalTime } from "@redux/stagesSlice";
 interface AchievementStageTheadDataProps {
   editing: boolean;
 }
@@ -33,16 +35,14 @@ export default function AchievementStageTheadData({
 }
 
 function ToggleGoalIsTimeBtn() {
-  const {
-    isGoalTimeState: [isGoalTime, setIsGoalTime],
-  } = useAchievementStageContext();
-
+  const { isGoalTime } = useSelector((root: RootStore) => root.stages);
+  const dispatch = useDispatch();
   return (
     <button
       className={`common-button ${
         isGoalTime ? "primary-button" : "danger-button"
       }`}
-      onClick={() => setIsGoalTime(!isGoalTime)}
+      onClick={() => dispatch(setIsGoalTime(!isGoalTime))}
     >
       {isGoalTime ? "Time" : "Points"}
     </button>

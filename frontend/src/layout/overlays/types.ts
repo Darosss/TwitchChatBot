@@ -1,7 +1,6 @@
 export interface OverlayKeysType {
   overlayRedemptions: string;
   overlayMusicPlayer: string;
-  overlayYoutubeMusicPlayer: string;
   overlayAchievements: string;
   overlayChat: string;
 }
@@ -22,7 +21,12 @@ interface BaseMusicStyles {
     baseBackground: string;
   };
 }
-
+export interface OverlayRequestsStyle extends BaseCssStyles {
+  boxShadow: string;
+  headerFontSize: string;
+  nicknameColor: string;
+  background: string;
+}
 interface BadgeCssStyles {
   boxShadow: string;
   badgeSize: string;
@@ -97,12 +101,12 @@ export interface OverlayMusicPlayerStyleParsed
     BaseMusicStyles {
   boxShadow: string;
   borderRadius: string;
+  requests: OverlayRequestsStyle;
 }
 
 export interface OverlayKeysStylesParsedType {
   overlayRedemptions: OverlayRedemptionsStyleParsed;
   overlayMusicPlayer: OverlayMusicPlayerStyleParsed;
-  overlayYoutubeMusicPlayer: OverlayYoutubeMusicPlayerStyleParsed;
   overlayAchievements: OverlayAchievementsStyleParsed;
   overlayChat: OverlayChatStyleParsed;
 }

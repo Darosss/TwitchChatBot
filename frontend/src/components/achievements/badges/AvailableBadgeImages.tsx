@@ -1,27 +1,19 @@
+import { useEffect, useState } from "react";
 import { useFileUpload } from "@hooks";
 import ProgressBar from "@ramonak/react-progress-bar";
 import {
   GetBagesImagesResponseData,
+  uploadBadgesData,
   useGetBadgesIamgesBasePath,
+  useRefetchBadgeData,
 } from "@services";
 import { addErrorNotification, addSuccessNotification } from "@utils";
-import { useEffect, useState } from "react";
-import { viteBackendUrl } from "src/configs/envVariables";
-
-export interface OnClickBadgeType {
-  basePath: string;
-  badgeName: string;
-  badgeExtension: string;
-}
+import { viteBackendUrl } from "@configs/envVariables";
+import { OnClickBadgeType } from "./types";
 
 interface AvailableBadgeImagesProps {
   badgesData: GetBagesImagesResponseData;
-  onClickBadge: ({
-    basePath,
-    badgeName,
-    badgeExtension,
-  }: OnClickBadgeType) => void;
-  onClickRefresh: () => void;
+  onClickBadge: ({ badgeName, badgeExtension }: OnClickBadgeType) => void;
   currentImgPath?: string;
   className?: string;
   showNames?: boolean;
@@ -30,24 +22,25 @@ interface AvailableBadgeImagesProps {
 export default function AvailableBadgeImages({
   badgesData,
   onClickBadge,
-  onClickRefresh,
   currentImgPath,
   className,
   showNames,
 }: AvailableBadgeImagesProps) {
+  const refetchBadges = useRefetchBadgeData();
   const { data: basePathData } = useGetBadgesIamgesBasePath();
   const [filterBadgesNames, setFilterBadgesNames] = useState("");
 
   if (!basePathData) return <> No base path data. </>;
+
   return (
     <div className={`available-badge-images-wrapper ${className}`}>
       <div>{currentImgPath}</div>
 
       <div className="action-items-wrapper">
-        <UploadBadgeImageButtons onSuccessCallback={onClickRefresh} />
+        <UploadBadgeImageButtons onSuccessCallback={refetchBadges} />
         <button
           className="common-button tertiary-button"
-          onClick={onClickRefresh}
+          onClick={refetchBadges}
         >
           Refresh
         </button>
@@ -70,9 +63,9 @@ export default function AvailableBadgeImages({
               className="one-badge-image-wrapper"
               onClick={() =>
                 onClickBadge({
-                  basePath: basePathData.data,
                   badgeName: name,
                   badgeExtension: extension,
+                  basePath: basePathData.data,
                 })
               }
             >
@@ -105,7 +98,7 @@ function UploadBadgeImageButtons({
   const [showUploadImages, setShowUploadImages] = useState(false);
 
   const { uploadProgress, handleFileUpload, error, success } = useFileUpload(
-    "achievements/badges/images/upload"
+    uploadBadgesData.badgesImages
   );
 
   useEffect(() => {

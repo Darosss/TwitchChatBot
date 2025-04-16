@@ -1,4 +1,4 @@
-import { BaseModelProperties } from "../api";
+import { BaseModelProperties, DefaultRequestParams } from "../api";
 import { Mood } from "../moods";
 import { Tag } from "../tags";
 
@@ -25,3 +25,14 @@ export interface ChatCommandCreateData
 }
 
 export interface ChatCommandUpdateData extends Partial<ChatCommandCreateData> {}
+
+export interface FetchChatCommandParams
+  extends DefaultRequestParams<keyof ChatCommand> {
+  search_name?: string;
+  end_date?: string;
+  start_date?: string;
+  privilege?: string;
+  aliases?: string;
+  description?: string;
+  messages?: string;
+}

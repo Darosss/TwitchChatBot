@@ -1,44 +1,53 @@
-import React, { useState } from "react";
-import { useCreateLayout, useGetWidgets, useRemoveWidgetById } from "@services";
+import { useState } from "react";
+import { useCreateWidget, useDeleteWidget, useGetWidgets } from "@services";
 import { Link } from "react-router-dom";
-import { initialLayoutWidgets, initialToolboxWidgets } from "src/layout";
-import { addSuccessNotification } from "@utils";
+import { initialLayoutWidgets, initialToolboxWidgets } from "@layout";
+import { addNotification } from "@utils";
 import CardboxWrapper from "@components/cardboxWrapper";
 import {
   CardboxInput,
   CardboxItem,
 } from "@components/cardboxWrapper/CardboxWrapper";
-import { AxiosError, Loading } from "@components/axiosHelper";
-import { useAxiosWithConfirmation } from "@hooks";
+import { Error, Loading } from "@components/axiosHelper";
+import { useQueryParams } from "@hooks/useQueryParams";
+import { fetchWidgetsDefaultParams } from "@services";
 
 export default function StreamNotifications() {
-  const { data, loading, error, refetchData } = useGetWidgets();
+  const queryParams = useQueryParams(fetchWidgetsDefaultParams);
+  const { data, isLoading, error } = useGetWidgets(queryParams);
 
   const [layoutName, setLayoutName] = useState<string>("");
 
-  const { refetchData: fetchCreateLayout } = useCreateLayout({
-    name: layoutName,
-    layout: initialLayoutWidgets,
-    toolbox: initialToolboxWidgets,
-  });
+  const createWidgetMutation = useCreateWidget();
+  const deleteWidgetMutation = useDeleteWidget();
 
-  const setWidgetIdToDelete = useAxiosWithConfirmation({
-    hookToProceed: useRemoveWidgetById,
-    opts: {
-      onFullfiled: () => refetchData(),
-    },
-  });
-
-  if (error) return <AxiosError error={error} />;
-  if (!data || loading) return <Loading />;
+  if (error) return <Error error={error} />;
+  if (!data || isLoading) return <Loading />;
 
   const { data: layouts } = data;
 
-  const createNewLayout = () => {
-    fetchCreateLayout().then(() => {
-      refetchData();
-      addSuccessNotification("Stream events layout created successfully");
+  const handleCreateWidget = () => {
+    if (!layoutName)
+      return addNotification(
+        "Provide name",
+        "You need to provide layout name",
+        "danger"
+      );
+    createWidgetMutation.mutate({
+      name: layoutName,
+      layout: initialLayoutWidgets,
+      toolbox: initialToolboxWidgets,
     });
+  };
+
+  const handleDeleteWidget = (id: string) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete the widget with ID: ${id}?`
+      )
+    )
+      return;
+    deleteWidgetMutation.mutate(id);
   };
 
   return (
@@ -52,7 +61,7 @@ export default function StreamNotifications() {
             onChange={(e) => setLayoutName(e.target.value)}
           ></input>
           <button
-            onClick={() => createNewLayout()}
+            onClick={handleCreateWidget}
             className="common-button primary-button"
           >
             Create
@@ -62,7 +71,7 @@ export default function StreamNotifications() {
           <CardboxItem
             title={layout.name}
             onClickX={() => {
-              setWidgetIdToDelete(layout._id);
+              handleDeleteWidget(layout._id);
             }}
             key={index}
           >

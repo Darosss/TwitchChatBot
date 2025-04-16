@@ -1,4 +1,4 @@
-import { BaseModelProperties } from "../api";
+import { BaseModelProperties, DefaultRequestParams } from "../api";
 import { Mood } from "../moods";
 import { Tag } from "../tags";
 
@@ -23,3 +23,9 @@ export interface MessageCategoryCreateData
 
 export interface MessageCategoryUpdateData
   extends Partial<MessageCategoryCreateData> {}
+
+export interface FetchMessageCategoriesParams
+  extends DefaultRequestParams<keyof MessageCategory> {
+  search_name?: string;
+  messages?: string;
+}

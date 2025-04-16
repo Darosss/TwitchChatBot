@@ -1,44 +1,42 @@
 import { updateCurrentStreamSession, createUserIfNotExist, isUserInDB, updateUser, getOneUser } from "@services";
 import { ApiClient, HelixChatChatter } from "@twurple/api";
 import { getBaseLog, removeDifferenceFromSet, retryWithCatch, watcherLogger } from "@utils";
-import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";
-import { Server } from "socket.io";
 import HeadHandler from "./HeadHandler";
-import { LoyaltyConfigs, PointsConfigs, StreamSessionModel } from "@models";
+import { ConfigModel, StreamSessionModel } from "@models";
 import { AuthorizedUserData } from "./types";
 import AchievementsHandler from "./AchievementsHandler";
-
-interface LoyaltyConfigsHandler extends LoyaltyConfigs, PointsConfigs {}
+import { SocketHandler } from "@socket";
+import { ConfigManager } from "./ConfigManager";
 
 class LoyaltyHandler extends HeadHandler {
-  private configs: LoyaltyConfigsHandler;
+  private configs: ConfigModel = ConfigManager.getInstance().getConfig();
   private usersBefore = new Set<string>();
   private currentSession: StreamSessionModel | null | undefined;
   private checkChattersTimeout: NodeJS.Timeout | undefined;
-  private achievementsHandler: AchievementsHandler;
-  constructor(
-    twitchApi: ApiClient,
-    socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
-    authorizedUser: AuthorizedUserData,
-    configs: LoyaltyConfigsHandler,
-    achievementsHandler: AchievementsHandler
-  ) {
-    super(socketIO, twitchApi, authorizedUser);
-    this.configs = configs;
-    this.achievementsHandler = achievementsHandler;
+  constructor(twitchApi: ApiClient, authorizedUser: AuthorizedUserData) {
+    super(twitchApi, authorizedUser);
+    ConfigManager.getInstance().registerObserver(this.handleConfigUpdate.bind(this));
     this.init();
   }
 
   private async init() {
-    this.checkChattersTimeout = setInterval(async () => {
-      await this.checkChatters();
-    }, this.configs.intervalCheckChatters * 1000);
+    this.startCheckChatters();
   }
 
-  public async refreshConfigs(configs: LoyaltyConfigsHandler) {
-    this.stopCheckChatters();
-    this.configs = configs;
-    this.init();
+  private async handleConfigUpdate(newConfigs: ConfigModel) {
+    this.configs = newConfigs;
+    this.startCheckChatters();
+  }
+
+  private startCheckChatters() {
+    this.clearCheckChattersTimeout();
+    this.checkChattersTimeout = setInterval(async () => {
+      await this.checkChatters();
+    }, this.configs.loyaltyConfigs.intervalCheckChatters * 1000);
+  }
+
+  private clearCheckChattersTimeout() {
+    clearTimeout(this.checkChattersTimeout);
   }
 
   public stopCheckChatters() {
@@ -52,18 +50,19 @@ class LoyaltyHandler extends HeadHandler {
   }
 
   private async checkWatchersLogic(userId: string, userName: string) {
-    const { watch: watchIncr, watchMultipler: watchMult } = this.configs.pointsIncrement;
+    const { watch: watchIncr, watchMultipler: watchMult } = this.configs.pointsConfigs.pointsIncrement;
 
     this.currentSession = await updateCurrentStreamSession({
       $inc: {
-        [`watchers.${userName}`]: this.configs.intervalCheckChatters
+        [`watchers.${userName}`]: this.configs.loyaltyConfigs.intervalCheckChatters
       }
     });
     if (!this.currentSession) return;
 
     const viewerWatchTime = this.currentSession.watchers?.get(userName);
     const multipler =
-      getBaseLog(watchMult, viewerWatchTime ? viewerWatchTime / this.configs.intervalCheckChatters : 1) + 1;
+      getBaseLog(watchMult, viewerWatchTime ? viewerWatchTime / this.configs.loyaltyConfigs.intervalCheckChatters : 1) +
+      1;
 
     const pointsWithMultip = watchIncr * multipler;
     watcherLogger.info(
@@ -123,7 +122,7 @@ class LoyaltyHandler extends HeadHandler {
       if (!this.usersBefore.has(userName) && userDB) {
         await this.updateEventsInCurrentSession(userDB.id, "Join chat");
 
-        this.socketIO.emit("userJoinTwitchChat", {
+        SocketHandler.getInstance().getIO().emit("userJoinTwitchChat", {
           eventDate: new Date(),
           eventName: "Join chat",
           user: userDB
@@ -143,7 +142,7 @@ class LoyaltyHandler extends HeadHandler {
       if (userDB) {
         await this.updateEventsInCurrentSession(userDB.id, "Left chat");
 
-        this.socketIO.emit("userJoinTwitchChat", {
+        SocketHandler.getInstance().getIO().emit("userJoinTwitchChat", {
           eventDate: new Date(),
           eventName: "Left chat",
           user: userDB
@@ -172,7 +171,7 @@ class LoyaltyHandler extends HeadHandler {
 
   private async updateWatcherStatistics(userId: string, value: number) {
     const updateData = {
-      $inc: { points: value, watchTime: this.configs.intervalCheckChatters },
+      $inc: { points: value, watchTime: this.configs.loyaltyConfigs.intervalCheckChatters },
       // add points by message,       count messages
       $set: { lastSeen: new Date() }
       // set last seen to new Date()
@@ -186,7 +185,7 @@ class LoyaltyHandler extends HeadHandler {
       const foundUser = await getOneUser({ twitchId: userId }, {});
       if (!foundUser) return watcherLogger.error("updateLoyaltyAchievements - user  not found");
 
-      await this.achievementsHandler.checkOnlineUserAchievements(foundUser);
+      await AchievementsHandler.getInstance().checkOnlineUserAchievements(foundUser);
     }
   }
 }

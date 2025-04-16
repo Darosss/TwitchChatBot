@@ -8,7 +8,7 @@ import {
 } from "@services";
 import LineChart from "@components/lineChart";
 import SlideShow from "@components/slideShow";
-import { AxiosError, Loading } from "@components/axiosHelper";
+import { Error, Loading } from "@components/axiosHelper";
 
 interface SessionMessagesProps {
   count: number;
@@ -34,22 +34,22 @@ export default function StreamStatistics() {
   const FETCH_INTERVAL = 60;
   const {
     data: statisticsData,
-    loading,
+    isLoading,
     error,
-    refetchData,
+    refetch,
   } = useGetCurrentSessionStatistics();
 
   useEffect(() => {
     const statisticInterval = setInterval(() => {
-      refetchData();
+      refetch();
     }, FETCH_INTERVAL * 1000);
 
     return () => clearInterval(statisticInterval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (error) return <AxiosError error={error} />;
-  if (!statisticsData || loading) return <Loading />;
+  if (error) return <Error error={error} />;
+  if (!statisticsData || isLoading) return <Loading />;
   const { data } = statisticsData;
   return (
     <div className="session-statistics-wrapper">

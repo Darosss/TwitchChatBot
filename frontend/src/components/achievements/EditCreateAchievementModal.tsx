@@ -1,57 +1,99 @@
 import Modal from "@components/modal";
 import ModalDataWrapper from "@components/modalDataWrapper";
-import { useManageAchievementContext } from "./ManageAchievementContext";
-import { useGetAchievementStages, useGetTags } from "@services";
+import {
+  fetchAchievementStagesDefaultParams,
+  useCreateCustomAchievement,
+  useEditAchievement,
+  useGetAchievementStages,
+  useGetTags,
+  useUpdateCustomAchievement,
+} from "@services";
 import { generateSelectModes } from "@utils";
 import { useState } from "react";
-import { useAchievementsListContext } from "./AchievementsContext";
 import CustomAchievementModalInputs from "./CustomAchievementModalInputs";
-interface EditCreateAchievementModalProps {
-  onSubmit: () => Promise<void>;
-}
-export default function EditCreateAchievementModal({
-  onSubmit,
-}: EditCreateAchievementModalProps) {
-  const { refetchAchievements } = useAchievementsListContext();
-  const {
-    achievementState: [state, dispatch],
-    showModalState: [showModal, setShowModal],
-  } = useManageAchievementContext();
-  const { data: tags } = useGetTags(false);
+import { useQueryParams } from "@hooks/useQueryParams";
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
+import {
+  closeModal,
+  ManageAchievementsCurrentAction,
+  setDescription,
+  setEnabled,
+  setHidden,
+  setStagesId,
+  setTagId,
+} from "@redux/achievementsSlice";
+
+export default function EditCreateAchievementModal() {
+  const dispatch = useDispatch();
+  const queryParams = useQueryParams(fetchAchievementStagesDefaultParams);
+
+  const { achievement, isModalOpen, currentAction, editingId } = useSelector(
+    (root: RootStore) => root.achievements
+  );
+  const { data: tags } = useGetTags();
 
   const [achievementStagesNameFilter, setAchievementStagesNameFilter] =
     useState("");
-  const { data: achievementStagesResponse } = useGetAchievementStages(
-    `search_name=${achievementStagesNameFilter}`
-  );
+
+  const { data: achievementStagesResponse } =
+    useGetAchievementStages(queryParams);
+
+  const createCustomAchievementMutation = useCreateCustomAchievement();
+
+  const updateCustomAchievementMutation = useUpdateCustomAchievement();
+
+  const updateAchievementMutation = useEditAchievement();
+
   return (
     <Modal
-      show={showModal}
-      onClose={() => setShowModal(false)}
-      onSubmit={() => onSubmit().then(() => refetchAchievements())}
+      show={isModalOpen}
+      onClose={() => dispatch(closeModal())}
+      onSubmit={() => {
+        switch (currentAction) {
+          case ManageAchievementsCurrentAction.EDIT:
+            if (!editingId) break;
+            updateAchievementMutation.mutate({
+              id: editingId,
+              updatedAchievement: achievement,
+            });
+            break;
+          case ManageAchievementsCurrentAction.EDIT_CUSTOM:
+            if (!editingId) break;
+            updateCustomAchievementMutation.mutate({
+              id: editingId,
+              updatedAchievement: achievement,
+            });
+            break;
+          case ManageAchievementsCurrentAction.CREATE_CUSTOM:
+            if (!achievement.custom) break;
+
+            createCustomAchievementMutation.mutate({
+              ...achievement,
+              custom: achievement.custom,
+            });
+            break;
+        }
+      }}
     >
       <ModalDataWrapper>
         <div>Description </div>
         <div>
           <input
             type="text"
-            onChange={(e) =>
-              dispatch({ type: "SET_DESCRIPTION", payload: e.target.value })
-            }
-            value={state.description}
+            onChange={(e) => dispatch(setDescription(e.target.value))}
+            value={achievement.description}
           />
         </div>
         <div>Enabled </div>
         <div>
           <button
             className={`common-button ${
-              state.enabled ? "primary-button" : "danger-button"
+              achievement.enabled ? "primary-button" : "danger-button"
             }`}
-            onClick={() =>
-              dispatch({ type: "SET_ENABLED", payload: !state.enabled })
-            }
+            onClick={() => dispatch(setEnabled(!achievement.enabled))}
           >
-            {String(state.enabled)}
+            {String(achievement.enabled)}
           </button>
         </div>
 
@@ -66,7 +108,8 @@ export default function EditCreateAchievementModal({
             />
             <button
               className={`common-button ${
-                state.stages._id === achievementStagesResponse?.data.at(0)?._id
+                achievement.stages ===
+                achievementStagesResponse?.data.at(0)?._id
                   ? "primary-button"
                   : "danger-button"
               } `}
@@ -74,10 +117,7 @@ export default function EditCreateAchievementModal({
               onClick={() => {
                 const payload = achievementStagesResponse?.data.at(0);
                 if (!payload) return;
-                dispatch({
-                  type: "SET_STAGES",
-                  payload: { _id: payload._id, name: payload.name },
-                });
+                dispatch(setStagesId(payload._id));
               }}
             >
               {achievementStagesResponse?.data.at(0)?.name ||
@@ -88,10 +128,8 @@ export default function EditCreateAchievementModal({
         <div>Tag </div>
         <div>
           {generateSelectModes(
-            state.tag._id,
-            (id, name) => {
-              dispatch({ type: "SET_TAG", payload: { _id: id, name: name } });
-            },
+            achievement.tag,
+            (e) => dispatch(setTagId(e)),
             tags?.data
           )}
         </div>
@@ -99,17 +137,15 @@ export default function EditCreateAchievementModal({
         <div>
           <button
             className={`common-button ${
-              state.hidden ? "primary-button" : "danger-button"
+              achievement.hidden ? "primary-button" : "danger-button"
             }`}
-            onClick={() =>
-              dispatch({ type: "SET_HIDDEN", payload: !state.hidden })
-            }
+            onClick={() => dispatch(setHidden(!achievement.hidden))}
           >
-            {String(state.hidden)}
+            {String(achievement.hidden)}
           </button>
         </div>
 
-        {state.custom ? <CustomAchievementModalInputs /> : null}
+        {achievement.custom ? <CustomAchievementModalInputs /> : null}
       </ModalDataWrapper>
     </Modal>
   );

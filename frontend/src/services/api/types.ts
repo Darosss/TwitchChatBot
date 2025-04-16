@@ -1,52 +1,38 @@
-export interface ResponseMessage {
-  message: string;
-}
-
-export interface ResponseData<T> extends Partial<ResponseMessage> {
+export interface BackendData<T> {
+  message?: string;
   data: T;
 }
 
-export interface PaginationData<T> {
+export interface PaginationData<T> extends Omit<BackendData<T>, "data"> {
   data: T[];
   totalPages: number;
   count: number;
   currentPage: number;
 }
 
-export interface AxiosCustomOptions<TBody> {
-  url: string | URL;
-  method?: string;
-  bodyData?: Partial<TBody>;
-  manual?: boolean;
-  urlParams?: boolean;
+export type PromiseBackendData<T> = Promise<BackendData<T>>;
+export type PromisePaginationData<T> = Promise<PaginationData<T>>;
+
+export interface ResponseData<T> {
+  data: T;
 }
 
-export type AxiosCustomReturnErrorType = {
-  message: string;
-  status: number;
-  code?: string;
-} | null;
-
-export interface AxiosCustomReturn<TResponse = unknown> {
-  data: TResponse | undefined;
-  loading: boolean;
-  error: AxiosCustomReturnErrorType;
-  refetchData: () => Promise<TResponse>;
+export interface DefaultRequestParams<SortByT extends string = string> {
+  limit: number;
+  page: number;
+  sortOrder: "asc" | "desc";
+  sortBy: SortByT;
+  search_name?: string;
 }
+
+export type QueryParams<KeyType extends string> = {
+  [key in KeyType]?: string | number | undefined;
+};
 
 export interface BaseModelProperties {
   _id: string;
   createdAt: Date;
   updatedAt: Date;
-}
-export interface BackendError {
-  message: string;
-  status: number;
-}
-
-export interface SearchParams {
-  limit?: number;
-  page?: number;
 }
 
 export interface CommonDeleteHookParams {

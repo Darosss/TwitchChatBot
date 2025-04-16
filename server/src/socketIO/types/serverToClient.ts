@@ -2,19 +2,16 @@ import {
   EventAndUser,
   RewardData,
   CustomRewardData,
-  AudioStreamData,
-  AudioStreamDataInfo,
-  AudioYTData,
-  AudioYTDataInfo,
   MessageServerData,
   MessageServerDeleteData,
   ObtainAchievementDataWithCollectedAchievement,
-  ObtainAchievementDataWithProgressOnly
+  ObtainAchievementDataWithProgressOnly,
+  AudioChunkData,
+  RequestSongData,
+  AudioStreamDataEmitCb
 } from "./dataTypes";
 
-export interface ServerToClientEvents extends ServerToClientYoutubeEvents, ServerToClientMusicLocalEvents {
-  noArg: () => void;
-  withAck: (callback: (e: number) => void) => void;
+export interface ServerToClientEvents extends ServerToClientMusicEvents {
   messageServer: (data: MessageServerData) => void;
   messageServerDelete: (data: MessageServerDeleteData) => void;
   userJoinTwitchChat: (eventAndUser: EventAndUser) => void;
@@ -31,19 +28,13 @@ export interface ServerToClientEvents extends ServerToClientYoutubeEvents, Serve
   refreshOverlayLayout: (overlayId: string) => void;
 }
 
-export interface ServerToClientMusicLocalEvents {
-  audio: (data: AudioStreamData) => void;
-  audioStop: () => void;
-  getAudioInfo: (data: AudioStreamDataInfo) => void;
+export interface ServerToClientMusicEvents {
   changeVolume: (volume: number) => void;
-}
-
-export interface ServerToClientYoutubeEvents {
-  changeYTVolume: (volume: number) => void;
-  musicYTNext: () => void;
-  musicYTPause: () => void;
-  musicYTStop: () => void;
-  musicYTPlay: () => void;
-  audioYT: (data: AudioYTData) => void;
-  getAudioYTInfo: (data: AudioYTDataInfo) => void;
+  musicNext: () => void;
+  musicPause: (isPlaying: boolean) => void;
+  musicStop: () => void;
+  musicPlay: () => void;
+  audioStreamData: (data: AudioStreamDataEmitCb) => void;
+  audioChunk: (data: AudioChunkData) => void;
+  requestSong: (data: RequestSongData) => void;
 }

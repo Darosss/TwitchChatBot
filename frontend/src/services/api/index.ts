@@ -1,13 +1,3 @@
-import useAxiosCustom from "./Api";
-
-export type {
-  PaginationData,
-  ResponseData,
-  ResponseMessage,
-  BaseModelProperties,
-  SearchParams,
-  AxiosCustomReturnErrorType,
-  AxiosCustomReturn,
-} from "./types";
-
-export default useAxiosCustom;
+export * from "./Api";
+export * from "./types";
+export * from "./enums";

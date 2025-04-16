@@ -6,11 +6,12 @@ import {
 import { getDateFromSecondsToYMDHMS, isObtainedAchievement } from "@utils";
 import moment from "moment";
 import { CSSProperties, useEffect, useMemo, useState } from "react";
-import { viteBackendUrl } from "src/configs/envVariables";
-import { useOverlayDataContext } from "../OverlayDataContext";
+import { viteBackendUrl } from "@configs/envVariables";
 import { getExampleAchievementsData } from "./exampleData";
-import { BaseOverlayAchievementsRarity } from "src/layout";
+import { BaseOverlayAchievementsRarity } from "@layout";
 import { useLocalStorage } from "@hooks";
+import { useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
 
 export type ObtainedAchievementStateType =
   | ObtainAchievementDataWithCollectedAchievement
@@ -29,9 +30,11 @@ export default function Achievements() {
   } = useSocketContext();
 
   const {
-    isEditorState: [isEditor],
-    stylesState: [{ overlayAchievements: styles }],
-  } = useOverlayDataContext();
+    isEditor,
+    baseData: {
+      styles: { overlayAchievements: styles },
+    },
+  } = useSelector((state: RootStore) => state.overlays);
 
   const [obtainedAchievements, setObtainedAchievements] = useLocalStorage<
     ObtainedAchievementStateType[]
@@ -41,9 +44,7 @@ export default function Achievements() {
   const [itemsQueLength, setItemsQueLength] = useState(0);
 
   useEffect(() => {
-    let showQueueInterval: NodeJS.Timer;
-
-    showQueueInterval = setInterval(() => {
+    const showQueueInterval = setInterval(() => {
       setShowAchievementsQueue(true);
 
       setTimeout(() => {
@@ -193,8 +194,10 @@ function AchievementDataBlock({
   flexDirection,
 }: AchievementDataBlockProps) {
   const {
-    stylesState: [{ overlayAchievements: styles }],
-  } = useOverlayDataContext();
+    baseData: {
+      styles: { overlayAchievements: styles },
+    },
+  } = useSelector((state: RootStore) => state.overlays);
 
   const currentRarity =
     achievement?.stage.data.rarity ||

@@ -3,7 +3,6 @@ import "./discord";
 import { initMongoDataBase, backendPort } from "@configs";
 import expressApp from "./app";
 import { logger } from "@utils";
-import { newSocket } from "./socketIO";
 import init from "./stream/initializeHandlers";
 
 const startServer = async () => {
@@ -11,14 +10,11 @@ const startServer = async () => {
 
   const server = expressApp();
 
-  const socketIO = newSocket(server);
-
   try {
-    await init(socketIO);
+    await init();
   } catch (err) {
     console.log("Error occured while trying to init handlers", err);
   }
-
   server.listen(backendPort, async () => {
     console.log("listening on *:", backendPort);
   });

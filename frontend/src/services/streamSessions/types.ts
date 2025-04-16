@@ -1,4 +1,9 @@
-import { BaseModelProperties } from "../api";
+import {
+  BaseModelProperties,
+  DefaultRequestParams,
+  PaginationData,
+} from "../api";
+import { Redemption } from "../redemptions";
 import { User } from "../users";
 
 export interface SessionEvents extends BaseModelProperties {
@@ -41,4 +46,14 @@ export interface StreamSessionStatistics {
   topRedemptionsUsers: TopRedemptionsUsers[];
   topUsedWords: TopUsedWords[];
   viewers: Map<string, number>;
+}
+export type StreamSessionRedemptions = PaginationData<Redemption>;
+
+export interface FetchStreamSessionsParams
+  extends DefaultRequestParams<keyof StreamSession> {
+  search_name?: string;
+  tags?: string;
+  categories?: string;
+  start_date?: string;
+  end_date?: string;
 }

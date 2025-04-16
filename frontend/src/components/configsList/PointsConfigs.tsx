@@ -1,15 +1,14 @@
+import { useDispatch, useSelector } from "react-redux";
 import ConfigInput from "./ConfigInput";
-import { useConfigsContext } from "./ConfigsContext";
-import { ConfigsDispatchActionType, ConfigsWrapperSharedProps } from "./types";
+import { setPointsConfigs } from "@redux/configsSlice";
+import { RootStore } from "@redux/store";
 
-const DISPATCH_TYPE = ConfigsDispatchActionType.SET_POINTS;
-
-export default function PointsConfigsWrapper({
-  showEdit,
-}: ConfigsWrapperSharedProps) {
+export default function PointsConfigsWrapper() {
+  const dispatch = useDispatch();
   const {
-    configState: [{ pointsConfigs }, dispatch],
-  } = useConfigsContext();
+    isUpdateMode,
+    config: { pointsConfigs },
+  } = useSelector((state: RootStore) => state.configs);
 
   return (
     <>
@@ -18,53 +17,50 @@ export default function PointsConfigsWrapper({
       <ConfigInput
         optionName="Message"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...pointsConfigs,
-              pointsIncrement: {
+          dispatch(
+            setPointsConfigs([
+              "pointsIncrement",
+              {
                 ...pointsConfigs.pointsIncrement,
-                message: e.target.valueAsNumber,
+                message: e.currentTarget.valueAsNumber,
               },
-            },
-          })
+            ])
+          )
         }
         value={pointsConfigs.pointsIncrement.message}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
       <ConfigInput
         optionName="Watch"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...pointsConfigs,
-              pointsIncrement: {
+          dispatch(
+            setPointsConfigs([
+              "pointsIncrement",
+              {
                 ...pointsConfigs.pointsIncrement,
-                watch: e.target.valueAsNumber,
+                watch: e.currentTarget.valueAsNumber,
               },
-            },
-          })
+            ])
+          )
         }
         value={pointsConfigs.pointsIncrement.watch}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
       <ConfigInput
         optionName="Watch multipler"
         setState={(e) =>
-          dispatch({
-            type: DISPATCH_TYPE,
-            payload: {
-              ...pointsConfigs,
-              pointsIncrement: {
+          dispatch(
+            setPointsConfigs([
+              "pointsIncrement",
+              {
                 ...pointsConfigs.pointsIncrement,
-                watchMultipler: e.target.valueAsNumber,
+                watchMultipler: e.currentTarget.valueAsNumber,
               },
-            },
-          })
+            ])
+          )
         }
         value={pointsConfigs.pointsIncrement.watchMultipler}
-        showEdit={showEdit}
+        showEdit={isUpdateMode}
       />
     </>
   );

@@ -1,8 +1,6 @@
 import HeadHandler from "./HeadHandler";
 import { ApiClient } from "@twurple/api";
 import { EventSubWsListener } from "@twurple/eventsub-ws";
-import { Server } from "socket.io";
-import type { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData, RewardData } from "@socket";
 import { eventsubLogger, retryWithCatch, getMp3AudioDuration } from "@utils";
 import { createStreamSession, updateCurrentStreamSession, createRedemption, createUserIfNotExist } from "@services";
 import fs from "fs";
@@ -10,14 +8,12 @@ import { alertSoundsPath, alertSoundPrefix } from "@configs";
 import path from "path";
 import { AuthorizedUserData } from "./types";
 import AchievementsHandler from "./AchievementsHandler";
-import MusicYTHandler from "./MusicYTHandler";
+import { RewardData, SocketHandler } from "@socket";
+import MusicHeadHandler from "./music/MusicHeadHandler";
 
 interface EventSubHandlerOptions {
   apiClient: ApiClient;
-  socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
   authorizedUser: AuthorizedUserData;
-  achievementsHandler: AchievementsHandler;
-  musicYTHandler: MusicYTHandler;
 }
 
 export type SubscriptionTiers = "1000" | "2000" | "3000";
@@ -26,15 +22,12 @@ class EventSubHandler extends HeadHandler {
   private listener: EventSubWsListener;
   private redemptionQue: [RewardData, { audioBuffer: Buffer; duration: number }][] = [];
   private isAlertPlaying = false;
-  private achievementsHandler: AchievementsHandler;
-  private musicYTHandler: MusicYTHandler;
+
   constructor(options: EventSubHandlerOptions) {
-    super(options.socketIO, options.apiClient, options.authorizedUser);
+    super(options.apiClient, options.authorizedUser);
     this.listener = new EventSubWsListener({
       apiClient: options.apiClient
     });
-    this.achievementsHandler = options.achievementsHandler;
-    this.musicYTHandler = options.musicYTHandler;
   }
 
   public async updateOptions(options: EventSubHandlerOptions): Promise<void> {
@@ -88,7 +81,7 @@ class EventSubHandler extends HeadHandler {
         if (!userDB) {
           return eventsubLogger.error(`subscribeToChannelSubscription - error when trying to manipulate user data`);
         }
-        await this.achievementsHandler.checkUserSubscribeForAchievements({
+        await AchievementsHandler.getInstance().checkUserSubscribeForAchievements({
           userId: userDB._id,
           username: userDB.username,
           tier,
@@ -125,7 +118,7 @@ class EventSubHandler extends HeadHandler {
         if (!userDB)
           return eventsubLogger.error(`subscribeToChannelFollow - error when trying to manipulate user data`);
 
-        await this.achievementsHandler.checkUserSubscribeGiftsForAchievements({
+        await AchievementsHandler.getInstance().checkUserSubscribeGiftsForAchievements({
           userId: userDB._id,
           username: userDB.username,
           tier,
@@ -157,7 +150,7 @@ class EventSubHandler extends HeadHandler {
         if (!userDB) {
           return eventsubLogger.error(`subscribeToChannelFollow - error when trying to manipulate user data`);
         }
-        await this.achievementsHandler.checkUserFollowageForAchievement({
+        await AchievementsHandler.getInstance().checkUserFollowageForAchievement({
           userId: userDB._id,
           username: userDB.username,
           dateProgress: followDate
@@ -191,7 +184,7 @@ class EventSubHandler extends HeadHandler {
         if (!userDB) {
           return eventsubLogger.error(`subscribeToChannelRaidFrom - error when trying to manipulate user data`);
         }
-        await this.achievementsHandler.checkRaidFromForAchievements({
+        await AchievementsHandler.getInstance().checkRaidFromForAchievements({
           viewersAmount: viewers,
           userId: userDB._id,
           username: userDB.username
@@ -232,7 +225,7 @@ class EventSubHandler extends HeadHandler {
               }
             );
 
-        await this.achievementsHandler.checkUserCheersForAchievements({
+        await AchievementsHandler.getInstance().checkUserCheersForAchievements({
           isAnonymous,
           bits,
           message,
@@ -313,7 +306,7 @@ class EventSubHandler extends HeadHandler {
       const alertSoundPath = path.join(alertSoundsPath, rewardTitle) + ".mp3";
       let alertSoundFileBuffer: Buffer;
 
-      await this.musicYTHandler.handleIfSongRequestRewardIsRedeemed({
+      await MusicHeadHandler.getInstance().handleIfSongRequestRewardIsRedeemed({
         title: rewardTitle,
         input,
         username: userDisplayName,
@@ -353,7 +346,7 @@ class EventSubHandler extends HeadHandler {
       }
       this.isAlertPlaying = true;
 
-      this.socketIO.emit("onRedemption", firstAlert[0], firstAlert[1].audioBuffer);
+      SocketHandler.getInstance().getIO().emit("onRedemption", firstAlert[0], firstAlert[1].audioBuffer);
 
       setTimeout(() => {
         this.isAlertPlaying = false;

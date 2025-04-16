@@ -1,19 +1,38 @@
 import { useState } from "react";
-import { useOverlayDataContext } from "./OverlayDataContext";
 import Modal from "@components/modal";
 import React from "react";
-import { OverlayKeysStylesParsedType } from "src/layout";
-import { useSocketContext } from "@socket";
+import { OverlayKeysStylesParsedType } from "@layout";
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
+import { useEditOverlay } from "@services";
+import { addNotification } from "@utils";
+import { setStyles } from "@redux/overlaysSlice";
 
 type OverlayKeysType =
   OverlayKeysStylesParsedType[keyof OverlayKeysStylesParsedType];
 
 function StyleCSSEditor() {
   const [showModal, setShowModal] = useState(false);
-  const { baseData, fetchEditOverlay } = useOverlayDataContext();
   const {
-    emits: { refreshOverlayLayout },
-  } = useSocketContext();
+    baseData,
+    overlay: { styles },
+  } = useSelector((state: RootStore) => state.overlays);
+
+  const editOverlayMutation = useEditOverlay();
+
+  const handleEditOverlay = () => {
+    if (!baseData._id)
+      return addNotification(
+        "No overlay id",
+        "No overlay id to delete",
+        "warning"
+      );
+
+    editOverlayMutation.mutate({
+      id: baseData._id,
+      updatedOverlay: { styles },
+    });
+  };
   return (
     <div className="style-css-editor">
       <button
@@ -27,10 +46,8 @@ function StyleCSSEditor() {
         show={showModal}
         onClose={() => setShowModal(false)}
         onSubmit={() => {
+          handleEditOverlay();
           setShowModal(false);
-          fetchEditOverlay().then(() => {
-            refreshOverlayLayout(baseData._id);
-          });
         }}
       >
         <StyleCssEditorModalData />
@@ -43,8 +60,8 @@ export default StyleCSSEditor;
 
 function StyleCssEditorModalData() {
   const {
-    stylesState: [styles],
-  } = useOverlayDataContext();
+    baseData: { styles },
+  } = useSelector((state: RootStore) => state.overlays);
 
   const [choosenOverlayEdit, setChoosenOverlayEdit] = useState<
     [keyof OverlayKeysStylesParsedType, OverlayKeysType]
@@ -91,8 +108,8 @@ type KeyDataAsObject = { [index: string]: number | string };
 
 function CssEditInputs({ propertyKeyName }: CssEditInputsProps) {
   const {
-    stylesState: [styles],
-  } = useOverlayDataContext();
+    baseData: { styles },
+  } = useSelector((state: RootStore) => state.overlays);
 
   const data = styles[propertyKeyName];
   const dataKeys = Object.keys(data);
@@ -154,9 +171,11 @@ function NestedInputData({
   propertyKeyName,
   overlayDataKey,
 }: NestedInputDataProps) {
+  const dispatch = useDispatch();
+  const overlaysStateRedux = useSelector((state: RootStore) => state.overlays);
   const {
-    stylesState: [styles, setStyles],
-  } = useOverlayDataContext();
+    baseData: { styles },
+  } = overlaysStateRedux;
   const data = styles[propertyKeyName];
   const keyOfNestedDataAsserted =
     keyOfNestedData as keyof typeof overlayNestedData;
@@ -171,26 +190,23 @@ function NestedInputData({
         <input
           type={`${isChangedDataString ? "text" : "number"}`}
           value={overlayNestedData[keyOfNestedDataAsserted]}
-          onChange={(e) =>
-            setStyles((prevState) => {
-              const newData = isChangedDataString
-                ? e.target.value
-                : e.target.valueAsNumber;
+          onChange={(e) => {
+            const newData = isChangedDataString
+              ? e.target.value
+              : e.target.valueAsNumber;
 
-              const newState: OverlayKeysStylesParsedType = {
-                ...prevState,
-                [propertyKeyName]: {
-                  ...data,
-                  [overlayDataKey]: {
-                    ...overlayNestedData,
-                    [keyOfNestedDataAsserted]: newData,
-                  },
+            const newState: OverlayKeysStylesParsedType = {
+              ...styles,
+              [propertyKeyName]: {
+                ...data,
+                [overlayDataKey]: {
+                  ...overlayNestedData,
+                  [keyOfNestedDataAsserted]: newData,
                 },
-              };
-
-              return newState;
-            })
-          }
+              },
+            };
+            dispatch(setStyles(newState));
+          }}
         />
       </div>
     </div>
@@ -202,9 +218,10 @@ function SimpleInputData({
   overlayPropertyData,
   propertyKeyName,
 }: SimpleInputDataProps) {
+  const dispatch = useDispatch();
   const {
-    stylesState: [styles, setStyles],
-  } = useOverlayDataContext();
+    baseData: { styles },
+  } = useSelector((state: RootStore) => state.overlays);
 
   const data = styles[propertyKeyName];
   return (
@@ -216,22 +233,20 @@ function SimpleInputData({
             typeof overlayPropertyData === "string" ? "text" : "number"
           }`}
           value={overlayPropertyData}
-          onChange={(e) =>
-            setStyles((prevState) => {
-              const newData =
-                typeof data[overlayDataKey] === "string"
-                  ? e.target.value
-                  : e.target.valueAsNumber;
-              const newState = {
-                ...prevState,
-                [propertyKeyName]: {
-                  ...data,
-                  [overlayDataKey]: newData,
-                },
-              };
-              return newState;
-            })
-          }
+          onChange={(e) => {
+            const newData =
+              typeof data[overlayDataKey] === "string"
+                ? e.target.value
+                : e.target.valueAsNumber;
+            const newState = {
+              ...styles,
+              [propertyKeyName]: {
+                ...data,
+                [overlayDataKey]: newData,
+              },
+            };
+            dispatch(setStyles(newState));
+          }}
         />
       </div>
     </div>

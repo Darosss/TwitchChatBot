@@ -1,4 +1,4 @@
-import { BaseModelProperties } from "../api";
+import { BaseModelProperties, DefaultRequestParams } from "../api";
 
 export interface Affix extends BaseModelProperties {
   name: string;
@@ -9,8 +9,16 @@ export interface Affix extends BaseModelProperties {
   prefixes: string[];
 }
 
-export interface AffixCreateData extends Pick<Affix, "name"> {}
-
+export interface AffixCreateData
+  extends Pick<
+    Affix,
+    | "name"
+    | "prefixChance"
+    | "suffixChance"
+    | "prefixes"
+    | "suffixes"
+    | "enabled"
+  > {}
 export interface AffixUpdateData
   extends Partial<AffixCreateData>,
     Partial<
@@ -19,3 +27,7 @@ export interface AffixUpdateData
         "prefixChance" | "suffixChance" | "prefixes" | "suffixes" | "enabled"
       >
     > {}
+
+export interface FetchAffixParams extends DefaultRequestParams<keyof Affix> {
+  search_name?: string;
+}

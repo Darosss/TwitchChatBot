@@ -1,20 +1,22 @@
-import React from "react";
-import { AllModesReturn, generateSelectModes } from "@utils";
-import { DispatchAction } from "./types";
-import { MessageCategoryCreateData } from "@services";
 import ModalDataWrapper from "@components/modalDataWrapper";
+import { generateSelectModes, useGetAllModes } from "@utils";
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
+import {
+  setMessages,
+  setMood,
+  setName,
+  setTag,
+  toggleEnabled,
+} from "@redux/messageCategoriesSlice";
 
-interface CategoriesModalDataProps {
-  state: MessageCategoryCreateData;
-  dispatch: React.Dispatch<DispatchAction>;
-  modes: AllModesReturn;
-}
-
-export default function CategoriesModalData({
-  state,
-  dispatch,
-  modes: { tags, moods },
-}: CategoriesModalDataProps) {
+export default function CategoriesModalData() {
+  const modes = useGetAllModes();
+  const dispatch = useDispatch();
+  const messageCategoryState = useSelector(
+    (state: RootStore) => state.messageCategories.messageCategory
+  );
+  const { tags, moods } = modes;
   return (
     <ModalDataWrapper>
       <div>Name</div>
@@ -22,41 +24,34 @@ export default function CategoriesModalData({
         <input
           className="categories-list-modal-input"
           type="text"
-          value={state.name}
-          onChange={(e) => {
-            dispatch({ type: "SET_NAME", payload: e.target.value });
-          }}
+          value={messageCategoryState.name}
+          onChange={(e) => dispatch(setName(e.target.value))}
         />
       </div>
       <div> Enabled </div>
       <div>
         <button
-          onClick={() => dispatch({ type: "SET_ENABLED" })}
-          className={
-            `${!state.enabled ? "danger-button" : "primary-button"} ` +
-            "common-button "
-          }
+          onClick={() => dispatch(toggleEnabled())}
+          className={`${
+            !messageCategoryState.enabled ? "danger-button" : "primary-button"
+          } common-button`}
         >
-          {state.enabled.toString()}
+          {messageCategoryState.enabled.toString()}
         </button>
       </div>
       <div>Tag</div>
       <div>
         {generateSelectModes(
-          state.tag,
-          (e) => {
-            dispatch({ type: "SET_TAG", payload: e });
-          },
+          messageCategoryState.tag,
+          (e) => dispatch(setTag(e)),
           tags
         )}
       </div>
       <div>Mood</div>
       <div>
         {generateSelectModes(
-          state.mood,
-          (e) => {
-            dispatch({ type: "SET_MOOD", payload: e });
-          },
+          messageCategoryState.mood,
+          (e) => dispatch(setMood(e)),
           moods
         )}
       </div>
@@ -64,13 +59,8 @@ export default function CategoriesModalData({
       <div>
         <textarea
           className="categories-list-textarea"
-          value={state.messages?.join("\n")}
-          onChange={(e) => {
-            dispatch({
-              type: "SET_MESSAGES",
-              payload: e.target.value?.split("\n"),
-            });
-          }}
+          value={messageCategoryState.messages?.join("\n")}
+          onChange={(e) => dispatch(setMessages(e.target.value?.split("\n")))}
         />
       </div>
     </ModalDataWrapper>

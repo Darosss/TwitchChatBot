@@ -1,7 +1,3 @@
-import HeadHandler from "./HeadHandler";
-import { ApiClient } from "@twurple/api";
-import type { ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData } from "@socket";
-import { Server } from "socket.io";
 import {
   getTimerById,
   getTimers,
@@ -12,27 +8,26 @@ import {
   getMultiperEnabledAfixesChances
 } from "@services";
 import { percentChance, randomWithMax, timerLogger } from "@utils";
-import { TimerModel, TimersConfigs, UserModel } from "@models";
-import { AuthorizedUserData } from "./types";
+import { ConfigModel, TimerModel, UserModel } from "@models";
+import { ConfigManager } from "./ConfigManager";
 
-class TimersHandler extends HeadHandler {
-  private configs: TimersConfigs;
-  private clientSay: (message: string) => void;
+type OnTimerExecute = (message: string) => void;
+
+class TimersHandler {
+  private configs: ConfigModel = ConfigManager.getInstance().getConfig();
   private timers: TimerModel[] = [];
   private timersTimeouts: Map<string, NodeJS.Timeout> = new Map();
   private affixesMultipler = { prefixMult: 1, suffixMult: 1 };
+  private _onTimerExecute: OnTimerExecute;
 
-  constructor(
-    twitchApi: ApiClient,
-    socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
-    authorizedUser: AuthorizedUserData,
-    configs: TimersConfigs,
-    clientSay: (message: string) => void
-  ) {
-    super(socketIO, twitchApi, authorizedUser);
-    this.configs = configs;
-    this.clientSay = clientSay;
+  constructor(onTimerExecute: OnTimerExecute) {
+    ConfigManager.getInstance().registerObserver(this.handleConfigUpdate.bind(this));
+    this._onTimerExecute = onTimerExecute;
     this.init();
+  }
+
+  public set onTimerExecute(value: (message: string) => void) {
+    this._onTimerExecute = value;
   }
 
   private async init() {
@@ -42,12 +37,12 @@ class TimersHandler extends HeadHandler {
 
     setInterval(async () => {
       await this.checkTimersByPoints();
-    }, this.configs.timersIntervalDelay * 1000);
+    }, this.configs.timersConfigs.timersIntervalDelay * 1000);
   }
 
-  public async refreshConfigs(refreshedConfigs: TimersConfigs) {
-    this.configs = refreshedConfigs;
-    await this.updateAffixesMultiplers();
+  private async handleConfigUpdate(newConfigs: ConfigModel) {
+    this.configs = newConfigs;
+    this.refreshTimers();
   }
 
   public async refreshTimers() {
@@ -80,7 +75,8 @@ class TimersHandler extends HeadHandler {
         const timerMessage = await this.getTimerMessage(id);
 
         timerLogger.info(`Timer ${name} with message: ${timerMessage} - delay finished`);
-        this.clientSay(timerMessage);
+        if (this._onTimerExecute) this._onTimerExecute(timerMessage);
+        else timerLogger.warn("In order to execute timer message provide and set _onTimerExecute in TimersHandler");
         await this.updateTimerAfterUsage(id);
         this.setTimerTimeout(id, name, delay);
       }, delay * 1000)
@@ -120,14 +116,14 @@ class TimersHandler extends HeadHandler {
   }
 
   private shouldGetPrefix() {
-    const prefixChance = this.configs.prefixChance * this.affixesMultipler.prefixMult;
+    const prefixChance = this.configs.timersConfigs.prefixChance * this.affixesMultipler.prefixMult;
     if (percentChance(prefixChance)) {
       return true;
     }
     return false;
   }
   private shouldGetsuffix() {
-    const suffixChance = this.configs.suffixChance * this.affixesMultipler.suffixMult;
+    const suffixChance = this.configs.timersConfigs.suffixChance * this.affixesMultipler.suffixMult;
     if (percentChance(suffixChance)) {
       return true;
     }
@@ -143,7 +139,8 @@ class TimersHandler extends HeadHandler {
         const timerMessage = messages[randomWithMax(messages.length)];
         timerLogger.info(`Timer ${name} with message: ${timerMessage} - points >= requiredPoints`);
 
-        this.clientSay(timerMessage);
+        if (this._onTimerExecute) this._onTimerExecute(timerMessage);
+        else timerLogger.warn("In order to execute timer message provide and set _onTimerExecute in TimersHandler");
 
         await this.updateTimerAfterUsage(_id);
       }, index * 2000);
@@ -165,7 +162,7 @@ class TimersHandler extends HeadHandler {
   }
 
   private async updateNonFollowsTimers() {
-    const updatedTimers = await updateEnabledTimersAndEnabledModes(this.configs.nonFollowTimerPoints, {
+    const updatedTimers = await updateEnabledTimersAndEnabledModes(this.configs.timersConfigs.nonFollowTimerPoints, {
       nonFollowMulti: false
     });
 
@@ -174,7 +171,7 @@ class TimersHandler extends HeadHandler {
 
   private async updateNonSubsTimers() {
     //TODO: add usage in future
-    const updatedTimers = await updateEnabledTimersAndEnabledModes(this.configs.nonSubTimerPoints, {
+    const updatedTimers = await updateEnabledTimersAndEnabledModes(this.configs.timersConfigs.nonSubTimerPoints, {
       nonSubMulti: false
     });
 

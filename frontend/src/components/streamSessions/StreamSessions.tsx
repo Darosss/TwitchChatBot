@@ -1,18 +1,19 @@
-import React from "react";
 import Pagination from "@components/pagination";
 import { Link } from "react-router-dom";
 import PreviousPage from "@components/previousPage";
 import FilterBarSessions from "./filterBarSessions";
-import { useGetSessions } from "@services";
+import { fetchStreamSessionsDefaultParams, useGetSessions } from "@services";
 import { DateDifference, DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
-import { AxiosError, Loading } from "@components/axiosHelper";
+import { Error, Loading } from "@components/axiosHelper";
+import { useQueryParams } from "@hooks/useQueryParams";
 
 export default function StreamSessions() {
-  const { data: sessionsData, loading, error } = useGetSessions();
+  const searchParams = useQueryParams(fetchStreamSessionsDefaultParams);
+  const { data: sessionsData, isLoading, error } = useGetSessions(searchParams);
 
-  if (error) return <AxiosError error={error} />;
-  if (!sessionsData || loading) return <Loading />;
+  if (error) return <Error error={error} />;
+  if (!sessionsData || isLoading) return <Loading />;
 
   const { data, count, currentPage } = sessionsData;
 

@@ -1,14 +1,41 @@
 import { youtubeApiKeyV3 } from "@configs";
+import { musicLogger } from "@utils";
 import { google, youtube_v3 } from "googleapis";
 
 class YoutubeApiHandler {
   private youtube: youtube_v3.Youtube;
 
-  constructor() {
+  constructor(customAuth?: string) {
     this.youtube = google.youtube({
       version: "v3",
-      auth: youtubeApiKeyV3
+      auth: customAuth ? customAuth : youtubeApiKeyV3
     });
+  }
+
+  public async searchYoutubePlaylistByName(name: string, maxResults: number) {
+    try {
+      const foundPlaylist = await this.youtube.search.list({
+        part: ["id", "snippet"],
+        q: name,
+        type: ["playlist"],
+        maxResults
+      });
+      const playlist = foundPlaylist.data.items;
+      if (!playlist) return;
+      const playlistData = playlist
+        ?.filter((data) => data.id?.playlistId && data.snippet?.title)
+        ?.map(({ id, snippet }) => {
+          const { title } = snippet!;
+          const { playlistId } = id!;
+
+          return { title: title!, playlistId: playlistId! };
+        });
+      if (playlist && playlist.length > 0) {
+        return playlistData;
+      }
+    } catch (err) {
+      musicLogger.error(`searchYoutubePlaylistByName -> ${err}`);
+    }
   }
 
   public async getYoutubePlaylistById(id: string): Promise<youtube_v3.Schema$Playlist | undefined> {
@@ -24,7 +51,7 @@ class YoutubeApiHandler {
         return playlist[0];
       }
     } catch (err) {
-      console.error(err);
+      musicLogger.error(`getYoutubePlaylistById -> ${err}`);
     }
   }
 
@@ -41,7 +68,7 @@ class YoutubeApiHandler {
 
       return foundPlaylistItems.data.items;
     } catch (err) {
-      console.error(err);
+      musicLogger.error(`getYoutubePlaylistItemsById -> ${err}`);
       return [];
     }
   }
@@ -61,14 +88,14 @@ class YoutubeApiHandler {
 
       return videosIds;
     } catch (err) {
-      console.error(err);
+      musicLogger.error(`getYoutubePlaylistVideosIds -> ${err}`);
       return [];
     }
   }
 
   public async getYoutubeVideosById(ids: string[], part?: string[]): Promise<youtube_v3.Schema$Video[] | undefined> {
     const videoDetails = await this.youtube.videos.list({
-      part: part ? part : ["contentDetails", "snippet"],
+      part: part ? part : ["contentDetails", "snippet", "topicDetails"],
       id: ids
     });
 
@@ -99,4 +126,6 @@ class YoutubeApiHandler {
   }
 }
 
-export default YoutubeApiHandler;
+const youtubeApiHandler = new YoutubeApiHandler();
+export { YoutubeApiHandler };
+export default youtubeApiHandler;

@@ -3,8 +3,6 @@ import CommandsHandler from "../CommandsHandler";
 import EventSubHandler from "../EventSubHandler";
 import LoyaltyHandler from "../LoyaltyHandler";
 import MessagesHandler from "../MessagesHandler";
-import MusicStreamHandler from "../MusicStreamHandler";
-import MusicYTHandler from "../MusicYTHandler";
 import TriggersHandler from "../TriggersHandler";
 import StreamHandler from "stream/StreamHandler";
 import TimersHandler from "stream/TimersHandler";
@@ -42,10 +40,7 @@ export interface AuthorizedUserData {
 
 export interface HandlersList {
   achievementsHandler?: AchievementsHandler;
-  musicStreamHandler?: MusicStreamHandler;
   timersHandler?: TimersHandler;
-  musicHandler?: MusicStreamHandler;
-  musicYTHandler?: MusicYTHandler;
   commandsHandler?: CommandsHandler;
   messagesHandler?: MessagesHandler;
   triggersHandler?: TriggersHandler;

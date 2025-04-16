@@ -1,6 +1,9 @@
 import fs from "fs";
 import getAudioDurationInSeconds from "get-audio-duration";
 import path from "path";
+
+export type PossibleExtensions = "mp3" | "jpg" | "jpeg" | "png" | "gif";
+
 export const getListOfDirectoryNames = (
   pathToFolders: string,
   callback: (folders: string[]) => void,
@@ -21,16 +24,10 @@ export const getListOfDirectoryNames = (
     }
   });
 };
-/**
- *
- * @param pathToFolder - absolute folder path
- * @param extension - extension name fe. .mp3
- * @param callback - (files) => void
- * @param errorCB (error) => void
- */
+
 export const getListOfFilesWithExtensionInFolder = (
   pathToFolder: string,
-  extensions: string[],
+  extensions: PossibleExtensions[],
   callback: (files: string[]) => void,
   errorCB: (errorMsg: string) => void
 ) => {
@@ -40,7 +37,7 @@ export const getListOfFilesWithExtensionInFolder = (
     } else {
       const matchedFiles = files.filter((file) => {
         for (const ext of extensions) {
-          if (path.extname(file).toLowerCase() === ext) return true;
+          if (path.extname(file).toLowerCase() === `.${ext}`) return true;
         }
       });
 
@@ -84,8 +81,46 @@ export const getMp3AudioDuration = async (path: string) => {
   return mp3DurationSec;
 };
 
+export const getListOfMp3InFolder = (
+  pathToFolder: string,
+  callback: (files: string[]) => void,
+  errorCB: (errorMsg: string) => void
+) => {
+  fs.readdir(pathToFolder, function (err, files) {
+    if (err) {
+      errorCB("Folder probably does not exist");
+    } else {
+      const mp3Files = files.filter((file) => {
+        return path.extname(file).toLowerCase() === ".mp3";
+      });
+
+      callback(mp3Files);
+    }
+  });
+};
+
 export const ensureDirectoryExists = (directoryPath: string): void => {
   if (!fs.existsSync(directoryPath)) {
     fs.mkdirSync(directoryPath, { recursive: true });
   }
+};
+
+export const isADirectory = (directoryPath: string) => {
+  try {
+    const isDirectory = fs.statSync(directoryPath).isDirectory();
+    if (!isDirectory) {
+      return;
+    }
+
+    return true;
+  } catch (err) {}
+};
+
+export const getChunksFromStream = async (stream: fs.ReadStream): Promise<(string | Buffer)[]> => {
+  return await new Promise((resolve, reject) => {
+    const chunks: (string | Buffer)[] = [];
+    stream.on("data", (chunk) => chunks.push(chunk));
+    stream.on("end", () => resolve(chunks));
+    stream.on("error", (error) => reject(error));
+  });
 };

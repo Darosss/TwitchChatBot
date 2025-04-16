@@ -1,17 +1,16 @@
 import { createMessage, MessageCreateData, updateUser } from "@services";
-import { PointsConfigs } from "@models";
+import { ConfigModel } from "@models";
+import { ConfigManager } from "./ConfigManager";
 import AchievementsHandler from "./AchievementsHandler";
 
 class MessagesHandler {
-  private configs: PointsConfigs;
-  private achievementsHandler: AchievementsHandler;
-  constructor(achievementsHandler: AchievementsHandler, configs: PointsConfigs) {
-    this.achievementsHandler = achievementsHandler;
-    this.configs = configs;
+  private configs: ConfigModel = ConfigManager.getInstance().getConfig();
+  constructor() {
+    ConfigManager.getInstance().registerObserver(this.handleConfigUpdate.bind(this));
   }
 
-  public async refreshConfigs(refreshedConfigs: PointsConfigs) {
-    this.configs = refreshedConfigs;
+  private async handleConfigUpdate(newConfigs: ConfigModel) {
+    this.configs = newConfigs;
   }
 
   public async saveMessageAndUpdateUser(
@@ -26,7 +25,7 @@ class MessagesHandler {
       date: date,
       message: messageData.message
     });
-    this.achievementsHandler.checkMessageForAchievements({
+    AchievementsHandler.getInstance().checkMessageForAchievements({
       messageData,
       date,
       userId,
@@ -49,7 +48,7 @@ class MessagesHandler {
 
   private async updateUserStatistics(userId: string) {
     const updateData = {
-      $inc: { points: this.configs.pointsIncrement.message, messageCount: 1 },
+      $inc: { points: this.configs.pointsConfigs.pointsIncrement.message, messageCount: 1 },
       // add points by message,       count messages
       $set: { lastSeen: new Date() }
       // set last seen to new Date()

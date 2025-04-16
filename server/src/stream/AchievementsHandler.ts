@@ -1,14 +1,9 @@
 import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData,
   ObtainAchievementDataWithCollectedAchievement,
   ObtainAchievementDataWithProgressOnly,
-  isObtainedAchievement
+  isObtainedAchievement,
+  SocketHandler
 } from "@socket";
-import { Server } from "socket.io";
-import QueueHandler from "./QueueHandler";
 import {
   getDataForObtainAchievementEmit,
   updateAchievementUserProgressProgresses,
@@ -29,8 +24,8 @@ import {
   AchievementCustomModel,
   AchievementModel,
   AchievementUserProgressModel,
-  AchievementsConfigs,
   BadgeModel,
+  ConfigModel,
   CustomAchievementAction,
   TagModel,
   UserModel
@@ -38,6 +33,8 @@ import {
 import { client as discordClient, sendMessageInChannelByChannelId } from "../discord";
 import { codeBlock } from "discord.js";
 import { SubscriptionTiers } from "./EventSubHandler";
+import { AchievementsQueueHandler } from "./AchievementsQueueHandler";
+import { ConfigManager } from "./ConfigManager";
 // TODO: PERFOMANCE
 // TODO: cache custom achievements names or _ids
 // TODO: cache basic achievements too maybe
@@ -110,26 +107,30 @@ interface CheckUserCheersForAchievementsParams extends Partial<CommonAchievement
   message: string;
 }
 
-class AchievementsHandler extends QueueHandler<
+//Note: as singleton, because it will be used mostly for updating data - nothing more its like helper
+
+class AchievementsHandler extends AchievementsQueueHandler<
   ObtainAchievementDataWithCollectedAchievement | ObtainAchievementDataWithProgressOnly
 > {
-  private socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
-  private configs: AchievementsConfigs;
-  constructor(
-    socketIO: Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
-    configs: AchievementsConfigs
-  ) {
+  public static instance: AchievementsHandler;
+  private configs: ConfigModel = ConfigManager.getInstance().getConfig();
+
+  private constructor() {
     super();
-    this.socketIO = socketIO;
     this.onEmulateAchievementSocket();
-    this.configs = configs;
+  }
+  public static getInstance() {
+    if (!AchievementsHandler.instance) {
+      AchievementsHandler.instance = new AchievementsHandler();
+    }
+    return AchievementsHandler.instance;
   }
 
   protected override startTimeout(delay = 0): void {
     super.startTimeout(delay, (item) => {
       this.emitObtainAchievement(item);
 
-      this.socketIO.emit("obtainAchievementQueueInfo", this.getItemsCountInQueue());
+      SocketHandler.getInstance().getIO().emit("obtainAchievementQueueInfo", this.getLength());
       if (isObtainedAchievement(item)) this.handleDiscordAnnoucment(item);
       // pretty sure it will be defined but still hard code 2500 as default
       const timeoutDelay = isObtainedAchievement(item)
@@ -140,9 +141,13 @@ class AchievementsHandler extends QueueHandler<
   }
 
   private async handleDiscordAnnoucment(item: ObtainAchievementDataWithCollectedAchievement) {
-    if (this.configs.obtainedAchievementsChannelId) {
+    if (this.configs.achievementsConfigs.obtainedAchievementsChannelId) {
       const messageToSend = this.getDiscordAchievementMessage(item);
-      sendMessageInChannelByChannelId(discordClient, this.configs.obtainedAchievementsChannelId, messageToSend);
+      sendMessageInChannelByChannelId(
+        discordClient,
+        this.configs.achievementsConfigs.obtainedAchievementsChannelId,
+        messageToSend
+      );
     }
   }
 
@@ -250,32 +255,31 @@ class AchievementsHandler extends QueueHandler<
   }
 
   private onEmulateAchievementSocket() {
-    this.socketIO.on("connect", (socket) => {
-      socket.on("emulateAchievement", (data) => {
-        this.enqueue(data);
-      });
+    const socketHandler = SocketHandler.getInstance();
+    socketHandler.subscribe("emulateAchievement", (data) => {
+      this.enqueue(data);
+    });
 
-      socket.on("addAchievementProgressToUser", async (data, cb) => {
-        try {
-          const update = await this.updateAchievementUserProgressAndAddToQueue(data);
-          if (update.error) throw Error(update.message);
+    socketHandler.subscribe("addAchievementProgressToUser", async (data, cb) => {
+      try {
+        const update = await this.updateAchievementUserProgressAndAddToQueue(data);
+        if (update.error) throw Error(update.message);
 
-          cb(null);
-        } catch (error) {
-          if (error instanceof Error) {
-            cb(error.message);
-          } else {
-            cb("An unknown error occured");
-          }
+        cb(null);
+      } catch (error) {
+        if (error instanceof Error) {
+          cb(error.message);
+        } else {
+          cb("An unknown error occured");
         }
-      });
+      }
     });
   }
 
   private emitObtainAchievement(
     emitData: ObtainAchievementDataWithCollectedAchievement | ObtainAchievementDataWithProgressOnly
   ) {
-    this.socketIO.emit("obtainAchievement", emitData);
+    SocketHandler.getInstance().getIO().emit("obtainAchievement", emitData);
   }
 
   public async checkMessageForAchievements({ messageData, ...data }: CheckMessageForAchievement) {

@@ -31,9 +31,6 @@ export const getSocketEmitsFunctions = (
     changeModes: () => {
       socketConnection.emit("changeModes");
     },
-    changeVolume: (volume) => {
-      socketConnection.emit("changeVolume", volume);
-    },
     musicPause: () => {
       socketConnection.emit("musicPause");
     },
@@ -46,38 +43,23 @@ export const getSocketEmitsFunctions = (
     musicPlay: () => {
       socketConnection.emit("musicPlay");
     },
-    loadSongs: (folderName) => {
-      socketConnection.emit("loadSongs", folderName);
+    loadPlaylist: (data) => {
+      socketConnection.emit("loadPlaylist", data);
     },
-    getAudioInfo: (cb) => {
-      socketConnection.emit("getAudioInfo", cb);
+    addSongToPlayer: (data) => {
+      socketConnection.emit("addSongToPlayer", data);
     },
-    getAudioStreamData: (cb) => {
-      socketConnection.emit("getAudioStreamData", cb);
+    sendBufferedInfo: (data) => {
+      socketConnection.emit("sendBufferedInfo", data);
     },
-    changeYTVolume: (volume) => {
-      socketConnection.emit("changeYTVolume", volume);
+    loadFolder: (folderName) => {
+      socketConnection.emit("loadFolder", folderName);
     },
-    musicYTNext: () => {
-      socketConnection.emit("musicYTNext");
+    getAudioData: (cb) => {
+      socketConnection.emit("getAudioData", cb);
     },
-    musicYTPause: () => {
-      socketConnection.emit("musicYTPause");
-    },
-    musicYTStop: () => {
-      socketConnection.emit("musicYTStop");
-    },
-    musicYTPlay: () => {
-      socketConnection.emit("musicYTPlay");
-    },
-    loadYTPlaylist: (playlistId) => {
-      socketConnection.emit("loadYTPlaylist", playlistId);
-    },
-    getAudioYTData: (cb) => {
-      socketConnection.emit("getAudioYTData", cb);
-    },
-    getAudioYTInfo: (cb) => {
-      socketConnection.emit("getAudioYTInfo", cb);
+    changeVolume: (volume) => {
+      socketConnection.emit("changeVolume", volume);
     },
     createCustomReward: (data, cb) => {
       socketConnection.emit("createCustomReward", data, cb);

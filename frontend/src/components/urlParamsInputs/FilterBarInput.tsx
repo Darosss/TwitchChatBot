@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes } from "react";
+import { InputHTMLAttributes } from "react";
 import "react-modern-drawer/dist/index.css";
 
 interface FilterBarInputProps extends InputHTMLAttributes<HTMLInputElement> {

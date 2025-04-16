@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { badgesPath, publicPath } from "@configs";
+import { badgesPath, publicEndpointPath } from "@configs";
 import {
   BadgeCreateData,
   BadgeUpdateData,
@@ -45,16 +45,15 @@ export const getManyBadges = async (req: Request<{}, {}, {}, RequestSearch>, res
 
   const searchFilter = filterBadgesByUrlParams(req.query);
   try {
-    const affixes = await getBadges(searchFilter, {
+    const badges = await getBadges(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
       sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 }
     });
 
     const count = await getBadgesCount(searchFilter);
-
     return res.status(200).send({
-      data: affixes,
+      data: badges,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page)
@@ -130,14 +129,14 @@ export const deleteBadgeImageByName = async (req: Request, res: Response, next: 
 };
 
 export const getBadgesBaseUrl = (req: Request, res: Response) => {
-  return res.status(200).send({ data: path.relative(publicPath, badgesPath) });
+  return res.status(200).send({ data: path.relative(publicEndpointPath, badgesPath) });
 };
 
 export const getBadgesImagesList = (req: Request, res: Response, next: NextFunction) => {
   try {
     getListOfFilesWithExtensionInFolder(
       badgesPath,
-      [".jpg", ".jpeg", ".png", ".gif"],
+      ["jpg", "jpeg", "png", "gif"],
       (imagesPaths) => {
         const onlyOriginalImagesPaths = imagesPaths
           .filter((path) => !path.includes(SEPARATOR_BADGE_IMAGE_SIZE))

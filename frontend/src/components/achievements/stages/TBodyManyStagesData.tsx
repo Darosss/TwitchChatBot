@@ -1,19 +1,21 @@
 import { DateTooltip } from "@components/dateTooltip";
-import { useDeleteAchievementStage, AchievementStage } from "@services";
+import { AchievementStage, useDeleteAchievementStage } from "@services";
 import { Link } from "react-router-dom";
-import { useManyAchievementStagesContext } from "./ManyAchievementStagesContext";
-import { useAxiosWithConfirmation } from "@hooks";
 
-export default function TBodyManyStagesData() {
-  const {
-    achievementStagesState: { data },
-    refetchStages,
-  } = useManyAchievementStagesContext();
+interface TBodyManyStagesDataProps {
+  data: AchievementStage[];
+}
 
-  const setAchievementStageIdToDelete = useAxiosWithConfirmation({
-    hookToProceed: useDeleteAchievementStage,
-    opts: { onFullfiled: () => refetchStages() },
-  });
+export default function TBodyManyStagesData({
+  data,
+}: TBodyManyStagesDataProps) {
+  const deleteAchievementStageMutation = useDeleteAchievementStage();
+
+  const handleDeleteStage = (id: string) => {
+    if (!window.confirm(`Are you sure you want to stage with ID: ${id}?`))
+      return;
+    deleteAchievementStageMutation.mutate(id);
+  };
 
   return (
     <>
@@ -21,12 +23,13 @@ export default function TBodyManyStagesData() {
         <TBodyStageData
           key={stage._id}
           stage={stage}
-          onClickDelete={(stageId) => setAchievementStageIdToDelete(stageId)}
+          onClickDelete={(stageId) => handleDeleteStage(stageId)}
         />
       ))}
     </>
   );
 }
+
 interface TBodyStageDataProps {
   stage: AchievementStage;
   onClickDelete: (stageId: string) => void;

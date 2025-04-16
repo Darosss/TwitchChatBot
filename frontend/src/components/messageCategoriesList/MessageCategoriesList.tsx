@@ -1,168 +1,97 @@
-import React, { useReducer, useState } from "react";
-
 import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
-
 import {
   useCreateMessageCategory,
-  useDeleteMessageCategoryById,
-  useEditMessageCategoryById,
   useGetMessageCategories,
-  MessageCategory,
-  MessageCategoryCreateData,
+  useEditMessageCategory,
+  fetchMessageCategoriesDefaultParams,
 } from "@services";
 import Modal from "@components/modal";
 import FilterBarCategories from "./filterBarCategories";
-import { addSuccessNotification, useGetAllModes } from "@utils";
-import { DispatchAction } from "./types";
+import { addNotification } from "@utils";
 import CategoriesData from "./CategoriesData";
 import CategoriesModalData from "./CategoriesModalData";
-import { AxiosError, Loading } from "@components/axiosHelper";
-import { useAxiosWithConfirmation } from "@hooks";
+import { Error, Loading } from "@components/axiosHelper";
+import {
+  closeModal,
+  resetMessageCategoryState,
+  setEditingId,
+} from "@redux/messageCategoriesSlice";
+import { RootStore } from "@redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { useQueryParams } from "@hooks/useQueryParams";
 
 export default function MessageCategoriesList() {
-  const [showModal, setShowModal] = useState(false);
-
-  const [editingCategory, setEditingCategory] = useState("");
-
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const modes = useGetAllModes();
-
+  const queryParams = useQueryParams(fetchMessageCategoriesDefaultParams);
   const {
-    data: categoriesData,
-    loading,
+    data: messageCategories,
+    isLoading,
     error,
-    refetchData,
-  } = useGetMessageCategories();
+  } = useGetMessageCategories(queryParams);
+  const dispatch = useDispatch();
+  const {
+    isModalOpen,
+    messageCategory: messageCategoryState,
+    editingId,
+  } = useSelector((state: RootStore) => state.messageCategories);
 
-  const { refetchData: fetchEditCategory } = useEditMessageCategoryById(
-    editingCategory,
-    state
-  );
-  const { refetchData: fetchCreateCategory } = useCreateMessageCategory(state);
+  const createMessageCategoryMutation = useCreateMessageCategory();
+  const updateMessageCategoryMutation = useEditMessageCategory();
 
-  const setCategoryIdToDelete = useAxiosWithConfirmation({
-    hookToProceed: useDeleteMessageCategoryById,
-    opts: { onFullfiled: () => refetchData() },
-  });
+  if (error) return <Error error={error} />;
+  if (isLoading || !messageCategories) return <Loading />;
 
-  if (error) return <AxiosError error={error} />;
-  if (!categoriesData || loading || !modes) return <Loading />;
-
-  const { data, currentPage, count } = categoriesData;
-
-  const onSubmitModalCreate = () => {
-    fetchCreateCategory().then(() => {
-      addSuccessNotification("Message category created successfully");
-      refetchData();
-      setShowModal(false);
-    });
+  const handleCreateMessageCategory = () => {
+    createMessageCategoryMutation.mutate(messageCategoryState);
+    dispatch(resetMessageCategoryState());
+    dispatch(closeModal());
   };
 
-  const onSubmitModalEdit = () => {
-    fetchEditCategory().then(() => {
-      addSuccessNotification("Message category edited successfully");
-      refetchData();
-      handleOnHideModal();
-    });
-  };
-
-  const setState = (category: MessageCategory) => {
-    dispatch({
-      type: "SET_STATE",
-      payload: {
-        name: category.name,
-        messages: category.messages.map((msg) => msg[0]),
-        enabled: category.enabled,
-        mood: category.mood._id,
-        tag: category.tag._id,
-      },
-    });
-  };
-
-  const handleOnShowEditModal = (category: MessageCategory) => {
-    setEditingCategory(category._id);
-    setState(category);
-    setShowModal(true);
-  };
-
-  const handleOnShowCreateModal = (category?: MessageCategory) => {
-    if (category) {
-      setState(category);
-    } else {
-      dispatch({ type: "SET_STATE", payload: initialState });
+  const handleUpdateMessageCategory = () => {
+    if (!editingId) {
+      addNotification(
+        "Couldn't update message category",
+        "No message category id",
+        "warning"
+      );
+      return;
     }
-
-    setShowModal(true);
+    updateMessageCategoryMutation.mutate({
+      id: editingId,
+      updatedMessageCategory: messageCategoryState,
+    });
+    dispatch(resetMessageCategoryState());
+    dispatch(closeModal());
+    dispatch(setEditingId(""));
   };
 
-  const handleOnHideModal = () => {
-    setShowModal(false);
-    setEditingCategory("");
-  };
   return (
     <>
       <PreviousPage />
       <FilterBarCategories />
-      <CategoriesData
-        data={data}
-        handleOnShowCreateModal={handleOnShowCreateModal}
-        handleOnShowEditModal={handleOnShowEditModal}
-        setCategoryIdToDelete={setCategoryIdToDelete}
-      />
+      <CategoriesData data={messageCategories.data} />
 
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
-          currentPage={currentPage}
-          totalCount={count}
+          currentPage={messageCategories.currentPage}
+          totalCount={messageCategories.count}
           localStorageName="messageCategoriesPageSize"
           siblingCount={1}
         />
       </div>
       <Modal
-        title={`${editingCategory ? "Edit" : "Create"} message category`}
-        onClose={handleOnHideModal}
+        title={`${editingId ? "Edit" : "Create"} message category`}
+        onClose={() => dispatch(closeModal())}
         onSubmit={() => {
-          editingCategory ? onSubmitModalEdit() : onSubmitModalCreate();
+          editingId
+            ? handleUpdateMessageCategory()
+            : handleCreateMessageCategory();
         }}
-        show={showModal}
+        show={isModalOpen}
       >
-        <CategoriesModalData state={state} dispatch={dispatch} modes={modes} />
+        <CategoriesModalData />
       </Modal>
     </>
   );
-}
-
-const initialState: MessageCategoryCreateData = {
-  name: "",
-  enabled: true,
-  messages: [""],
-  tag: "",
-  mood: "",
-};
-function reducer(
-  state: MessageCategoryCreateData,
-  action: DispatchAction
-): MessageCategoryCreateData {
-  switch (action.type) {
-    case "SET_NAME":
-      return { ...state, name: action.payload };
-    case "SET_ENABLED":
-      return { ...state, enabled: action.payload || !state.enabled };
-    // case "SET_DESC":
-    //   return { ...state, description: action.payload };
-    case "SET_MESSAGES":
-      return { ...state, messages: action.payload };
-    case "SET_TAG":
-      return { ...state, tag: action.payload };
-
-    case "SET_MOOD":
-      return { ...state, mood: action.payload };
-    case "SET_STATE":
-      return { ...state, ...action.payload };
-    default:
-      throw new Error("Invalid action type");
-  }
 }

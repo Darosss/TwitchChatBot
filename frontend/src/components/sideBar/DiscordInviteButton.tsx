@@ -1,12 +1,12 @@
-import { AxiosError, Loading } from "@components/axiosHelper";
+import { Error, Loading } from "@components/axiosHelper";
 import { useGetDiscordInviteUrl } from "@services";
 
 export default function DiscordInviteButton() {
-  const { data: discordInviteUrl, error, loading } = useGetDiscordInviteUrl();
+  const { data: discordInviteUrl, error, isLoading } = useGetDiscordInviteUrl();
 
   if (!discordInviteUrl) return null;
-  if (error) return <AxiosError error={error} />;
-  if (loading) return <Loading />;
+  if (error) return <Error error={error} />;
+  if (isLoading) return <Loading />;
   return (
     <a
       className="common-button tertiary-button"

@@ -1,138 +1,80 @@
-import React, { useState } from "react";
-import Pagination from "@components/pagination";
+import { Error, Loading } from "@components/axiosHelper";
+import CardboxWrapper from "@components/cardboxWrapper";
 import Modal from "@components/modal";
+import Pagination from "@components/pagination";
 import PreviousPage from "@components/previousPage";
 import {
+  fetchTagsDefaultParams,
   useGetTags,
-  useEditTag,
   useCreateTag,
-  useDeleteTag,
-  Tag,
+  useEditTag,
 } from "@services";
-import { addSuccessNotification } from "@utils";
+import { addNotification } from "@utils";
+import { useDispatch, useSelector } from "react-redux";
+import { useQueryParams } from "@hooks/useQueryParams";
+import { RootStore } from "@redux/store";
+import { resetTagState, closeModal, setEditingId } from "@redux/tagsSlice";
 import FilterBarModes from "../filterBarModes";
-import ModalDataWrapper from "@components/modalDataWrapper";
-import { AxiosError, Loading } from "@components/axiosHelper";
-import { useAxiosWithConfirmation } from "@hooks";
+import TagModalData from "./TagModalData";
+import TagsData from "./TagsData";
 
 export default function Tags() {
-  const [showModal, setShowModal] = useState(false);
+  const queryParams = useQueryParams(fetchTagsDefaultParams);
+  const { data: tags, isLoading, error } = useGetTags(queryParams);
+  const dispatch = useDispatch();
+  const {
+    isModalOpen,
+    tag: tagState,
+    editingId,
+  } = useSelector((state: RootStore) => state.tags);
 
-  const [editingTag, setEditingTag] = useState("");
+  const createTagMutation = useCreateTag();
+  const updateTagMutation = useEditTag();
 
-  const [name, setName] = useState("");
-  const [createName, setCreateName] = useState("");
+  if (error) return <Error error={error} />;
+  if (isLoading || !tags) return <Loading />;
 
-  const { data: tagsData, loading, error, refetchData } = useGetTags();
+  const handleCreateTag = () => {
+    createTagMutation.mutate(tagState);
+    dispatch(resetTagState());
+  };
 
-  const { refetchData: fetchEditTag } = useEditTag(editingTag, { name: name });
-
-  const { refetchData: fetchCreateTag } = useCreateTag({
-    name: createName,
-  });
-
-  const setTagIdToDelete = useAxiosWithConfirmation({
-    hookToProceed: useDeleteTag,
-    opts: { onFullfiled: () => refetchData() },
-  });
-
-  if (error) return <AxiosError error={error} />;
-  if (loading || !tagsData) return <Loading />;
-
-  const { data, count, currentPage } = tagsData;
-
-  const createNewTag = () => {
-    fetchCreateTag().then(() => {
-      addSuccessNotification("Tag created successfully");
-      refetchData();
+  const handleUpdateTag = () => {
+    if (!editingId) {
+      addNotification("Couldn't update tag", "No tag id", "warning");
+      return;
+    }
+    updateTagMutation.mutate({
+      id: editingId,
+      updatedTag: tagState,
     });
-  };
-
-  const onSubmitEditModal = () => {
-    fetchEditTag().then(() => {
-      addSuccessNotification("Tag edited successfully");
-      refetchData();
-    });
-    setShowModal(false);
-  };
-
-  const onCloseModal = () => {
-    setShowModal(false);
-  };
-
-  const handleOnEdit = (tag: Tag) => {
-    setEditingTag(tag._id);
-    setName(tag.name);
-    setShowModal(true);
+    dispatch(resetTagState());
+    dispatch(setEditingId(""));
   };
 
   return (
     <>
       <PreviousPage />
       <FilterBarModes />
-      <div className="table-list-wrapper mode-list-wrapper">
-        <div>
-          <div className="mode-list-create">
-            <input
-              type="text"
-              placeholder="Name"
-              value={createName}
-              onChange={(e) => setCreateName(e.target.value)}
-            ></input>
-            <button
-              onClick={createNewTag}
-              className="common-button primary-button"
-            >
-              Create
-            </button>
-          </div>
-        </div>
-        {data.map((tag, index) => (
-          <div key={index} className="mode-item">
-            <button
-              onClick={() => handleOnEdit(tag)}
-              className="common-button primary-button edit-mode-button"
-            >
-              {tag.name}
-            </button>
-            <button
-              onClick={() => setTagIdToDelete(tag._id)}
-              className="common-button danger-button remove-mode-btn"
-            >
-              X
-            </button>
-          </div>
-        ))}
-      </div>
+      <CardboxWrapper title={"Tags list"}>
+        <TagsData data={tags.data} />
+      </CardboxWrapper>
       <div className="table-list-pagination">
         <Pagination
           className="pagination-bar"
           localStorageName="tagsListPageSize"
-          currentPage={currentPage}
-          totalCount={count}
+          currentPage={tags.currentPage}
+          totalCount={tags.count}
           siblingCount={1}
         />
       </div>
       <Modal
-        title="Edit tag"
-        onClose={() => onCloseModal()}
-        onSubmit={() => {
-          onSubmitEditModal();
-        }}
-        show={showModal}
+        title={`${editingId ? "Edit" : "Create"} tag`}
+        onClose={() => dispatch(closeModal())}
+        onSubmit={() => (editingId ? handleUpdateTag() : handleCreateTag())}
+        show={isModalOpen}
       >
-        <ModalDataWrapper>
-          <div>Name</div>
-          <div>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-            />
-          </div>
-        </ModalDataWrapper>
+        <TagModalData />
       </Modal>
     </>
   );

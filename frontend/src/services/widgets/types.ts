@@ -1,12 +1,16 @@
-import { BaseModelProperties } from "../api";
+import { BaseModelProperties, DefaultRequestParams } from "../api";
 
-export interface Widgets extends BaseModelProperties {
+export interface Widget extends BaseModelProperties {
   name: string;
   layout: ReactGridLayout.Layouts;
   toolbox: ReactGridLayout.Layouts;
 }
 
-export interface WidgetsCreateData
-  extends Pick<Widgets, "name" | "layout" | "toolbox"> {}
+export interface WidgetCreateData
+  extends Pick<Widget, "name" | "layout" | "toolbox"> {}
 
-export interface WidgetsUpdateData extends Partial<WidgetsCreateData> {}
+export interface WidgetUpdateData extends Partial<WidgetCreateData> {}
+
+export interface FetchWidgetsParams extends DefaultRequestParams<keyof Widget> {
+  search_name?: string;
+}

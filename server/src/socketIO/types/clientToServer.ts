@@ -1,17 +1,11 @@
 import {
   CustomRewardCreateData,
-  AudioStreamDataInfo,
-  AudioYTData,
-  AudioYTDataInfo,
-  AudioStreamData,
   ObtainAchievementDataWithCollectedAchievement,
-  AddAchievementProgressToUserData
+  AddAchievementProgressToUserData,
+  AudioStreamDataEmitCb
 } from "./dataTypes";
 
-export interface ClientToServerEvents
-  extends ClientToServerMusicLocalEvents,
-    ClientToServerYoutubeEvents,
-    ClientToServerCustomRewards {
+export interface ClientToServerEvents extends ClientToServerMusicEvents, ClientToServerCustomRewards {
   messageClient: (message: string) => void;
   saveConfigs: () => void;
   refreshTriggers: () => void;
@@ -30,25 +24,15 @@ export interface ClientToServerCustomRewards {
   updateCustomReward: (id: string, data: CustomRewardCreateData, cb: (success: boolean) => void) => void;
   getCustomRewards: () => void;
 }
-
-export interface ClientToServerMusicLocalEvents {
+export interface ClientToServerMusicEvents {
+  changeVolume: (volume: number) => void;
+  musicNext: () => void;
   musicPause: () => void;
   musicStop: () => void;
   musicPlay: () => void;
-  musicNext: () => void;
-  changeVolume: (volume: number) => void;
-  getAudioStreamData: (cb: (isPlaying: boolean, data: AudioStreamData) => void) => void;
-  loadSongs: (folderName: string) => void;
-  getAudioInfo: (cb: (data: AudioStreamDataInfo) => void) => void;
-}
-
-export interface ClientToServerYoutubeEvents {
-  changeYTVolume: (volume: number) => void;
-  musicYTNext: () => void;
-  musicYTPause: () => void;
-  musicYTStop: () => void;
-  musicYTPlay: () => void;
-  loadYTPlaylist: (playlistId: string) => void;
-  getAudioYTData: (cb: (isPlaying: boolean, data: AudioYTData) => void) => void;
-  getAudioYTInfo: (cb: (data: AudioYTDataInfo) => void) => void;
+  loadPlaylist: (playlistId: string) => void;
+  loadFolder: (folderName: string) => void;
+  getAudioData: (cb: (data: AudioStreamDataEmitCb) => void) => void;
+  addSongToPlayer: (songData: string) => void;
+  sendBufferedInfo: (bufferedTime: number) => void;
 }

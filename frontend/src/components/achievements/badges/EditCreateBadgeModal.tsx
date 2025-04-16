@@ -1,43 +1,43 @@
 import Modal from "@components/modal";
 import { useEditBadge, useCreateBadge } from "@services";
-import { addSuccessNotification } from "@utils";
+import { addErrorNotification } from "@utils";
 import BadgeModalData from "./BadgesModalData";
-import { useBadgeContextEditCreateData } from "./ContextEditCreateData";
-import { useBadgesContext } from "./ContextManyData";
+import { useDispatch, useSelector } from "react-redux";
+import { RootStore } from "@redux/store";
+import { closeModal, setEditingId } from "@redux/badgesSlice";
 
 export default function EditCreateBadgeModal() {
-  const {
-    badgeState: [{ _id, ...restBadgeState }],
-    showModalState: [showModal, setShowModal],
-  } = useBadgeContextEditCreateData();
+  const dispatch = useDispatch();
 
-  const { refetchBadgeData } = useBadgesContext();
-  const { refetchData: fetchEditBadge } = useEditBadge(_id, restBadgeState);
-  const { refetchData: fetchCreateBadge } = useCreateBadge(restBadgeState);
+  const { isModalOpen, badge, editingId } = useSelector(
+    (root: RootStore) => root.badges
+  );
+  const editBadgeMutation = useEditBadge();
+  const createBadgeMutation = useCreateBadge();
 
   const onSubmitModalCreate = () => {
-    fetchCreateBadge().then(() => {
-      addSuccessNotification("Badge created successfully");
-      setShowModal(false);
-      refetchBadgeData();
-    });
+    createBadgeMutation.mutate({ newBadge: badge });
+    dispatch(closeModal());
   };
+
   const onSubmitModalEdit = () => {
-    fetchEditBadge().then(() => {
-      addSuccessNotification("Badge edited successfully");
-      setShowModal(false);
-      refetchBadgeData();
+    if (!editingId) return addErrorNotification("ID badge need to be provided");
+    editBadgeMutation.mutate({
+      id: editingId,
+      updatedBadge: badge,
     });
+    dispatch(closeModal());
+    dispatch(setEditingId(""));
   };
 
   return (
     <Modal
-      title={`${_id ? "Edit" : "Create"} badge`}
-      onClose={() => setShowModal(false)}
+      title={`${editingId ? "Edit" : "Create"} badge`}
+      onClose={() => dispatch(closeModal())}
       onSubmit={() => {
-        _id ? onSubmitModalEdit() : onSubmitModalCreate();
+        editingId ? onSubmitModalEdit() : onSubmitModalCreate();
       }}
-      show={showModal}
+      show={isModalOpen}
     >
       <BadgeModalData />
     </Modal>

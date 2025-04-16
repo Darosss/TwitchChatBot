@@ -1,5 +1,6 @@
 import { usePagination } from "@hooks";
-import React, { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
+
 interface SelectWithDataProps<T> {
   title: string;
   data: T[];

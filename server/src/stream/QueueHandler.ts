@@ -1,83 +1,45 @@
-class QueueHandler<T> {
-  private items: T[];
-  private interval: NodeJS.Timeout | null = null;
-  private timeout: NodeJS.Timeout | null = null;
+import { shuffleArray } from "@utils";
+
+export class QueueHandler<T> {
+  protected items: T[];
+
   constructor() {
     this.items = [];
   }
 
-  private clearInterval() {
-    if (this.interval) {
-      clearInterval(this.interval);
-      this.interval = null;
-    }
-  }
-  private clearTimeout() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-      this.timeout = null;
-    }
-  }
-
-  protected startInterval(cb: (item: T) => void) {
-    if (this.interval) return;
-    this.interval = setInterval(async () => {
-      const item = this.peek();
-
-      if (!item) return this.clearInterval();
-
-      cb(item);
-
-      if (item) this.dequeue();
-    }, 2500);
-  }
-
-  protected startTimeout(delay = 1000, cb: (item: T) => void) {
-    if (this.timeout) return;
-
-    this.timeout = setTimeout(async () => {
-      const item = this.peek();
-
-      if (!item) return this.clearTimeout();
-
-      this.clearTimeout();
-      if (item) this.dequeue();
-      cb(item);
-    }, delay);
-  }
-
-  public enqueue(item: T, overrideAddInfo?: string) {
+  public enqueue(item: T): void {
     this.items.push(item);
-    !overrideAddInfo
-      ? console.log(`Item ${JSON.stringify(item)} inserted`)
-      : console.log(`Item ${overrideAddInfo} inserted`);
   }
 
-  public dequeue() {
-    if (this.isEmpty()) {
-      return console.log("No items in queue");
-    }
+  public dequeue(): T | undefined {
     return this.items.shift();
   }
 
-  public peek() {
-    if (this.isEmpty()) {
-      return console.log("No items in queue");
-    }
+  public peek(): T | undefined {
     return this.items[0];
   }
 
-  public isEmpty() {
-    return this.items.length == 0;
-  }
-
-  public getItemsCountInQueue() {
+  public size(): number {
     return this.items.length;
   }
 
-  public printQueue() {
-    console.log(JSON.stringify(this.items));
+  public isEmpty(): boolean {
+    return this.items.length === 0;
+  }
+
+  public clear(): void {
+    this.items = [];
+  }
+
+  public getItems(): T[] {
+    return this.items;
+  }
+
+  public getLength(): number {
+    return this.items.length;
+  }
+
+  public shuffle() {
+    this.items = shuffleArray(this.items);
   }
 }
-
-export default QueueHandler;

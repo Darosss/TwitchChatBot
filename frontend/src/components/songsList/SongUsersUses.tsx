@@ -13,7 +13,7 @@ interface MappedUserUsesType {
 }
 
 export default function SongUsersUses({ uses }: UsersUsesProps) {
-  const { data, error, loading } = useGetUsersByIds(Object.keys(uses));
+  const { data, error, isLoading } = useGetUsersByIds(Object.keys(uses));
   const [sortDescending, setSortDescending] = useState(true);
   const mappedUsersUses = useMemo<MappedUserUsesType[] | null>(() => {
     if (!data) return null;
@@ -33,7 +33,7 @@ export default function SongUsersUses({ uses }: UsersUsesProps) {
     });
   }, [data, uses]);
 
-  if (error || loading) return null;
+  if (error || isLoading) return null;
 
   return (
     <div className="preview-song-modal-song-users-data">

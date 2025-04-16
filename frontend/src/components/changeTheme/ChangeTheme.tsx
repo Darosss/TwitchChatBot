@@ -5,7 +5,6 @@ export default function ChangeTheme() {
   const [theme, setTheme] = useLocalStorage("theme", "");
 
   useEffect(() => {
-    console.log("theme", theme);
     if (theme) return;
     const prefersDarkMode =
       window.matchMedia &&

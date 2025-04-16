@@ -1,2 +1,2 @@
 export * from "./Redemptions";
-export type { Redemption } from "./types";
+export type * from "./types";
