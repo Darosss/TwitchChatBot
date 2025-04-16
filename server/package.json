@@ -19,6 +19,7 @@
   "author": "Darosss",
   "license": "MIT",
   "dependencies": {
+    "@distube/ytdl-core": "^4.16.8",
     "@twurple/api": "^7.0.3",
     "@twurple/eventsub-http": "^7.0.3",
     "@twurple/eventsub-ws": "^7.0.3",
@@ -37,8 +38,7 @@
     "socket.io": "^4.5.4",
     "tmi.js": "^1.8.5",
     "winston": "^3.8.2",
-    "winston-daily-rotate-file": "^4.7.1",
-    "ytdl-core": "^4.11.5"
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.15",
