@@ -41,31 +41,30 @@ export const initMongoDataBase = async () => {
 
   await Promise.all([createDefaultTag(), createDefaultMood()]);
 
-  const [tag, mood] = await Promise.all([getOneTag({}), getOneMood({})]);
-  if (tag) {
-    if (mood) {
-      await createDefaultCommands(tag.id, mood.id);
-    }
-
-    await createDefaultInitialAchievements(tag.id);
-  }
+  await createDefaultCommands();
+  await createDefaultInitialAchievements();
 };
 
 const createDefaultConfigs = async () => {
   if (!(await configExist())) await createNewConfig();
 };
 
-const createDefaultCommands = async (tagId: string, moodId: string) => {
+const createDefaultCommands = async () => {
   if ((await getChatCommandsCount()) === 0) {
-    const chatCommands = getDefaultChatCommands();
-    const chatCommandsWithModes = chatCommands.map((command) => {
-      return {
-        ...command,
-        tag: tagId,
-        mood: moodId
-      };
-    });
-    await createChatCommand(chatCommandsWithModes);
+    const modes = await Promise.all([getOneTag({}), getOneMood({})]);
+
+    const [tag, mood] = modes;
+    if (tag && mood) {
+      const chatCommands = getDefaultChatCommands();
+      const chatCommandsWithModes = chatCommands.map((command) => {
+        return {
+          ...command,
+          tag: tag.id,
+          mood: mood.id
+        };
+      });
+      await createChatCommand(chatCommandsWithModes);
+    }
   }
 };
 const createDefaultTag = async () => {
@@ -94,11 +93,14 @@ const createDefaultAchievements = async (stagesId: string, tagId: string) => {
   achievementsData.forEach((data) => createAchievement(data));
 };
 
-const createDefaultInitialAchievements = async (tagId: string) => {
+const createDefaultInitialAchievements = async () => {
   if ((await getAchievementsCount()) !== 0) return;
+  const foundTag = await getOneTag({});
+  if (!foundTag) throw new Error("Error while creating default initial achievements -> No tag found");
   const badge = await createBadge(getDefaultBadgeData());
-  if (!badge) return;
+  if (!badge) throw new Error("Error while creating default initial achievements -> No created badge found");
   const stages = await createDefaultAchievementStages(badge._id);
-  if (!stages) return;
-  await createDefaultAchievements(stages._id, tagId);
+  if (!stages)
+    throw new Error("Error while creating default initial achievements -> No created achievmenets stages found");
+  await createDefaultAchievements(stages._id, foundTag._id);
 };
