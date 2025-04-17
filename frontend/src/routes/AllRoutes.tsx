@@ -60,7 +60,6 @@ export const allRoutes = createBrowserRouter(
       </Route>
       <Route element={<DefaultRouteLayout />}>
         <Route path="/achievements/*" element={<AchievementsRoutes />} />
-        <Route path="/messages/*" element={<MessageRoutes />} />
         <Route
           path="/overlay"
           element={
