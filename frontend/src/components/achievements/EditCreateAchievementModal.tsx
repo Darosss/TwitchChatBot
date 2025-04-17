@@ -1,17 +1,13 @@
 import Modal from "@components/modal";
 import ModalDataWrapper from "@components/modalDataWrapper";
 import {
-  fetchAchievementStagesDefaultParams,
   useCreateCustomAchievement,
   useEditAchievement,
-  useGetAchievementStages,
   useGetTags,
   useUpdateCustomAchievement,
 } from "@services";
 import { generateSelectModes } from "@utils";
-import { useState } from "react";
 import CustomAchievementModalInputs from "./CustomAchievementModalInputs";
-import { useQueryParams } from "@hooks/useQueryParams";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStore } from "@redux/store";
 import {
@@ -23,21 +19,15 @@ import {
   setStagesId,
   setTagId,
 } from "@redux/achievementsSlice";
+import { SelectAchievementStages } from "./stages/SelectAchievementStages";
 
 export default function EditCreateAchievementModal() {
   const dispatch = useDispatch();
-  const queryParams = useQueryParams(fetchAchievementStagesDefaultParams);
 
   const { achievement, isModalOpen, currentAction, editingId } = useSelector(
     (root: RootStore) => root.achievements
   );
   const { data: tags } = useGetTags();
-
-  const [achievementStagesNameFilter, setAchievementStagesNameFilter] =
-    useState("");
-
-  const { data: achievementStagesResponse } =
-    useGetAchievementStages(queryParams);
 
   const createCustomAchievementMutation = useCreateCustomAchievement();
 
@@ -74,6 +64,8 @@ export default function EditCreateAchievementModal() {
             });
             break;
         }
+
+        dispatch(closeModal());
       }}
     >
       <ModalDataWrapper>
@@ -98,32 +90,13 @@ export default function EditCreateAchievementModal() {
         </div>
 
         <div>Stages </div>
-        <div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <label> Search</label>
-            <input
-              type="text"
-              onChange={(e) => setAchievementStagesNameFilter(e.target.value)}
-              value={achievementStagesNameFilter}
-            />
-            <button
-              className={`common-button ${
-                achievement.stages ===
-                achievementStagesResponse?.data.at(0)?._id
-                  ? "primary-button"
-                  : "danger-button"
-              } `}
-              style={{ padding: "1rem" }}
-              onClick={() => {
-                const payload = achievementStagesResponse?.data.at(0);
-                if (!payload) return;
-                dispatch(setStagesId(payload._id));
-              }}
-            >
-              {achievementStagesResponse?.data.at(0)?.name ||
-                "No stages available"}
-            </button>
-          </div>
+        <div className="edit-create-achievement-modal-stages-wrapper">
+          <SelectAchievementStages
+            params={{ stageId: achievement.stages }}
+            onChangeSelect={(e) => {
+              dispatch(setStagesId(e.value));
+            }}
+          />
         </div>
         <div>Tag </div>
         <div>

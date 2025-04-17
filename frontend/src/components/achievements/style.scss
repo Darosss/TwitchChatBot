@@ -31,3 +31,16 @@
 .modal-custom-achievement-name {
   order: -1;
 }
+
+.edit-create-achievement-modal-stages-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  .stages-actions {
+    display: flex;
+    justify-content: space-around;
+    * {
+      flex-grow: 1;
+    }
+  }
+}
