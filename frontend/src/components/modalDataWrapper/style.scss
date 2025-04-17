@@ -11,7 +11,8 @@
 }
 
 .modal-data-wrapper > div {
-  flex: 0 1 48%;
+  max-width: 48%;
+  min-width: 48%;
   border-bottom: 0.1rem solid var(--revert-background-color);
   margin-top: 0.1rem;
 }
