@@ -5,15 +5,16 @@ import {
   PromisePaginationData,
   customAxios,
   PromiseBackendData,
+  queryKeysParamsHelper,
 } from "../api";
-import { Message } from "../messages";
+import { FetchMessagesParams, Message } from "../messages";
 import {
   FetchStreamSessionsParams,
   StreamSession,
   StreamSessionRedemptions,
   StreamSessionStatistics,
 } from "./types";
-import { Redemption } from "../redemptions";
+import { FetchRedemptionsParams, Redemption } from "../redemptions";
 
 export const fetchStreamSessionsDefaultParams: Required<FetchStreamSessionsParams> =
   {
@@ -33,10 +34,24 @@ const baseEndpointName = BaseEndpointNames.STREAM_SESSIONS;
 export const queryKeysStreamSessions = {
   allStreamSessions: "stream-sessions",
   streamSessionById: (id: string) => ["stream-session", id] as [string, string],
-  streamSessionMessages: (id: string) =>
-    ["stream-sessions-messages", id] as [string, string],
-  streamSessionRedemptions: (id: string) =>
-    ["stream-sessions-redemptions", id] as [string, string],
+  streamSessionMessages: (
+    id: string,
+    params?: QueryParams<keyof FetchMessagesParams>
+  ) =>
+    ["stream-sessions-messages", id, queryKeysParamsHelper(params)] as [
+      string,
+      string,
+      string
+    ],
+  streamSessionRedemptions: (
+    id: string,
+    params?: QueryParams<keyof FetchMessagesParams>
+  ) =>
+    ["stream-sessions-redemptions", id, queryKeysParamsHelper(params)] as [
+      string,
+      string,
+      string
+    ],
   currentStreamSessionMessages: "current-stream-session-messages",
   currentStreamSessionStatistics: "current-stream-session-statistics",
   currentStreamSessionRedemptions: "current-stream-session-redemptions",
@@ -57,27 +72,35 @@ export const fetchSessionById = async (
 };
 
 export const fetchSessionMessages = async (
-  id: string
+  id: string,
+  params?: QueryParams<keyof FetchMessagesParams>
 ): PromisePaginationData<Message> => {
-  const response = await customAxios.get(`/${baseEndpointName}/${id}/messages`);
+  const response = await customAxios.get(
+    `/${baseEndpointName}/${id}/messages`,
+    { params }
+  );
   return response.data;
 };
 export const fetchSessionRedemptions = async (
-  id: string
+  id: string,
+  params?: QueryParams<keyof FetchRedemptionsParams>
 ): PromisePaginationData<Redemption> => {
   const response = await customAxios.get(
-    `/${baseEndpointName}/${id}/redemptions`
+    `/${baseEndpointName}/${id}/redemptions`,
+    { params }
   );
   return response.data;
 };
 
-export const fetchCurrentSessionMessages =
-  async (): PromisePaginationData<Message> => {
-    const response = await customAxios.get(
-      `/${baseEndpointName}/current-session/messages`
-    );
-    return response.data;
-  };
+export const fetchCurrentSessionMessages = async (
+  params?: QueryParams<keyof FetchMessagesParams>
+): PromisePaginationData<Message> => {
+  const response = await customAxios.get(
+    `/${baseEndpointName}/current-session/messages`,
+    { params }
+  );
+  return response.data;
+};
 
 export const fetchCurrentSessionStatistics =
   async (): PromiseBackendData<StreamSessionStatistics> => {
@@ -87,13 +110,15 @@ export const fetchCurrentSessionStatistics =
     return response.data;
   };
 
-export const fetchCurrentSessionRedemptions =
-  async (): PromiseBackendData<StreamSessionRedemptions> => {
-    const response = await customAxios.get(
-      `/${baseEndpointName}/current-session/redemptions`
-    );
-    return response.data;
-  };
+export const fetchCurrentSessionRedemptions = async (
+  params?: QueryParams<keyof FetchRedemptionsParams>
+): PromiseBackendData<StreamSessionRedemptions> => {
+  const response = await customAxios.get(
+    `/${baseEndpointName}/current-session/redemptions`,
+    { params }
+  );
+  return response.data;
+};
 
 export const useGetSessions = (
   params?: QueryParams<keyof FetchStreamSessionsParams>
@@ -109,21 +134,30 @@ export const useGetSessionById = (id: string) => {
   );
 };
 
-export const useGetSessionMessages = (id: string) => {
-  return useQuery(queryKeysStreamSessions.streamSessionMessages(id), () =>
-    fetchSessionMessages(id)
+export const useGetSessionMessages = (
+  id: string,
+  params?: QueryParams<keyof FetchMessagesParams>
+) => {
+  return useQuery(
+    queryKeysStreamSessions.streamSessionMessages(id, params),
+    () => fetchSessionMessages(id, params)
   );
 };
-export const useGetSessionRedemptions = (id: string) => {
-  return useQuery(queryKeysStreamSessions.streamSessionRedemptions(id), () =>
-    fetchSessionRedemptions(id)
+export const useGetSessionRedemptions = (
+  id: string,
+  params?: QueryParams<keyof FetchRedemptionsParams>
+) => {
+  return useQuery(
+    queryKeysStreamSessions.streamSessionRedemptions(id, params),
+    () => fetchSessionRedemptions(id, params)
   );
 };
 
-export const useGetCurrentSessionMessages = () => {
-  return useQuery(
-    queryKeysStreamSessions.currentStreamSessionMessages,
-    fetchCurrentSessionMessages
+export const useGetCurrentSessionMessages = (
+  params?: QueryParams<keyof FetchMessagesParams>
+) => {
+  return useQuery(queryKeysStreamSessions.currentStreamSessionMessages, () =>
+    fetchCurrentSessionMessages(params)
   );
 };
 
@@ -134,9 +168,10 @@ export const useGetCurrentSessionStatistics = () => {
   );
 };
 
-export const useGetCurrentSessionRedemptions = () => {
-  return useQuery(
-    queryKeysStreamSessions.currentStreamSessionRedemptions,
-    fetchCurrentSessionRedemptions
+export const useGetCurrentSessionRedemptions = (
+  params?: QueryParams<keyof FetchRedemptionsParams>
+) => {
+  return useQuery(queryKeysStreamSessions.currentStreamSessionRedemptions, () =>
+    fetchCurrentSessionRedemptions(params)
   );
 };
