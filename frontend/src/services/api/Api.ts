@@ -2,6 +2,13 @@ import Axios, { AxiosError } from "axios";
 import { viteBackendUrl } from "@configs/envVariables";
 import { addNotification } from "@utils";
 import { QueryClient } from "react-query";
+import { QueryParams } from "./types";
+
+export const queryKeysParamsHelper = <ParamsType extends string>(
+  params?: QueryParams<ParamsType>
+) => {
+  return params ? JSON.stringify(params) : "";
+};
 
 export const customAxios = Axios.create({
   baseURL: viteBackendUrl,
