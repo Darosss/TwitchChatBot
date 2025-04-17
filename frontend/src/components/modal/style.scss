@@ -46,6 +46,8 @@
     padding: 1rem;
     border-top: 0.1rem solid var(--revert-background-color);
     border-bottom: 0.1rem solid var(--revert-background-color);
+    overflow-x: hidden;
+    max-height: 70dvh;
   }
 
   .modal-button {
