@@ -12,8 +12,9 @@ import {
 } from "@services";
 import { DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
-import Error from "@components/axiosHelper/errors";
+import ErrorHelper from "@components/axiosHelper/errors";
 import Loading from "@components/axiosHelper/loading";
+
 import { useQueryParams } from "@hooks/useQueryParams";
 
 interface MessagesDetailsProp {
@@ -29,31 +30,61 @@ interface MessagesProps {
 }
 
 export default function MessagesList({ messages }: MessagesListProps) {
+  const { userId, sessionId } = useParams();
+
   switch (messages) {
     case "session":
-      return <MessagesSession />;
+      return sessionId ? (
+        <MessagesSession sessionId={sessionId} />
+      ) : (
+        <ErrorHelper
+          error={
+            new Error(
+              "Session id must be provided in order to get session messages"
+            )
+          }
+        />
+      );
     case "user":
-      return <MessagesUser />;
+      return userId ? (
+        <MessagesUser userId={userId} />
+      ) : (
+        <ErrorHelper
+          error={
+            new Error("User id must be provided in order to get user messages")
+          }
+        />
+      );
     case "all":
     default:
       return <MessagesAll />;
   }
 }
-//TODO: add query params to user/session based
 
-const MessagesUser = () => {
-  const { userId } = useParams();
-  const { data, isLoading, error } = useGetUserMessages(userId!);
-  if (error) return <Error error={error} />;
+interface MessagesUserProps {
+  userId: string;
+}
+
+const MessagesUser = ({ userId }: MessagesUserProps) => {
+  const queryParams = useQueryParams(fetchMessagesDefaultParams);
+  const { data, isLoading, error } = useGetUserMessages(userId, queryParams);
+
+  if (error) return <ErrorHelper error={error} />;
   if (!data || isLoading) return <Loading />;
-
   return <Messages messagesData={data} />;
 };
 
-const MessagesSession = () => {
-  const { sessionId } = useParams();
-  const { data, isLoading, error } = useGetSessionMessages(sessionId!);
-  if (error) return <Error error={error} />;
+interface MessagesSessionProps {
+  sessionId: string;
+}
+
+const MessagesSession = ({ sessionId }: MessagesSessionProps) => {
+  const queryParams = useQueryParams(fetchMessagesDefaultParams);
+  const { data, isLoading, error } = useGetSessionMessages(
+    sessionId,
+    queryParams
+  );
+  if (error) return <ErrorHelper error={error} />;
   if (!data || isLoading) return <Loading />;
 
   return <Messages messagesData={data} />;
@@ -62,7 +93,7 @@ const MessagesSession = () => {
 const MessagesAll = () => {
   const queryParams = useQueryParams(fetchMessagesDefaultParams);
   const { data, isLoading, error } = useGetMessages(queryParams);
-  if (error) return <Error error={error} />;
+  if (error) return <ErrorHelper error={error} />;
   if (!data || isLoading) return <Loading />;
 
   return <Messages messagesData={data} />;
