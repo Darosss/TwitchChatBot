@@ -12,7 +12,7 @@ import {
 } from "@services";
 import { DateTooltip } from "@components/dateTooltip";
 import SortByParamsButton from "@components/SortByParamsButton";
-import { Error, Loading } from "@components/axiosHelper";
+import { Error as ErrorHelper, Loading } from "@components/axiosHelper";
 import { useQueryParams } from "@hooks/useQueryParams";
 
 interface RedemptionsListProps {
@@ -28,32 +28,64 @@ interface RedemptionsProps {
 }
 
 export default function RedemptionsList({ redemptions }: RedemptionsListProps) {
+  const { userId, sessionId } = useParams();
+
   switch (redemptions) {
-    case "user":
-      return <RedemptionsUser />;
     case "session":
-      return <RedemptionsSession />;
+      return sessionId ? (
+        <RedemptionsSession sessionId={sessionId} />
+      ) : (
+        <ErrorHelper
+          error={
+            new Error(
+              "Session id must be provided in order to get session redemptions"
+            )
+          }
+        />
+      );
+    case "user":
+      return userId ? (
+        <RedemptionsUser userId={userId} />
+      ) : (
+        <ErrorHelper
+          error={
+            new Error(
+              "User id must be provided in order to get user redemptions"
+            )
+          }
+        />
+      );
     case "all":
     default:
       return <RedemptionsAll />;
   }
 }
 
-//TODO: add query params to user/session based
+interface RedemptionsUserProps {
+  userId: string;
+}
 
-const RedemptionsUser = () => {
-  const { userId } = useParams();
-  const { data, isLoading, error } = useGetUserRedemptions(userId!);
-  if (error) return <Error error={error} />;
+const RedemptionsUser = ({ userId }: RedemptionsUserProps) => {
+  const queryParms = useQueryParams(fetchRedemptionsDefaultParams);
+
+  const { data, isLoading, error } = useGetUserRedemptions(userId, queryParms);
+  if (error) return <ErrorHelper error={error} />;
   if (!data || isLoading) return <Loading />;
 
   return <Redemptions redemptionsData={data} />;
 };
 
-const RedemptionsSession = () => {
-  const { sessionId } = useParams();
-  const { data, isLoading, error } = useGetSessionRedemptions(sessionId!);
-  if (error) return <Error error={error} />;
+interface RedemptionsSessionProps {
+  sessionId: string;
+}
+
+const RedemptionsSession = ({ sessionId }: RedemptionsSessionProps) => {
+  const queryParms = useQueryParams(fetchRedemptionsDefaultParams);
+  const { data, isLoading, error } = useGetSessionRedemptions(
+    sessionId,
+    queryParms
+  );
+  if (error) return <ErrorHelper error={error} />;
   if (!data || isLoading) return <Loading />;
 
   return <Redemptions redemptionsData={data} />;
@@ -62,7 +94,7 @@ const RedemptionsSession = () => {
 const RedemptionsAll = () => {
   const queryParms = useQueryParams(fetchRedemptionsDefaultParams);
   const { data, isLoading, error } = useGetRedemptions(queryParms);
-  if (error) return <Error error={error} />;
+  if (error) return <ErrorHelper error={error} />;
   if (!data || isLoading) return <Loading />;
 
   return <Redemptions redemptionsData={data} />;
