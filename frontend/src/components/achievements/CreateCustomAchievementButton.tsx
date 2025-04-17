@@ -6,6 +6,7 @@ import {
   openModal,
   setAchievementState,
   setCurrentAction,
+  setEditingId,
 } from "@redux/achievementsSlice";
 
 const initialAchievementData: Required<AchievementSliceDataType> = {
@@ -32,6 +33,7 @@ export function CreateCustomAchievementButton() {
             setCurrentAction(ManageAchievementsCurrentAction.CREATE_CUSTOM)
           );
           dispatch(setAchievementState(initialAchievementData));
+          dispatch(setEditingId(""));
         }}
       >
         Create custom

@@ -9,6 +9,7 @@ import {
   openModal,
   setAchievementState,
   setCurrentAction,
+  setEditingId,
 } from "@redux/achievementsSlice";
 
 interface TBodyDataProps {
@@ -131,6 +132,7 @@ function EditAchievementButton({ achievement }: EditAchievementButtonProps) {
     <button
       className="common-button primary-button"
       onClick={() => {
+        dispatch(setEditingId(achievement._id));
         dispatch(
           setCurrentAction(
             achievement.custom
