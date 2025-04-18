@@ -413,8 +413,7 @@ class MusicHeadHandler {
 
     const foundUser = await getOneUser({ username: username }, {});
 
-    //  TODO: pass this to logger
-    if (!foundUser) return console.log("No user found :(");
+    if (!foundUser) return musicLogger.error(`No user found with username: ${username}`);
 
     await manageSongLikesById(
       currentSong.type === "yt" ? { youtubeId: currentSong.id } : { id: currentSong.id },
