@@ -57,11 +57,11 @@ export const getBadgeById = async (id: string, findOptions: BadgeFindOptions) =>
   try {
     const foundBadge = await Badge.findById(id).select(select);
 
-    const streamSession = checkExistResource(foundBadge, `Stream session with id(${id})`);
+    const badge = checkExistResource(foundBadge, `Badge with id(${id})`);
 
-    return streamSession;
+    return badge;
   } catch (err) {
-    logger.error(`Error occured while getting stream session by id(${id}). ${err}`);
+    logger.error(`Error occured while getting badge by id(${id}). ${err}`);
     handleAppError(err);
   }
 };
