@@ -119,7 +119,7 @@ export const deleteAchievementStageById = async (id: string) => {
 
     return { message: "Successfully removed achievement stage" };
   } catch (err) {
-    logger.error(`Error occured while deleting badge by id(${id}). ${err}`);
+    logger.error(`Error occured while deleting achievement stages by id(${id}). ${err}`);
     handleAppError(err);
   }
 };

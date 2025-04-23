@@ -25,7 +25,7 @@ export const getAchievements = async (
   const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = findOptions;
 
   try {
-    const affix = await Achievement.find(filter)
+    const achievements = await Achievement.find(filter)
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
@@ -53,7 +53,7 @@ export const getAchievements = async (
       ])
       .sort(sort);
 
-    return affix;
+    return achievements;
   } catch (err) {
     logger.error(`Error occured while getting achievements. ${err}`);
     handleAppError(err);
