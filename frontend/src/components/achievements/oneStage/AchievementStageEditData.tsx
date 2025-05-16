@@ -13,7 +13,7 @@ import {
   removeStageDataByIndex,
   updateStageDataPropertyByIndex,
 } from "@redux/stagesSlice";
-import { closeModal, openModal } from "@redux/achievementsSlice";
+import { closeSoundModal, openSoundModal } from "@redux/stagesSlice";
 
 interface AchievementStageEditDataProps {
   onClickBadge: (indexOfStage: number) => void;
@@ -22,7 +22,7 @@ interface AchievementStageEditDataProps {
 export default function AchievementStageEditData({
   onClickBadge,
 }: AchievementStageEditDataProps) {
-  const { isModalOpen, isGoalTime, stage } = useSelector(
+  const { isSoundModalOpen, isGoalTime, stage } = useSelector(
     (root: RootStore) => root.stages
   );
 
@@ -165,7 +165,7 @@ export default function AchievementStageEditData({
             <div
               onClick={() => {
                 setCurrentChoosenStageIndex(index);
-                dispatch(openModal());
+                dispatch(openSoundModal());
               }}
             >
               {data.sound}
@@ -177,8 +177,8 @@ export default function AchievementStageEditData({
         title={`Edit stage: ${
           stage.stageData.at(currentChoosenStageIndex)?.name
         }`}
-        onClose={() => dispatch(closeModal())}
-        show={isModalOpen}
+        onClose={() => dispatch(closeSoundModal())}
+        show={isSoundModalOpen}
       >
         <AvailableAchievementSounds
           className="achievement-stage-edit-sound"

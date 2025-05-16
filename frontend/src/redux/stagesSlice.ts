@@ -13,7 +13,10 @@ export type StagesSliceType = CommonSliceTypeFields<
     createdAt: string;
     updatedAt: string;
   }
-> & { isGoalTime: boolean };
+> & {
+  isGoalTime: boolean;
+  isSoundModalOpen: boolean;
+};
 
 const initialState: StagesSliceType = {
   isGoalTime: false,
@@ -24,6 +27,7 @@ const initialState: StagesSliceType = {
     updatedAt: new Date().toISOString(),
   },
   isModalOpen: false,
+  isSoundModalOpen: false,
 };
 
 type UpdateStageDataByIndexPayload = {
@@ -53,6 +57,12 @@ const stageSlice = createSlice({
     },
     closeModal(state) {
       state.isModalOpen = false;
+    },
+    openSoundModal(state) {
+      state.isSoundModalOpen = true;
+    },
+    closeSoundModal(state) {
+      state.isSoundModalOpen = false;
     },
     setEditingId(state, action: PayloadAction<string>) {
       state.editingId = action.payload;
@@ -135,6 +145,8 @@ const stageSlice = createSlice({
 export const {
   closeModal,
   openModal,
+  closeSoundModal,
+  openSoundModal,
   setIsGoalTime,
   setEditingId,
   setName,
