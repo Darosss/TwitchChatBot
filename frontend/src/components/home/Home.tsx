@@ -37,9 +37,11 @@ export default function Home() {
         <ChatBackground />
       </div>
       <div className="home-footer">
-        <div>Footer</div>
-        <div>Footer</div>
-        <div>Footer</div>
+        <div>
+          <Link to="https://github.com/Darosss" target="_blank">
+            GH: Darosss 2022-2025
+          </Link>
+        </div>
       </div>
     </div>
   );
