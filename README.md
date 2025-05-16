@@ -1,4 +1,4 @@
-# Twitch ChatBot
+# Stream Manager
 
 <a name="readme-top"></a>
 
@@ -8,7 +8,7 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">Twitch ChatBot</a>
+      <a href="#about-the-project">Stream Manager</a>
       <ul>
         <li><a href="#built-with">Built With</a></li>
       </ul>
@@ -33,8 +33,8 @@
 
 <img src="./images/home.png" width=500px alt="Create trigger">
 
-Twitch chat bot designed to be deployed on localhost and home LAN only.
-It **SHOULD NOT** be on online hosting.
+Twitch stream manager is under **development** and for now designed to be deployed on localhost and home LAN only.
+It **SHOULD NOT** be on online hosting
 
 ## Built with
 
@@ -71,7 +71,7 @@ To use this you need to have:
 1. Clone the repo
 
 ```sh
-git clone https://github.com/Darosss/TwitchChatBot.git
+git clone https://github.com/Darosss/StreamManager
 ```
 
 2. From root folder navigate to `server` folder and install npm packages
@@ -101,7 +101,6 @@ BACKEND_PORT=5000
 DATABASE_CONNECT_URL=mongodb://127.0.0.1:27017/mychatbot
 
 # Twitch application configuration
-
 # Read below for CLIENT_ID / CLIENT_SECRET / REDIRECT_URL
 CLIENT_ID=<twitch application client id>
 CLIENT_SECRET=<twitch application client secret>
@@ -187,7 +186,7 @@ Once the app is started, it will listen for incoming twitch chat messages on you
 
 ## Features
 
-#### The chatbot includes the following features:
+#### The manager includes the following features:
 
 - Modes:
 
@@ -334,4 +333,4 @@ Distributed under the MIT License. See `LICENSE.md` for more information.
 
 Darosss - darosss12@proton.me
 
-Project Link: [https://github.com/Darosss/TwitchChatBot](https://github.com/Darosss/TwitchChatBot)
+Project Link: [https://github.com/Darosss/StreamManager](https://github.com/Darosss/StreamManager)

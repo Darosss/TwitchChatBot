@@ -1,7 +1,7 @@
 {
-  "name": "twitchchatbot-server",
+  "name": "stream-manager-server",
   "version": "1.0.0",
-  "description": "Server for TwitchChatBot repository",
+  "description": "Server for Stream Manager repository",
   "main": "index.js",
   "directories": {
     "test": "test"

@@ -21,5 +21,5 @@ export default function ComponentWithTitle({
 }
 
 export function HelmetTitle({ title }: HemletTitleProps) {
-  return <Helmet title={title + " | Twitch ChatBot"}></Helmet>;
+  return <Helmet title={title + " | Stream Manager"}></Helmet>;
 }

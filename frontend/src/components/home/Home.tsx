@@ -21,7 +21,7 @@ export default function Home() {
     <div className="home-wrapper">
       <HelmetTitle title="Home" />
       <div className="home-nav">
-        <h1> Twitch ChatBot </h1>
+        <h1> Stream Manager </h1>
         <ChangeTheme />
       </div>
       <div className="home-content">
