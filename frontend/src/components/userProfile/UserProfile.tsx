@@ -52,7 +52,7 @@ export default function UserProfile() {
         <div className="detail-section-wrapper">
           <div>
             <div>Username:</div> <div>{data.username}</div>
-            <div>Kick name:</div>
+            <div>Twitch name:</div>
             <div>{data.twitchName}</div>
           </div>
           <div>
