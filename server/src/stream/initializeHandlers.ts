@@ -14,6 +14,7 @@ import TimersHandler from "./TimersHandler";
 import CommandsHandler from "./CommandsHandler";
 import TriggersHandler from "./TriggersHandler";
 import MessagesHandler from "./MessagesHandler";
+import AchievementsHandler from "./AchievementsHandler";
 
 const INITIALIZED_HANDLERS: HandlersList = {};
 
@@ -105,6 +106,7 @@ const init = async () => {
   }
   await initializeHandlers({ twitchApi, authorizedUser });
 
+  AchievementsHandler.getInstance();
   SocketHandler.getInstance().getIO().emit("forceReconnect");
 };
 
