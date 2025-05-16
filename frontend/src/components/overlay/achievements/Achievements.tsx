@@ -5,12 +5,12 @@ import {
 } from "@socket";
 import { isObtainedAchievement } from "@utils";
 import { useEffect, useMemo, useState } from "react";
-import { viteBackendUrl } from "@configs/envVariables";
 import { getExampleAchievementsData } from "./exampleData";
 import { useLocalStorage } from "@hooks";
 import { useSelector } from "react-redux";
 import { RootStore } from "@redux/store";
 import { AchievementDataBlock } from "./Data-Blocks";
+import { useAchievementQueue } from "./use-achievements-queue";
 
 export type ObtainedAchievementStateType =
   | ObtainAchievementDataWithCollectedAchievement
@@ -19,9 +19,10 @@ export type ObtainedAchievementStateType =
 const MAX_ACHIEVEMENTS_IN_CACHE = 10;
 
 export default function Achievements() {
+  const socket = useSocketContext();
   const {
-    events: { obtainAchievement, obtainAchievementQueueInfo },
-  } = useSocketContext();
+    events: { obtainAchievementQueueInfo },
+  } = socket;
 
   const {
     isEditor,
@@ -50,43 +51,34 @@ export default function Achievements() {
       clearInterval(showQueueInterval);
     };
   }, []);
+
   useEffect(() => {
     if (isEditor) setObtainedAchievements(getExampleAchievementsData());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditor]);
 
-  useEffect(() => {
-    const audio = new Audio();
-    obtainAchievement.on((data) => {
-      setObtainedAchievements((prevState) => [data, ...prevState]);
+  //TODO: add progressBar via those.
+  const { start, end, isActive } = useAchievementQueue(
+    socket,
+    setObtainedAchievements,
 
-      const options = {
-        audioUrl: "",
-        delay: 2500,
-      };
-      if (isObtainedAchievement(data)) {
-        options.audioUrl = data.stage.data.sound || "";
-        options.delay = data.stage.data.showTimeMs;
-      } else {
-        options.audioUrl = data.progressData.currentStage?.sound || "";
-        options.delay = data.progressData.currentStage?.showTimeMs || 2500;
-      }
-
-      if (options.audioUrl) {
-        audio.src = `${viteBackendUrl}/${options.audioUrl}`;
-        audio.play();
-      }
-
-      setTimeout(() => {
-        audio.pause();
-      }, options.delay || 2500);
-    });
-
-    return () => {
-      obtainAchievement.off();
-      audio.pause();
-    };
-  }, [obtainAchievement, setObtainedAchievements]);
+    {
+      enabled: true,
+      getAudioAndDelay: (data) => {
+        if (isObtainedAchievement(data)) {
+          return {
+            audioUrl: data.stage.data.sound || "",
+            delay: data.stage.data.showTimeMs || 2500,
+          };
+        } else {
+          return {
+            audioUrl: data.progressData.currentStage?.sound || "",
+            delay: data.progressData.currentStage?.showTimeMs || 2500,
+          };
+        }
+      },
+    }
+  );
 
   useEffect(() => {
     if (obtainedAchievements.length > MAX_ACHIEVEMENTS_IN_CACHE) {
