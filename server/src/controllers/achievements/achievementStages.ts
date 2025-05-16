@@ -39,7 +39,7 @@ export const getManyAchievementStages = async (
 
   const searchFilter = filterAchievementStagesByUrlParams(req.query);
   try {
-    const affixes = await getAchievementStages(searchFilter, {
+    const stages = await getAchievementStages(searchFilter, {
       limit: Number(limit),
       skip: Number(page),
       sort: { [sortBy]: sortOrder === "desc" ? -1 : 1 }
@@ -48,7 +48,7 @@ export const getManyAchievementStages = async (
     const count = await getAchievementStagesCount(searchFilter);
 
     return res.status(200).send({
-      data: affixes,
+      data: stages,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page)

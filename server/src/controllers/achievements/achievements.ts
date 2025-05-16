@@ -24,7 +24,7 @@ export const getManyAchievements = async (
 
   const searchFilter = filterAchievementsByUrlParams(req.query);
   try {
-    const affixes = await getAchievements(
+    const achievements = await getAchievements(
       searchFilter,
       {
         limit: Number(limit),
@@ -37,7 +37,7 @@ export const getManyAchievements = async (
     const count = await getAchievementsCount(searchFilter);
 
     return res.status(200).send({
-      data: affixes,
+      data: achievements,
       totalPages: Math.ceil(count / Number(limit)),
       count: count,
       currentPage: Number(page)
