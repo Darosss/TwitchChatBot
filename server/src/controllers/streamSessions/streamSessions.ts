@@ -193,8 +193,9 @@ export const getCurrentSessionStatistics = async (req: Request, res: Response, n
         data: sessionStatstics
       });
     }
-
-    throw new AppError(404, "Not found any sessions");
+    return res.status(200).send({
+      data: null
+    });
   } catch (err) {
     next(err);
   }

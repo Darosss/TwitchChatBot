@@ -102,11 +102,9 @@ export const getLatestStreamSession = async (findOptions: StreamSessionFindOptio
       .select(select)
       .populate("events.user");
 
-    const streamSession = checkExistResource<StreamSessionDocument>(foundStreamSession, "Stream session");
-
-    return streamSession;
+    return foundStreamSession;
   } catch (err) {
-    logger.error(`Error occured while getting current stream session. ${err}`);
+    logger.error(`Error occured while getting latest stream session. ${err}`);
     handleAppError(err);
   }
 };
