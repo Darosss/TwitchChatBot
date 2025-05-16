@@ -20,9 +20,10 @@ type UseFileUploadReturnType = {
 };
 
 export const useFileUpload = (url: string): UseFileUploadReturnType => {
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<any>();
+  const [uploadProgress, setUploadProgress] =
+    useState<UseFileUploadReturnType["uploadProgress"]>(0);
+  const [error, setError] = useState<UseFileUploadReturnType["error"]>(null);
+  const [success, setSuccess] = useState<UseFileUploadReturnType["success"]>();
 
   const handleFileUpload = async (
     props: {
