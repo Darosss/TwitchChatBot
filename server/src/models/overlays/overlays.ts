@@ -19,7 +19,7 @@ const OverlaySchema: Schema<OverlayDocument> = new Schema(
     styles: {
       type: Map,
       of: String,
-      defaulot: new Map()
+      default: new Map()
     }
   },
   { timestamps: true }
