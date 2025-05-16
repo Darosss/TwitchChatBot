@@ -103,7 +103,7 @@ export const fetchCurrentSessionMessages = async (
 };
 
 export const fetchCurrentSessionStatistics =
-  async (): PromiseBackendData<StreamSessionStatistics> => {
+  async (): PromiseBackendData<StreamSessionStatistics | null> => {
     const response = await customAxios.get(
       `/${baseEndpointName}/current-session/statistics`
     );

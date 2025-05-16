@@ -49,8 +49,16 @@ export default function StreamStatistics() {
   }, []);
 
   if (error) return <Error error={error} />;
-  if (!statisticsData || isLoading) return <Loading />;
-  const { data } = statisticsData;
+  if (isLoading) return <Loading />;
+  const { data } = statisticsData || {};
+
+  if (!data)
+    return (
+      <div className="no-session-found">
+        <h1> No session found</h1>
+      </div>
+    );
+
   return (
     <div className="session-statistics-wrapper">
       <div>
@@ -59,7 +67,6 @@ export default function StreamStatistics() {
       <div>
         <TopUsersMessages users={data.topMsgsUsers} />
       </div>
-
       <div>
         <MostRedemptions users={data.topRedemptionsUsers} />
       </div>
