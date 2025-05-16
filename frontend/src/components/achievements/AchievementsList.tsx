@@ -3,13 +3,13 @@ import PreviousPage from "@components/previousPage";
 
 import AchievementsListData from "./AchievementsListData";
 import FilterBarAchievements from "./FilterBarAchievements";
-import { fetchChatCommandsDefaultParams, useGetAchievements } from "@services";
+import { fetchAchievementsDefaultParams, useGetAchievements } from "@services";
 import { Error, Loading } from "@components/axiosHelper";
 import EditCreateAchievementModal from "./EditCreateAchievementModal";
 import { useQueryParams } from "@hooks/useQueryParams";
 
 export default function AchievementsList() {
-  const queryParams = useQueryParams(fetchChatCommandsDefaultParams);
+  const queryParams = useQueryParams(fetchAchievementsDefaultParams);
   const {
     data: achievementsData,
     isLoading,
