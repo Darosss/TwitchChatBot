@@ -38,7 +38,7 @@ models:
 
 - [x] Req.body as interface
 
-- [x] Common interfaces in modeltwq
+- [x] Common interfaces in model
 
 - [] Add tests
 
@@ -72,6 +72,10 @@ models:
 
 - [x] add volume for music
 
+- [x] add base initial achievements
+
+- [x] add base logic for custom achievements
+
 - [] Add edit enabled and other things to custom alerts sounds
 
 - [] Add format messages
@@ -95,7 +99,7 @@ models:
 - [x] Every message add points depends on multipler(if sub or follow mutlipler > 1) else add 1
 
 - [] Timers follows if need add (get any follow from database and it can be used like
-  username ,created at followed at itd like in commands handler)
+  username, created at followed at itd like in commands handler)
 
 # frontend:
 
@@ -112,6 +116,10 @@ models:
 - [x] Add home site
 
 - [x] Add dynamical titles
+
+- [x] Replace custom useFetch/useAxios with tanstack query
+
+- [x] Replace useContext's with Redux storage
 
 - [] Box same as messages but with sounds?
 

@@ -3,11 +3,7 @@ server/dist
 server/node_modules
 server/logs
 
-
-*.temp.*
-
 #FRONTEND
-
 # dependencies
 frontend/node_modules
 frontend/.pnp
@@ -36,7 +32,8 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
-
 .vscode
 
 todo.md
+
+*.temp.*
