@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
-import { TriggerCreateData } from "@models";
+import { TriggerModel, TriggerCreateData } from "@models";
 jest.mock("@models", () => ({
   Trigger: {
     find: jest.fn(),
@@ -22,13 +22,23 @@ jest.mock("../aggregations", () => ({
 import { Trigger } from "@models";
 import * as TriggersService from "./triggers";
 
-const createFakeTrigger = () => ({
-  _id: "trigger-1",
-  enabled: true,
-  words: ["hello"],
-  createdAt: new Date("2024-01-01T00:00:00.000Z"),
-  updatedAt: new Date("2024-01-01T00:00:00.000Z")
-});
+const createFakeTrigger = () =>
+  ({
+    _id: "trigger-1",
+    enabled: true,
+    words: ["hello"],
+    createdAt: new Date("2024-01-01T00:00:00.000Z"),
+    updatedAt: new Date("2024-01-01T00:00:00.000Z"),
+    name: "triggers-1",
+    chance: 50,
+    delay: 10,
+    onDelay: false,
+    uses: 2,
+    messages: ["trigger message", "trigger message 2"],
+    mode: "WholeWord",
+    mood: "moodd-id",
+    tag: "tag-id"
+  }) as TriggerModel;
 
 describe("Triggers Service", () => {
   beforeEach(() => {
