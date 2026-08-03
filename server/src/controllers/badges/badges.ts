@@ -25,7 +25,7 @@ import sharp from "sharp";
 import type { ParamsDictionary } from "express-serve-static-core";
 
 import { BadgeUpdateData, BadgeCreateData } from "@models";
-import { badgeModelIMagesUrlsSizesNumbers, SEPARATOR_BADGE_IMAGE_SIZE } from "../../services/badges/utils";
+import { getBadgeModelIMagesUrlsSizesNumbers, SEPARATOR_BADGE_IMAGE_SIZE } from "../../services/badges/utils";
 export interface RequestParamsBadgeName extends ParamsDictionary {
   badgeName: string;
 }
@@ -90,7 +90,7 @@ export const uploadBadgeImages = (req: Request, res: Response, next: NextFunctio
         sharp.cache(false);
 
         const files = req.files as Express.Multer.File[];
-        const imageSizes = badgeModelIMagesUrlsSizesNumbers;
+        const imageSizes = getBadgeModelIMagesUrlsSizesNumbers();
 
         files.forEach(async (file, index) => {
           const { fileName, extension } = getFileNameAndExtension(file.filename);
@@ -124,7 +124,7 @@ export const deleteBadgeImageByName = async (
   const { badgeName } = req.params;
   const { fileName, extension } = getFileNameAndExtension(badgeName);
 
-  const deleteFilter = { name: fileName, extension, sizesToDelete: badgeModelIMagesUrlsSizesNumbers };
+  const deleteFilter = { name: fileName, extension, sizesToDelete: getBadgeModelIMagesUrlsSizesNumbers() };
   try {
     const message = await deleteBadgeImages(deleteFilter);
     res.status(200).send({ message });
@@ -156,7 +156,7 @@ export const getBadgesImagesList = (req: Request, res: Response, next: NextFunct
             //thats for show for user only x128px
             imagesPaths: onlyOriginalImagesPaths,
             separatorSizes: SEPARATOR_BADGE_IMAGE_SIZE,
-            availableSizes: badgeModelIMagesUrlsSizesNumbers
+            availableSizes: getBadgeModelIMagesUrlsSizesNumbers()
           }
         });
       },
