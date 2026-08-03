@@ -1,4 +1,4 @@
 export * from "./redemptions";
 export * from "./";
 
-export { RedemptionCreateData } from "./types";
+export type { RedemptionCreateData } from "./types";

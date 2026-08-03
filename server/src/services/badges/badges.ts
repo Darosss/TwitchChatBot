@@ -6,6 +6,7 @@ import { getAchievementStages } from "@services";
 import { promises as fsPromises } from "fs";
 import path from "path";
 import { badgesPath } from "@configs";
+import { SEPARATOR_BADGE_IMAGE_SIZE } from "./utils";
 
 export const getBadges = async (filter: QueryFilter<BadgeDocument> = {}, findOptions: ManyBadgesFindOptions) => {
   const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = findOptions;
