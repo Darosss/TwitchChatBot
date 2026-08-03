@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, jest, it, beforeEach, afterEach } from "@jest/globals";
 import * as ConfigsService from "./configs";
-import { Config } from "@models";
-import { configDefaults } from "@defaults";
+import { Config, ConfigModel, ConfigUpdateData } from "../../models/configs";
+import { configDefaults } from "../../defaults/configsDefaults";
 import { Error } from "mongoose";
 
 describe("Configs Services", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+
   afterEach(() => {
     jest.restoreAllMocks();
   });
@@ -87,8 +88,17 @@ describe("Configs Services", () => {
   });
   describe("updateConfigs", () => {
     it("should successfully update configs and return the updated document", async () => {
-      const fakeUpdateData = { someSetting: "newValue" };
-      const fakeUpdatedDoc = { _id: "123", someSetting: "newValue" };
+      const fakeUpdateData: ConfigUpdateData = {
+        commandsConfigs: {
+          commandsPrefix: "!"
+        }
+      };
+      const fakeUpdatedDoc: ConfigModel = {
+        _id: "123",
+        ...configDefaults,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
 
       const dbSpy = jest.spyOn(Config, "findOneAndUpdate").mockResolvedValue(fakeUpdatedDoc as any);
 
@@ -100,7 +110,11 @@ describe("Configs Services", () => {
     });
 
     it("should log the error and trigger handleAppError when the database throws", async () => {
-      const fakeUpdateData = { someSetting: "newValue" };
+      const fakeUpdateData: ConfigUpdateData = {
+        commandsConfigs: {
+          commandsPrefix: "!"
+        }
+      };
       const dbError = new Error("Database connection lost");
 
       jest.spyOn(Config, "findOneAndUpdate").mockRejectedValue(dbError);
