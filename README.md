@@ -6,7 +6,7 @@
 
 <a name="readme-top"></a>
 
-**⚠️ Note: This repository is currently under development and is not yet production-ready. Use at your own risk.**
+⚠️ Note: This project is under active development and intended for local or LAN deployment only. It's not recommended for public hosting or production use.
 
 <details>
   <summary>Table of Contents</summary>
@@ -37,8 +37,6 @@
 
 <img src="./images/home.webp" width="100%" alt="Create trigger">
 
-Twitch stream manager is under **development** and for now designed to be deployed on localhost and home LAN only.
-It **SHOULD NOT** be on online hosting
 
 ## Built with
 
@@ -66,7 +64,7 @@ It **SHOULD NOT** be on online hosting
 
 ### Prerequisites
 
-It can work on most versions, tho it is most tested on versions mentioned
+Works on many Node/Mongo versions; testing is done against the versions listed below.
 
 - MongoDB (`v8.0+`)
 
@@ -74,8 +72,9 @@ It can work on most versions, tho it is most tested on versions mentioned
 
 - npm
 
+Ensure npm is up to date (optional):
 ```sh
-  npm install npm@latest -g
+npm install -g npm@latest
 ```
 
 ### Installation
@@ -120,8 +119,9 @@ CLIENT_SECRET=<twitch application client secret>
 # Read below for YOUTUBE_API_KEY_V3
 YOUTUBE_API_KEY_V3=keyapi
 
-# ENCRYPTION_KEY - have to be 16 bytes string
-# I've used crypto libaray: crypto.randomBytes(16).toString('hex')
+# ENCRYPTION_KEY - must be a 16-byte value (hex-encoded)
+# To generate a secure key:
+# node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"
 ENCRYPTION_KEY=random_encryption_secret_stringkey
 
 # REDIRECT_URL=<backend localhost with port>/auth/twitch/callback
@@ -152,7 +152,7 @@ DISCORD_CLIENT_ID=
 `OAuth Redirect URLs` - in twitch app should have \<backend localhost with port>/auth/twitch/callback
 <br>
 `REDIRECT_URL` - must be same as **OAuth Redirect URLs** from app registered above <br>
-`BOT_PASSWORD` - can be obtained by accesing Implicit grant flow. More information: https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#implicit-grant-flow<br>
+`BOT_PASSWORD` - can be obtained by accessing the Implicit Grant flow. More information: https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#implicit-grant-flow<br>
 `BOT_ID` - can be obtained from twitch api or any external site
 
 `DISCORD_CLIENT_TOKEN` and `DISCORD_CLIENT_ID` - both can be obtained from discord developer portal: https://discord.com/developers/applications
@@ -168,9 +168,11 @@ DISCORD_CLIENT_ID=
   ```
 - then build
 
-  ```sh
-    npm build
-  ```
+```sh
+npm run build
+```
+
+Run this from the server folder; use the script name defined in server/package.json if different.
 
 - then run
 
@@ -188,15 +190,11 @@ DISCORD_CLIENT_ID=
 
 - navigate to frontend folder
 
-  ```sh
-    cd frontend
-  ```
-
-- navigate to frontend folder
-
-  ```sh
-    npm start
-  ```
+```sh
+cd frontend
+npm install
+npm run dev
+```
 
 ## Usage
 
@@ -211,7 +209,7 @@ Once the app is started, it will listen for incoming twitch chat messages on you
   - Create modes and assign them to timers / triggers / commands / message categories
   - By default global modes are created
   - Depends on which Tags and/or Moods are currently turned on, bot sends other messages(_of course if you added any_)
-  - Affixes are a bit different, just because they works as affix to messages. Each of affixes have multipler(in %) that adjust global configs of affix chance
+  - Affixes are a bit different — they act as message affixes. Each affix has a multiplier (in %) that adjusts global affix chances.
 
 - Timers:
   - Schedule messages to be sent at regular intervals
@@ -224,7 +222,7 @@ Once the app is started, it will listen for incoming twitch chat messages on you
 
 - Triggers:
   - Messages that triggers depends on context that user says
-  - Each trigger canhave mode between: ALL / WHOLE-WORD / STARTS-WITH
+  - Each trigger can have a mode between: ALL / WHOLE-WORD / STARTS-WITH
     - **STARTS-WITH**: trigger only fire when any word/message starts with word
     - **WHOLE-WORD**: trigger only fire when whole word occurs
     - **ALL**: trigger fire wherever word occurs
@@ -265,10 +263,8 @@ Once the app is started, it will listen for incoming twitch chat messages on you
 
       </details>
 
-  - Chat commands can contain user data who triggered command with `$user{<user field>}` fe.
-    - `@$user{username}`, your messages: `$user{messageCount}`
-  - And this command data with `$command{<command field>}` fe.
-    - I'm command and my name is: `$command{name}`
+  - Chat commands can contain user data from the user who triggered the command with `$user{<user field>}` (e.g. `@$user{username}` or `$user{messageCount}`).
+  - Commands can also include command data with `$command{<command field>}` (e.g. `$command{name}`).
 
 - Chat logging:
   - Log all messages from the chat to database.
@@ -309,24 +305,24 @@ Once the app is started, it will listen for incoming twitch chat messages on you
 
 ## Roadmap
 
-- [] Add subscriptions to follows, subs, cheers and others
-- [] Add styles for overlay and events widgets
-- [] Add music from youtube to overlay
-- [] Add info about music to database
-- [] Add complete user edit
-- [] Add functionality to non sub timers
-- [] Refactor prefixes, sufixes to get from enabled modes
-- [] Add information about fields in frontend when:
-  - [] Creating new triggers, chat commands, timers or message categories
-  - [] Editing configs to understand what each config option does
-- [] Add rest of alert sounds options (fe. enabled, colors, prompts etc.)
-- [] Add more stream statistics and improve existing
-- [] Add variety chat games (fe. random numbers, jokes etc)
-- [] Add starting soon and ending screens as overlays
+- [ ] Add subscriptions to follows, subs, cheers and others
+- [ ] Add styles for overlay and events widgets
+- [ ] Add music from YouTube to overlay
+- [ ] Add info about music to database
+- [ ] Add complete user edit
+- [ ] Add functionality to non sub timers
+- [ ] Refactor prefixes, suffixes to get from enabled modes
+- [ ] Add information about fields in frontend when:
+  - [ ] Creating new triggers, chat commands, timers or message categories
+  - [ ] Editing configs to understand what each config option does
+- [ ] Add rest of alert sounds options (e.g. enabled, colors, prompts etc.)
+- [ ] Add more stream statistics and improve existing
+- [ ] Add variety chat games (e.g. random numbers, jokes etc)
+- [ ] Add starting soon and ending screens as overlays
 
 ## License
 
-Distributed under the MIT License. See `LICENSE.md` for more information.
+Distributed under the MIT License. See LICENSE for details.
 
 ## Contact
 
