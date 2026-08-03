@@ -1,5 +1,6 @@
 import { ChannelType, CommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
-import { CommandData, CommandNames } from "./types";
+import type { CommandData } from "./types";
+import { CommandNames } from "./enums";
 import { updateConfigs } from "@services";
 
 export const setObtainedAchievementsChannelId: CommandData = {

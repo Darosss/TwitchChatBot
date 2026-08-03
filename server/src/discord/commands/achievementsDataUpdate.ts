@@ -9,12 +9,13 @@ import {
 } from "discord.js";
 import {
   CommandData,
-  CommandNames,
   OnChannelMessagesLogicFn,
   OnInterractionOptionsLogicFn,
   SendAchievementsListMessagesFn,
   SendBadgesListMessagesFn
 } from "./types";
+
+import { CommandNames } from "./enums";
 import { generateRandomWord, getDateFromSecondsToYMDHMS, logger } from "@utils";
 import { clearChannelFromMessages, findTextBasedChannelById, sendMessageInChannelByChannel } from "../utils";
 import { getAchievements, getBadges } from "@services";

@@ -1,3 +1,3 @@
 export { client, initialize } from "./client";
-export { CommandData } from "./commands";
+export type { CommandData } from "./commands";
 export * from "./utils";
