@@ -81,7 +81,7 @@ export const updateCurrentStreamSession = async (updateData: UpdateQuery<StreamS
 
   if (!currentStreamSession) return null;
   try {
-    const updatedStreamSession = await StreamSession.findByIdAndUpdate(currentStreamSession.id, updateData, {
+    const updatedStreamSession = await StreamSession.findByIdAndUpdate(currentStreamSession._id, updateData, {
       new: true
     });
 
