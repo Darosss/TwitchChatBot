@@ -1,6 +1,5 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import viteTsconfigPaths from "vite-tsconfig-paths";
 import svgrPlugin from "vite-plugin-svgr";
 import eslint from "@nabla/vite-plugin-eslint";
 import path from "path";
@@ -13,14 +12,14 @@ export default defineConfig({
     },
   },
   resolve: {
+    tsconfigPaths: true,
     alias: {
-      src: path.resolve(__dirname, "./src"),
+      src: path.resolve(import.meta.dirname, "./src"),
     },
   },
 
   plugins: [
     react(),
-    viteTsconfigPaths(),
     svgrPlugin(),
     eslint(),
     visualizer({ filename: "dist/stats.html", template: "treemap" }),
