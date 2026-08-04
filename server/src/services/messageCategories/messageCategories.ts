@@ -1,6 +1,6 @@
 import { modesPipeline, getLeastMessagePipeline } from "../aggregations";
-import { MessageCategory, MessageCategoryCreateData, MessageCategoryDocument, MessageCategoryModel } from "@models";
-import { handleAppError, checkExistResource, logger, randomWithMax } from "@utils";
+import { MessageCategory, MessageCategoryCreateData, MessageCategoryDocument } from "@models";
+import { handleAppError, checkExistResource, logger } from "@utils";
 import mongoose, { QueryFilter, PipelineStage, UpdateQuery } from "mongoose";
 import { ManyMessageCategoriesFindOptions, MessageCategoryFindOptions } from "./types";
 
@@ -71,11 +71,6 @@ export const getRandomCategoryMessage = async (modesEnabled = false) => {
     logger.error(`Error occured while getting random message category: ${err}`);
     handleAppError(err);
   }
-};
-
-export const getRandomMessageFromCategory = async (messageCategory: MessageCategoryModel) => {
-  const { messages } = messageCategory;
-  return messages[randomWithMax(messages.length)];
 };
 
 export const getLeastUsedMessagesFromMessageCategory = async (id: string, divideMessagesBy = 3): Promise<string[]> => {
