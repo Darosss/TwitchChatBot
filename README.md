@@ -6,10 +6,10 @@
 
 <a name="readme-top"></a>
 
-**⚠️ Note: This repository is currently under development and is not yet production-ready. Use at your own risk.**
+**⚠️ This project is actively being developed and is currently intended for local use only. It is a personal tool and hobby project, so please use it with that in mind.**
 
 <details>
-  <summary>Table of Contents</summary>
+  <summary>Contents</summary>
   <ol>
     <li>
       <a href="#about-the-project">Stream Manager</a>
@@ -35,12 +35,9 @@
 </details>
 <br>
 
-<img src="./images/home.webp" width="100%" alt="Create trigger">
+<img src="./images/home.webp" width="100%" alt="Stream Manager Home Page">
 
-Twitch stream manager is under **development** and for now designed to be deployed on localhost and home LAN only.
-It **SHOULD NOT** be on online hosting
-
-## Built with
+## Tech stack
 
 ### SERVER:
 
@@ -54,6 +51,7 @@ It **SHOULD NOT** be on online hosting
 - discord.js
 - sharp
 - zod
+- dayjs
 
 ### FRONTEND
 
@@ -66,7 +64,7 @@ It **SHOULD NOT** be on online hosting
 
 ### Prerequisites
 
-It can work on most versions, tho it is most tested on versions mentioned
+It should work on most versions, though it has been tested most thoroughly on the versions listed below.
 
 - MongoDB (`v8.0+`)
 
@@ -158,45 +156,84 @@ DISCORD_CLIENT_ID=
 `DISCORD_CLIENT_TOKEN` and `DISCORD_CLIENT_ID` - both can be obtained from discord developer portal: https://discord.com/developers/applications
 </sub>
 
-### How to start
+### Running the project locally
 
-#### Start server
+#### 1. Start the backend
 
-- navigate to server folder
-  ```sh
-    cd server
-  ```
-- then build
+1. Open a terminal and go to the server folder:
 
-  ```sh
-    npm build
-  ```
+   ```sh
+   cd server
+   ```
 
-- then run
+2. Install dependencies:
 
-  ```sh
-    node ./dist/index.js
-  ```
+   ```sh
+   npm install
+   ```
 
-- OR you can too use nodemon as it will build and start server
+3. Build the server:
 
-  ```sh
-    npm run dev
-  ```
+   ```sh
+   npm run build
+   ```
 
-#### Start frontend
+4. Start it:
 
-- navigate to frontend folder
+   ```sh
+   node ./dist/index.js
+   ```
 
-  ```sh
-    cd frontend
-  ```
+   You can also use nodemon for automatic rebuilds and restarts during development:
 
-- navigate to frontend folder
+   ```sh
+   npm run dev
+   ```
 
-  ```sh
-    npm start
-  ```
+#### 2. Start the frontend
+
+1. Open a second terminal and go to the frontend folder:
+
+   ```sh
+   cd frontend
+   ```
+
+2. Install dependencies:
+
+   ```sh
+   npm install
+   ```
+
+3. Start the app:
+
+   ```sh
+   npm start
+   ```
+
+The frontend should then be available in your browser, typically at http://localhost:5173.
+
+### Test scripts
+
+#### Backend
+
+From the server folder:
+
+```sh
+cd server
+npm run test
+npm run test:unit
+npm run test:integration
+```
+
+#### Frontend
+
+From the frontend folder:
+
+```sh
+cd frontend
+npm test
+npm run test:coverage
+```
 
 ## Usage
 
