@@ -536,7 +536,10 @@ class AchievementsHandler extends AchievementsQueueHandler<
     )) {
       const { name, custom } = achievement;
 
-      const condition = this.checkAchievementDependsOnMessageAction(custom, data.messageData.message);
+      const condition = this.checkAchievementDependsOnMessageAction(
+        custom!, // assertion use custom: { $exists: true } in filter
+        data.messageData.message
+      );
       if (condition) {
         await this.updateAchievementUserProgressAndAddToQueue({
           ...data,
@@ -595,11 +598,8 @@ class AchievementsHandler extends AchievementsQueueHandler<
     for (const achievement of foundCustomWatchTimeAchievements.filter(
       (achivementFilter) => (achivementFilter.tag as TagModel).enabled
     )) {
-      const {
-        name,
-        custom: { action }
-      } = achievement;
-
+      const { name, custom } = achievement;
+      const action = custom!.action; // assertion use custom: { $exists: true } in filter
       if (action !== CustomAchievementAction.WATCH_TIME) return;
 
       await this.updateAchievementUserProgressAndAddToQueue({

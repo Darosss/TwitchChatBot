@@ -40,7 +40,7 @@ export interface AchievementModel<
   isTime: boolean;
   tag: string | TagModel;
   enabled: boolean;
-  custom: AchievementCustomModel;
+  custom?: AchievementCustomModel;
   hidden?: boolean;
   showProgress?: boolean;
 }
