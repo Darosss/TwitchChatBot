@@ -16,6 +16,16 @@ jest.mock("@services", () => ({
   getAchievementStages: jest.fn()
 }));
 
+jest.mock("fs", () => {
+  const actualFs = jest.requireActual<any>("fs");
+  return {
+    ...actualFs,
+    promises: {
+      ...actualFs.promises,
+      unlink: jest.fn()
+    }
+  };
+});
 import { Badge, BadgeModel, BadgeCreateData } from "@models";
 import { getAchievementStages } from "@services";
 import * as BadgesService from "./badges";
