@@ -11,13 +11,13 @@ import { SEPARATOR_BADGE_IMAGE_SIZE } from "./utils";
 export const getBadges = async (filter: QueryFilter<BadgeDocument> = {}, findOptions: ManyBadgesFindOptions) => {
   const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = findOptions;
   try {
-    const affix = await Badge.find(filter)
+    const badges = await Badge.find(filter)
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
       .sort(sort);
 
-    return affix;
+    return badges;
   } catch (err) {
     logger.error(`Error occured while getting badges. ${err}`);
     handleAppError(err);

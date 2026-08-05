@@ -20,13 +20,13 @@ export const getAchievementStages = async (
   const { limit = 50, skip = 1, sort = { createdAt: -1 }, select = { __v: 0 } } = findOptions;
 
   try {
-    const affix = await AchievementStage.find(filter)
+    const achievementStages = await AchievementStage.find(filter)
       .limit(limit * 1)
       .skip((skip - 1) * limit)
       .select(select)
       .sort(sort);
 
-    return affix;
+    return achievementStages;
   } catch (err) {
     logger.error(`Error occured while getting achievement stages. ${err}`);
     handleAppError(err);
