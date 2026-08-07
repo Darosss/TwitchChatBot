@@ -136,9 +136,9 @@ describe("Songs Service", () => {
       const fakeSong = createFakeSong();
       const updateSpy = jest.spyOn(Songs, "findByIdAndUpdate").mockResolvedValue(fakeSong as any);
 
-      const result = await SongsService.updateSongById("song-1", { $set: { title: "Updated" } });
+      const result = await SongsService.updateSongById(fakeSong._id, { $set: { title: "Updated" } });
 
-      expect(updateSpy).toHaveBeenCalledWith("song-1", { $set: { title: "Updated" } }, { new: true });
+      expect(updateSpy).toHaveBeenCalledWith(fakeSong._id, { $set: { title: "Updated" } }, { new: true });
       expect(result).toEqual(fakeSong);
     });
   });
@@ -148,9 +148,9 @@ describe("Songs Service", () => {
       const fakeSong = createFakeSong();
       const updateSpy = jest.spyOn(Songs, "findOneAndUpdate").mockResolvedValue(fakeSong as any);
 
-      const result = await SongsService.manageSongLikesById({ id: "song-1" }, "like", "user-1");
+      const result = await SongsService.manageSongLikesById({ id: fakeSong._id }, "like", "user-1");
 
-      expect(updateSpy).toHaveBeenCalledWith({ _id: "song-1" }, { $set: { "likes.user-1": 1 } }, { new: true });
+      expect(updateSpy).toHaveBeenCalledWith({ _id: fakeSong._id }, { $set: { "likes.user-1": 1 } }, { new: true });
       expect(result).toEqual(fakeSong);
     });
   });
@@ -160,9 +160,9 @@ describe("Songs Service", () => {
       const fakeSong = createFakeSong();
       const deleteSpy = jest.spyOn(Songs, "findByIdAndDelete").mockResolvedValue(fakeSong as any);
 
-      const result = await SongsService.deleteSongById("song-1");
+      const result = await SongsService.deleteSongById(fakeSong._id);
 
-      expect(deleteSpy).toHaveBeenCalledWith("song-1");
+      expect(deleteSpy).toHaveBeenCalledWith(fakeSong._id);
       expect(result).toEqual(fakeSong);
     });
   });
@@ -172,9 +172,9 @@ describe("Songs Service", () => {
       const fakeSong = createFakeSong();
       const getSpy = jest.spyOn(Songs, "findById").mockResolvedValue(fakeSong as any);
 
-      const result = await SongsService.getSongById("song-1");
+      const result = await SongsService.getSongById(fakeSong._id);
 
-      expect(getSpy).toHaveBeenCalledWith("song-1", {});
+      expect(getSpy).toHaveBeenCalledWith(fakeSong._id, {});
       expect(result).toEqual(fakeSong);
     });
   });
@@ -200,10 +200,10 @@ describe("Songs Service", () => {
       const fakeSong = createFakeSong();
       const updateSpy = jest.spyOn(Songs, "findByIdAndUpdate").mockResolvedValue(fakeSong as any);
 
-      const result = await SongsService.updateSongUsesById("song-1", "botUses");
+      const result = await SongsService.updateSongUsesById(fakeSong._id, "botUses");
 
       expect(updateSpy).toHaveBeenCalledWith(
-        "song-1",
+        fakeSong._id,
         { $inc: { botUses: 1, songRequestUses: 0, uses: 1 } },
         { new: true }
       );

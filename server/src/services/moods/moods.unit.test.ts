@@ -25,13 +25,13 @@ import { Mood, MoodModel, MoodCreateData } from "@models";
 import { getChatCommandsCount, getMessageCategoriesCount, getTimersCount, getTriggersCount } from "@services";
 import * as MoodsService from "./moods";
 
-const createFakeMood = () =>
-  ({
-    _id: "mood-1",
-    name: "Happy",
-    createdAt: new Date("2024-01-01T00:00:00.000Z"),
-    updatedAt: new Date("2024-01-01T00:00:00.000Z")
-  }) as MoodModel;
+const createFakeMood = (): MoodModel => ({
+  _id: "mood-1",
+  name: "Happy",
+  createdAt: new Date("2024-01-01T00:00:00.000Z"),
+  updatedAt: new Date("2024-01-01T00:00:00.000Z"),
+  enabled: true
+});
 
 describe("Moods Service", () => {
   beforeEach(() => {
@@ -83,7 +83,7 @@ describe("Moods Service", () => {
     it("should create a mood and return it", async () => {
       const fakeMood = createFakeMood();
       const createSpy = jest.spyOn(Mood, "create").mockResolvedValue(fakeMood as any);
-      const createData: MoodCreateData = { name: "Happy", enabled: true };
+      const createData: MoodCreateData = { name: fakeMood.name, enabled: fakeMood.enabled };
 
       const result = await MoodsService.createMood(createData);
 

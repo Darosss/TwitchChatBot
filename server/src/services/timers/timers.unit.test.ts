@@ -22,25 +22,26 @@ jest.mock("../aggregations", () => ({
 import { Timer } from "@models";
 import * as TimersService from "./timers";
 
-const createFakeTimer = () =>
-  ({
-    _id: "timer-1",
-    enabled: true,
-    words: ["hello"],
-    points: 10,
-    reqPoints: 15,
-    name: "timer-1",
-    delay: 10,
-    uses: 2,
-    nonFollowMulti: false,
-    nonSubMulti: false,
-    messages: ["timer message", "timer message 2"],
-    description: "Test timer",
-    mood: "mood-id",
-    tag: "tag-id",
-    createdAt: new Date("2024-01-01T00:00:00.000Z"),
-    updatedAt: new Date("2024-01-01T00:00:00.000Z")
-  }) as TimerModel;
+const createFakeTimer = (): TimerModel & { tag: string; mood: string } => ({
+  _id: "timer-1",
+  enabled: true,
+  points: 10,
+  reqPoints: 15,
+  name: "timer-1",
+  delay: 10,
+  uses: 2,
+  nonFollowMulti: false,
+  nonSubMulti: false,
+  messages: ["timer message", "timer message 2"],
+  description: "Test timer",
+  mood: createFakeMood()._id,
+  tag: createFakeTag()._id,
+  createdAt: new Date("2024-01-01T00:00:00.000Z"),
+  updatedAt: new Date("2024-01-01T00:00:00.000Z")
+});
+
+const createFakeMood = () => ({ _id: "mood-1" as any });
+const createFakeTag = () => ({ _id: "tag-1" as any });
 
 describe("Timers Service", () => {
   beforeEach(() => {
@@ -95,12 +96,11 @@ describe("Timers Service", () => {
       const fakeTimer = createFakeTimer();
       const createSpy = jest.spyOn(Timer, "create").mockResolvedValue(fakeTimer as any);
       const createData: TimerCreateData = {
-        messages: ["hello"],
-        enabled: true,
-        points: 10,
-        name: "timmer-1",
-        mood: "mood-id",
-        tag: "tag-id"
+        messages: fakeTimer.messages,
+        name: fakeTimer.name,
+        enabled: fakeTimer.enabled,
+        mood: fakeTimer.mood,
+        tag: fakeTimer.tag
       };
 
       const result = await TimersService.createTimer(createData);
@@ -138,9 +138,9 @@ describe("Timers Service", () => {
       const fakeTimer = createFakeTimer();
       const updateSpy = jest.spyOn(Timer, "findByIdAndUpdate").mockResolvedValue(fakeTimer as any);
 
-      const result = await TimersService.updateTimerById("timer-1", { enabled: false });
+      const result = await TimersService.updateTimerById(fakeTimer._id, { enabled: false });
 
-      expect(updateSpy).toHaveBeenCalledWith("timer-1", { enabled: false }, { new: true });
+      expect(updateSpy).toHaveBeenCalledWith(fakeTimer._id, { enabled: false }, { new: true });
       expect(result).toBe(fakeTimer);
     });
   });
@@ -150,9 +150,9 @@ describe("Timers Service", () => {
       const fakeTimer = createFakeTimer();
       const deleteSpy = jest.spyOn(Timer, "findByIdAndDelete").mockResolvedValue(fakeTimer as any);
 
-      const result = await TimersService.deleteTimerById("timer-1");
+      const result = await TimersService.deleteTimerById(fakeTimer._id);
 
-      expect(deleteSpy).toHaveBeenCalledWith("timer-1");
+      expect(deleteSpy).toHaveBeenCalledWith(fakeTimer._id);
       expect(result).toBe(fakeTimer);
     });
   });
@@ -167,12 +167,12 @@ describe("Timers Service", () => {
         .mockReturnValue({ select: selectMock, populate: populateMock } as any);
 
       const result = await TimersService.getTimerById(
-        "timer-1",
+        fakeTimer._id,
         { enabled: 1 },
         { select: { __v: 0 }, populate: ["user"] }
       );
 
-      expect(findByIdSpy).toHaveBeenCalledWith("timer-1", { enabled: 1 });
+      expect(findByIdSpy).toHaveBeenCalledWith(fakeTimer._id, { enabled: 1 });
       expect(selectMock).toHaveBeenCalledWith({ __v: 0 });
       expect(populateMock).toHaveBeenCalledWith(["user"]);
       expect(result).toBe(fakeTimer);

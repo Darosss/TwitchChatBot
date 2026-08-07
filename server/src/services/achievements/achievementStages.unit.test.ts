@@ -150,9 +150,13 @@ describe("Achievement Stages Service", () => {
       };
       const findByIdSpy = jest.spyOn(AchievementStage, "findById").mockReturnValue(queryChain as any);
 
-      const result = await AchievementStagesService.getAchievementStagesById("stage-1", {}, { stageDataBadge: true });
+      const result = await AchievementStagesService.getAchievementStagesById(
+        fakeStage._id.toString(),
+        {},
+        { stageDataBadge: true }
+      );
 
-      expect(findByIdSpy).toHaveBeenCalledWith("stage-1", {});
+      expect(findByIdSpy).toHaveBeenCalledWith(fakeStage._id, {});
       expect(queryChain.populate).toHaveBeenCalledWith([{ path: "stageData.badge" }]);
       expect(result).toEqual(fakeStage);
     });

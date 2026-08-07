@@ -73,9 +73,9 @@ describe("Auth Service", () => {
       const fakeAuth = createFakeAuth();
       const updateSpy = jest.spyOn(AuthToken, "findByIdAndUpdate").mockResolvedValue(fakeAuth as any);
 
-      const result = await AuthService.updateAuthUserId("auth-1", "user-2");
+      const result = await AuthService.updateAuthUserId(fakeAuth._id, "user-2");
 
-      expect(updateSpy).toHaveBeenCalledWith("auth-1", { userId: "user-2" }, { new: true });
+      expect(updateSpy).toHaveBeenCalledWith(fakeAuth._id, { userId: "user-2" }, { new: true });
       expect(result).toBe(fakeAuth);
     });
   });

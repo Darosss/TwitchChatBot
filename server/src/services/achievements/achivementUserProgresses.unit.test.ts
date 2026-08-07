@@ -19,9 +19,67 @@ import { AchievementUserProgress, AchievementUserProgressModel, AchievementWithB
 import { getUserById } from "@services";
 import * as AchievementUserProgressesService from "./achivementUserProgresses";
 
+const createFakeTag = () => ({
+  _id: "tag-1"
+});
+const createFakeAchievement = (): AchievementWithBadgePopulated => ({
+  _id: "achievement-1" as any, // no need to be a valid ObjectId for testing
+  name: "Test Achievement",
+  stages: {
+    stageData: [
+      {
+        stage: 1,
+        goal: 5,
+        name: "badge-1",
+        badge: {
+          _id: "badge-id-1",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          name: "badge-name-1",
+          imagesUrls: {
+            x32: "x32.png",
+            x64: "x64.png",
+            x96: "x96.png",
+            x128: "x128.png"
+          }
+        },
+        showTimeMs: 500
+      },
+      {
+        stage: 2,
+        goal: 10,
+        name: "badge-2",
+        badge: {
+          _id: "badge-id-2",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          name: "badge-name-2",
+          imagesUrls: {
+            x32: "x32.png",
+            x64: "x64.png",
+            x96: "x96.png",
+            x128: "x128.png"
+          }
+        },
+        showTimeMs: 1000
+      }
+    ],
+    name: "stage-name",
+    _id: "stage-id" as any, // no need to be a valid ObjectId for testing
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }, // no need to be a valid ObjectId for testing
+  tag: createFakeTag()._id,
+  createdAt: new Date("2024-01-01T00:00:00.000Z"),
+  updatedAt: new Date("2024-01-01T00:00:00.000Z"),
+  description: "",
+  isTime: false,
+  enabled: false
+});
+
 const createFakeProgress = (): AchievementUserProgressModel => ({
   _id: "progress-1" as any, // no need to be a valid ObjectId for testing,
-  achievement: "achievement-1" as any, // no need to be a valid ObjectId for testing,
+  achievement: createFakeAchievement()._id as any, // no need to be a valid ObjectId for testing,
   userId: "user-1",
   value: 5,
   progresses: [],
@@ -66,10 +124,10 @@ describe("Achievement User Progresses Service", () => {
       const findOneSpy = jest.spyOn(AchievementUserProgress, "findOne").mockResolvedValue(fakeProgress as any);
 
       const result = await AchievementUserProgressesService.getOneAchievementUserProgress({
-        achievement: "achievement-1"
+        achievement: createFakeAchievement()._id
       });
 
-      expect(findOneSpy).toHaveBeenCalledWith({ achievement: "achievement-1" });
+      expect(findOneSpy).toHaveBeenCalledWith({ achievement: createFakeAchievement()._id });
       expect(result).toEqual(fakeProgress);
     });
   });
@@ -113,12 +171,12 @@ describe("Achievement User Progresses Service", () => {
       const updateSpy = jest.spyOn(AchievementUserProgress, "findByIdAndUpdate").mockResolvedValue(fakeProgress as any);
 
       const result = await AchievementUserProgressesService.updateOneAchievementUserProgress(
-        { _id: "progress-1" },
+        { _id: fakeProgress._id },
         { progresses: [[1, 100]] }
       );
 
       expect(updateSpy).toHaveBeenCalledWith(
-        "progress-1",
+        fakeProgress._id,
         expect.objectContaining({ progresses: [[1, 100]], $set: { progressesLength: 1 } }),
         { new: true }
       );
@@ -154,69 +212,14 @@ describe("Achievement User Progresses Service", () => {
 
   describe("updateFinishedStagesDependsOnProgress", () => {
     it("should finish stages when progress passes stage goals", async () => {
-      const achievement: AchievementWithBadgePopulated = {
-        stages: {
-          stageData: [
-            {
-              stage: 1,
-              goal: 5,
-              name: "badge-1",
-              badge: {
-                _id: "badge-id-1",
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                name: "badge-name-1",
-                imagesUrls: {
-                  x32: "x32.png",
-                  x64: "x64.png",
-                  x96: "x96.png",
-                  x128: "x128.png"
-                }
-              },
-              showTimeMs: 500
-            },
-            {
-              stage: 2,
-              goal: 10,
-              name: "badge-2",
-              badge: {
-                _id: "badge-id-2",
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                name: "badge-name-2",
-                imagesUrls: {
-                  x32: "x32.png",
-                  x64: "x64.png",
-                  x96: "x96.png",
-                  x128: "x128.png"
-                }
-              },
-              showTimeMs: 1000
-            }
-          ],
-          name: "progress-name",
-          _id: "progress-id" as any, // no need to be a valid ObjectId for testing
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },
-        showProgress: false,
-        name: "Test Achievement",
-        description: "achievement desc",
-        isTime: false,
-        tag: "tag-id",
-        enabled: false,
-        _id: "achievement-id" as any, // no need to be a valid ObjectId for testing
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        custom: undefined
-      };
-      const userProgress = { _id: "progress-1", progresses: [] } as any;
+      const fakeAchievement = createFakeAchievement();
+      const userProgress = { _id: fakeAchievement.stages._id, progresses: [] } as any;
       jest
         .spyOn(AchievementUserProgressesService, "updateOneAchievementUserProgress")
         .mockResolvedValue(userProgress as any);
 
       const result = await AchievementUserProgressesService.updateFinishedStagesDependsOnProgress(
-        achievement,
+        fakeAchievement,
         userProgress,
         6
       );

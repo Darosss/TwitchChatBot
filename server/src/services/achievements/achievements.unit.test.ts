@@ -13,7 +13,7 @@ jest.mock("@models", () => ({
     findOneAndDelete: jest.fn()
   }
 }));
-import { Achievement, CustomAchievementAction } from "@models";
+import { Achievement, CustomAchievementAction, AchievementStageModel } from "@models";
 import * as AchievementsService from "./achievements";
 
 const createFakeAchievement = () => ({
@@ -23,6 +23,17 @@ const createFakeAchievement = () => ({
   tag: { name: "test", enabled: true },
   createdAt: new Date("2024-01-01T00:00:00.000Z"),
   updatedAt: new Date("2024-01-01T00:00:00.000Z")
+});
+
+const createFakeStage = (): AchievementStageModel => ({
+  _id: "stages-1" as any, // no need to be a valid ObjectId for testing,
+  name: "",
+  stageData: [],
+  createdAt: new Date("2024-01-01T00:00:00.000Z"),
+  updatedAt: new Date("2024-01-01T00:00:00.000Z")
+});
+const createFakeTag = () => ({
+  _id: "tag-1"
 });
 
 describe("Achievements Service", () => {
@@ -133,8 +144,8 @@ describe("Achievements Service", () => {
         name: "Custom Achievement",
         custom: { action: CustomAchievementAction.INCLUDES, stringValues: ["hello"] },
         description: "custom achievement description",
-        stages: "stages-id" as any, //no need to make ObjectId for unit test
-        tag: "tag-id"
+        stages: createFakeStage()._id,
+        tag: createFakeTag()._id
       });
       console.log(result);
       expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({ isTime: false }));
@@ -147,8 +158,8 @@ describe("Achievements Service", () => {
           name: "Custom Achievement",
           custom: { action: CustomAchievementAction.INCLUDES, stringValues: [] },
           description: "custom achievement description",
-          stages: "stages-id" as any, //no need to make ObjectId for unit test
-          tag: "tag-id"
+          stages: createFakeStage()._id,
+          tag: createFakeTag()._id
         })
       ).rejects.toThrow();
     });
@@ -159,8 +170,8 @@ describe("Achievements Service", () => {
           name: "Custom Achievement",
           custom: { action: CustomAchievementAction.MESSAGE_GT },
           description: "custom achievement description",
-          stages: "stages-id" as any, //no need to make ObjectId for unit test
-          tag: "tag-id"
+          stages: createFakeStage()._id,
+          tag: createFakeTag()._id
         })
       ).rejects.toThrow();
     });

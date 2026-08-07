@@ -22,14 +22,22 @@ jest.mock("../aggregations", () => ({
 import { ChatCommand, ChatCommandModel, ChatCommandCreateData } from "@models";
 import * as ChatCommandsService from "./chatCommands";
 
-const createFakeChatCommand = () =>
-  ({
-    _id: "command-1",
-    aliases: ["hello"],
-    enabled: true,
-    createdAt: new Date("2024-01-01T00:00:00.000Z"),
-    updatedAt: new Date("2024-01-01T00:00:00.000Z")
-  }) as ChatCommandModel;
+const createFakeChatCommand = (): ChatCommandModel & { tag: string; mood: string } => ({
+  _id: "command-1",
+  aliases: ["hello"],
+  enabled: true,
+  createdAt: new Date("2024-01-01T00:00:00.000Z"),
+  updatedAt: new Date("2024-01-01T00:00:00.000Z"),
+  name: "command-name",
+  uses: 1,
+  messages: ["command message", "command message 2"],
+  tag: createFakeTag()._id,
+  mood: createFakeMood()._id,
+  privilege: 0
+});
+
+const createFakeTag = () => ({ _id: "tag-1" as any });
+const createFakeMood = () => ({ _id: "mood-1" as any });
 
 describe("Chat Commands Service", () => {
   beforeEach(() => {
@@ -108,12 +116,12 @@ describe("Chat Commands Service", () => {
       const fakeCommand = createFakeChatCommand();
       const createSpy = jest.spyOn(ChatCommand, "create").mockResolvedValue(fakeCommand as any);
       const createData: ChatCommandCreateData = {
-        aliases: ["hello"],
-        enabled: true,
-        name: "test-command",
-        messages: ["Hello, command!"],
-        tag: "tag-id",
-        mood: "mood-id"
+        aliases: fakeCommand.aliases,
+        enabled: fakeCommand.enabled,
+        name: fakeCommand.name,
+        messages: fakeCommand.messages,
+        tag: fakeCommand.tag,
+        mood: fakeCommand.mood
       };
 
       const result = await ChatCommandsService.createChatCommand(createData);
@@ -129,9 +137,9 @@ describe("Chat Commands Service", () => {
       const selectMock = jest.fn().mockResolvedValue(fakeCommand as never);
       const findByIdSpy = jest.spyOn(ChatCommand, "findById").mockReturnValue({ select: selectMock } as any);
 
-      const result = await ChatCommandsService.getChatCommandById("command-1", { select: { __v: 0 } });
+      const result = await ChatCommandsService.getChatCommandById(fakeCommand._id, { select: { __v: 0 } });
 
-      expect(findByIdSpy).toHaveBeenCalledWith("command-1");
+      expect(findByIdSpy).toHaveBeenCalledWith(fakeCommand._id);
       expect(selectMock).toHaveBeenCalledWith({ __v: 0 });
       expect(result).toBe(fakeCommand);
     });
@@ -142,9 +150,9 @@ describe("Chat Commands Service", () => {
       const fakeCommand = createFakeChatCommand();
       const updateSpy = jest.spyOn(ChatCommand, "findByIdAndUpdate").mockResolvedValue(fakeCommand as any);
 
-      const result = await ChatCommandsService.updateChatCommandById("command-1", { enabled: false });
+      const result = await ChatCommandsService.updateChatCommandById(fakeCommand._id, { enabled: false });
 
-      expect(updateSpy).toHaveBeenCalledWith("command-1", { enabled: false }, { new: true });
+      expect(updateSpy).toHaveBeenCalledWith(fakeCommand._id, { enabled: false }, { new: true });
       expect(result).toBe(fakeCommand);
     });
   });
@@ -166,9 +174,9 @@ describe("Chat Commands Service", () => {
       const fakeCommand = createFakeChatCommand();
       const deleteSpy = jest.spyOn(ChatCommand, "findByIdAndDelete").mockResolvedValue(fakeCommand as any);
 
-      const result = await ChatCommandsService.deleteChatCommandById("command-1");
+      const result = await ChatCommandsService.deleteChatCommandById(fakeCommand._id);
 
-      expect(deleteSpy).toHaveBeenCalledWith("command-1");
+      expect(deleteSpy).toHaveBeenCalledWith(fakeCommand._id);
       expect(result).toBe(fakeCommand);
     });
   });

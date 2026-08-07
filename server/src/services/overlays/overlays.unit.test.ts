@@ -77,9 +77,9 @@ describe("Overlays Service", () => {
       const selectMock = jest.fn().mockResolvedValue(fakeOverlay as never);
       const findByIdSpy = jest.spyOn(Overlay, "findById").mockReturnValue({ select: selectMock } as any);
 
-      const result = await OverlaysService.getOverlayById("overlay-1", { select: { __v: 0 } });
+      const result = await OverlaysService.getOverlayById(fakeOverlay._id, { select: { __v: 0 } });
 
-      expect(findByIdSpy).toHaveBeenCalledWith("overlay-1");
+      expect(findByIdSpy).toHaveBeenCalledWith(fakeOverlay._id);
       expect(selectMock).toHaveBeenCalledWith({ __v: 0 });
       expect(result).toBe(fakeOverlay);
     });
@@ -96,9 +96,9 @@ describe("Overlays Service", () => {
       const fakeOverlay = createFakeOverlay();
       const updateSpy = jest.spyOn(Overlay, "findByIdAndUpdate").mockResolvedValue(fakeOverlay as any);
 
-      const result = await OverlaysService.updateOverlayById("overlay-1", { name: "Updated Overlay" });
+      const result = await OverlaysService.updateOverlayById(fakeOverlay._id, { name: "Updated Overlay" });
 
-      expect(updateSpy).toHaveBeenCalledWith("overlay-1", { name: "Updated Overlay" }, { new: true });
+      expect(updateSpy).toHaveBeenCalledWith(fakeOverlay._id, { name: "Updated Overlay" }, { new: true });
       expect(result).toBe(fakeOverlay);
     });
   });
@@ -108,9 +108,9 @@ describe("Overlays Service", () => {
       const fakeOverlay = createFakeOverlay();
       const deleteSpy = jest.spyOn(Overlay, "findByIdAndDelete").mockResolvedValue(fakeOverlay as any);
 
-      const result = await OverlaysService.deleteOverlayById("overlay-1");
+      const result = await OverlaysService.deleteOverlayById(fakeOverlay._id);
 
-      expect(deleteSpy).toHaveBeenCalledWith("overlay-1");
+      expect(deleteSpy).toHaveBeenCalledWith(fakeOverlay._id);
       expect(result).toBe(fakeOverlay);
     });
   });

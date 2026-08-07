@@ -22,23 +22,25 @@ jest.mock("../aggregations", () => ({
 import { Trigger } from "@models";
 import * as TriggersService from "./triggers";
 
-const createFakeTrigger = () =>
-  ({
-    _id: "trigger-1",
-    enabled: true,
-    words: ["hello"],
-    createdAt: new Date("2024-01-01T00:00:00.000Z"),
-    updatedAt: new Date("2024-01-01T00:00:00.000Z"),
-    name: "triggers-1",
-    chance: 50,
-    delay: 10,
-    onDelay: false,
-    uses: 2,
-    messages: ["trigger message", "trigger message 2"],
-    mode: "WholeWord",
-    mood: "moodd-id",
-    tag: "tag-id"
-  }) as TriggerModel;
+const createFakeTrigger = (): TriggerModel => ({
+  _id: "trigger-1",
+  enabled: true,
+  words: ["hello"],
+  createdAt: new Date("2024-01-01T00:00:00.000Z"),
+  updatedAt: new Date("2024-01-01T00:00:00.000Z"),
+  name: "triggers-1",
+  chance: 50,
+  delay: 10,
+  onDelay: false,
+  uses: 2,
+  messages: ["trigger message", "trigger message 2"],
+  mode: "WholeWord",
+  mood: createFakeMood()._id,
+  tag: createFakeTag()._id
+});
+
+const createFakeMood = () => ({ _id: "mood-1" as any });
+const createFakeTag = () => ({ _id: "tag-1" as any });
 
 describe("Triggers Service", () => {
   beforeEach(() => {
@@ -123,9 +125,9 @@ describe("Triggers Service", () => {
       const fakeTrigger = createFakeTrigger();
       const updateSpy = jest.spyOn(Trigger, "findByIdAndUpdate").mockResolvedValue(fakeTrigger as any);
 
-      const result = await TriggersService.updateTriggerById("trigger-1", { enabled: false });
+      const result = await TriggersService.updateTriggerById(fakeTrigger._id, { enabled: false });
 
-      expect(updateSpy).toHaveBeenCalledWith("trigger-1", { enabled: false }, { new: true });
+      expect(updateSpy).toHaveBeenCalledWith(fakeTrigger._id, { enabled: false }, { new: true });
       expect(result).toBe(fakeTrigger);
     });
   });
@@ -135,9 +137,9 @@ describe("Triggers Service", () => {
       const fakeTrigger = createFakeTrigger();
       const deleteSpy = jest.spyOn(Trigger, "findByIdAndDelete").mockResolvedValue(fakeTrigger as any);
 
-      const result = await TriggersService.deleteTriggerById("trigger-1");
+      const result = await TriggersService.deleteTriggerById(fakeTrigger._id);
 
-      expect(deleteSpy).toHaveBeenCalledWith("trigger-1");
+      expect(deleteSpy).toHaveBeenCalledWith(fakeTrigger._id);
       expect(result).toBe(fakeTrigger);
     });
   });
@@ -147,9 +149,9 @@ describe("Triggers Service", () => {
       const fakeTrigger = createFakeTrigger();
       const findByIdSpy = jest.spyOn(Trigger, "findById").mockResolvedValue(fakeTrigger as any);
 
-      const result = await TriggersService.getTriggerById("trigger-1", { enabled: 1 });
+      const result = await TriggersService.getTriggerById(fakeTrigger._id, { enabled: 1 });
 
-      expect(findByIdSpy).toHaveBeenCalledWith("trigger-1", { enabled: 1 });
+      expect(findByIdSpy).toHaveBeenCalledWith(fakeTrigger._id, { enabled: 1 });
       expect(result).toBe(fakeTrigger);
     });
   });

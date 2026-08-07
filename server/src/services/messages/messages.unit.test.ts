@@ -14,7 +14,7 @@ jest.mock("@models", () => ({
 import { Message } from "@models";
 import * as MessagesService from "./messages";
 
-const createFakeMessage = (): MessageModel => ({
+const createFakeMessage = (): MessageModel & { owner: string } => ({
   _id: "message-1",
   message: "hello world",
   date: new Date("2024-01-01T00:00:00.000Z"),
@@ -66,10 +66,10 @@ describe("Messages Service", () => {
       const fakeMessage = createFakeMessage();
       const createSpy = jest.spyOn(Message, "create").mockResolvedValue(fakeMessage as any);
       const createData: MessageCreateData = {
-        message: "hello world",
-        date: new Date("2024-01-01T00:00:00.000Z"),
-        owner: "user-1",
-        ownerUsername: "tester"
+        message: fakeMessage.message,
+        date: fakeMessage.date,
+        owner: fakeMessage.owner,
+        ownerUsername: fakeMessage.ownerUsername
       };
 
       const result = await MessagesService.createMessage(createData);

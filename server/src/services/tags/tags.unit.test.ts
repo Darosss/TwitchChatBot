@@ -32,14 +32,13 @@ import {
 } from "@services";
 import * as TagsService from "./tags";
 
-const createFakeTag = () =>
-  ({
-    _id: "tag-1",
-    name: "Test Tag",
-    enabled: true,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  }) as TagModel;
+const createFakeTag = (): TagModel => ({
+  _id: "tag-1",
+  name: "Test Tag",
+  enabled: true,
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
 
 describe("Tags Service", () => {
   beforeEach(() => {
@@ -88,7 +87,7 @@ describe("Tags Service", () => {
     it("should create a tag and return it", async () => {
       const fakeTag = createFakeTag();
       const createSpy = jest.spyOn(Tag, "create").mockResolvedValue(fakeTag as any);
-      const createData: TagCreateData = { name: "Test Tag", enabled: true };
+      const createData: TagCreateData = { name: fakeTag.name, enabled: fakeTag.enabled };
 
       const result = await TagsService.createTag(createData);
 
@@ -112,9 +111,9 @@ describe("Tags Service", () => {
       const fakeTag = createFakeTag();
       const updateSpy = jest.spyOn(Tag, "findByIdAndUpdate").mockResolvedValue(fakeTag as any);
 
-      const result = await TagsService.updateTagById("tag-1", { name: "Updated Tag" });
+      const result = await TagsService.updateTagById(fakeTag._id, { name: "Updated Tag" });
 
-      expect(updateSpy).toHaveBeenCalledWith("tag-1", { name: "Updated Tag" }, { new: true });
+      expect(updateSpy).toHaveBeenCalledWith(fakeTag._id, { name: "Updated Tag" }, { new: true });
       expect(result).toBe(fakeTag);
     });
   });
@@ -129,9 +128,9 @@ describe("Tags Service", () => {
       jest.mocked(getMessageCategoriesCount).mockResolvedValue(0 as any);
       jest.mocked(getAchievementsCount).mockResolvedValue(0 as any);
 
-      const result = await TagsService.deleteTagById("tag-1");
+      const result = await TagsService.deleteTagById(fakeTag._id);
 
-      expect(deleteSpy).toHaveBeenCalledWith("tag-1");
+      expect(deleteSpy).toHaveBeenCalledWith(fakeTag._id);
       expect(result).toBe(fakeTag);
     });
 
@@ -151,9 +150,9 @@ describe("Tags Service", () => {
       const fakeTag = createFakeTag();
       const findByIdSpy = jest.spyOn(Tag, "findById").mockResolvedValue(fakeTag as any);
 
-      const result = await TagsService.getTagById("tag-1", { name: 1 });
+      const result = await TagsService.getTagById(fakeTag._id, { name: 1 });
 
-      expect(findByIdSpy).toHaveBeenCalledWith("tag-1", { name: 1 });
+      expect(findByIdSpy).toHaveBeenCalledWith(fakeTag._id, { name: 1 });
       expect(result).toBe(fakeTag);
     });
   });

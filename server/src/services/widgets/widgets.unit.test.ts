@@ -77,9 +77,9 @@ describe("Widgets Service", () => {
       const selectMock = jest.fn().mockResolvedValue(fakeWidget as never);
       const findByIdSpy = jest.spyOn(Widgets, "findById").mockReturnValue({ select: selectMock } as any);
 
-      const result = await WidgetsService.getWidgetById("widget-1", { select: { __v: 0 } });
+      const result = await WidgetsService.getWidgetById(fakeWidget._id, { select: { __v: 0 } });
 
-      expect(findByIdSpy).toHaveBeenCalledWith("widget-1");
+      expect(findByIdSpy).toHaveBeenCalledWith(fakeWidget._id);
       expect(selectMock).toHaveBeenCalledWith({ __v: 0 });
       expect(result).toBe(fakeWidget);
     });
@@ -96,9 +96,9 @@ describe("Widgets Service", () => {
       const fakeWidget = createFakeWidget();
       const updateSpy = jest.spyOn(Widgets, "findByIdAndUpdate").mockResolvedValue(fakeWidget as any);
 
-      const result = await WidgetsService.updateWidgetById("widget-1", { name: "Updated Widget" });
+      const result = await WidgetsService.updateWidgetById(fakeWidget._id, { name: "Updated Widget" });
 
-      expect(updateSpy).toHaveBeenCalledWith("widget-1", { name: "Updated Widget" }, { new: true });
+      expect(updateSpy).toHaveBeenCalledWith(fakeWidget._id, { name: "Updated Widget" }, { new: true });
       expect(result).toBe(fakeWidget);
     });
   });
@@ -108,9 +108,9 @@ describe("Widgets Service", () => {
       const fakeWidget = createFakeWidget();
       const deleteSpy = jest.spyOn(Widgets, "findByIdAndDelete").mockResolvedValue(fakeWidget as any);
 
-      const result = await WidgetsService.deleteWidgetById("widget-1");
+      const result = await WidgetsService.deleteWidgetById(fakeWidget._id);
 
-      expect(deleteSpy).toHaveBeenCalledWith("widget-1");
+      expect(deleteSpy).toHaveBeenCalledWith(fakeWidget._id);
       expect(result).toBe(fakeWidget);
     });
   });

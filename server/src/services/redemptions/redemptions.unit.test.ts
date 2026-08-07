@@ -23,6 +23,9 @@ const createFakeRedemption = () => ({
   updatedAt: new Date("2024-01-01T00:00:00.000Z")
 });
 
+const createFakeTwitch = () => ({ _id: "twitch-1" });
+const createFakeReward = () => ({ _id: "reward-1" });
+
 describe("Redemptions Service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -77,8 +80,8 @@ describe("Redemptions Service", () => {
         userId: "user-1",
         rewardCost: 100,
         redemptionDate: new Date("2024-01-01T00:00:00.000Z"),
-        twitchId: "twitch-id",
-        rewardId: "reward-id",
+        twitchId: createFakeTwitch()._id,
+        rewardId: createFakeReward()._id,
         userName: "username",
         userDisplayName: "User Display Name",
         rewardTitle: "Reward Title"

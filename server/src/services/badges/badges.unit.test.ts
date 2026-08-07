@@ -102,7 +102,7 @@ describe("Badges Service", () => {
           x96: "test-96.png",
           x128: "test-128.png"
         }
-      } as any;
+      };
 
       const result = await BadgesService.createBadge(createData);
 
@@ -120,9 +120,9 @@ describe("Badges Service", () => {
 
       const findByIdSpy = jest.spyOn(Badge, "findById").mockReturnValue(queryChain as any);
 
-      const result = await BadgesService.getBadgeById("badge-1", { select: { __v: 0 } });
+      const result = await BadgesService.getBadgeById(fakeBadge._id, { select: { __v: 0 } });
 
-      expect(findByIdSpy).toHaveBeenCalledWith("badge-1");
+      expect(findByIdSpy).toHaveBeenCalledWith(fakeBadge._id);
       expect(queryChain.select).toHaveBeenCalledWith({ __v: 0 });
       expect(result).toEqual(fakeBadge);
     });
@@ -133,9 +133,9 @@ describe("Badges Service", () => {
       const fakeBadge = createFakeBadge();
       const updateSpy = jest.spyOn(Badge, "findByIdAndUpdate").mockResolvedValue(fakeBadge as any);
 
-      const result = await BadgesService.updateBadgeById("badge-1", { $set: { name: "Updated" } });
+      const result = await BadgesService.updateBadgeById(fakeBadge._id, { $set: { name: "Updated" } });
 
-      expect(updateSpy).toHaveBeenCalledWith("badge-1", { $set: { name: "Updated" } }, { new: true });
+      expect(updateSpy).toHaveBeenCalledWith(fakeBadge._id, { $set: { name: "Updated" } }, { new: true });
       expect(result).toEqual(fakeBadge);
     });
   });

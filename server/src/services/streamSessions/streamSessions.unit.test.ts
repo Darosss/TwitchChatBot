@@ -20,7 +20,7 @@ jest.mock("@services", () => ({
   getFollowersCount: jest.fn()
 }));
 
-import { StreamSession, StreamSessionModel } from "@models";
+import { StreamSession, StreamSessionCreateData, StreamSessionModel } from "@models";
 import * as StreamSessionsService from "./streamSessions";
 import {
   getMostActiveUsersByMsgs,
@@ -95,9 +95,9 @@ describe("Stream Sessions Service", () => {
 
       const findByIdSpy = jest.spyOn(StreamSession, "findById").mockReturnValue(queryChain as any);
 
-      const result = await StreamSessionsService.getStreamSessionById("session-1", { select: { __v: 0 } });
+      const result = await StreamSessionsService.getStreamSessionById(fakeSession._id, { select: { __v: 0 } });
 
-      expect(findByIdSpy).toHaveBeenCalledWith("session-1");
+      expect(findByIdSpy).toHaveBeenCalledWith(fakeSession._id);
       expect(queryChain.select).toHaveBeenCalledWith({ __v: 0 });
       expect(queryChain.populate).toHaveBeenCalledWith("events.user");
       expect(result).toEqual(fakeSession);
@@ -140,7 +140,11 @@ describe("Stream Sessions Service", () => {
         $set: { [`viewers.${timestamp}`]: 320 }
       });
 
-      expect(updateSpy).toHaveBeenCalledWith("session-1", { $set: { [`viewers.${timestamp}`]: 320 } }, { new: true });
+      expect(updateSpy).toHaveBeenCalledWith(
+        fakeSession._id,
+        { $set: { [`viewers.${timestamp}`]: 320 } },
+        { new: true }
+      );
       expect(result).toEqual(updatedSession);
     });
   });
@@ -220,10 +224,12 @@ describe("Stream Sessions Service", () => {
       const fakeSession = createFakeStreamSession();
       const createSpy = jest.spyOn(StreamSession, "create").mockResolvedValue(fakeSession as any);
 
-      const result = await StreamSessionsService.createStreamSession({
-        sessionStart: new Date(),
-        sessionEnd: new Date()
-      } as any);
+      const createData: StreamSessionCreateData = {
+        sessionStart: fakeSession.sessionStart,
+        sessionEnd: fakeSession.sessionEnd
+      };
+
+      const result = await StreamSessionsService.createStreamSession(createData);
 
       expect(createSpy).toHaveBeenCalledWith(
         expect.objectContaining({ sessionStart: expect.any(Date), sessionEnd: expect.any(Date) })

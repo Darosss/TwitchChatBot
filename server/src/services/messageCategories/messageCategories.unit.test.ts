@@ -31,22 +31,20 @@ jest.mock("mongoose", () => ({
 import { MessageCategory, MessageCategoryCreateData, MessageCategoryModel } from "@models";
 import * as MessageCategoriesService from "./messageCategories";
 
-const createFakeCategory = () =>
-  ({
-    _id: "category-1",
-    category: "greetings",
-    enabled: true,
-    name: "category-1-name",
-    uses: 5,
-    messages: [
-      ["hello", 0],
-      ["hi", 1]
-    ],
-    mood: "mood-id",
-    tag: "tag-id",
-    createdAt: new Date("2024-01-01T00:00:00.000Z"),
-    updatedAt: new Date("2024-01-01T00:00:00.000Z")
-  }) as MessageCategoryModel;
+const createFakeCategory = (): MessageCategoryModel & { tag: string; mood: string } => ({
+  _id: "category-1",
+  enabled: true,
+  name: "category-1-name",
+  uses: 5,
+  messages: [
+    ["hello", 0],
+    ["hi", 1]
+  ],
+  mood: "mood-id",
+  tag: "tag-id",
+  createdAt: new Date("2024-01-01T00:00:00.000Z"),
+  updatedAt: new Date("2024-01-01T00:00:00.000Z")
+});
 
 describe("Message Categories Service", () => {
   beforeEach(() => {
@@ -105,12 +103,12 @@ describe("Message Categories Service", () => {
         .spyOn(MessageCategory, "findById")
         .mockReturnValue({ select: selectMock, populate: populateMock } as any);
 
-      const result = await MessageCategoriesService.getMessageCategoryById("category-1", {
+      const result = await MessageCategoriesService.getMessageCategoryById(fakeCategory._id, {
         select: { __v: 0 },
         populate: ["user"]
       });
 
-      expect(findByIdSpy).toHaveBeenCalledWith("category-1");
+      expect(findByIdSpy).toHaveBeenCalledWith(fakeCategory._id);
       expect(selectMock).toHaveBeenCalledWith({ __v: 0 });
       expect(populateMock).toHaveBeenCalledWith(["user"]);
       expect(result).toBe(fakeCategory);
@@ -171,24 +169,17 @@ describe("Message Categories Service", () => {
       const fakeCategory = createFakeCategory();
       const createSpy = jest.spyOn(MessageCategory, "create").mockResolvedValue(fakeCategory as any);
       const createData: MessageCategoryCreateData = {
-        messages: ["hello", "hi"],
-        enabled: true,
-        name: "new-test-category",
-        tag: "tag-id",
-        mood: "mood-id"
+        messages: fakeCategory.messages.map(([message]) => message),
+        enabled: fakeCategory.enabled,
+        name: fakeCategory.name,
+        tag: fakeCategory.tag,
+        mood: fakeCategory.mood
       };
 
       const result = await MessageCategoriesService.createMessageCategories(createData);
-
       expect(createSpy).toHaveBeenCalledWith({
-        name: "new-test-category",
-        messages: [
-          ["hello", 0],
-          ["hi", 0]
-        ],
-        tag: "tag-id",
-        mood: "mood-id",
-        enabled: true
+        ...createData,
+        messages: createData.messages.map((message) => [message, 0])
       });
       expect(result).toBe(fakeCategory);
     });
@@ -200,7 +191,7 @@ describe("Message Categories Service", () => {
       jest.spyOn(MessageCategoriesService as any, "getMessageCategoryById").mockResolvedValue(fakeCategory as any);
       const updateSpy = jest.spyOn(MessageCategory, "findByIdAndUpdate").mockResolvedValue(fakeCategory as any);
 
-      const result = await MessageCategoriesService.updateMessageCategoryById("category-1", {
+      const result = await MessageCategoriesService.updateMessageCategoryById(fakeCategory._id, {
         messages: ["hello", "hi"]
       } as any);
 
@@ -217,7 +208,7 @@ describe("Message Categories Service", () => {
       const result = await MessageCategoriesService.findCategoryAndUpdateMessageUse("category-1", "hello");
 
       expect(updateSpy).toHaveBeenCalledWith(
-        { _id: "category-1", "messages.0": { $exists: true } },
+        { _id: fakeCategory._id, "messages.0": { $exists: true } },
         { $inc: { "messages.$[elem].1": 1 } },
         {
           arrayFilters: [{ "elem.0": "hello" }],
@@ -234,9 +225,9 @@ describe("Message Categories Service", () => {
       const fakeCategory = createFakeCategory();
       const deleteSpy = jest.spyOn(MessageCategory, "findByIdAndDelete").mockResolvedValue(fakeCategory as any);
 
-      const result = await MessageCategoriesService.deleteMessageCategory("category-1");
+      const result = await MessageCategoriesService.deleteMessageCategory(fakeCategory._id);
 
-      expect(deleteSpy).toHaveBeenCalledWith("category-1");
+      expect(deleteSpy).toHaveBeenCalledWith(fakeCategory._id);
       expect(result).toBe(fakeCategory);
     });
   });

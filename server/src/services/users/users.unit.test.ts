@@ -23,13 +23,15 @@ const createFakeUser = (): UserModel => ({
   follower: new Date("2024-01-01T00:00:00.000Z"),
   createdAt: new Date("2024-01-01T00:00:00.000Z"),
   updatedAt: new Date("2024-01-01T00:00:00.000Z"),
-  twitchId: "twitch-id",
+  twitchId: createFakeTwitch()._id,
   privileges: 8,
   points: 200,
   watchTime: 120,
   lastSeen: new Date("2024-01-01T00:00:00.000Z"),
   messageCount: 300
 });
+
+const createFakeTwitch = () => ({ _id: "twitch-1" });
 
 describe("Users Service", () => {
   beforeEach(() => {
@@ -147,7 +149,7 @@ describe("Users Service", () => {
       expect(queryChain.limit).toHaveBeenCalledWith(5);
       expect(queryChain.skip).toHaveBeenCalledWith(2);
       expect(countSpy).toHaveBeenCalledWith();
-      expect(result).toEqual({ usernames: ["tester"], total: 1 });
+      expect(result).toEqual({ usernames: fakeUsers.map((u) => u.username), total: 1 });
     });
   });
 
@@ -184,9 +186,9 @@ describe("Users Service", () => {
 
       const findOneSpy = jest.spyOn(User, "findOne").mockReturnValue(queryChain as any);
 
-      const result = await UsersService.isUserInDB({ username: "tester" });
+      const result = await UsersService.isUserInDB({ username: fakeUser.username });
 
-      expect(findOneSpy).toHaveBeenCalledWith({ username: "tester" });
+      expect(findOneSpy).toHaveBeenCalledWith({ username: fakeUser.username });
       expect(result).toEqual(fakeUser);
     });
   });
@@ -196,8 +198,8 @@ describe("Users Service", () => {
       const fakeUser = createFakeUser();
       const createSpy = jest.spyOn(User, "create").mockResolvedValue(fakeUser as any);
       const createData: UserCreateData = {
-        twitchId: "twitch-id",
-        username: "tester"
+        twitchId: fakeUser.twitchId,
+        username: fakeUser.username
       };
       const result = await UsersService.createUser(createData);
 
@@ -215,12 +217,12 @@ describe("Users Service", () => {
 
       const findOneAndUpdateSpy = jest.spyOn(User, "findOneAndUpdate").mockReturnValue(queryChain as any);
       const createData: UserCreateData = {
-        twitchId: "twitch-id",
-        username: "tester"
+        twitchId: fakeUser.twitchId,
+        username: fakeUser.username
       };
-      const result = await UsersService.createUserIfNotExist({ username: "tester" }, createData, true);
+      const result = await UsersService.createUserIfNotExist({ username: createData.username }, createData, true);
 
-      expect(findOneAndUpdateSpy).toHaveBeenCalledWith({ username: "tester" }, createData, {
+      expect(findOneAndUpdateSpy).toHaveBeenCalledWith({ username: createData.username }, createData, {
         upsert: true,
         new: true,
         populate: "displayBadges"
@@ -234,9 +236,13 @@ describe("Users Service", () => {
       const fakeUser = createFakeUser();
       const updateSpy = jest.spyOn(User, "findOneAndUpdate").mockResolvedValue(fakeUser as any);
 
-      const result = await UsersService.updateUser({ username: "tester" }, { $set: { username: "updated" } });
+      const result = await UsersService.updateUser({ username: fakeUser.username }, { $set: { username: "updated" } });
 
-      expect(updateSpy).toHaveBeenCalledWith({ username: "tester" }, { $set: { username: "updated" } }, { new: true });
+      expect(updateSpy).toHaveBeenCalledWith(
+        { username: fakeUser.username },
+        { $set: { username: "updated" } },
+        { new: true }
+      );
       expect(result).toEqual(fakeUser);
     });
   });
